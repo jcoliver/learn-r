@@ -1,0 +1,42 @@
+---
+title: "Introduction to R Statistics"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+An introduction to using the R statistics package and the RStudio interface.
+
+####Learning objectives
+1. Read data from files and output results
+2. Extract relevant portions of datasets
+3. Run standard statistical tests in R, including Student's t, linear regression
+and analysis of variance
+
+###Setup
+```{r, eval = FALSE}
+dir.create(path = "data")
+dir.create(path = "output")
+```
+
+###Student's _t_
+```{r}
+# Use the iris data
+# Subset setosa and versicolor data
+# Compare Petal.Length of these two species
+```
+
+###Linear regression
+```{r}
+# Download gapminder data
+# Subset for a single year
+# Quick plot of data
+# Transformation of gdpPercap
+# Test lifeExp vs. log.gdpPercap
+```
+
+###Analysis of Variance (ANOVA)
+```{r}
+# Again on gapminder subset for single year
+# Ask use Continent as predictor of gdp? lifeExp?
+```
