@@ -19,6 +19,14 @@ dir.create(path = "data")
 dir.create(path = "output")
 ```
 
+###Analysis of Variance (ANOVA)
+```{r}
+# Run anova on iris data set
+# Use Species as a predictor of Petal.Length
+petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
+petal.length.anova <- anova(object = petal.length.aov)
+```
+
 ###Student's _t_
 ```{r}
 # Use the iris data
@@ -35,8 +43,3 @@ dir.create(path = "output")
 # Test lifeExp vs. log.gdpPercap
 ```
 
-###Analysis of Variance (ANOVA)
-```{r}
-# Again on gapminder subset for single year
-# Ask use Continent as predictor of gdp? lifeExp?
-```
