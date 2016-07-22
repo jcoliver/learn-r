@@ -1,0 +1,453 @@
+---
+title: "Introduction to R Graphing"
+author: "Jeff Oliver"
+date: "June 21, 2016"
+output: html_document
+---
+
+This brief tutorial will demonstrate how to create a basic plot in R from a text file of data.  This introduction provides an entry point for those unfamiliar with R (or a refresher for those who are rusty).  We will start with a very minimal piece of code and work our way up to code that automates the creation of 12 different pdf files, each with a different X-Y scatterplot.
+
+####Learning objectives:####
+
+* Gain familiarity with R
+* Read data from a file
+* Visualize data in a graph
+* Understand the principle of control flow
+
+In this tutorial, we will be using the 'gapminder' dataset, available here: <a href="http://tinyurl.com/qb83k3z"> http://tinyurl.com/qb83k3z</a> (right-click or Ctrl-click on link and Save As...).
+
+###Your first plot###
+```{r}
+#######################################
+# Plot points
+#######################################
+# Read in data
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+```
+When reading data into R, it is always a good idea to make sure you read in the data correctly.  There are a number of ways to investigate your data, but three common methods are:
+
+* `head` shows us the first 6 rows in a data frame.
+* `str` (structure) provides some information about the data stored in the data frame.
+* `summary` provides even more information about the data, including some summary statistics for numerical data.
+
+```{r}
+# Investigate data
+head(gapminder.all)
+str(gapminder.all)
+summary(gapminder.all)
+```
+
+Because we are only interested in graphing data from 2002, we just pull out those data.
+```{r}
+# Subset data, retaining only those data from 2002
+gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
+```
+
+Last but not least, we use the `plot` function to draw the plot.
+```{r}
+# Plot points
+plot(x = gapminder.2002$gdpPercap, 
+     y = gapminder.2002$lifeExp)
+```
+
+***
+###Make it pretty###
+A good start, but those axis labels are pretty unseemly.  We can fix those up by setting values in the `plot` function call.  Namely, we will be passing values to the `main`, `xlab` (x-axis label), and `ylab` (y-axis label) parameters.
+```{r}
+#######################################
+# Add better axis titles
+#######################################
+# Read in data
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+
+# Subset data
+gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
+
+plot(x = gapminder.2002$gdpPercap, 
+     y = gapminder.2002$lifeExp, 
+     main = "Life expectancy v. GDP", 
+     xlab = "GDP Per capita", 
+     ylab = "Life expectancy (years)")
+```
+
+***
+###Changing scales###
+This does not look like a linear relationship, but we can try a simple log-transformation on the GDP data to see how that looks.
+```{r}
+#######################################
+# Plot x-axis on log-scale
+#######################################
+# Read in data
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+
+# Subset data
+gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
+
+# Make new vector of Log GDP
+gapminder.2002$Log10GDP <- log10(gapminder.2002$gdpPercap)
+
+plot(x = gapminder.2002$Log10GDP, 
+     y = gapminder.2002$lifeExp, 
+     main = "Life expectancy v. GDP", 
+     xlab = "Log(GDP Per capita)", 
+     ylab = "Life expectancy (years)")
+```
+
+***
+###Make it <em>prettier</em>###
+We are not restricted to black and white colors.  Here we will color points by the continent each country is located on.
+```{r}
+#######################################
+# Color points by continent + add legend
+#######################################
+# Read in data
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+
+# Subset data
+gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
+
+# Make new vector of Log GDP
+gapminder.2002$Log10GDP <- log10(gapminder.2002$gdpPercap)
+```
+
+Start by looking at the different values in the `gapminder.2002$continent` vector.
+```{r}
+# What are the possible values for continent?
+levels(gapminder.2002$continent)
+```
+
+There are five possible values, so we will need five different colors.  The first step is to create a new vector in the `gapminder.2002` data frame; call it `colors` and fill it with `NA` values.  Then assign colors based on the value in the `gapminder.2002$continent` vector.
+```{r}
+# Create new vector for colors
+gapminder.2002$colors <- NA
+
+# Assign colors based on gapminder.2002$continent
+gapminder.2002$colors[gapminder.2002$continent == "Africa"] <- "red"
+gapminder.2002$colors[gapminder.2002$continent == "Americas"] <- "orange"
+gapminder.2002$colors[gapminder.2002$continent == "Asia"] <- "forestgreen"
+gapminder.2002$colors[gapminder.2002$continent == "Europe"] <- "darkblue"
+gapminder.2002$colors[gapminder.2002$continent == "Oceania"] <- "violet"
+
+# Create main plot
+plot(x = gapminder.2002$Log10GDP, 
+     y = gapminder.2002$lifeExp, 
+     main = "Life expectancy v. GDP", 
+     xlab = "Log(GDP Per capita)", 
+     ylab = "Life expectancy (years)",
+     col = gapminder.2002$colors,
+     pch = 18) # A diamond symbol
+
+# We will also need to add a legend, so we know what the colors mean.
+# Here we have to be sure the order of the colors matches the order 
+# of the different levels of gapminder.2002$continents.
+legend("topleft", 
+       legend = levels(gapminder.2002$continent), 
+       col = c("red", "orange3", "forestgreen", "darkblue", "violet"),
+       pch = 18)
+```
+
+***
+###Abstract code###
+When writing code, abstraction can be quite useful, to ensure consistency throughout your code.
+```{r}
+#######################################
+# Abstraction + a regression line
+#######################################
+# Read in data
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+
+# Subset data
+gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
+
+# Make new vector of Log GDP
+gapminder.2002$Log10GDP <- log10(gapminder.2002$gdpPercap)
+
+# Store values to use for some plotting parameters
+symbol <- 18
+sym.size <- 1.2
+continents <- levels(gapminder.2002$continent)
+continent.colors <- c("red", "orange", "forestgreen", "darkblue", "violet")
+
+# Assign colors for each continent
+gapminder.2002$colors <- NA
+gapminder.2002$colors[gapminder.2002$continent == continents[1]] <- continent.colors[1]
+gapminder.2002$colors[gapminder.2002$continent == continents[2]] <- continent.colors[2]
+gapminder.2002$colors[gapminder.2002$continent == continents[3]] <- continent.colors[3]
+gapminder.2002$colors[gapminder.2002$continent == continents[4]] <- continent.colors[4]
+gapminder.2002$colors[gapminder.2002$continent == continents[5]] <- continent.colors[5]
+
+# Create main plot
+plot(x = gapminder.2002$Log10GDP, 
+     y = gapminder.2002$lifeExp, 
+     main = "Life expectancy v. GDP", 
+     xlab = "Log(GDP Per capita)", 
+     ylab = "Life expectancy (years)",
+     col = gapminder.2002$colors,
+     pch = symbol,
+     cex = sym.size,
+     lwd = 1.5)
+
+# Add a legend - we don't have to worry about getting the colors 
+# in the right order because we are using the same vector that we used 
+# when assigning colors in the first place.
+legend("topleft", 
+       legend = continents, 
+       col = continent.colors,
+       pch = symbol)
+
+# Add a regression line
+lifeExp.lm <- lm(gapminder.2002$lifeExp ~ gapminder.2002$Log10GDP)
+abline(lifeExp.lm, lty = 2, lwd = 2)
+```
+
+***
+###More abstraction & loops###
+Continuing with abstraction, we can simplify our code with control flow - here we use a `for` loop to accomplish the color assignment task.
+```{r}
+#######################################
+# Control flow (a for loop)
+#######################################
+# Read in data
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+
+# Subset data
+gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
+
+# Make new vector of Log GDP
+gapminder.2002$Log10GDP <- log10(gapminder.2002$gdpPercap)
+
+# Store values to use for some plotting parameters
+symbol <- 18
+sym.size <- 1.2
+continents <- levels(gapminder.2002$continent)
+continent.colors <- c("red", "orange", "forestgreen", "darkblue", "violet")
+
+# Establish first color as default
+gapminder.2002$colors <- NA
+# Loop over continents and assign colors
+for (i in 1:length(continents)) {
+  gapminder.2002$colors[gapminder.2002$continent == continents[i]] <- continent.colors[i]
+}
+
+# Create main plot
+plot(x = gapminder.2002$Log10GDP, 
+     y = gapminder.2002$lifeExp, 
+     main = "Life expectancy v. GDP", 
+     xlab = "Log(GDP Per capita)", 
+     ylab = "Life expectancy (years)",
+     col = gapminder.2002$colors,
+     pch = symbol,
+     cex = sym.size,
+     lwd = 1.5)
+
+# Add a legend
+legend("topleft", 
+       legend = continents, 
+       col = continent.colors,
+       pch = symbol)
+
+# Add a regression line
+lifeExp.lm <- lm(gapminder.2002$lifeExp ~ gapminder.2002$Log10GDP)
+abline(lifeExp.lm, lty = 2, lwd = 2)
+```
+
+***
+###Saving graphical output###
+To save the file, we can redirect the output to a graphics device.  In this example we use a pdf writer; many other graphics devices are availble for writing different file formats, including `svg`, `jpeg`, and `png`.
+```{r eval = FALSE}
+#######################################
+# Send to pdf
+#######################################
+# Read in data
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+
+# Subset data
+gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
+
+# Make new vector of Log GDP
+gapminder.2002$Log10GDP <- log10(gapminder.2002$gdpPercap)
+
+# Store values to use for some plotting parameters
+symbol <- 18
+sym.size <- 1.2
+continents <- levels(gapminder.2002$continent)
+continent.colors <- c("red", "orange", "forestgreen", "darkblue", "violet")
+
+# Establish first color as default
+gapminder.2002$colors <- NA
+# Loop over continents and assign colors
+for (i in 1:length(continents)) {
+  gapminder.2002$colors[gapminder.2002$continent == continents[i]] <- continent.colors[i]
+}
+
+# Open PDF device
+pdf(file = "output/Life_expectancy_graph.pdf", useDingbats = FALSE)
+# Create main plot
+plot(x = gapminder.2002$Log10GDP, 
+     y = gapminder.2002$lifeExp, 
+     main = "Life expectancy v. GDP", 
+     xlab = "Log(GDP Per capita)", 
+     ylab = "Life expectancy (years)",
+     col = gapminder.2002$colors,
+     pch = symbol,
+     cex = sym.size,
+     lwd = 1.5)
+
+# Add a legend
+legend("topleft", 
+       legend = continents, 
+       col = continent.colors,
+       pch = symbol)
+
+# Add a regression line
+lifeExp.lm <- lm(gapminder.2002$lifeExp ~ gapminder.2002$Log10GDP)
+abline(lifeExp.lm, lty = 2, lwd = 2)
+
+# Close PDF device
+dev.off()
+```
+
+***
+###Automation!###
+Finally (well, almost finally, see below), we can automate this process to create a separate pdf of the same graph for each year of data in the gapminder datasets (there are 12 years of data for each country).
+```{r eval = FALSE}
+#######################################
+# Make one pdf for each of 12 years
+#######################################
+# Read in data
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+
+# Hold off on subsetting the data
+# Make new vector of Log GDP
+gapminder.all$Log10GDP <- log10(gapminder.all$gdpPercap)
+
+# Store values to use for some plotting parameters
+symbol <- 18
+sym.size <- 1.2
+continents <- levels(gapminder.all$continent)
+continent.colors <- c("red", "orange", "forestgreen", "darkblue", "violet")
+
+# Establish first color as default
+gapminder.all$colors <- NA
+# Loop over continents and assign colors
+for (i in 1:length(continents)) {
+  gapminder.all$colors[gapminder.all$continent == continents[i]] <- continent.colors[i]
+}
+
+# Find the unique values in the gapminder.all$year vector
+years <- unique(gapminder.all$year)
+
+# Now loop over each of the different years to create the pdfs.
+for (curr.year in years) {
+  # Subset data
+  gapminder.one.year <- gapminder.all[gapminder.all$year == curr.year, ]
+  
+  # Open PDF device
+  filename <- paste0("output/Life_exp_", curr.year, "_graph.pdf")
+  pdf(file = filename, useDingbats = FALSE)
+  # Create main plot
+  plot(x = gapminder.one.year$Log10GDP, 
+       y = gapminder.one.year$lifeExp, 
+       main = "Life expectancy v. GDP", 
+       sub = curr.year, 
+       xlab = "Log(GDP Per capita)", 
+       ylab = "Life expectancy (years)",
+       col = gapminder.one.year$colors,
+       pch = symbol,
+       cex = sym.size,
+       lwd = 1.5)
+  
+  # Add a legend
+  legend("topleft", 
+         legend = continents, 
+         col = continent.colors,
+         pch = symbol)
+  
+  # Add a regression line
+  lifeExp.lm <- lm(gapminder.one.year$lifeExp ~ gapminder.one.year$Log10GDP)
+  abline(lifeExp.lm, lty = 2, lwd = 2)
+  
+  # Close PDF device
+  dev.off()
+}
+```
+
+***
+###Advanced topic: making it even prettier###
+And for advanced users, we can add some transparency to the points (skipping the step were the plot is saved to a PDF file).
+```{r}
+#######################################
+# Add transparency to colors
+#######################################
+# Read in data
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+
+# Subset data
+gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
+
+# Make new vector of Log GDP
+gapminder.2002$Log10GDP <- log10(gapminder.2002$gdpPercap)
+
+# Store values to use for some plotting parameters
+symbol <- 18
+sym.size <- 1.2
+continents <- levels(gapminder.2002$continent)
+continent.colors <- c("red", "orange", "forestgreen", "darkblue", "violet")
+```
+
+To add transparency, color names will not be enough - we will have to use RGB values and add an alpha (transparency) value.  Start by using the `col2rgb` function to see what the red, green, and blue values are for our five colors.
+```{r}
+# Investigating colors
+col2rgb(continent.colors)
+```
+In this output, we see that each column corresponds to a color in our `continents.colors` vector (first column corresponds to "red", second column corresponds to "orange", etc.).  Each row corresponds to one of the three primary colors.
+
+```{r}
+# Convert colors to RGB, so we can add an alpha (transparency) value
+continent.rgb <- col2rgb(continent.colors)
+continent.colors <- NULL
+opacity <- 150
+# Loop over each column (i.e. color) in continent.rgb and extract Red, Green, and Blue values
+for (color.column in 1:ncol(continent.rgb)) {
+  new.color <- rgb(red = continent.rgb['red', color.column],
+                   green = continent.rgb['green', color.column], 
+                   blue = continent.rgb['blue', color.column],
+                   alpha = opacity,
+                   maxColorValue = 255)
+  continent.colors[color.column] <- new.color
+}
+
+# Establish first color as default
+gapminder.2002$colors <- NA
+# loop over continents and assign colors
+for (i in 1:length(continents)) {
+  gapminder.2002$colors[gapminder.2002$continent == continents[i]] <- continent.colors[i]
+}
+
+# Create main plot
+plot(x = gapminder.2002$Log10GDP, 
+     y = gapminder.2002$lifeExp, 
+     main = "Life expectancy v. GDP", 
+     xlab = "Log(GDP Per capita)", 
+     ylab = "Life expectancy (years)",
+     col = gapminder.2002$colors,
+     bg = gapminder.2002$colors, 
+     pch = symbol,
+     cex = sym.size, 
+     lwd = 1.5)
+
+# Add a legend
+legend("topleft", 
+       legend = continents, 
+       col = continent.colors,
+       pch = symbol)
+
+# Add a regression line
+lifeExp.lm <- lm(gapminder.2002$lifeExp ~ gapminder.2002$Log10GDP)
+abline(lifeExp.lm, lty = 2, lwd = 2)
+```
+
+***
+For advanced graphing, the <a href="http://ggplot2.org/">ggplot2</a> package is *extremely* useful.
+
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
