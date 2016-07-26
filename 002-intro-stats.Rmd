@@ -41,12 +41,23 @@ head(x = iris)
   
 To keep track of what we do, we will switch from running commands directly in the console to writing R scripts that we can execute. These scripts are just text files with R commands. Create a new script file called 'iris-anova.R'. Now add some key information to the top of the script, using the comment character, #, so R will know to ignore these lines.
 ```{r}
-# Run anova on iris data set
+# ANOVA on iris data set
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2016-09-09
 ```
-Commenting your code is critical in understanding why and how you did analyses when you return to the code two years from now.
+Commenting your code is critical in understanding why and how you did analyses when you return to the code two years from now.  
+The question we will first address is: _are there differences in petal length among the three species?_  
+We start by building an analysis of variance model with the `aov` function:
+```{r}
+aov(formula = Petal.Length ~ Species, data = iris)
+```
+But this 
+
+```{r}
+petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
+```
+
 
 ```{r}
 # Run anova on iris data set
@@ -58,6 +69,7 @@ petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
 petal.length.anova <- anova(object = petal.length.aov)
 petal.length.anova
 ```
+
 
 ###Student's _t_
 ```{r}
