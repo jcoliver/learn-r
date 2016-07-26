@@ -47,47 +47,115 @@ To keep track of what we do, we will switch from running commands directly in th
 # 2016-09-09
 ```
 Commenting your code is critical in understanding why and how you did analyses when you return to the code two years from now.  
+  
 The question we will first address is: _are there differences in petal length among the three species?_  
 We start by building an analysis of variance model with the `aov` function:
 ```{r}
 aov(formula = Petal.Length ~ Species, data = iris)
 ```
-But this 
+In this case, we pass _two_ arguments to the `aov` function:
 
+1. For the `formula` parameter, we pass `Petal.Length ~ Species`. This format is used throughout R for describing relationships we are testing. The format is `y ~ x`, where the response variables (e.g. `y`) are to the left of the tilde (~) and the predictor variables (e.g. `x`) are to the right of the tilde. In this example, we are asking if petal length is significantly different among the three species.
+2. We also need to tell R where to find the `Petal.Length` and `Species` data, so we pass the name of the `iris data.frame` to the `data` parameter.
+
+But we want to store the model, not just print it to the screen, so we use the assignment operator `<-` to store the product of the `aov` function in a variable of our choice
 ```{r}
 petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
 ```
-
-
+Notice how when we execute this command, nothing printed in the console because we instead sent it to a variable. If you just type the variable name,
 ```{r}
-# Run anova on iris data set
-# Jeff Oliver
-# jcoliver@email.arizona.edu
-# 2016-09-09
+petal.length.aov
+```
+you will see the familiar output from the `aov` function.  
+To see the results of the ANOVA, we call the `summary` function:
+```{r}
+summary(object = petal.length.aov)
+```
+The species _do_ have significantly different petal lengths (P < 0.001).
 
-petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
+###Necessary?
+```{r}
 petal.length.anova <- anova(object = petal.length.aov)
 petal.length.anova
 ```
 
 
 ###Student's _t_
+So the species are different, but how? To investigate this, we need to perform pairwise comparisons between the species. Make a new R script file called 'iris-t-test.R' and add the header information.
 ```{r}
+# T-test on iris petal lengths
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-09-09
+
+# Compare setosa and versicolor
+```
+We'll start by comparing the data of _Iris setosa_ and _Iris versicolor_, so we need to create two new data objects, one corresponding to the _I. setosa_ data and one for the _I. versicolor_ data.
+```{r}
+setosa <- iris[iris$Species == "setosa", ]
+versicolor <- iris[iris$Species == "versicolor", ]
+```
+OK, a lot happened with those two lines. Let's take a look:
+
+* `iris` is the `data.frame` we worked with before.
+* `iris$Species` refers to one column in `iris`, that is, the column with the name of the species (setosa, versicolor, or virginica).
+* The square brackets `[<position 1>, <position 2>]` are used to indicate a subset of data in the `iris data.frame`. A `data.frame` is effectively a two-dimensional structure - it has some number of rows (the first dimension) and some number of columns (the second dimension). We use the square brackets to essentially give an address for the data we are interested in. We tell R which rows we want in the first position and which columns we want in the second position. If a dimension is left blank, then all rows/columns are returned. For example, this would return all columns for the third row of data:
+```{r, eval = FALSE}
+iris[3, ]
+```
+So the code 
+```{r, eval = FALSE}
+setosa <- iris[iris$Species == "setosa", ]
+```
+will extract all columns (because there is nothing after the comma) in the `iris` data for those rows where the value in the `Species` column is "setosa" _and_ assign that information to a variable called `setosa`.  
+Comparing the `iris` data and the `setosa` data, we see that there are indeed fewer rows in the `setosa` data:
+```{r}
+nrow(iris)
+nrow(setosa)
+```
+
+Talk about vectors to get the means of each species 
+
+```{r}
+
 # Use the iris data
 # Subset setosa and versicolor data
 # Compare Petal.Length of these two species
-setosa <- iris[iris$Species == "setosa", ]
-versicolor <- iris[iris$Species == "versicolor", ]
 setosa.v.versicolor <- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
 setosa.v.versicolor
 ```
+As a challenge, write the code to test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
 
 ###Linear regression
 ```{r}
 # Download gapminder data
+# Summary for QA
 # Subset for a single year
 # Quick plot of data
 # Transformation of gdpPercap
 # Test lifeExp vs. log.gdpPercap
 ```
 
+###Answer to challenges
+####Test for significant differences between _I. setosa_ and _I. virginica_ petal lengths.
+```{r}
+# Subset setosa data
+setosa <- iris[iris$Species == "setosa", ]
+# Subset virginica data
+virginica <- iris[iris$Species == "virginica", ]
+# Run t-test
+setosa.v.virginica <- t.test(x = setosa$Petal.Length, y = virginica$Petal.Length)
+# Print the results
+setosa.v.virginica
+```
+####Test for significant differences between _I. versicolor_ and _I. virginica_ petal lengths.
+```{r}
+# Subset versicolor data
+versicolor <- iris[iris$Species == "versicolor", ]
+# Subset virginica data
+virginica <- iris[iris$Species == "virginica", ]
+# Run t-test
+versicolor.v.virginica <- t.test(x = versicolor$Petal.Length, y = virginica$Petal.Length)
+# Print the results
+versicolor.v.virginica
+```

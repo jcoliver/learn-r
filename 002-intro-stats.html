@@ -147,18 +147,57 @@ dir.create(path = &quot;output&quot;)</code></pre>
 <pre class="r"><code>head(x = iris)</code></pre>
 <ul>
 <li><code>iris</code> is a variable. That is, it is a name we use to refer to some information in our computer’s memory. In this case, the information is a table of flower measurements.</li>
-<li><code>head</code> is the name of the function that prints out the first six rows of a <code>data.frame</code>. Most functions require some form of input; in this example, we provided one piece of input to <code>head</code>: the name of the variable for which we want the first six lines.<br />To keep track of what we do, we will switch from running commands directly in the console to writing R scripts that we can execute. These scripts are just text files with R commands. Create a new script file called ‘iris-anova.R’. Now add some key information to the top of the script, using the comment character, #, so R will know to ignore these lines.</li>
+<li><code>head</code> is the name of the function that prints out the first six rows of a <code>data.frame</code>. Most functions require some form of input; in this example, we provided one piece of input to <code>head</code>: the name of the variable for which we want the first six lines.</li>
 </ul>
-<pre class="r"><code># Run anova on iris data set
+<p>To keep track of what we do, we will switch from running commands directly in the console to writing R scripts that we can execute. These scripts are just text files with R commands. Create a new script file called ‘iris-anova.R’. Now add some key information to the top of the script, using the comment character, #, so R will know to ignore these lines.</p>
+<pre class="r"><code># ANOVA on iris data set
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2016-09-09</code></pre>
-<pre class="r"><code># Run anova on iris data set
-# Jeff Oliver
-# jcoliver@email.arizona.edu
-# 2016-09-09
-petal.length.aov &lt;- aov(formula = Petal.Length ~ Species, data = iris)
-petal.length.anova &lt;- anova(object = petal.length.aov)
+<p>Commenting your code is critical in understanding why and how you did analyses when you return to the code two years from now.</p>
+<p>The question we will first address is: <em>are there differences in petal length among the three species?</em><br />We start by building an analysis of variance model with the <code>aov</code> function:</p>
+<pre class="r"><code>aov(formula = Petal.Length ~ Species, data = iris)</code></pre>
+<pre><code>## Call:
+##    aov(formula = Petal.Length ~ Species, data = iris)
+## 
+## Terms:
+##                  Species Residuals
+## Sum of Squares  437.1028   27.2226
+## Deg. of Freedom        2       147
+## 
+## Residual standard error: 0.4303345
+## Estimated effects may be unbalanced</code></pre>
+<p>In this case, we pass <em>two</em> arguments to the <code>aov</code> function:</p>
+<ol style="list-style-type: decimal">
+<li>For the <code>formula</code> parameter, we pass <code>Petal.Length ~ Species</code>. This format is used throughout R for describing relationships we are testing. The format is <code>y ~ x</code>, where the response variables (e.g. <code>y</code>) are to the left of the tilde (~) and the predictor variables (e.g. <code>x</code>) are to the right of the tilde. In this example, we are asking if petal length is significantly different among the three species.</li>
+<li>We also need to tell R where to find the <code>Petal.Length</code> and <code>Species</code> data, so we pass the name of the <code>iris data.frame</code> to the <code>data</code> parameter.</li>
+</ol>
+<p>But we want to store the model, not just print it to the screen, so we use the assignment operator <code>&lt;-</code> to store the product of the <code>aov</code> function in a variable of our choice</p>
+<pre class="r"><code>petal.length.aov &lt;- aov(formula = Petal.Length ~ Species, data = iris)</code></pre>
+<p>Notice how when we execute this command, nothing printed in the console because we instead sent it to a variable. If you just type the variable name,</p>
+<pre class="r"><code>petal.length.aov</code></pre>
+<pre><code>## Call:
+##    aov(formula = Petal.Length ~ Species, data = iris)
+## 
+## Terms:
+##                  Species Residuals
+## Sum of Squares  437.1028   27.2226
+## Deg. of Freedom        2       147
+## 
+## Residual standard error: 0.4303345
+## Estimated effects may be unbalanced</code></pre>
+<p>you will see the familiar output from the <code>aov</code> function.<br />To see the results of the ANOVA, we call the <code>summary</code> function:</p>
+<pre class="r"><code>summary(object = petal.length.aov)</code></pre>
+<pre><code>##              Df Sum Sq Mean Sq F value Pr(&gt;F)    
+## Species       2  437.1  218.55    1180 &lt;2e-16 ***
+## Residuals   147   27.2    0.19                   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+<p>The species <em>do</em> have significantly different petal lengths (P &lt; 0.001).</p>
+</div>
+<div id="necessary" class="section level3">
+<h3>Necessary?</h3>
+<pre class="r"><code>petal.length.anova &lt;- anova(object = petal.length.aov)
 petal.length.anova</code></pre>
 <pre><code>## Analysis of Variance Table
 ## 
@@ -171,11 +210,33 @@ petal.length.anova</code></pre>
 </div>
 <div id="students-t" class="section level3">
 <h3>Student’s <em>t</em></h3>
+<p>So the species are different, but how? To investigate this, we need to perform pairwise comparisons between the species. Make a new R script file called ‘iris-t-test.R’ and add the header information.</p>
+<pre class="r"><code># T-test on iris petal lengths
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-09-09
+
+# Compare setosa and versicolor</code></pre>
+<p>We’ll start by comparing the data of <em>Iris setosa</em> and <em>Iris versicolor</em>, so we need to create two new data objects, one corresponding to the <em>I. setosa</em> data and one for the <em>I. versicolor</em> data.</p>
+<pre class="r"><code>setosa &lt;- iris[iris$Species == &quot;setosa&quot;, ]
+versicolor &lt;- iris[iris$Species == &quot;versicolor&quot;, ]</code></pre>
+<p>OK, a lot happened with those two lines. Let’s take a look:</p>
+<ul>
+<li><code>iris</code> is the <code>data.frame</code> we worked with before.</li>
+<li><code>iris$Species</code> refers to one column in <code>iris</code>, that is, the column with the name of the species (setosa, versicolor, or virginica).</li>
+<li>The square brackets <code>[&lt;position 1&gt;, &lt;position 2&gt;]</code> are used to indicate a subset of data in the <code>iris data.frame</code>. A <code>data.frame</code> is effectively a two-dimensional structure - it has some number of rows (the first dimension) and some number of columns (the second dimension). We use the square brackets to essentially give an address for the data we are interested in. We tell R which rows we want in the first position and which columns we want in the second position. If a dimension is left blank, then all rows/columns are returned. For example, this would return all columns for the third row of data:</li>
+</ul>
+<pre class="r"><code>iris[3, ]</code></pre>
+<p>So the code</p>
+<pre class="r"><code>setosa &lt;- iris[iris$Species == &quot;setosa&quot;, ]</code></pre>
+<p>will extract all columns (because there is nothing after the comma) in the <code>iris</code> data for those rows where the value in the <code>Species</code> column is “setosa” <em>and</em> assign that information to a variable called <code>setosa</code>.<br />Comparing the <code>iris</code> data and the <code>setosa</code> data, we see that there are indeed fewer rows in the <code>setosa</code> data:</p>
+<pre class="r"><code>nrow(iris)</code></pre>
+<pre><code>## [1] 150</code></pre>
+<pre class="r"><code>nrow(setosa)</code></pre>
+<pre><code>## [1] 50</code></pre>
 <pre class="r"><code># Use the iris data
 # Subset setosa and versicolor data
 # Compare Petal.Length of these two species
-setosa &lt;- iris[iris$Species == &quot;setosa&quot;, ]
-versicolor &lt;- iris[iris$Species == &quot;versicolor&quot;, ]
 setosa.v.versicolor &lt;- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
 setosa.v.versicolor</code></pre>
 <pre><code>## 
@@ -189,14 +250,63 @@ setosa.v.versicolor</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##     1.462     4.260</code></pre>
+<p>As a challenge, write the code to test for significant differences in petal lengths between <em>I. setosa</em> and <em>I. virginica</em> and between <em>I. versicolor</em> and <em>I. virginica</em>.</p>
 </div>
 <div id="linear-regression" class="section level3">
 <h3>Linear regression</h3>
 <pre class="r"><code># Download gapminder data
+# Summary for QA
 # Subset for a single year
 # Quick plot of data
 # Transformation of gdpPercap
 # Test lifeExp vs. log.gdpPercap</code></pre>
+</div>
+<div id="answer-to-challenges" class="section level3">
+<h3>Answer to challenges</h3>
+<div id="test-for-significant-differences-between-i.-setosa-and-i.-virginica-petal-lengths." class="section level4">
+<h4>Test for significant differences between <em>I. setosa</em> and <em>I. virginica</em> petal lengths.</h4>
+<pre class="r"><code># Subset setosa data
+setosa &lt;- iris[iris$Species == &quot;setosa&quot;, ]
+# Subset virginica data
+virginica &lt;- iris[iris$Species == &quot;virginica&quot;, ]
+# Run t-test
+setosa.v.virginica &lt;- t.test(x = setosa$Petal.Length, y = virginica$Petal.Length)
+# Print the results
+setosa.v.virginica</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  setosa$Petal.Length and virginica$Petal.Length
+## t = -49.986, df = 58.609, p-value &lt; 2.2e-16
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -4.253749 -3.926251
+## sample estimates:
+## mean of x mean of y 
+##     1.462     5.552</code></pre>
+</div>
+<div id="test-for-significant-differences-between-i.-versicolor-and-i.-virginica-petal-lengths." class="section level4">
+<h4>Test for significant differences between <em>I. versicolor</em> and <em>I. virginica</em> petal lengths.</h4>
+<pre class="r"><code># Subset versicolor data
+versicolor &lt;- iris[iris$Species == &quot;versicolor&quot;, ]
+# Subset virginica data
+virginica &lt;- iris[iris$Species == &quot;virginica&quot;, ]
+# Run t-test
+versicolor.v.virginica &lt;- t.test(x = versicolor$Petal.Length, y = virginica$Petal.Length)
+# Print the results
+versicolor.v.virginica</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  versicolor$Petal.Length and virginica$Petal.Length
+## t = -12.604, df = 95.57, p-value &lt; 2.2e-16
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -1.49549 -1.08851
+## sample estimates:
+## mean of x mean of y 
+##     4.260     5.552</code></pre>
+</div>
 </div>
 
 
