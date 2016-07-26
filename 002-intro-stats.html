@@ -110,7 +110,7 @@ $(document).ready(function () {
 
 <h1 class="title">Introduction to R Statistics</h1>
 <h4 class="author"><em>Jeff Oliver</em></h4>
-<h4 class="date"><em>22 July, 2016</em></h4>
+<h4 class="date"><em>26 July, 2016</em></h4>
 
 </div>
 
@@ -123,17 +123,72 @@ $(document).ready(function () {
 <li>Extract relevant portions of datasets</li>
 <li>Run standard statistical tests in R, including Student’s t, linear regression and analysis of variance</li>
 </ol>
+<p>What has to be covered? * organization data/code/output * data structures (at least vectors and data.frames) * passing information to a function</p>
 </div>
 <div id="setup" class="section level3">
 <h3>Setup</h3>
+<p>First we need to setup our development environment. We need to create two folders: ‘data’ will store the data we will be analyzing, and ‘output’ will store the results of our analyses.</p>
 <pre class="r"><code>dir.create(path = &quot;data&quot;)
 dir.create(path = &quot;output&quot;)</code></pre>
+</div>
+<div id="analysis-of-variance-anova" class="section level3">
+<h3>Analysis of Variance (ANOVA)</h3>
+<p>For our first set of analyses, we’ll use a dataset that comes pre-loaded in R. The <code>iris</code> data is from early statistical work of R.A. Fisher <a href="https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x">doi: 10.1111%2Fj.1469-1809.1936.tb02137.x</a>, who used three species of <em>Iris</em> flowers to develop linear discriminant analysis. To begin, we’ll look at the <code>data.frame</code> called <code>iris</code> using the <code>head</code> command:</p>
+<pre class="r"><code>head(x = iris)</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa</code></pre>
+<p>The <code>data.frame</code> is probably the most commonly used data type in R. It is basically a table where each column is a variable and each row has one set of values for each of those variables. In the <code>iris</code> data, there are five columns: Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, and Species. Each row corresponds to the measurements for an individual flower. Note that all the values in a column of a <code>data.frame</code> must be of the same type - if you try to mix numbers and words in the same column, R will “coerce” the data to a single type, which may cause problems for downstream analyses.</p>
+<p>An investigation of our call to the <code>head</code> command illustrates two fundamental concepts in R: variables and functions.</p>
+<pre class="r"><code>head(x = iris)</code></pre>
+<ul>
+<li><code>iris</code> is a variable. That is, it is a name we use to refer to some information in our computer’s memory. In this case, the information is a table of flower measurements.</li>
+<li><code>head</code> is the name of the function that prints out the first six rows of a <code>data.frame</code>. Most functions require some form of input; in this example, we provided one piece of input to <code>head</code>: the name of the variable for which we want the first six lines.<br />To keep track of what we do, we will switch from running commands directly in the console to writing R scripts that we can execute. These scripts are just text files with R commands. Create a new script file called ‘iris-anova.R’. Now add some key information to the top of the script, using the comment character, #, so R will know to ignore these lines.</li>
+</ul>
+<pre class="r"><code># Run anova on iris data set
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-09-09</code></pre>
+<pre class="r"><code># Run anova on iris data set
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-09-09
+petal.length.aov &lt;- aov(formula = Petal.Length ~ Species, data = iris)
+petal.length.anova &lt;- anova(object = petal.length.aov)
+petal.length.anova</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: Petal.Length
+##            Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Species     2 437.10 218.551  1180.2 &lt; 2.2e-16 ***
+## Residuals 147  27.22   0.185                      
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div id="students-t" class="section level3">
 <h3>Student’s <em>t</em></h3>
 <pre class="r"><code># Use the iris data
 # Subset setosa and versicolor data
-# Compare Petal.Length of these two species</code></pre>
+# Compare Petal.Length of these two species
+setosa &lt;- iris[iris$Species == &quot;setosa&quot;, ]
+versicolor &lt;- iris[iris$Species == &quot;versicolor&quot;, ]
+setosa.v.versicolor &lt;- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
+setosa.v.versicolor</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  setosa$Petal.Length and versicolor$Petal.Length
+## t = -39.493, df = 62.14, p-value &lt; 2.2e-16
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -2.939618 -2.656382
+## sample estimates:
+## mean of x mean of y 
+##     1.462     4.260</code></pre>
 </div>
 <div id="linear-regression" class="section level3">
 <h3>Linear regression</h3>
@@ -142,11 +197,6 @@ dir.create(path = &quot;output&quot;)</code></pre>
 # Quick plot of data
 # Transformation of gdpPercap
 # Test lifeExp vs. log.gdpPercap</code></pre>
-</div>
-<div id="analysis-of-variance-anova" class="section level3">
-<h3>Analysis of Variance (ANOVA)</h3>
-<pre class="r"><code># Again on gapminder subset for single year
-# Ask use Continent as predictor of gdp? lifeExp?</code></pre>
 </div>
 
 

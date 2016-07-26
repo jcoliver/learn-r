@@ -12,19 +12,51 @@ An introduction to using the R statistics package and the RStudio interface.
 2. Extract relevant portions of datasets
 3. Run standard statistical tests in R, including Student's t, linear regression
 and analysis of variance
+  
+What has to be covered?
+* organization data/code/output
+* data structures (at least vectors and data.frames)
+* passing information to a function
 
 ###Setup
+First we need to setup our development environment. We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses.
 ```{r, eval = FALSE}
 dir.create(path = "data")
 dir.create(path = "output")
 ```
 
 ###Analysis of Variance (ANOVA)
+For our first set of analyses, we'll use a dataset that comes pre-loaded in R. The `iris` data is from early statistical work of R.A. Fisher [doi: 10.1111%2Fj.1469-1809.1936.tb02137.x](https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x), who used three species of _Iris_ flowers to develop linear discriminant analysis. To begin, we'll look at the `data.frame` called `iris` using the `head` command:
+```{r}
+head(x = iris)
+```
+The `data.frame` is probably the most commonly used data type in R. It is basically a table where each column is a variable and each row has one set of values for each of those variables. In the `iris` data, there are five columns: Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, and Species. Each row corresponds to the measurements for an individual flower. Note that all the values in a column of a `data.frame` must be of the same type - if you try to mix numbers and words in the same column, R will "coerce" the data to a single type, which may cause problems for downstream analyses.  
+
+An investigation of our call to the `head` command illustrates two fundamental concepts in R: variables and functions.
+```{r, eval = FALSE}
+head(x = iris)
+```
+* `iris` is a variable. That is, it is a name we use to refer to some information in our computer's memory. In this case, the information is a table of flower measurements.
+* `head` is the name of the function that prints out the first six rows of a `data.frame`. Most functions require some form of input; in this example, we provided one piece of input to `head`: the name of the variable for which we want the first six lines.  
+  
+To keep track of what we do, we will switch from running commands directly in the console to writing R scripts that we can execute. These scripts are just text files with R commands. Create a new script file called 'iris-anova.R'. Now add some key information to the top of the script, using the comment character, #, so R will know to ignore these lines.
 ```{r}
 # Run anova on iris data set
-# Use Species as a predictor of Petal.Length
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-09-09
+```
+Commenting your code is critical in understanding why and how you did analyses when you return to the code two years from now.
+
+```{r}
+# Run anova on iris data set
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-09-09
+
 petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
 petal.length.anova <- anova(object = petal.length.aov)
+petal.length.anova
 ```
 
 ###Student's _t_
@@ -32,6 +64,10 @@ petal.length.anova <- anova(object = petal.length.aov)
 # Use the iris data
 # Subset setosa and versicolor data
 # Compare Petal.Length of these two species
+setosa <- iris[iris$Species == "setosa", ]
+versicolor <- iris[iris$Species == "versicolor", ]
+setosa.v.versicolor <- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
+setosa.v.versicolor
 ```
 
 ###Linear regression
