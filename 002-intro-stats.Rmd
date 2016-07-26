@@ -5,6 +5,10 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
+##What still needs to be covered?
+* data structures (at least vectors and data.frames)
+* boxplot (right before introducing script files)
+
 An introduction to using the R statistics package and the RStudio interface.
 
 ####Learning objectives
@@ -13,11 +17,6 @@ An introduction to using the R statistics package and the RStudio interface.
 3. Run standard statistical tests in R, including Student's t, linear regression
 and analysis of variance
   
-What has to be covered?
-* organization data/code/output
-* data structures (at least vectors and data.frames)
-* passing information to a function
-
 ###Setup
 First we need to setup our development environment. We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses.
 ```{r, eval = FALSE}
@@ -38,7 +37,12 @@ head(x = iris)
 ```
 * `iris` is a variable. That is, it is a name we use to refer to some information in our computer's memory. In this case, the information is a table of flower measurements.
 * `head` is the name of the function that prints out the first six rows of a `data.frame`. Most functions require some form of input; in this example, we provided one piece of input to `head`: the name of the variable for which we want the first six lines.  
-  
+
+
+```{r}
+boxplot(Petal.Length ~ Species, data = iris)
+```
+
 To keep track of what we do, we will switch from running commands directly in the console to writing R scripts that we can execute. These scripts are just text files with R commands. Create a new script file called 'iris-anova.R'. Now add some key information to the top of the script, using the comment character, #, so R will know to ignore these lines.
 ```{r}
 # ANOVA on iris data set
@@ -79,7 +83,6 @@ petal.length.anova <- anova(object = petal.length.aov)
 petal.length.anova
 ```
 
-
 ###Student's _t_
 So the species are different, but how? To investigate this, we need to perform pairwise comparisons between the species. Make a new R script file called 'iris-t-test.R' and add the header information.
 ```{r}
@@ -99,7 +102,7 @@ OK, a lot happened with those two lines. Let's take a look:
 
 * `iris` is the `data.frame` we worked with before.
 * `iris$Species` refers to one column in `iris`, that is, the column with the name of the species (setosa, versicolor, or virginica).
-* The square brackets `[<position 1>, <position 2>]` are used to indicate a subset of data in the `iris data.frame`. A `data.frame` is effectively a two-dimensional structure - it has some number of rows (the first dimension) and some number of columns (the second dimension). We use the square brackets to essentially give an address for the data we are interested in. We tell R which rows we want in the first position and which columns we want in the second position. If a dimension is left blank, then all rows/columns are returned. For example, this would return all columns for the third row of data:
+* The square brackets `[<position 1>, <position 2>]` are used to indicate a subset of the `iris` data. A `data.frame` is effectively a two-dimensional structure - it has some number of rows (the first dimension) and some number of columns (the second dimension). We can see how many rows and columns are in a `data.frame` with the `dim` command. `dim(iris)` prints out the number of rows (`r nrow(iris)`) and the number of columns (`r ncol(iris)`): `r dim(iris)`. We use the square brackets to essentially give an address for the data we are interested in. We tell R which rows we want in the first position and which columns we want in the second position. If a dimension is left blank, then all rows/columns are returned. For example, this would return all columns for the third row of data:
 ```{r, eval = FALSE}
 iris[3, ]
 ```
@@ -108,13 +111,13 @@ So the code
 setosa <- iris[iris$Species == "setosa", ]
 ```
 will extract all columns (because there is nothing after the comma) in the `iris` data for those rows where the value in the `Species` column is "setosa" _and_ assign that information to a variable called `setosa`.  
+  
 Comparing the `iris` data and the `setosa` data, we see that there are indeed fewer rows in the `setosa` data:
 ```{r}
 nrow(iris)
 nrow(setosa)
 ```
 
-Talk about vectors to get the means of each species 
 
 ```{r}
 
@@ -129,9 +132,9 @@ As a challenge, write the code to test for significant differences in petal leng
 ###Linear regression
 ```{r}
 # Download gapminder data
-# Summary for QA
+# summary() for QA
 # Subset for a single year
-# Quick plot of data
+# Quick plot of data, showing non-linearity
 # Transformation of gdpPercap
 # Test lifeExp vs. log.gdpPercap
 ```
