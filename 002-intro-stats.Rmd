@@ -107,7 +107,23 @@ sink()
 ---
 
 ###Student's _t_
-So the species are different, but how? To investigate this, we need to perform pairwise comparisons between the species. Make a new R script file called 'iris-t-test.R' and add the header information.
+So the species are different, but how? To investigate this, we need to perform pairwise comparisons between the species. We use a _t_-test to ask whether or not the values for two species were likely drawn from two separate populations. Just looking at the data for two species of irises, it looks like the petal lengths are different, but are the _significantly_ different?
+<style type="text/css">
+.table {
+    width: 30%;
+}
+</style>
+
+| _I. setosa_ | _I. versicolor_ |
+|:-----------:|:---------------:|
+|     1.4     |      4.7        |
+|     1.4     |      4.5        |
+|     1.3     |      4.9        |
+|     1.5     |      4.0        |
+|     1.4     |      4.6        |
+|     ...     |      ...        |
+
+Start by making a new R script file called 'iris-t-test.R' and add the header information.
 ```{r}
 # T-test on iris petal lengths
 # Jeff Oliver
@@ -116,6 +132,7 @@ So the species are different, but how? To investigate this, we need to perform p
 
 # Compare setosa and versicolor
 ```
+
 We'll start by comparing the data of _Iris setosa_ and _Iris versicolor_, so we need to create two new data objects, one corresponding to the _I. setosa_ data and one for the _I. versicolor_ data.
 ```{r}
 setosa <- iris[iris$Species == "setosa", ]
@@ -150,6 +167,20 @@ nrow(setosa)
 setosa.v.versicolor <- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
 setosa.v.versicolor
 ```
+The final script should be:
+```{r, eval = FALSE}
+# T-test on iris petal lengths
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-09-09
+
+# Compare setosa and versicolor
+setosa <- iris[iris$Species == "setosa", ]
+versicolor <- iris[iris$Species == "versicolor", ]
+setosa.v.versicolor <- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
+
+```
+
 As a challenge, write the code to test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
 
 ---

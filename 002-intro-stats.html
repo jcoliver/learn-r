@@ -223,7 +223,43 @@ sink()</code></pre>
 </div>
 <div id="students-t" class="section level3">
 <h3>Student’s <em>t</em></h3>
-<p>So the species are different, but how? To investigate this, we need to perform pairwise comparisons between the species. Make a new R script file called ‘iris-t-test.R’ and add the header information.</p>
+So the species are different, but how? To investigate this, we need to perform pairwise comparisons between the species.A <em>t</em>-test will compare the values in two columns to see if they came from separate populations, so if we had a table of petal lengths for two species of irises:
+<style type="text/css">
+.table {
+    width: 30%;
+}
+</style>
+<table>
+<thead>
+<tr class="header">
+<th align="center"><em>I. setosa</em></th>
+<th align="center"><em>I. versicolor</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1.4</td>
+<td align="center">4.7</td>
+</tr>
+<tr class="even">
+<td align="center">1.4</td>
+<td align="center">4.5</td>
+</tr>
+<tr class="odd">
+<td align="center">1.3</td>
+<td align="center">4.9</td>
+</tr>
+<tr class="even">
+<td align="center">1.5</td>
+<td align="center">4.0</td>
+</tr>
+<tr class="odd">
+<td align="center">1.4</td>
+<td align="center">4.6</td>
+</tr>
+</tbody>
+</table>
+<p>Start by making a new R script file called ‘iris-t-test.R’ and add the header information.</p>
 <pre class="r"><code># T-test on iris petal lengths
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -264,6 +300,16 @@ setosa.v.versicolor</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##     1.462     4.260</code></pre>
+<p>The final script should be:</p>
+<pre class="r"><code># T-test on iris petal lengths
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-09-09
+
+# Compare setosa and versicolor
+setosa &lt;- iris[iris$Species == &quot;setosa&quot;, ]
+versicolor &lt;- iris[iris$Species == &quot;versicolor&quot;, ]
+setosa.v.versicolor &lt;- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)</code></pre>
 <p>As a challenge, write the code to test for significant differences in petal lengths between <em>I. setosa</em> and <em>I. virginica</em> and between <em>I. versicolor</em> and <em>I. virginica</em>.</p>
 <hr />
 </div>
