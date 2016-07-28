@@ -25,11 +25,12 @@ dir.create(path = "output")
 ```
 
 ###Analysis of Variance (ANOVA)
-For our first set of analyses, we'll use a dataset that comes pre-loaded in R. The `iris` data is from early statistical work of R.A. Fisher [doi: 10.1111%2Fj.1469-1809.1936.tb02137.x](https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x), who used three species of _Iris_ flowers to develop linear discriminant analysis. To begin, we'll look at the `data.frame` called `iris` using the `head` command:
+For our first set of analyses, we'll use a dataset that comes pre-loaded in R. The `iris` data is from early statistical work of R.A. Fisher [doi: 10.1111%2Fj.1469-1809.1936.tb02137.x](https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x), who used three species of _Iris_ flowers to develop linear discriminant analysis.  
+Start by looking at the data with the `head` command:
 ```{r}
 head(x = iris)
 ```
-The `data.frame` is probably the most commonly used data type in R. It is basically a table where each column is a variable and each row has one set of values for each of those variables. In the `iris` data, there are five columns: Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, and Species. Each row corresponds to the measurements for an individual flower. Note that all the values in a column of a `data.frame` must be of the same type - if you try to mix numbers and words in the same column, R will "coerce" the data to a single type, which may cause problems for downstream analyses.  
+`iris` is a `data.frame`, which is probably the most commonly used data type in R. It is basically a table where each column is a variable and each row has one set of values for each of those variables. In the `iris` data, there are five columns: Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, and Species. Each row corresponds to the measurements for an individual flower. Note that all the values in a column of a `data.frame` must be of the same type - if you try to mix numbers and words in the same column, R will "coerce" the data to a single type, which may cause problems for downstream analyses.  
 
 An investigation of our call to the `head` command illustrates two fundamental concepts in R: variables and functions.
 ```{r, eval = FALSE}
@@ -38,11 +39,13 @@ head(x = iris)
 * `iris` is a variable. That is, it is a name we use to refer to some information in our computer's memory. In this case, the information is a table of flower measurements.
 * `head` is the name of the function that prints out the first six rows of a `data.frame`. Most functions require some form of input; in this example, we provided one piece of input to `head`: the name of the variable for which we want the first six lines.  
 
-
+Another great idea when investigating data is to plot it out to see if there are any odd values. Here we use `boxplot` to show the data for each species.
 ```{r}
 boxplot(Petal.Length ~ Species, data = iris)
 ```
-
+  
+`boxplot` uses the syntax `y ~ group`, where the reference to the left of the tilde (~) is the value to plot on the y-axis (here we are plotting the values of `Petal.length`) and the reference to the right indicates how to group the data (here we group by the value in the `Species` column of `iris`). Find out more about the plot by typing `?boxplot` into the console.
+  
 To keep track of what we do, we will switch from running commands directly in the console to writing R scripts that we can execute. These scripts are just text files with R commands. Create a new script file called 'iris-anova.R'. Now add some key information to the top of the script, using the comment character, #, so R will know to ignore these lines.
 ```{r}
 # ANOVA on iris data set
@@ -60,28 +63,48 @@ aov(formula = Petal.Length ~ Species, data = iris)
 In this case, we pass _two_ arguments to the `aov` function:
 
 1. For the `formula` parameter, we pass `Petal.Length ~ Species`. This format is used throughout R for describing relationships we are testing. The format is `y ~ x`, where the response variables (e.g. `y`) are to the left of the tilde (~) and the predictor variables (e.g. `x`) are to the right of the tilde. In this example, we are asking if petal length is significantly different among the three species.
-2. We also need to tell R where to find the `Petal.Length` and `Species` data, so we pass the name of the `iris data.frame` to the `data` parameter.
+2. We also need to tell R where to find the `Petal.Length` and `Species` data, so we pass the variable name of the `iris data.frame` to the `data` parameter.  
 
 But we want to store the model, not just print it to the screen, so we use the assignment operator `<-` to store the product of the `aov` function in a variable of our choice
 ```{r}
 petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
 ```
-Notice how when we execute this command, nothing printed in the console because we instead sent it to a variable. If you just type the variable name,
-```{r}
+Notice how when we execute this command, nothing printed in the console. This is because we instead sent the output of the `aov` call to a variable. If you just type the variable name,
+```{r, eval = FALSE}
 petal.length.aov
 ```
-you will see the familiar output from the `aov` function.  
+you will see the familiar output from the `aov` function:  
+```{r, echo = FALSE}
+petal.length.aov
+```
 To see the results of the ANOVA, we call the `summary` function:
 ```{r}
 summary(object = petal.length.aov)
 ```
-The species _do_ have significantly different petal lengths (P < 0.001).
-
-###Necessary?
-```{r}
-petal.length.anova <- anova(object = petal.length.aov)
-petal.length.anova
+The species _do_ have significantly different petal lengths (P < 0.001).  
+  
+The last thing we want to do with this code is save our results to a file. To do so, we put the call to `summary` between a pair of calls to `sink`:
+```{r, eval = FALSE}
+sink(file = "output/petal-length-anova.txt")
+summary(object = petal.length.aov)
+sink()
 ```
+Notice now that because we have directed output to the file "petal-length-anova.txt", the output of `summary` will _not_ be output to the console. Open the file to make sure the output was saved correctly.  
+  
+Our script should look like this:
+```{r, eval = FALSE}
+# ANOVA on iris data set
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-09-09
+
+petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
+sink(file = "output/petal-length-anova.txt")
+summary(object = petal.length.aov)
+sink()
+```
+
+---
 
 ###Student's _t_
 So the species are different, but how? To investigate this, we need to perform pairwise comparisons between the species. Make a new R script file called 'iris-t-test.R' and add the header information.
@@ -129,6 +152,8 @@ setosa.v.versicolor
 ```
 As a challenge, write the code to test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
 
+---
+
 ###Linear regression
 ```{r}
 # Download gapminder data
@@ -138,6 +163,8 @@ As a challenge, write the code to test for significant differences in petal leng
 # Transformation of gdpPercap
 # Test lifeExp vs. log.gdpPercap
 ```
+
+---
 
 ###Answer to challenges
 ####Test for significant differences between _I. setosa_ and _I. virginica_ petal lengths.
