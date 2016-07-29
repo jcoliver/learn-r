@@ -187,7 +187,9 @@ a {
     font-weight: bold; }
   .main-content table th, .main-content table td {
     padding: 0.5rem 1rem;
-    border: 1px solid #e9ebec; }
+    border: 5px solid #FFFFFF; /*#e9ebec*/
+    background-color: #E7E5D7;
+  }
 .main-content dl {
   padding: 0; }
   .main-content dl dt {
@@ -225,14 +227,14 @@ a {
 .site-footer {
   padding-top: 2rem;
   margin-top: 2rem;
-  border-top: solid 1px #eff0f1; }
+  border-top: solid 1px #0C234B; }
 
 .site-footer-owner {
   display: block;
   font-weight: bold; }
 
 .site-footer-credits {
-  color: #819198; }
+  color: #606c71; }
 
 @media screen and (min-width: 64em) {
   .site-footer {
