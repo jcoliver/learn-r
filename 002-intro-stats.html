@@ -110,7 +110,7 @@ $(document).ready(function () {
 
 <h1 class="title">Introduction to R Statistics</h1>
 <h4 class="author"><em>Jeff Oliver</em></h4>
-<h4 class="date"><em>28 July, 2016</em></h4>
+<h4 class="date"><em>29 July, 2016</em></h4>
 
 </div>
 
@@ -223,7 +223,7 @@ sink()</code></pre>
 </div>
 <div id="students-t" class="section level3">
 <h3>Student’s <em>t</em></h3>
-So the species are different, but how? To investigate this, we need to perform pairwise comparisons between the species.A <em>t</em>-test will compare the values in two columns to see if they came from separate populations, so if we had a table of petal lengths for two species of irises:
+So the species are different, but how? To investigate this, we need to perform pairwise comparisons between the species. We use a <em>t</em>-test to ask whether or not the values for two species were likely drawn from two separate populations. Just looking at the data for two species of irises, it looks like the petal lengths are different, but are the <em>significantly</em> different?
 <style type="text/css">
 .table {
     width: 30%;
@@ -257,6 +257,10 @@ So the species are different, but how? To investigate this, we need to perform p
 <td align="center">1.4</td>
 <td align="center">4.6</td>
 </tr>
+<tr class="even">
+<td align="center">…</td>
+<td align="center">…</td>
+</tr>
 </tbody>
 </table>
 <p>Start by making a new R script file called ‘iris-t-test.R’ and add the header information.</p>
@@ -273,8 +277,11 @@ versicolor &lt;- iris[iris$Species == &quot;versicolor&quot;, ]</code></pre>
 <ul>
 <li><code>iris</code> is the <code>data.frame</code> we worked with before.</li>
 <li><code>iris$Species</code> refers to one column in <code>iris</code>, that is, the column with the name of the species (setosa, versicolor, or virginica).</li>
-<li>The square brackets <code>[&lt;position 1&gt;, &lt;position 2&gt;]</code> are used to indicate a subset of the <code>iris</code> data. A <code>data.frame</code> is effectively a two-dimensional structure - it has some number of rows (the first dimension) and some number of columns (the second dimension). We can see how many rows and columns are in a <code>data.frame</code> with the <code>dim</code> command. <code>dim(iris)</code> prints out the number of rows (150) and the number of columns (5): 150, 5. We use the square brackets to essentially give an address for the data we are interested in. We tell R which rows we want in the first position and which columns we want in the second position. If a dimension is left blank, then all rows/columns are returned. For example, this would return all columns for the third row of data:</li>
+<li>The square brackets <code>[&lt;position 1&gt;, &lt;position 2&gt;]</code> are used to indicate a subset of the <code>iris</code> data. A <code>data.frame</code> is effectively a two-dimensional structure - it has some number of rows (the first dimension) and some number of columns (the second dimension). We can see how many rows and columns are in a <code>data.frame</code> with the <code>dim</code> command. <code>dim(iris)</code> prints out the number of rows (150) and the number of columns (5):</li>
 </ul>
+<pre class="r"><code>dim(iris)</code></pre>
+<pre><code>## [1] 150   5</code></pre>
+<p>We use the square brackets to essentially give an address for the data we are interested in. We tell R which rows we want in the first position and which columns we want in the second position. If a dimension is left blank, then all rows/columns are returned. For example, this would return all columns for the third row of data:</p>
 <pre class="r"><code>iris[3, ]</code></pre>
 <p>So the code</p>
 <pre class="r"><code>setosa &lt;- iris[iris$Species == &quot;setosa&quot;, ]</code></pre>
@@ -284,11 +291,11 @@ versicolor &lt;- iris[iris$Species == &quot;versicolor&quot;, ]</code></pre>
 <pre><code>## [1] 150</code></pre>
 <pre class="r"><code>nrow(setosa)</code></pre>
 <pre><code>## [1] 50</code></pre>
-<pre class="r"><code># Use the iris data
-# Subset setosa and versicolor data
-# Compare Petal.Length of these two species
-setosa.v.versicolor &lt;- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
-setosa.v.versicolor</code></pre>
+<p>Now to compare the two species, we call the <code>t.test</code> function in R, passing each set of data to <code>x</code> and <code>y</code>.</p>
+<pre class="r"><code># Compare Petal.Length of these two species
+setosa.v.versicolor &lt;- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)</code></pre>
+<p>The output of a <em>t</em>-test is a little different than an ANOVA; we only have to enter the name of the variable to see the results (in contrast, we had to use <code>summary</code> to see the significance of our ANOVA).</p>
+<pre class="r"><code>setosa.v.versicolor</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
 ## 
@@ -300,6 +307,16 @@ setosa.v.versicolor</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##     1.462     4.260</code></pre>
+<p>The results include:</p>
+<ul>
+<li>Test statistic, degrees of freedom, and p-value</li>
+<li>The confidence interval for the difference in means between the two data sets</li>
+<li>The means of each data set</li>
+</ul>
+<p>So we reject the hypothesis that these species have the same petal lengths.<br />As before, though, if we want to save these results to a file, we use <code>sink</code>:</p>
+<pre class="r"><code>sink(file = &quot;output/petal-length-setosa-versicolor-t-test.txt&quot;)
+setosa.v.versicolor
+sink()</code></pre>
 <p>The final script should be:</p>
 <pre class="r"><code># T-test on iris petal lengths
 # Jeff Oliver
@@ -307,9 +324,18 @@ setosa.v.versicolor</code></pre>
 # 2016-09-09
 
 # Compare setosa and versicolor
+
+# Subset data
 setosa &lt;- iris[iris$Species == &quot;setosa&quot;, ]
 versicolor &lt;- iris[iris$Species == &quot;versicolor&quot;, ]
-setosa.v.versicolor &lt;- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)</code></pre>
+
+# Run t-test
+setosa.v.versicolor &lt;- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
+
+# Save results to file
+sink(file = &quot;output/petal-length-setosa-versicolor-t-test.txt&quot;)
+setosa.v.versicolor
+sink()</code></pre>
 <p>As a challenge, write the code to test for significant differences in petal lengths between <em>I. setosa</em> and <em>I. virginica</em> and between <em>I. versicolor</em> and <em>I. virginica</em>.</p>
 <hr />
 </div>
@@ -321,6 +347,33 @@ setosa.v.versicolor &lt;- t.test(x = setosa$Petal.Length, y = versicolor$Petal.L
 # Quick plot of data, showing non-linearity
 # Transformation of gdpPercap
 # Test lifeExp vs. log.gdpPercap</code></pre>
+<p>The final script should be:</p>
+<pre class="r"><code># Test relationship between life expectancy and GDP
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-07-29
+
+gapminder &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
+
+# Subset 2007 data
+gapminder.2007 &lt;- gapminder[gapminder$year == 2007, ]
+
+# Plot to look at data
+plot(x = gapminder.2007$gdpPercap, y = gapminder.2007$lifeExp)
+
+# Create log-transformed GDP
+gapminder.2007$logGDP &lt;- log10(gapminder.2007$gdpPercap)
+
+# Plot new variable
+plot(x = gapminder.2007$logGDP, y = gapminder.2007$lifeExp)
+
+# Run linear model
+lifeExp.v.gdp &lt;- lm(lifeExp ~ logGDP, data = gapminder.2007)
+
+# Save results to file
+sink(file = &quot;output/lifeExp-gdp-regression.txt&quot;)
+summary(lifeExp.v.gdp)
+sink()</code></pre>
 <hr />
 </div>
 <div id="answer-to-challenges" class="section level3">

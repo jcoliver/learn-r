@@ -5,10 +5,6 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
-##What still needs to be covered?
-* data structures (at least vectors and data.frames)
-* boxplot (right before introducing script files)
-
 An introduction to using the R statistics package and the RStudio interface.
 
 ####Learning objectives
@@ -142,7 +138,11 @@ OK, a lot happened with those two lines. Let's take a look:
 
 * `iris` is the `data.frame` we worked with before.
 * `iris$Species` refers to one column in `iris`, that is, the column with the name of the species (setosa, versicolor, or virginica).
-* The square brackets `[<position 1>, <position 2>]` are used to indicate a subset of the `iris` data. A `data.frame` is effectively a two-dimensional structure - it has some number of rows (the first dimension) and some number of columns (the second dimension). We can see how many rows and columns are in a `data.frame` with the `dim` command. `dim(iris)` prints out the number of rows (`r nrow(iris)`) and the number of columns (`r ncol(iris)`): `r dim(iris)`. We use the square brackets to essentially give an address for the data we are interested in. We tell R which rows we want in the first position and which columns we want in the second position. If a dimension is left blank, then all rows/columns are returned. For example, this would return all columns for the third row of data:
+* The square brackets `[<position 1>, <position 2>]` are used to indicate a subset of the `iris` data. A `data.frame` is effectively a two-dimensional structure - it has some number of rows (the first dimension) and some number of columns (the second dimension). We can see how many rows and columns are in a `data.frame` with the `dim` command. `dim(iris)` prints out the number of rows (`r nrow(iris)`) and the number of columns (`r ncol(iris)`): 
+```{r}
+dim(iris)
+```
+We use the square brackets to essentially give an address for the data we are interested in. We tell R which rows we want in the first position and which columns we want in the second position. If a dimension is left blank, then all rows/columns are returned. For example, this would return all columns for the third row of data:
 ```{r, eval = FALSE}
 iris[3, ]
 ```
@@ -157,16 +157,31 @@ Comparing the `iris` data and the `setosa` data, we see that there are indeed fe
 nrow(iris)
 nrow(setosa)
 ```
-
-
+  
+Now to compare the two species, we call the `t.test` function in R, passing each set of data to `x` and `y`.
 ```{r}
-
-# Use the iris data
-# Subset setosa and versicolor data
 # Compare Petal.Length of these two species
 setosa.v.versicolor <- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
+```
+  
+The output of a _t_-test is a little different than an ANOVA; we only have to enter the name of the variable to see the results (in contrast, we had to use `summary` to see the significance of our ANOVA).
+```{r}
 setosa.v.versicolor
 ```
+The results include:
+
+* Test statistic, degrees of freedom, and p-value
+* The confidence interval for the difference in means between the two data sets
+* The means of each data set
+
+So we reject the hypothesis that these species have the same petal lengths.    
+As before, though, if we want to save these results to a file, we use `sink`:
+```{r, eval = FALSE}
+sink(file = "output/petal-length-setosa-versicolor-t-test.txt")
+setosa.v.versicolor
+sink()
+```
+
 The final script should be:
 ```{r, eval = FALSE}
 # T-test on iris petal lengths
@@ -175,10 +190,18 @@ The final script should be:
 # 2016-09-09
 
 # Compare setosa and versicolor
+
+# Subset data
 setosa <- iris[iris$Species == "setosa", ]
 versicolor <- iris[iris$Species == "versicolor", ]
+
+# Run t-test
 setosa.v.versicolor <- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
 
+# Save results to file
+sink(file = "output/petal-length-setosa-versicolor-t-test.txt")
+setosa.v.versicolor
+sink()
 ```
 
 As a challenge, write the code to test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
@@ -193,6 +216,38 @@ As a challenge, write the code to test for significant differences in petal leng
 # Quick plot of data, showing non-linearity
 # Transformation of gdpPercap
 # Test lifeExp vs. log.gdpPercap
+
+
+```
+
+The final script should be:
+```{r, eval = FALSE}
+# Test relationship between life expectancy and GDP
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-07-29
+
+gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
+
+# Subset 2007 data
+gapminder.2007 <- gapminder[gapminder$year == 2007, ]
+
+# Plot to look at data
+plot(x = gapminder.2007$gdpPercap, y = gapminder.2007$lifeExp)
+
+# Create log-transformed GDP
+gapminder.2007$logGDP <- log10(gapminder.2007$gdpPercap)
+
+# Plot new variable
+plot(x = gapminder.2007$logGDP, y = gapminder.2007$lifeExp)
+
+# Run linear model
+lifeExp.v.gdp <- lm(lifeExp ~ logGDP, data = gapminder.2007)
+
+# Save results to file
+sink(file = "output/lifeExp-gdp-regression.txt")
+summary(lifeExp.v.gdp)
+sink()
 ```
 
 ---
@@ -209,6 +264,7 @@ setosa.v.virginica <- t.test(x = setosa$Petal.Length, y = virginica$Petal.Length
 # Print the results
 setosa.v.virginica
 ```
+  
 ####Test for significant differences between _I. versicolor_ and _I. virginica_ petal lengths.
 ```{r}
 # Subset versicolor data
