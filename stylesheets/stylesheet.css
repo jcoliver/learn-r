@@ -7,10 +7,10 @@ body {
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
-  color: #606c71; }
+  color: #606c71; /*#2F2E2E*/; }
 
 a {
-  color: #1e6bb8;
+  color: #B75527; /*#1e6bb8;*/
   text-decoration: none; }
   a:hover {
     text-decoration: underline; }
@@ -114,7 +114,7 @@ a {
   margin-top: 2rem;
   margin-bottom: 1rem;
   font-weight: normal;
-  color: #159957; }
+  color: #AB0520; }
 .main-content p {
   margin-bottom: 1em; }
 .main-content code {
@@ -245,7 +245,3 @@ a {
 @media screen and (max-width: 42em) {
   .site-footer {
     font-size: 0.9rem; } }
-/*Added by jcoliver below this point*/
-.main-content ul {
-  list-style: none;
-}
