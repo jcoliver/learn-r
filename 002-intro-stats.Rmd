@@ -209,15 +209,70 @@ As a challenge, write the code to test for significant differences in petal leng
 ---
 
 ###Linear regression
+For this final section, we will test for a relationship between life expectancy and per capita [https://en.wikipedia.org/wiki/Gross_domestic_product](gross domestic product) (GDP). Start by downloading the data from [http://tinyurl.com/qb83k3z](http://tinyurl.com/qb83k3z) (right-click or Ctrl-click on link and Save As...). Save this to the 'data' directory you created in the Setup section. The file has comma-separated values for 142 countries at twelve different years; the data can be loaded in R with the `read.csv` function:
 ```{r}
-# Download gapminder data
-# summary() for QA
-# Subset for a single year
-# Quick plot of data, showing non-linearity
-# Transformation of gdpPercap
-# Test lifeExp vs. log.gdpPercap
+# Test relationship between life expectancy and GDP
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-07-29
 
+gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
+```
+This reads the file into memory and stores the data in a data frame called `gapminder`.
+  
+Recall you can see the first few rows with the `head` function.
+```{r}
+head(gapminder)
+```
+Another useful quality assurance tool is `summary`, which provides a basic description for each column in the data frame.
+```{r}
+summary(gapminder)
+```
+For the four numeric columns (`year`, `pop`, `lifeExp`, and `gdpPercap`), some descriptive statistics are shown. For the `country` and `continent` columns the first few values and frequencies of each value are shown (i.e. there are 12 records for Afghanistan and 624 records for Africa).
+  
+For this analysis, we only want the data from 2007, so we start by subsetting those data. This creates a new variable and stores only those rows in the original `gapminder` data frame where the value in the `year` column is 2007.
+```{r}
+# Subset 2007 data
+gapminder.2007 <- gapminder[gapminder$year == 2007, ]
+```
+  
+As we did for the ANOVA analyses, it is usually a good idea to visually inspect the data when possible. Here we can use the `plot` function to create a scatterplot of the two columns of interest, `lifeExp` and `gdpPercap`.
+```{r}
+# Plot to look at data
+plot(x = gapminder.2007$gdpPercap, y = gapminder.2007$lifeExp)
+```
+  
+We can see immediately that this is unlikely a linear relationship. For our purposes, we will need to log-transform the GDP data. Create a new column in the `gapminder.2007` data frame with the log~10~-transformed GDP and plot this transformed data.
+```{r}
+# Create log-transformed GDP
+gapminder.2007$logGDP <- log10(gapminder.2007$gdpPercap)
 
+# Plot again, with log-transformed GDP on the x-axis
+plot(x = gapminder.2007$logGDP, y = gapminder.2007$lifeExp, xlab = "log10(GDP)", ylab = "Life Expectancy")
+```
+  
+Notice also that we passed two additional arguments to the `plot` command: `xlab` and `ylab`. These are used to label the x- and y-axis, respectively (try the `plot` function without passing `xlab` and `ylab` arguments to see what happens without them).
+  
+Now that the data are properly transformed, we can create the linear model for the predictability of life expectancy based on gross domestic product.
+```{r}
+# Run a linear model
+lifeExp.v.gdp <- lm(lifeExp ~ logGDP, data = gapminder.2007)
+
+# Investigate results of the model
+summary(lifeExp.v.gdp)
+```
+  
+For our question, the relationship between life expectancy and GDP, focus on the *coefficients* section, specifically the line for *logGDP*:
+
+>`## logGDP        16.585      1.019  16.283   <2e-16 ***`
+  
+First of all, there is quite a significant relationship between these two variables (P < 2 x 10^-6^, or, as R reports in the `Pr>(|t|)` column, P < 2e-6). The `Estimate` column of the results lists a value of 16.585, which means that for every 10-fold increase in per capita GDP (we log-transformed, remember), life expectancy increases by almost 17 years.
+  
+As before, if we want to instead save the results to a file instead of printing them to the screen, we use the `sink` function.
+```{r, eval = FALSE}
+sink(file = "output/lifeExp-gdp-regression.txt")
+summary(lifeExp.v.gdp)
+sink()
 ```
 
 The final script should be:
@@ -239,7 +294,7 @@ plot(x = gapminder.2007$gdpPercap, y = gapminder.2007$lifeExp)
 gapminder.2007$logGDP <- log10(gapminder.2007$gdpPercap)
 
 # Plot new variable
-plot(x = gapminder.2007$logGDP, y = gapminder.2007$lifeExp)
+plot(x = gapminder.2007$logGDP, y = gapminder.2007$lifeExp, xlab = "log10(GDP)", ylab = "Life Expectancy")
 
 # Run linear model
 lifeExp.v.gdp <- lm(lifeExp ~ logGDP, data = gapminder.2007)
