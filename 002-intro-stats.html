@@ -213,6 +213,10 @@ petal.length.aov &lt;- aov(formula = Petal.Length ~ Species, data = iris)
 sink(file = &quot;output/petal-length-anova.txt&quot;)
 summary(object = petal.length.aov)
 sink()</code></pre>
+<blockquote>
+<h3>Challenge 1</h3>
+<p>ANOVA on another variable</p>
+</blockquote>
 <hr />
 </div>
 <div id="students-t" class="section level3">
@@ -330,7 +334,10 @@ setosa.v.versicolor &lt;- t.test(x = setosa$Petal.Length, y = versicolor$Petal.L
 sink(file = &quot;output/petal-length-setosa-versicolor-t-test.txt&quot;)
 setosa.v.versicolor
 sink()</code></pre>
-<p>As a challenge, write the code to test for significant differences in petal lengths between <em>I. setosa</em> and <em>I. virginica</em> and between <em>I. versicolor</em> and <em>I. virginica</em>.</p>
+<blockquote>
+<h3>Challenge 2</h3>
+<p>Test for significant differences in petal lengths between <em>I. setosa</em> and <em>I. virginica</em> and between <em>I. versicolor</em> and <em>I. virginica</em>.</p>
+</blockquote>
 <hr />
 </div>
 <div id="linear-regression" class="section level3">
@@ -419,6 +426,9 @@ summary(lifeExp.v.gdp)</code></pre>
 <pre class="r"><code>sink(file = &quot;output/lifeExp-gdp-regression.txt&quot;)
 summary(lifeExp.v.gdp)
 sink()</code></pre>
+<blockquote>
+
+</blockquote>
 <p>The final script should be:</p>
 <pre class="r"><code># Test relationship between life expectancy and GDP
 # Jeff Oliver
@@ -446,6 +456,10 @@ lifeExp.v.gdp &lt;- lm(lifeExp ~ logGDP, data = gapminder.2007)
 sink(file = &quot;output/lifeExp-gdp-regression.txt&quot;)
 summary(lifeExp.v.gdp)
 sink()</code></pre>
+<blockquote>
+<h3>Challenge 3</h3>
+<p>Compare relationship of life expectancy and log GDP on the 1952 data.</p>
+</blockquote>
 <hr />
 </div>
 <div id="answer-to-challenges" class="section level3">

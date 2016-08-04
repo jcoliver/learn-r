@@ -100,6 +100,9 @@ summary(object = petal.length.aov)
 sink()
 ```
 
+> ###Challenge 1  
+ANOVA on another variable
+
 ---
 
 ###Student's _t_
@@ -204,7 +207,8 @@ setosa.v.versicolor
 sink()
 ```
 
-As a challenge, write the code to test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
+> ###Challenge 2  
+Test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
 
 ---
 
@@ -274,6 +278,8 @@ sink(file = "output/lifeExp-gdp-regression.txt")
 summary(lifeExp.v.gdp)
 sink()
 ```
+  
+> 
 
 The final script should be:
 ```{r, eval = FALSE}
@@ -305,6 +311,10 @@ summary(lifeExp.v.gdp)
 sink()
 ```
 
+  
+> ###Challenge 3  
+Compare relationship of life expectancy and log GDP on the 1952 data.
+  
 ---
 
 ###Answer to challenges
