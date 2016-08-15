@@ -213,7 +213,7 @@ Test for significant differences in petal lengths between _I. setosa_ and _I. vi
 ---
 
 ###Linear regression
-For this final section, we will test for a relationship between life expectancy and per capita [https://en.wikipedia.org/wiki/Gross_domestic_product](gross domestic product) (GDP). Start by downloading the data from [http://tinyurl.com/qb83k3z](http://tinyurl.com/qb83k3z) (right-click or Ctrl-click on link and Save As...). Save this to the 'data' directory you created in the Setup section. The file has comma-separated values for 142 countries at twelve different years; the data can be loaded in R with the `read.csv` function:
+For this final section, we will test for a relationship between life expectancy and per capita [gross domestic product](https://en.wikipedia.org/wiki/Gross_domestic_product) (GDP). Start by downloading the data from [http://tinyurl.com/qb83k3z](http://tinyurl.com/qb83k3z) (right-click or Ctrl-click on link and Save As...). Save this to the 'data' directory you created in the Setup section. The file has comma-separated values for 142 countries at twelve different years; the data can be loaded in R with the `read.csv` function:
 ```{r}
 # Test relationship between life expectancy and GDP
 # Jeff Oliver
