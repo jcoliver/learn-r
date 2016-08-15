@@ -215,7 +215,7 @@ summary(object = petal.length.aov)
 sink()</code></pre>
 <blockquote>
 <h3>Challenge 1</h3>
-<p>ANOVA on another variable</p>
+<p>Use ANOVA to test for differences in sepal width among the three species. What are the values of the <em>F</em>-statistic and the p-value?</p>
 </blockquote>
 <hr />
 </div>
@@ -458,14 +458,22 @@ summary(lifeExp.v.gdp)
 sink()</code></pre>
 <blockquote>
 <h3>Challenge 3</h3>
-<p>Compare relationship of life expectancy and log GDP on the 1952 data.</p>
+<p>Test for a relationship between life expectancy and natural log of GDP for the 1952 data. How much of the variation in life expectancy is explained by the variation in (transformed) GDP?</p>
 </blockquote>
 <hr />
 </div>
-<div id="answer-to-challenges" class="section level3">
-<h3>Answer to challenges</h3>
-<div id="test-for-significant-differences-between-i.-setosa-and-i.-virginica-petal-lengths." class="section level4">
-<h4>Test for significant differences between <em>I. setosa</em> and <em>I. virginica</em> petal lengths.</h4>
+<div id="answers-to-challenges" class="section level3">
+<h3>Answers to challenges</h3>
+<blockquote>
+<h3>Challenge 1</h3>
+<p>Use ANOVA to test for differences in sepal width among the three species. What are the values of the <em>F</em>-statistic and the p-value?</p>
+</blockquote>
+<blockquote>
+<h3>Challenge 2</h3>
+<p>Test for significant differences in petal lengths between <em>I. setosa</em> and <em>I. virginica</em> and between <em>I. versicolor</em> and <em>I. virginica</em>.</p>
+</blockquote>
+<div id="first-comparison-i.-setosa-vs.-i.-virginica" class="section level4">
+<h4>First comparison: <em>I. setosa</em> vs. <em>I. virginica</em></h4>
 <pre class="r"><code># Subset setosa data
 setosa &lt;- iris[iris$Species == &quot;setosa&quot;, ]
 # Subset virginica data
@@ -486,8 +494,8 @@ setosa.v.virginica</code></pre>
 ## mean of x mean of y 
 ##     1.462     5.552</code></pre>
 </div>
-<div id="test-for-significant-differences-between-i.-versicolor-and-i.-virginica-petal-lengths." class="section level4">
-<h4>Test for significant differences between <em>I. versicolor</em> and <em>I. virginica</em> petal lengths.</h4>
+<div id="second-comparison-i.-versicolor-and-i.-virginica" class="section level4">
+<h4>Second comparison: <em>I. versicolor</em> and <em>I. virginica</em></h4>
 <pre class="r"><code># Subset versicolor data
 versicolor &lt;- iris[iris$Species == &quot;versicolor&quot;, ]
 # Subset virginica data
@@ -507,6 +515,13 @@ versicolor.v.virginica</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##     4.260     5.552</code></pre>
+<blockquote>
+<p>In both pairwise comparisons, petal lengths were significantly different between the two species.</p>
+</blockquote>
+<blockquote>
+<h3>Challenge 3</h3>
+<p>Test for a relationship between life expectancy and natural log of GDP for the 1952 data. How much of the variation in life expectancy is explained by the variation in (transformed) GDP?</p>
+</blockquote>
 </div>
 </div>
 

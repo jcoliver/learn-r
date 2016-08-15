@@ -101,7 +101,7 @@ sink()
 ```
 
 > ###Challenge 1  
-ANOVA on another variable
+Use ANOVA to test for differences in sepal width among the three species. What are the values of the _F_-statistic and the p-value?
 
 ---
 
@@ -313,12 +313,18 @@ sink()
 
   
 > ###Challenge 3  
-Compare relationship of life expectancy and log GDP on the 1952 data.
-  
+Test for a relationship between life expectancy and natural log of GDP for the 1952 data. How much of the variation in life expectancy is explained by the variation in (transformed) GDP?
+
 ---
 
-###Answer to challenges
-####Test for significant differences between _I. setosa_ and _I. virginica_ petal lengths.
+###Answers to challenges
+> ###Challenge 1  
+Use ANOVA to test for differences in sepal width among the three species. What are the values of the _F_-statistic and the p-value?
+
+> ###Challenge 2  
+Test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
+
+####First comparison: _I. setosa_ vs. _I. virginica_
 ```{r}
 # Subset setosa data
 setosa <- iris[iris$Species == "setosa", ]
@@ -330,7 +336,8 @@ setosa.v.virginica <- t.test(x = setosa$Petal.Length, y = virginica$Petal.Length
 setosa.v.virginica
 ```
   
-####Test for significant differences between _I. versicolor_ and _I. virginica_ petal lengths.
+  
+####Second comparison: _I. versicolor_ and _I. virginica_
 ```{r}
 # Subset versicolor data
 versicolor <- iris[iris$Species == "versicolor", ]
@@ -341,3 +348,8 @@ versicolor.v.virginica <- t.test(x = versicolor$Petal.Length, y = virginica$Peta
 # Print the results
 versicolor.v.virginica
 ```
+
+> In both pairwise comparisons, petal lengths were significantly different between the two species.
+
+> ###Challenge 3  
+Test for a relationship between life expectancy and natural log of GDP for the 1952 data. How much of the variation in life expectancy is explained by the variation in (transformed) GDP?
