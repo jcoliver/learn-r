@@ -101,7 +101,7 @@ sink()
 ```
 
 > ###Challenge 1  
-Use ANOVA to test for differences in sepal width among the three species. What are the values of the _F_-statistic and the p-value?
+Use ANOVA to test for differences in sepal width among the three species. What is the _F_-statistic?
 
 ---
 
@@ -268,7 +268,7 @@ summary(lifeExp.v.gdp)
   
 For our question, the relationship between life expectancy and GDP, focus on the *coefficients* section, specifically the line for *logGDP*:
 
->`## logGDP        16.585      1.019  16.283   <2e-16 ***`
+>`## logGDP        16.585      1.019  16.283   < 2e-16 ***`
   
 First of all, there is quite a significant relationship between these two variables (P < 2 x 10^-6^, or, as R reports in the `Pr>(|t|)` column, P < 2e-6). The `Estimate` column of the results lists a value of 16.585, which means that for every 10-fold increase in per capita GDP (we log-transformed, remember), life expectancy increases by almost 17 years.
   
@@ -319,7 +319,21 @@ Test for a relationship between life expectancy and natural log of GDP for the 1
 
 ###Answers to challenges
 > ###Challenge 1  
-Use ANOVA to test for differences in sepal width among the three species. What are the values of the _F_-statistic and the p-value?
+Use ANOVA to test for differences in sepal width among the three species. What is the _F_-statistic?
+
+```{r}
+sepal.width.aov <- aov(formula = Sepal.Width ~ Species, data = iris)
+summary(object = sepal.width.aov)
+```
+
+```{r echo = FALSE}
+aov.summary <- summary(object = sepal.width.aov)
+f.stat <- aov.summary[[1]][['F value']][1]
+```
+
+The _F_-statistic = `r round(x = f.stat, digits = 2)`, and the p-value is quite small, so there are significant sepal width differences among species.
+
+---
 
 > ###Challenge 2  
 Test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
@@ -335,7 +349,7 @@ setosa.v.virginica <- t.test(x = setosa$Petal.Length, y = virginica$Petal.Length
 # Print the results
 setosa.v.virginica
 ```
-  
+> _I. setosa_ and _I. virginica_ have significantly different petal lengths.  
   
 ####Second comparison: _I. versicolor_ and _I. virginica_
 ```{r}
@@ -348,8 +362,33 @@ versicolor.v.virginica <- t.test(x = versicolor$Petal.Length, y = virginica$Peta
 # Print the results
 versicolor.v.virginica
 ```
+> _I. versicolor_ and _I. virginica_ also have different significantly different petal lengths.
 
-> In both pairwise comparisons, petal lengths were significantly different between the two species.
+---
 
 > ###Challenge 3  
-Test for a relationship between life expectancy and natural log of GDP for the 1952 data. How much of the variation in life expectancy is explained by the variation in (transformed) GDP?
+Test for a relationship between life expectancy and log base 2 of GDP for the 1952 data. How does life expectancy change with a four-fold increase in GDP?
+
+```{r}
+gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
+
+# Subset 1952 data
+gapminder.1952 <- gapminder[gapminder$year == 1952, ]
+
+# Create log2-transformed GDP
+gapminder.1952$log2GDP <- log2(gapminder.1952$gdpPercap)
+
+# Run linear model
+lifeExp.v.gdp <- lm(lifeExp ~ log2GDP, data = gapminder.1952)
+summary(lifeExp.v.gdp)
+```
+
+```{r echo = FALSE}
+lifeExp.sum <- summary(lifeExp.v.gdp)
+```
+
+> The line to focus on is the `log2GPD` line in the `coefficients` section:
+
+>`## log2GDP        6.1204      0.4593  13.326   < 2e-16 ***`
+
+> The coefficient for log~2~ GDP in the model is positive, with increases in GDP correlating with increased life expectancy. The estimated coefficient for the relationship is `r round(x = lifeExp.v.gdp$coefficients['log2GDP'], digits = 2)`. Remember that we transformed the GDP data, so this coefficient indicates the change in life expectancy for every two-fold increase in per capita GDP. For a four-fold increase in GDP, we multiply this coefficient by two (because four is two two-fold changes) to conclude that a four-fold increase in GDP results in an increase of `r round(x = (2 * lifeExp.v.gdp$coefficients['log2GDP']), digits = 2)` years in life expectancy.
