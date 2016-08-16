@@ -121,17 +121,17 @@ $(document).ready(function () {
 <ol style="list-style-type: decimal">
 <li>Read data from files and output results</li>
 <li>Extract relevant portions of datasets</li>
-<li>Run standard statistical tests in R, including Student’s t, linear regression and analysis of variance</li>
+<li>Run standard statistical tests in R, including Student’s <em>t</em>, linear regression and analysis of variance</li>
 </ol>
 </div>
-<div id="setup" class="section level3">
-<h3>Setup</h3>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
 <p>First we need to setup our development environment. We need to create two folders: ‘data’ will store the data we will be analyzing, and ‘output’ will store the results of our analyses.</p>
 <pre class="r"><code>dir.create(path = &quot;data&quot;)
 dir.create(path = &quot;output&quot;)</code></pre>
 </div>
-<div id="analysis-of-variance-anova" class="section level3">
-<h3>Analysis of Variance (ANOVA)</h3>
+<div id="analysis-of-variance-anova" class="section level2">
+<h2>Analysis of Variance (ANOVA)</h2>
 <p>For our first set of analyses, we’ll use a dataset that comes pre-loaded in R. The <code>iris</code> data is from early statistical work of R.A. Fisher <a href="https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x">doi: 10.1111%2Fj.1469-1809.1936.tb02137.x</a>, who used three species of <em>Iris</em> flowers to develop linear discriminant analysis.<br />Start by looking at the data with the <code>head</code> command:</p>
 <pre class="r"><code>head(x = iris)</code></pre>
 <pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
@@ -215,12 +215,12 @@ summary(object = petal.length.aov)
 sink()</code></pre>
 <blockquote>
 <h3>Challenge 1</h3>
-<p>Use ANOVA to test for differences in sepal width among the three species. What is the <em>F</em>-statistic?</p>
+<p>Use ANOVA to test for differences in sepal width among the three species. What is the value of the <em>F</em>-statistic?</p>
 </blockquote>
 <hr />
 </div>
-<div id="students-t" class="section level3">
-<h3>Student’s <em>t</em></h3>
+<div id="students-t" class="section level2">
+<h2>Student’s <em>t</em></h2>
 So the species are different, but how? To investigate this, we need to perform pairwise comparisons between the species. We use a <em>t</em>-test to ask whether or not the values for two species were likely drawn from two separate populations. Just looking at the data for two species of irises, it looks like the petal lengths are different, but are the <em>significantly</em> different?
 <style type="text/css">
 .table {
@@ -340,8 +340,8 @@ sink()</code></pre>
 </blockquote>
 <hr />
 </div>
-<div id="linear-regression" class="section level3">
-<h3>Linear regression</h3>
+<div id="linear-regression" class="section level2">
+<h2>Linear regression</h2>
 <p>For this final section, we will test for a relationship between life expectancy and per capita <a href="https://en.wikipedia.org/wiki/Gross_domestic_product">gross domestic product</a> (GDP). Start by downloading the data from <a href="http://tinyurl.com/qb83k3z"><a href="http://tinyurl.com/qb83k3z" class="uri">http://tinyurl.com/qb83k3z</a></a> (right-click or Ctrl-click on link and Save As…). Save this to the ‘data’ directory you created in the Setup section. The file has comma-separated values for 142 countries at twelve different years; the data can be loaded in R with the <code>read.csv</code> function:</p>
 <pre class="r"><code># Test relationship between life expectancy and GDP
 # Jeff Oliver
@@ -421,20 +421,18 @@ summary(lifeExp.v.gdp)</code></pre>
 <blockquote>
 <p><code>## logGDP        16.585      1.019  16.283   &lt; 2e-16 ***</code></p>
 </blockquote>
-<p>First of all, there is quite a significant relationship between these two variables (P &lt; 2 x 10<sup>-6</sup>, or, as R reports in the <code>Pr&gt;(|t|)</code> column, P &lt; 2e-6). The <code>Estimate</code> column of the results lists a value of 16.585, which means that for every 10-fold increase in per capita GDP (we log-transformed, remember), life expectancy increases by almost 17 years.</p>
+<p>First of all, there <em>is</em> a significant relationship between these two variables (p &lt; 2 x 10<sup>-6</sup>, or, as R reports in the <code>Pr&gt;(|t|)</code> column, p &lt; 2e-6). The <code>Estimate</code> column of the results lists a value of 16.585, which means that for every 10-fold increase in per capita GDP (remember we log<sub>10</sub>-transformed GDP), life expectancy increases by almost 17 years.</p>
 <p>As before, if we want to instead save the results to a file instead of printing them to the screen, we use the <code>sink</code> function.</p>
 <pre class="r"><code>sink(file = &quot;output/lifeExp-gdp-regression.txt&quot;)
 summary(lifeExp.v.gdp)
 sink()</code></pre>
-<blockquote>
-
-</blockquote>
 <p>The final script should be:</p>
 <pre class="r"><code># Test relationship between life expectancy and GDP
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2016-07-29
 
+# Read data from comma-separated values file
 gapminder &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
 
 # Subset 2007 data
@@ -458,15 +456,15 @@ summary(lifeExp.v.gdp)
 sink()</code></pre>
 <blockquote>
 <h3>Challenge 3</h3>
-<p>Test for a relationship between life expectancy and natural log of GDP for the 1952 data. How much of the variation in life expectancy is explained by the variation in (transformed) GDP?</p>
+<p>Test for a relationship between life expectancy and log base 2 of GDP for the 1982 data. How does life expectancy change with a four-fold increase in GDP?</p>
 </blockquote>
 <hr />
 </div>
-<div id="answers-to-challenges" class="section level3">
-<h3>Answers to challenges</h3>
+<div id="answers-to-challenges" class="section level2">
+<h2>Answers to challenges</h2>
 <blockquote>
 <h3>Challenge 1</h3>
-<p>Use ANOVA to test for differences in sepal width among the three species. What is the <em>F</em>-statistic?</p>
+<p>Use ANOVA to test for differences in sepal width among the three species. What is the value of the <em>F</em>-statistic?</p>
 </blockquote>
 <pre class="r"><code>sepal.width.aov &lt;- aov(formula = Sepal.Width ~ Species, data = iris)
 summary(object = sepal.width.aov)</code></pre>
@@ -502,9 +500,8 @@ setosa.v.virginica</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##     1.462     5.552</code></pre>
-<blockquote>
 <p><em>I. setosa</em> and <em>I. virginica</em> have significantly different petal lengths.</p>
-</blockquote>
+<hr />
 </div>
 <div id="second-comparison-i.-versicolor-and-i.-virginica" class="section level4">
 <h4>Second comparison: <em>I. versicolor</em> and <em>I. virginica</em></h4>
@@ -527,52 +524,49 @@ versicolor.v.virginica</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##     4.260     5.552</code></pre>
-<blockquote>
 <p><em>I. versicolor</em> and <em>I. virginica</em> also have different significantly different petal lengths.</p>
-</blockquote>
 <hr />
 <blockquote>
 <h3>Challenge 3</h3>
-<p>Test for a relationship between life expectancy and log base 2 of GDP for the 1952 data. How does life expectancy change with a four-fold increase in GDP?</p>
+<p>Test for a relationship between life expectancy and log base 2 of GDP for the 1982 data. How does life expectancy change with a four-fold increase in GDP?</p>
 </blockquote>
-<pre class="r"><code>gapminder &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
+<pre class="r"><code># Read data from comma-separated values file
+gapminder &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
 
-# Subset 1952 data
-gapminder.1952 &lt;- gapminder[gapminder$year == 1952, ]
+# Subset 1982 data
+gapminder.1982 &lt;- gapminder[gapminder$year == 1982, ]
 
 # Create log2-transformed GDP
-gapminder.1952$log2GDP &lt;- log2(gapminder.1952$gdpPercap)
+gapminder.1982$log2GDP &lt;- log2(gapminder.1982$gdpPercap)
 
 # Run linear model
-lifeExp.v.gdp &lt;- lm(lifeExp ~ log2GDP, data = gapminder.1952)
+lifeExp.v.gdp &lt;- lm(lifeExp ~ log2GDP, data = gapminder.1982)
 summary(lifeExp.v.gdp)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = lifeExp ~ log2GDP, data = gapminder.1952)
+## lm(formula = lifeExp ~ log2GDP, data = gapminder.1982)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -28.9571  -5.7319   0.7517   6.5770  13.7361 
+## -18.7709  -2.8743   0.4812   3.6039  14.6986 
 ## 
 ## Coefficients:
 ##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) -17.8457     5.0668  -3.522 0.000578 ***
-## log2GDP       6.1204     0.4593  13.326  &lt; 2e-16 ***
+## (Intercept)  -0.6505     3.3463  -0.194    0.846    
+## log2GDP       5.1942     0.2766  18.780   &lt;2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 8.146 on 140 degrees of freedom
-## Multiple R-squared:  0.5592, Adjusted R-squared:  0.556 
-## F-statistic: 177.6 on 1 and 140 DF,  p-value: &lt; 2.2e-16</code></pre>
-<blockquote>
+## Residual standard error: 5.762 on 140 degrees of freedom
+## Multiple R-squared:  0.7158, Adjusted R-squared:  0.7138 
+## F-statistic: 352.7 on 1 and 140 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>The line to focus on is the <code>log2GPD</code> line in the <code>coefficients</code> section:</p>
-</blockquote>
 <blockquote>
-<p><code>## log2GDP        6.1204      0.4593  13.326   &lt; 2e-16 ***</code></p>
+<p><code>## log2GDP        5.1942      0.2766  18.780   &lt;2e-16 ***</code></p>
 </blockquote>
-<blockquote>
-<p>The coefficient for log<sub>2</sub> GDP in the model is positive, with increases in GDP correlating with increased life expectancy. The estimated coefficient for the relationship is 6.12. Remember that we transformed the GDP data, so this coefficient indicates the change in life expectancy for every two-fold increase in per capita GDP. For a four-fold increase in GDP, we multiply this coefficient by two (because four is two two-fold changes) to conclude that a four-fold increase in GDP results in an increase of 12.24 years in life expectancy.</p>
-</blockquote>
+<p>The coefficient for log<sub>2</sub> GDP in the model is positive, with increases in GDP correlating with increased life expectancy. The estimated coefficient for the relationship is 5.19. Remember that we transformed the GDP data, so this coefficient indicates the change in life expectancy for every two-fold increase in per capita GDP. For a four-fold increase in GDP, we multiply this coefficient by two (because four is two two-fold changes) to conclude that a four-fold increase in GDP results in an increase of 10.39 years in life expectancy.</p>
+<hr />
+<p>Questions? e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.</p>
 </div>
 </div>
 
