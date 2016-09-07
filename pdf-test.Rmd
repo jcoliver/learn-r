@@ -1,0 +1,14 @@
+---
+title: "PDF knit error"
+author: "Jeff Oliver"
+date: "07 September 2016"
+output: pdf_document
+---
+
+##Headers
+
+> ###Quote 1
+This results in an error; if the blockquote symbol ('>') in preceeding line is removed, no error
+
+> ###Quote 2
+This line is fine
