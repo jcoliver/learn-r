@@ -8,7 +8,7 @@ output: html_document
 An introduction to using the R statistics package and the RStudio interface.
 
 ####Learning objectives
-1. Read data from files and output results
+1. Read data from files and output results to files
 2. Extract relevant portions of datasets
 3. Run standard statistical tests in R, including Student's _t_, linear regression
 and analysis of variance
@@ -37,7 +37,7 @@ head(x = iris)
 
 Another great idea when investigating data is to plot it out to see if there are any odd values. Here we use `boxplot` to show the data for each species.
 ```{r}
-boxplot(Petal.Length ~ Species, data = iris)
+boxplot(formula = Petal.Length ~ Species, data = iris)
 ```
   
 `boxplot` uses the syntax `y ~ group`, where the reference to the left of the tilde (~) is the value to plot on the y-axis (here we are plotting the values of `Petal.length`) and the reference to the right indicates how to group the data (here we group by the value in the `Species` column of `iris`). Find out more about the plot by typing `?boxplot` into the console.
@@ -94,7 +94,10 @@ Our script should look like this:
 # jcoliver@email.arizona.edu
 # 2016-09-09
 
+# Run ANOVA on petal length
 petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
+
+# Save results to file
 sink(file = "output/petal-length-anova.txt")
 summary(object = petal.length.aov)
 sink()
@@ -145,8 +148,8 @@ OK, a lot happened with those two lines. Let's take a look:
 ```{r}
 dim(iris)
 ```
-We use the square brackets to essentially give an address for the data we are interested in. We tell R which rows we want in the first position and which columns we want in the second position. If a dimension is left blank, then all rows/columns are returned. For example, this would return all columns for the third row of data:
-```{r, eval = FALSE}
+We use the square brackets to essentially give an address for the data we are interested in. We tell R which rows we want in the first position and which columns we want in the second position. If a dimension is left blank, then all rows/columns are returned. For example, this returns all columns for the third row of data in `iris`:
+```{r}
 iris[3, ]
 ```
 So the code 
@@ -274,7 +277,7 @@ For our question, the relationship between life expectancy and GDP, focus on the
 lifeExp.sum <- summary(lifeExp.v.gdp)
 ```
   
-First of all, there *is* a significant relationship between these two variables (p < 2 x 10^-6^, or, as R reports in the `Pr>(|t|)` column, p < 2e-6). The `Estimate` column of the results lists a value of `r round(x = lifeExp.sum$coefficients['logGDP', 'Estimate'], digits = 3)`, which means that for every 10-fold increase in per capita GDP (remember we log~10~-transformed GDP), life expectancy increases by almost 17 years.
+First of all, there *is* a significant relationship between these two variables (p < 2 x 10^-16^, or, as R reports in the `Pr>(|t|)` column, p < 2e-16). The `Estimate` column of the results lists a value of `r round(x = lifeExp.sum$coefficients['logGDP', 'Estimate'], digits = 3)`, which means that for every 10-fold increase in per capita GDP (remember we log~10~-transformed GDP), life expectancy increases by almost 17 years.
   
 As before, if we want to instead save the results to a file instead of printing them to the screen, we use the `sink` function.
 ```{r, eval = FALSE}
@@ -314,7 +317,6 @@ summary(lifeExp.v.gdp)
 sink()
 ```
 
-  
 > ###Challenge 3  
 Test for a relationship between life expectancy and log base 2 of GDP for the 1982 data. How does life expectancy change with a four-fold increase in GDP?
 
@@ -402,7 +404,8 @@ The line to focus on is the `log2GPD` line in the `coefficients` section:
 
 >`## log2GDP        5.1942      0.2766  18.780   <2e-16 ***`
 
-The coefficient for log~2~ GDP in the model is positive, with increases in GDP correlating with increased life expectancy. The estimated coefficient for the relationship is `r round(x = lifeExp.v.gdp$coefficients['log2GDP'], digits = 2)`. Remember that we transformed the GDP data, so this coefficient indicates the change in life expectancy for every two-fold increase in per capita GDP. For a four-fold increase in GDP, we multiply this coefficient by two (because four is two two-fold changes) to conclude that a four-fold increase in GDP results in an increase of `r round(x = (2 * lifeExp.v.gdp$coefficients['log2GDP']), digits = 2)` years in life expectancy.
+The coefficient for log~2~ GDP in the model is positive, with increases in GDP correlating with increased life expectancy. The estimated coefficient for the relationship is `r round(x = lifeExp.v.gdp$coefficients['log2GDP'], digits = 2)`. Remember that we log~2~-tranformed
+the GDP data, so this coefficient indicates the change in life expectancy for every two-fold increase in per capita GDP. For a four-fold increase in GDP, we multiply this coefficient by two (because four is two two-fold changes) to conclude that a four-fold increase in GDP results in an increase of `r round(x = (2 * lifeExp.v.gdp$coefficients['log2GDP']), digits = 2)` years in life expectancy.
 
 ***
 
