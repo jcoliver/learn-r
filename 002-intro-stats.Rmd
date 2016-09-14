@@ -21,8 +21,7 @@ dir.create(path = "output")
 ```
 
 ##Analysis of Variance (ANOVA)
-For our first set of analyses, we'll use a dataset that comes pre-loaded in R. The `iris` data is from early statistical work of R.A. Fisher [doi: 10.1111%2Fj.1469-1809.1936.tb02137.x](https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x), who used three species of _Iris_ flowers to develop linear discriminant analysis.  
-Start by looking at the data with the `head` command:
+For our first set of analyses, we'll use a dataset that comes pre-loaded in R. The `iris` data is from early statistical work of R.A. Fisher [doi: 10.1111%2Fj.1469-1809.1936.tb02137.x](https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x), who used three species of _Iris_ flowers to develop linear discriminant analysis. Start by looking at the data with the `head` command:
 ```{r}
 head(x = iris)
 ```
@@ -40,7 +39,12 @@ Another great idea when investigating data is to plot it out to see if there are
 boxplot(formula = Petal.Length ~ Species, data = iris)
 ```
   
-`boxplot` uses the syntax `y ~ group`, where the reference to the left of the tilde (~) is the value to plot on the y-axis (here we are plotting the values of `Petal.length`) and the reference to the right indicates how to group the data (here we group by the value in the `Species` column of `iris`). Find out more about the plot by typing `?boxplot` into the console.
+`boxplot` uses the syntax `y ~ group`, where the reference to the left of the tilde (~) is the value to plot on the y-axis (here we are plotting the values of `Petal.Length`) and the reference to the right indicates how to group the data (here we group by the value in the `Species` column of `iris`). Find out more about the plot by typing `?boxplot` into the console.  
+  
+Also note that R is *case sensitive*, so if we refer to objects without using the correct case, we will often encounter errors. For example, if I forgot to capitalize `Species` in the `boxplot` call, R cannot find `species` and throws an error:
+```{r error = TRUE}
+boxplot(formula = Petal.Length ~ species, data = iris)
+```
   
 To keep track of what we do, we will switch from running commands directly in the console to writing R scripts that we can execute. These scripts are just text files with R commands. Create a new script file called 'iris-anova.R'. Now add some key information to the top of the script, using the comment character, #, so R will know to ignore these lines.
 ```{r}
