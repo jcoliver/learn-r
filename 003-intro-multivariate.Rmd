@@ -1,0 +1,51 @@
+---
+title: "Introduction to Multivariate Statistics in R"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+##See:
+
++ http://www.statmethods.net/stats/regression.html
++ https://www.r-bloggers.com/r-tutorial-series-anova-tables/
+
+An introduction to using the R statistics package and the RStudio interface for multivariate statistics.
+
+####Learning objectives
+1. Prepare data in spreadsheet program (e.g. Excel, LibreOffice Calc) for export to R
+2. Read data from files into R
+3. Run statistical tests with multiple predictor variables
+
+##Setup
+First we need to setup our development environment. We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses.
+```{r, eval = FALSE}
+dir.create(path = "data")
+dir.create(path = "output")
+```
+
+##Preparing data in external source
+
+***
+
+##Reading data into R
+
+***
+
+##Multivariate linear regression
+
+```{r}
+gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder$logGDP <- log10(gapminder$gdpPercap)
+fit.one <- lm(formula = lifeExp ~ logGDP, data = gapminder)
+fit.two <- lm(formula = lifeExp ~ year + logGDP, data = gapminder)
+anova(fit.one, fit.two)
+```
+
+***
+
+##Multivariate analysis with categorical predictors
+
+***
+
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
