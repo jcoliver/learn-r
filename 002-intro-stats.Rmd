@@ -267,7 +267,7 @@ Notice also that we passed two additional arguments to the `plot` command: `xlab
 Now that the data are properly transformed, we can create the linear model for the predictability of life expectancy based on gross domestic product.
 ```{r}
 # Run a linear model
-lifeExp.v.gdp <- lm(lifeExp ~ logGDP, data = gapminder.2007)
+lifeExp.v.gdp <- lm(formula = lifeExp ~ logGDP, data = gapminder.2007)
 
 # Investigate results of the model
 summary(lifeExp.v.gdp)
@@ -313,7 +313,7 @@ gapminder.2007$logGDP <- log10(gapminder.2007$gdpPercap)
 plot(x = gapminder.2007$logGDP, y = gapminder.2007$lifeExp, xlab = "log10(GDP)", ylab = "Life Expectancy")
 
 # Run linear model
-lifeExp.v.gdp <- lm(lifeExp ~ logGDP, data = gapminder.2007)
+lifeExp.v.gdp <- lm(formula = lifeExp ~ logGDP, data = gapminder.2007)
 
 # Save results to file
 sink(file = "output/lifeExp-gdp-regression.txt")

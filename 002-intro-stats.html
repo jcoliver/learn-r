@@ -118,7 +118,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Introduction to R Statistics</h1>
 <h4 class="author"><em>Jeff Oliver</em></h4>
-<h4 class="date"><em>13 September, 2016</em></h4>
+<h4 class="date"><em>16 September, 2016</em></h4>
 
 </div>
 
@@ -413,7 +413,7 @@ plot(x = gapminder.2007$logGDP, y = gapminder.2007$lifeExp, xlab = &quot;log10(G
 <p>Notice also that we passed two additional arguments to the <code>plot</code> command: <code>xlab</code> and <code>ylab</code>. These are used to label the x- and y-axis, respectively (try the <code>plot</code> function without passing <code>xlab</code> and <code>ylab</code> arguments to see what happens without them).</p>
 <p>Now that the data are properly transformed, we can create the linear model for the predictability of life expectancy based on gross domestic product.</p>
 <pre class="r"><code># Run a linear model
-lifeExp.v.gdp &lt;- lm(lifeExp ~ logGDP, data = gapminder.2007)
+lifeExp.v.gdp &lt;- lm(formula = lifeExp ~ logGDP, data = gapminder.2007)
 
 # Investigate results of the model
 summary(lifeExp.v.gdp)</code></pre>
@@ -466,7 +466,7 @@ gapminder.2007$logGDP &lt;- log10(gapminder.2007$gdpPercap)
 plot(x = gapminder.2007$logGDP, y = gapminder.2007$lifeExp, xlab = &quot;log10(GDP)&quot;, ylab = &quot;Life Expectancy&quot;)
 
 # Run linear model
-lifeExp.v.gdp &lt;- lm(lifeExp ~ logGDP, data = gapminder.2007)
+lifeExp.v.gdp &lt;- lm(formula = lifeExp ~ logGDP, data = gapminder.2007)
 
 # Save results to file
 sink(file = &quot;output/lifeExp-gdp-regression.txt&quot;)
