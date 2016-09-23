@@ -5,9 +5,10 @@ output: pdf_document
 
 ##Headers  
 
+\mbox{}\vspace*{-1cm}
+
 > ###Quote 1
-This results in an error; if the blockquote symbol ('>') in 
-preceeding line is removed, no error
+This results in an error if `mbox` line is deleted; if the blockquote symbol ('>') in preceeding line is removed, no error.
 
 > ###Quote 2
-This line is fine
+This line is fine.
