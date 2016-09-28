@@ -64,17 +64,43 @@ for (i in 1:10) {
 }
 plot(x = c(1:10), y = wss, xlab = "Number of clusters, K", ylab = "Total within SS", type = "b")
 
+# Percentage of variance explained is the ratio of the between-group variance to the total 
+# variance, also known as an F-test. A slight variation of this method plots the curvature 
+# of the within group variance. https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set
+# 
+
 ```
 
+Abstracting the number of clusters to analyze
 ```{r}
-# Stolen from: http://www.statmethods.net/advstats/cluster.html
-# K-Means Cluster Analysis
-fit <- kmeans(mydata, 5) # 5 cluster solution
-# get cluster means
-aggregate(mydata,by=list(fit$cluster),FUN=mean)
-# append cluster assignment
-mydata <- data.frame(mydata, fit$cluster)
+# Scale data & drop species column
+iris.scaled <- scale(x = iris[, -5])
+k.max <- 10
+
+# Try 1-8 clusters to find "elbow" in sum of squares
+wss <- numeric(k.max)
+for (i in 1:k.max) {
+  iris.fit <- kmeans(x = iris.scaled, centers = i, nstart = 10)
+  wss[i] <- iris.fit$tot.withinss
+}
+plot(x = c(1:k.max), y = wss, xlab = "Number of clusters, K", ylab = "Total within SS", type = "b")
 ```
+
+Apply "Elbow" method based on percentage of variance explained
+```{r}
+# Advanced
+```
+
+See how clustering aligned with species
+```{r}
+# Run kmeans again for K = 3, to get clustering info
+iris.k.3 <- kmeans(x = iris.scaled, centers = 3, nstart = 10)
+
+iris.clusters <- data.frame(iris, cluster = iris.k.3$cluster)
+assignments <- table(iris.clusters$Species, iris.clusters$cluster)
+assignments
+```
+
 
 ***
 
