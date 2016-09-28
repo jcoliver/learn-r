@@ -20,6 +20,8 @@ output:
 + http://www.statmethods.net/advstats/cluster.html
 + https://stat.ethz.ch/R-manual/R-devel/library/stats/html/kmeans.html
 + http://stackoverflow.com/questions/15376075/cluster-analysis-in-r-determine-the-optimal-number-of-clusters
++ [Wikipedia entry for the various ways of determining the optimal number of clusters](https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set)
++ [Programmatically identifying the "elbow"](http://stackoverflow.com/questions/2018178/finding-the-best-trade-off-point-on-a-curve)
 
 ###Ignore these:
 
@@ -47,6 +49,10 @@ dir.create(path = "output")
 ***
 
 ##Reading data into R
+
+***
+
+##PCA
 
 ***
 
