@@ -19,6 +19,7 @@ output:
 + https://www.r-bloggers.com/k-means-clustering-in-r/
 + http://www.statmethods.net/advstats/cluster.html
 + https://stat.ethz.ch/R-manual/R-devel/library/stats/html/kmeans.html
++ http://stackoverflow.com/questions/15376075/cluster-analysis-in-r-determine-the-optimal-number-of-clusters
 
 ###Ignore these:
 
@@ -49,17 +50,37 @@ dir.create(path = "output")
 
 ***
 
+##Clustering with K-means
+
 ```{r}
-iris.fit <- kmeans(x = iris, centers = 2)
+# Scale data & drop species column
+iris.scaled <- scale(x = iris[, -5])
+
+# Try 1-8 clusters to find "elbow" in sum of squares
+wss <- numeric(10)
+for (i in 1:10) {
+  iris.fit <- kmeans(x = iris.scaled, centers = i, nstart = 10)
+  wss[i] <- iris.fit$tot.withinss
+}
+plot(x = c(1:10), y = wss, xlab = "Number of clusters, K", ylab = "Total within SS", type = "b")
 
 ```
 
+```{r}
+# Stolen from: http://www.statmethods.net/advstats/cluster.html
 # K-Means Cluster Analysis
 fit <- kmeans(mydata, 5) # 5 cluster solution
 # get cluster means
 aggregate(mydata,by=list(fit$cluster),FUN=mean)
 # append cluster assignment
 mydata <- data.frame(mydata, fit$cluster)
+```
+
+***
+
+###References
+
+See: [Bibliographies in RStudio](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
 
 ***
 
