@@ -1,0 +1,26 @@
+---
+title: "Introduction to Multivariate Statistics in R"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+***
+  
+##Multivariate linear regression
+
+```{r}
+gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder$logGDP <- log10(gapminder$gdpPercap)
+fit.one <- lm(formula = lifeExp ~ logGDP, data = gapminder)
+fit.two <- lm(formula = lifeExp ~ year + logGDP, data = gapminder)
+anova(fit.one, fit.two)
+```
+
+***
+
+##Multivariate analysis with categorical predictors
+
+***
+
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
