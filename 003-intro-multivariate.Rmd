@@ -27,11 +27,12 @@ output:
 
 An introduction to using the R statistics package and the RStudio interface for multivariate statistics.
 
-####Learning objectives {.faded}
+####Learning objectives
 1. Prepare data in spreadsheet program (e.g. Excel, LibreOffice Calc) for export to R
 2. Read data from files into R
 3. Run Principal Components Analysis (PCA) and graphically display results
-4. Run 
+4. Run K-means clustering analysis
+5. Run DFA?
 
 ##Setup
 First we need to setup our development environment. We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses.
@@ -48,19 +49,17 @@ dir.create(path = "output")
 
 ***
 
-##Multivariate linear regression
-
 ```{r}
-gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
-gapminder$logGDP <- log10(gapminder$gdpPercap)
-fit.one <- lm(formula = lifeExp ~ logGDP, data = gapminder)
-fit.two <- lm(formula = lifeExp ~ year + logGDP, data = gapminder)
-anova(fit.one, fit.two)
+iris.fit <- kmeans(x = iris, centers = 2)
+
 ```
 
-***
-
-##Multivariate analysis with categorical predictors
+# K-Means Cluster Analysis
+fit <- kmeans(mydata, 5) # 5 cluster solution
+# get cluster means
+aggregate(mydata,by=list(fit$cluster),FUN=mean)
+# append cluster assignment
+mydata <- data.frame(mydata, fit$cluster)
 
 ***
 
