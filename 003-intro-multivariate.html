@@ -66,6 +66,7 @@ h6 {
 }
 </style>
 
+<link href="data:text/css;charset=utf-8,%2Emain%2Dcontent%20%2Efaded%20%7B%0Acolor%3A%20%23A8868C%3B%0A%7D%0A" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -118,24 +119,51 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Introduction to Multivariate Statistics in R</h1>
 <h4 class="author"><em>Jeff Oliver</em></h4>
-<h4 class="date"><em>23 September, 2016</em></h4>
+<h4 class="date"><em>28 September, 2016</em></h4>
 
 </div>
 
 
-<div id="see" class="section level1">
-<h1>See:</h1>
+<div id="see" class="section level2">
+<h2>See:</h2>
+<div id="pca" class="section level3">
+<h3>PCA:</h3>
 <ul>
-<li><a href="http://www.statmethods.net/stats/regression.html" class="uri">http://www.statmethods.net/stats/regression.html</a></li>
+<li><a href="http://www.statmethods.net/advstats/factor.html" class="uri">http://www.statmethods.net/advstats/factor.html</a></li>
+<li><a href="https://www.r-bloggers.com/computing-and-visualizing-pca-in-r/" class="uri">https://www.r-bloggers.com/computing-and-visualizing-pca-in-r/</a></li>
+</ul>
+</div>
+<div id="clustering-k-means" class="section level3">
+<h3>Clustering, K-means:</h3>
+<ul>
+<li><a href="https://www.r-bloggers.com/k-means-clustering-in-r/" class="uri">https://www.r-bloggers.com/k-means-clustering-in-r/</a></li>
+<li><a href="http://www.statmethods.net/advstats/cluster.html" class="uri">http://www.statmethods.net/advstats/cluster.html</a></li>
+<li><a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/kmeans.html" class="uri">https://stat.ethz.ch/R-manual/R-devel/library/stats/html/kmeans.html</a></li>
+</ul>
+</div>
+<div id="ignore-these" class="section level3">
+<h3>Ignore these:</h3>
+<ul>
+<li><a href="http://www.statmethods.net/stats/regression.html" class="uri">http://www.statmethods.net/stats/regression.html</a> <em>ignore</em></li>
+<li><a href="https://www.r-bloggers.com/r-tutorial-series-anova-tables/" class="uri">https://www.r-bloggers.com/r-tutorial-series-anova-tables/</a> <em>ignore</em></li>
 </ul>
 <p>An introduction to using the R statistics package and the RStudio interface for multivariate statistics.</p>
-<div id="learning-objectives" class="section level4">
+<div id="learning-objectives" class="section level4 faded">
 <h4>Learning objectives</h4>
 <ol style="list-style-type: decimal">
 <li>Prepare data in spreadsheet program (e.g. Excel, LibreOffice Calc) for export to R</li>
 <li>Read data from files into R</li>
-<li>Run statistical tests with multiple predictor variables</li>
+<li>Run Principal Components Analysis (PCA) and graphically display results</li>
+<li>Run</li>
 </ol>
+</div>
+</div>
+</div>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>First we need to setup our development environment. We need to create two folders: ‘data’ will store the data we will be analyzing, and ‘output’ will store the results of our analyses.</p>
+<pre class="r"><code>dir.create(path = &quot;data&quot;)
+dir.create(path = &quot;output&quot;)</code></pre>
 </div>
 <div id="preparing-data-in-external-source" class="section level2">
 <h2>Preparing data in external source</h2>
@@ -147,13 +175,26 @@ $(document).ready(function () {
 </div>
 <div id="multivariate-linear-regression" class="section level2">
 <h2>Multivariate linear regression</h2>
+<pre class="r"><code>gapminder &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
+gapminder$logGDP &lt;- log10(gapminder$gdpPercap)
+fit.one &lt;- lm(formula = lifeExp ~ logGDP, data = gapminder)
+fit.two &lt;- lm(formula = lifeExp ~ year + logGDP, data = gapminder)
+anova(fit.one, fit.two)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: lifeExp ~ logGDP
+## Model 2: lifeExp ~ year + logGDP
+##   Res.Df   RSS Df Sum of Sq      F    Pr(&gt;F)    
+## 1   1702 98814                                  
+## 2   1701 80454  1     18359 388.16 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <hr />
 </div>
 <div id="multivariate-analysis-with-categorical-predictors" class="section level2">
 <h2>Multivariate analysis with categorical predictors</h2>
 <hr />
 <p>Questions? e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.</p>
-</div>
 </div>
 
 

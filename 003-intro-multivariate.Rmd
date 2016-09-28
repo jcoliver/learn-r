@@ -2,20 +2,36 @@
 title: "Introduction to Multivariate Statistics in R"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output: 
+  html_document:
+    css: stylesheets/markdown-styles.css
 ---
 
-##See:
+##See: 
 
-+ http://www.statmethods.net/stats/regression.html
-+ https://www.r-bloggers.com/r-tutorial-series-anova-tables/
+###PCA:
+
++ http://www.statmethods.net/advstats/factor.html
++ https://www.r-bloggers.com/computing-and-visualizing-pca-in-r/
+
+###Clustering, K-means:
+
++ https://www.r-bloggers.com/k-means-clustering-in-r/
++ http://www.statmethods.net/advstats/cluster.html
++ https://stat.ethz.ch/R-manual/R-devel/library/stats/html/kmeans.html
+
+###Ignore these:
+
++ http://www.statmethods.net/stats/regression.html _ignore_
++ https://www.r-bloggers.com/r-tutorial-series-anova-tables/ _ignore_
 
 An introduction to using the R statistics package and the RStudio interface for multivariate statistics.
 
-####Learning objectives
+####Learning objectives {.faded}
 1. Prepare data in spreadsheet program (e.g. Excel, LibreOffice Calc) for export to R
 2. Read data from files into R
-3. Run statistical tests with multiple predictor variables
+3. Run Principal Components Analysis (PCA) and graphically display results
+4. Run 
 
 ##Setup
 First we need to setup our development environment. We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses.
