@@ -54,6 +54,11 @@ dir.create(path = "output")
 
 ##PCA
 
++ Standardize variables, mean = 0, variance = 1
++ eigenvalues are variance by each component
+  + Get % variance for i^th^ component via eig~i~/n, where n is the total number of components (total number of variables)
++ Look at loadings to explain variation in data
+
 ***
 
 ##Clustering with K-means
