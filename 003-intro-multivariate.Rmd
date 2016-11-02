@@ -54,6 +54,23 @@ dir.create(path = "output")
 
 ##PCA
 
+from: http://www.statmethods.net/advstats/factor.html
+fit <- princomp(mydata, cor=TRUE)
+summary(fit) # print variance accounted for
+loadings(fit) # pc loadings
+plot(fit,type="lines") # scree plot
+fit$scores # the principal components
+biplot(fit) 
+
+```{r}
+fit <- princomp(iris[, -5], cor = TRUE)
+summary(fit)
+loadings(fit)
+plot(fit, type = "lines")
+fit$scores
+biplot(x = fit)
+```
+
 + Standardize variables, mean = 0, variance = 1
 + eigenvalues are variance by each component
   + Get % variance for i^th^ component via eig~i~/n, where n is the total number of components (total number of variables)
@@ -111,7 +128,6 @@ iris.clusters <- data.frame(iris, cluster = iris.k.3$cluster)
 assignments <- table(iris.clusters$Species, iris.clusters$cluster)
 assignments
 ```
-
 
 ***
 
