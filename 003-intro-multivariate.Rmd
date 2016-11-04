@@ -56,7 +56,7 @@ dir.create(path = "output")
 
 ##Reading data into R
 ```{r}
-otter <- read.csv(file = "~/Desktop/otter-mandible-data.csv", header = TRUE)
+otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
 otter <- na.omit(otter)
 ```
 ***
