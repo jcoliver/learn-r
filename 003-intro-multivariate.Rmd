@@ -7,6 +7,9 @@ output:
     css: stylesheets/markdown-styles.css
 ---
 
+REDO with Otter data?
+[Divergent Skull Morphology Supports Two Trophic Specializations in Otters (Lutrinae)](https://dx.doi.org/10.1371%2Fjournal.pone.0143236)
+
 ##See: 
 
 ###PCA:
@@ -47,28 +50,46 @@ dir.create(path = "output")
 ##Preparing data in external source
 
 ***
++ Download data file from https://jcoliver.github.io/learn-r/data/iris.xlsx
++ Open in spreadsheet program
++ Export / Save As... a CSV file
 
 ##Reading data into R
-
+```{r}
+otter <- read.csv(file = "~/Desktop/otter-mandible-data.csv", header = TRUE)
+otter <- na.omit(otter)
+```
 ***
 
 ##PCA
 
-from: http://www.statmethods.net/advstats/factor.html
-fit <- princomp(mydata, cor=TRUE)
-summary(fit) # print variance accounted for
-loadings(fit) # pc loadings
-plot(fit,type="lines") # scree plot
-fit$scores # the principal components
-biplot(fit) 
++ Why pca?
++ Do pca
++ point out
+  + summary for the proportion of variance)
+  + loadings for what points along an axis actually mean, e.g. high PC 1 score -> relatively smaller sepal width
++ do call to biplot (ugly)
++ do plot from fit$scores
+  + make plot nicer
 
 ```{r}
-fit <- princomp(iris[, -5], cor = TRUE)
-summary(fit)
-loadings(fit)
-plot(fit, type = "lines")
-fit$scores
-biplot(x = fit)
+pca.fit <- princomp(x = otter[, -1])
+species <- unique(otter$species)
+legend.cols <- c("black", "darkred", "cadetblue", "forestgreen")
+pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
+pt.cols[otter$species == species[2]] <- legend.cols[2]
+pt.cols[otter$species == species[3]] <- legend.cols[3]
+pt.cols[otter$species == species[4]] <- legend.cols[4]
+plot(x = pca.fit$scores[, 1],
+     y = pca.fit$scores[, 2],
+     xlab = "PC 1",
+     ylab = "PC 2",
+     pch = 19,
+     col = pt.cols)
+legend("topright", legend = species, pch = 19, col = legend.cols, cex = 0.6)
+
+boxplot(formula = jaw.length ~ species, data = otter)
+boxplot(formula = mandibular.ramus.height ~ species, data = otter)
 ```
 
 + Standardize variables, mean = 0, variance = 1
@@ -82,15 +103,13 @@ biplot(x = fit)
 
 ```{r}
 # Scale data & drop species column
-iris.scaled <- scale(x = iris[, -5])
-
-# Try 1-8 clusters to find "elbow" in sum of squares
+otter.scaled <- scale(x = otter[, -1])
 wss <- numeric(10)
 for (i in 1:10) {
-  iris.fit <- kmeans(x = iris.scaled, centers = i, nstart = 10)
-  wss[i] <- iris.fit$tot.withinss
+  kmeans.fit <- kmeans(x = otter.scaled, centers = i, nstart = 10)
+  wss[i] <- kmeans.fit$tot.withinss
 }
-plot(x = c(1:10), y = wss, xlab = "Number of clusters, K", ylab = "Total within SS", type = "b")
+plot(x = c(1:length(wss)), y = wss, xlab = "Number of clusters, K", ylab = "Total within SS", type = "b")
 
 # Percentage of variance explained is the ratio of the between-group variance to the total 
 # variance, also known as an F-test. A slight variation of this method plots the curvature 
@@ -101,17 +120,6 @@ plot(x = c(1:10), y = wss, xlab = "Number of clusters, K", ylab = "Total within 
 
 Abstracting the number of clusters to analyze
 ```{r}
-# Scale data & drop species column
-iris.scaled <- scale(x = iris[, -5])
-k.max <- 10
-
-# Try 1-8 clusters to find "elbow" in sum of squares
-wss <- numeric(k.max)
-for (i in 1:k.max) {
-  iris.fit <- kmeans(x = iris.scaled, centers = i, nstart = 10)
-  wss[i] <- iris.fit$tot.withinss
-}
-plot(x = c(1:k.max), y = wss, xlab = "Number of clusters, K", ylab = "Total within SS", type = "b")
 ```
 
 Apply "Elbow" method based on percentage of variance explained
@@ -121,12 +129,12 @@ Apply "Elbow" method based on percentage of variance explained
 
 See how clustering aligned with species
 ```{r}
-# Run kmeans again for K = 3, to get clustering info
-iris.k.3 <- kmeans(x = iris.scaled, centers = 3, nstart = 10)
-
-iris.clusters <- data.frame(iris, cluster = iris.k.3$cluster)
-assignments <- table(iris.clusters$Species, iris.clusters$cluster)
+# Run kmeans again for K = 4, to get clustering info
+otter.k.4 <- kmeans(x = otter.scaled, centers = 4, nstart = 10)
+otter.clusters <- data.frame(otter, cluster = otter.k.4$cluster)
+assignments <- table(otter.clusters$species, otter.clusters$cluster)
 assignments
+
 ```
 
 ***
