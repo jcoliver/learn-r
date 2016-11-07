@@ -16,6 +16,8 @@ REDO with Otter data?
 
 + http://www.statmethods.net/advstats/factor.html
 + https://www.r-bloggers.com/computing-and-visualizing-pca-in-r/
++ [Why PCA? (or "how to explain PCA to your grandmother")](http://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues)
++ [Principal Components Regression](https://www.r-bloggers.com/performing-principal-components-regression-pcr-in-r/)
 
 ###Clustering, K-means:
 
@@ -91,6 +93,29 @@ legend("topright", legend = species, pch = 19, col = legend.cols, cex = 0.6)
 boxplot(formula = jaw.length ~ species, data = otter)
 boxplot(formula = mandibular.ramus.height ~ species, data = otter)
 ```
+
+### Compare to `prcomp`
+
+```{r}
+pca.fit <- princomp(x = otter[, -1])
+species <- unique(otter$species)
+legend.cols <- c("black", "darkred", "cadetblue", "forestgreen")
+pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
+pt.cols[otter$species == species[2]] <- legend.cols[2]
+pt.cols[otter$species == species[3]] <- legend.cols[3]
+pt.cols[otter$species == species[4]] <- legend.cols[4]
+plot(x = pca.fit$scores[, 1],
+     y = pca.fit$scores[, 2],
+     xlab = "PC 1",
+     ylab = "PC 2",
+     pch = 19,
+     col = pt.cols)
+legend("topright", legend = species, pch = 19, col = legend.cols, cex = 0.6)
+
+boxplot(formula = jaw.length ~ species, data = otter)
+boxplot(formula = mandibular.ramus.height ~ species, data = otter)
+```
+
 
 + Standardize variables, mean = 0, variance = 1
 + eigenvalues are variance by each component
