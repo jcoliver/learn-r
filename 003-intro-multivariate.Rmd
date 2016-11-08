@@ -7,8 +7,13 @@ output:
     css: stylesheets/markdown-styles.css
 ---
 
-REDO with Otter data?
-[Divergent Skull Morphology Supports Two Trophic Specializations in Otters (Lutrinae)](https://dx.doi.org/10.1371%2Fjournal.pone.0143236)
+## TODO:
+1. Add instructions for downloading data then exporting as CSV file
+2. Break apart PCA code in stepwise fashion
+3. Provide rationale for why PCA
+4. Add (advanced) code for detecting the number of clusters
+5. Provide spreadsheet software info (Excel, LibreOffice) on 000-setup-instructions page
+
 
 ##See: 
 
