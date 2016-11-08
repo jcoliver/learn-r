@@ -8,12 +8,11 @@ output:
 ---
 
 ## TODO:
-1. ~Add instructions for downloading data then exporting as CSV file~
+1. ~~Add instructions for downloading data then exporting as CSV file~~
 2. Break apart PCA code in stepwise fashion
-3. Provide rationale for why PCA
+3. ~~Provide rationale for why PCA~~
 4. Add (advanced) code for detecting the number of clusters
-5. Provide spreadsheet software info (Excel, LibreOffice) on 000-setup-instructions page
-
+5. ~~Provide spreadsheet software info (Excel, LibreOffice) on 000-setup-instructions page~~
 
 ##See: 
 
@@ -45,7 +44,6 @@ An introduction to using the R statistics package and the RStudio interface for 
 2. Read data from files into R
 3. Run Principal Components Analysis (PCA) and graphically display results
 4. Run K-means clustering analysis
-5. Run DFA?
 
 ##Setup
 ###Workspace organization
@@ -73,8 +71,6 @@ otter <- na.omit(otter)
 ```
 
 ##PCA
-Why PCA? Very briefly, Principal Components Analysis is a way of re-describing the variation observed in your data. It serves as a means of reducing the dimensionality of data (i.e. reducing the number of predictor variables) and is often used for exploratory analyses. The full rationale and mathematically underpinnings are waaaaaaaay beyond the scope of this lesson, and other resources already do a fairly good job of explaining PCA. If you want a few perspectives for a relatively novice audience, check out this [Why PCA? (or "how to explain PCA to your grandmother")](http://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues) thread at Stack Overflow. If you are more inclined to print media, I highly recommend B.F.J. Manly's _Multivariate Statistical Methods: A primer_ [*TODO: REF*], which provides an excellent introduction to a variety of multivariate statistic topics.
-
 + Do pca
 + point out
     + summary for the proportion of variance (remember if you want to show how this is calculated, the standard deviation has to be squared to get variance)
@@ -83,8 +79,27 @@ Why PCA? Very briefly, Principal Components Analysis is a way of re-describing t
 + do plot from fit$x
   + make plot nicer
 
+Why PCA? Very briefly, Principal Components Analysis is a way of re-describing the variation observed in your data. It serves as a means of reducing the dimensionality of data (i.e. reducing the number of predictor variables) and is often used for exploratory analyses. The full rationale and mathematically underpinnings are waaaaaaaay beyond the scope of this lesson, and other resources already do a fairly good job of explaining PCA. If you want a few perspectives for a relatively novice audience, check out this [Why PCA? (or "how to explain PCA to your grandmother")](http://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues) thread at Stack Overflow. If you are more inclined to print media, I highly recommend B.F.J. Manly's _Multivariate Statistical Methods: A primer_ [*TODO: REF*], which provides an excellent introduction to a variety of multivariate statistic topics.
+  
+So, on to the code:
 ```{r}
 pca.fit <- prcomp(x = otter[, -1], scale. = TRUE)
+```
+That's PCA. We pass the data to the `x` parameter, skipping the first column `[, -1]` because that has the name of the species the data came from (and is not something we can analyze with the PCA). We also set the `scale.` parameter to `TRUE` because we want to transform the data so each column has a mean of zero and a variance of one.
+  
+To look at the results, we use the `summary` command and assign the output to a variable.
+```{r}
+pca.summary <- summary(pca.fit)
+ls(pca.summary) # Lists the objects produced by summary
+```
+
+We are interested to know (1) what are the important factors that emerge from the PCA (i.e. which ones explain a lot of variation) and (2) what do these factors actually say about the variation observed in our data. For (1), look at the `importance` object in the summary:
+```{r}
+pca.summary$importance
+```
+The second row, `Proportion of Variance`, shows how much variation in the data is described by each component; notice that the first component, PC1, explains the most variance, `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2), 4)`, or `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2) * 100, 2)`% of the total variance, the second components explains the second most variance (`r round(pca.summary$sdev[2]^2/sum(pca.summary$sdev^2) * 100, 2)`%), and so on, with each successive component explaining a lower proportion of the total variance.
+
+```{r}
 species <- unique(otter$species)
 legend.cols <- c("black", "forestgreen", "cadetblue", "darkred")
 pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
