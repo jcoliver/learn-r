@@ -54,7 +54,7 @@ dir.create(path = "output")
 ```
 
 ###Preparing data in a format R can read
-+ Download data file from [https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx](https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx) or [http://tinyurl.otter-data](http://tinyurl.otter-data) (the latter just re-directs to the former).
++ Download data file from [https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx](https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx) or [http://tinyurl.otter-data](http://tinyurl.otter-data) (the latter just re-directs to the former). These data are a subset of those used in a study on skull morphology and diet specialization in otters [doi: 10.1371/journal.pone.0143236](http://dx.doi.org/10.1371/journal.pone.0143236).
 + Open this file, otter-mandible-data.xlsx, in spreadsheet program like Microsoft Excel<sup>&reg;</sup> or LibreOffice Calc.
 + Save a copy of the file as a CSV (comma-separated values) file named 'otter-mandible-data.csv' in the data folder you created above:
     + In MS Excel<sup>&reg;</sup>, select File > Save As... and in the dialog that appears, select CSV from the type dropdown menu.
@@ -97,7 +97,38 @@ We are interested to know (1) what are the important factors that emerge from th
 ```{r}
 pca.summary$importance
 ```
-The second row, `Proportion of Variance`, shows how much variation in the data is described by each component; notice that the first component, PC1, explains the most variance, `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2), 4)`, or `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2) * 100, 2)`% of the total variance, the second components explains the second most variance (`r round(pca.summary$sdev[2]^2/sum(pca.summary$sdev^2) * 100, 2)`%), and so on, with each successive component explaining a lower proportion of the total variance.
+The second row, `Proportion of Variance`, shows how much variation in the data is described by each component; notice that the first component, PC1, explains the most variance, `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2), 4)`, or `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2) * 100, 2)`% of the total variance, the second components explains the second most variance (`r round(pca.summary$sdev[2]^2/sum(pca.summary$sdev^2) * 100, 2)`%), and so on, with each successive component explaining a lower proportion of the total variance. For the remainder of the lesson, we will focus on the first two principal components, which together explain `r round((pca.summary$sdev[1]^2 + pca.summary$sdev[2]^2)/sum(pca.summary$sdev^2) * 100, 2)`% of the observed variation in the skull measurements.
+  
+But what about that variation? What are the principal components actually explaining? To address this (point 2 from above), we need to look at the loadings of the PCA. The `rotation` object from the summary call has the information we are interested in. Focus on the values in the PC1 column:
+```{r}
+pca.summary$rotation
+```
+
+```{r echo = FALSE}
+# Crude, but should be fine
+direction <- "positive"
+if (sum(pca.summary$rotation) < 0) {
+  direction <- "negative" 
+}
+```
+Looking at the signs of the loadings, we see they are all the same (`r direction`), thus this first component, explaining most of the variation in the measurements, is really just reflecting variation in size. That is, since all the loadings have the same sign, large values for one skull measurement generally coincide with large values for other skull measurements for this first component.
+  
+The second principal component is a little more interesting. Two of the variables, mandibular ramus width and outlever at carnassial don't contribute much to the component (the magnitudes of their respective loadings (.173 and .031) are small compared to the other four skull measurements). The remaining four indicate a shape difference, with one pair of variables having positive loadings and one pair having negative loadings. This interpretation of the second principal component would benefit greatly from a graphical representation.
+  
+Plotting the results of a PCA can be done using a simple call to the `biplot` function:
+```{r}
+biplot(x = pca.fit)
+```
+
+But that figure really leaves much to be desired, and gets messier with larger sample sizes and more variables. If you want to find out more about how that figure is produced, look at the documentation for `biplot` (`?biplot`).
+
+Instead, we can plot the scores of the first two principal components using the standard `plot` command, using the scores that are stored in the `x` object of `pca.fit`:
+```{r}
+plot(x = pca.fit$x[, 1],
+     y = pca.fit$x[, 2],
+     xlab = "PC 1",
+     ylab = "PC 2")
+```
 
 ```{r}
 species <- unique(otter$species)
@@ -118,10 +149,9 @@ boxplot(formula = jaw.length ~ species, data = otter)
 boxplot(formula = mandibular.ramus.height ~ species, data = otter)
 ```
 
-+ Standardize variables, mean = 0, variance = 1
-+ eigenvalues are variance by each component
-  + Get % variance for i^th^ component via eig~i~/n, where n is the total number of components (total number of variables)
-+ Look at loadings to explain variation in data
+Our script should look like this:
+```{r}
+```
 
 ***
 
