@@ -75,9 +75,9 @@ otter <- na.omit(otter)
   + make plot nicer
 
 ```{r}
-pca.fit <- prcomp(x = otter[, -1])
+pca.fit <- prcomp(x = otter[, -1], scale. = TRUE)
 species <- unique(otter$species)
-legend.cols <- c("black", "darkred", "cadetblue", "forestgreen")
+legend.cols <- c("black", "forestgreen", "cadetblue", "darkred")
 pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
 pt.cols[otter$species == species[2]] <- legend.cols[2]
 pt.cols[otter$species == species[3]] <- legend.cols[3]
@@ -88,7 +88,7 @@ plot(x = pca.fit$x[, 1],
      ylab = "PC 2",
      pch = 19,
      col = pt.cols)
-legend("topleft", legend = species, pch = 19, col = legend.cols, cex = 0.6)
+legend("bottomleft", legend = species, pch = 19, col = legend.cols, cex = 0.8)
 
 boxplot(formula = jaw.length ~ species, data = otter)
 boxplot(formula = mandibular.ramus.height ~ species, data = otter)
