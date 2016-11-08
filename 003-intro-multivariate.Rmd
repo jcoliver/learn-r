@@ -48,32 +48,36 @@ An introduction to using the R statistics package and the RStudio interface for 
 5. Run DFA?
 
 ##Setup
+###Workspace organization
 First we need to setup our development environment. We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses.
 ```{r, eval = FALSE}
 dir.create(path = "data")
 dir.create(path = "output")
 ```
 
-##Preparing data in external source
+###Preparing data in a format R can read
++ Download data file from [https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx](https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx) or [http://tinyurl.otter-data](http://tinyurl.otter-data) (the latter just re-directs to the former).
++ Open this file, otter-mandible-data.xlsx, in spreadsheet program like Microsoft Excel<sup>&reg;</sup> or LibreOffice Calc.
++ Save a copy of the file as a CSV (comma-separated values) file named 'otter-mandible-data.csv' in the data folder you created above:
+    + In MS Excel<sup>&reg;</sup>, select File > Save As... and in the dialog that appears, select CSV from the type dropdown menu.
+    + In LibreOffice Calc, select File > Save As... and in the dialog that appears, select Text CSV (.csv) in the Format dropdown in the lower-right portion of the dialog.
 
-***
-+ Download data file from https://jcoliver.github.io/learn-r/data/iris.xlsx
-+ Open in spreadsheet program
-+ Export / Save As... a CSV file
-
-##Reading data into R
+###Reading data into R
 ```{r}
 otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
+```
+  
+Missing data can cause problems in downstream analyses, so we will just remove any rows that have missing data. Here we replace the original data object `otter` with one in which there are no missing values. Note, this _does not_ alter the data in the original file we read into R; it only alters the data object `otter` currently in R's memory.
+```{r}
 otter <- na.omit(otter)
 ```
-***
 
 ##PCA
 
 + Why pca?
 + Do pca
 + point out
-  + summary for the proportion of variance)
+  + summary for the proportion of variance
   + loadings for what points along an axis actually mean
 + do call to biplot (ugly)?
 + do plot from fit$x
