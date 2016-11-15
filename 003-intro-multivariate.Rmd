@@ -15,27 +15,12 @@ output:
 5. ~~Provide spreadsheet software info (Excel, LibreOffice) on 000-setup-instructions page~~
 
 ##See: 
-
 ###PCA:
 
 + http://www.statmethods.net/advstats/factor.html
 + https://www.r-bloggers.com/computing-and-visualizing-pca-in-r/
 + [Why PCA? (or "how to explain PCA to your grandmother")](http://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues)
 + [Principal Components Regression](https://www.r-bloggers.com/performing-principal-components-regression-pcr-in-r/)
-
-###Clustering, K-means:
-
-+ https://www.r-bloggers.com/k-means-clustering-in-r/
-+ http://www.statmethods.net/advstats/cluster.html
-+ https://stat.ethz.ch/R-manual/R-devel/library/stats/html/kmeans.html
-+ http://stackoverflow.com/questions/15376075/cluster-analysis-in-r-determine-the-optimal-number-of-clusters
-+ [Wikipedia entry for the various ways of determining the optimal number of clusters](https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set)
-+ [Programmatically identifying the "elbow"](http://stackoverflow.com/questions/2018178/finding-the-best-trade-off-point-on-a-curve)
-
-###Ignore these:
-
-+ http://www.statmethods.net/stats/regression.html _ignore_
-+ https://www.r-bloggers.com/r-tutorial-series-anova-tables/ _ignore_
 
 An introduction to using the R statistics package and the RStudio interface for multivariate statistics.
 
@@ -174,46 +159,6 @@ boxplot(formula = mandibular.ramus.height ~ species, data = otter)
 
 Our script should look like this:
 ```{r}
-```
-
-***
-
-##Clustering with K-means
-
-```{r}
-# Scale data & drop species column
-otter.scaled <- scale(x = otter[, -1])
-wss <- numeric(10)
-for (i in 1:10) {
-  kmeans.fit <- kmeans(x = otter.scaled, centers = i, nstart = 10)
-  wss[i] <- kmeans.fit$tot.withinss
-}
-plot(x = c(1:length(wss)), y = wss, xlab = "Number of clusters, K", ylab = "Total within SS", type = "b")
-
-# Percentage of variance explained is the ratio of the between-group variance to the total 
-# variance, also known as an F-test. A slight variation of this method plots the curvature 
-# of the within group variance. https://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set
-# 
-
-```
-
-Abstracting the number of clusters to analyze
-```{r}
-```
-
-Apply "Elbow" method based on percentage of variance explained
-```{r}
-# Advanced
-```
-
-See how clustering aligned with species
-```{r}
-# Run kmeans again for K = 4, to get clustering info
-otter.k.4 <- kmeans(x = otter.scaled, centers = 4, nstart = 10)
-otter.clusters <- data.frame(otter, cluster = otter.k.4$cluster)
-assignments <- table(otter.clusters$species, otter.clusters$cluster)
-assignments
-
 ```
 
 ***
