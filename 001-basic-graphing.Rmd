@@ -7,14 +7,29 @@ output: html_document
 
 This brief tutorial will demonstrate how to create a basic plot in R from a text file of data.  This introduction provides an entry point for those unfamiliar with R (or a refresher for those who are rusty).  We will start with a very minimal piece of code and work our way up to code that automates the creation of 12 different pdf files, each with a different X-Y scatterplot.
 
-####Learning objectives:####
-
-* Gain familiarity with R
-* Read data from a file
-* Visualize data in a graph
-* Understand the principle of control flow
+####Learning objectives
+1. Gain familiarity with R
+2. Read data from a file
+3. Visualize data in a graph
+4. Understand the principle of control flow
 
 In this tutorial, we will be using the 'gapminder' dataset, available here: <a href="http://tinyurl.com/qb83k3z"> http://tinyurl.com/qb83k3z</a> (right-click or Ctrl-click on link and Save As...).
+
+##Setup
+First we need to setup our development environment. Open RStudio and create a new project via:
+
++ File > New Project...
++ Select 'New Directory'
++ For the Project Type select 'Empty Project'
++ For Directory name, call it something like "r-workshop" (without the quotes)
++ For the subdirectory, select somewhere you will remember (like "My Documents" or "Desktop")
+
+We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses. In the RStudio console:
+```{r, eval = FALSE}
+dir.create(path = "data")
+dir.create(path = "output")
+```
+
 
 ###Your first plot###
 ```{r}
