@@ -13,6 +13,7 @@ output:
 3. ~~Provide rationale for why PCA~~
 4. Add (advanced) code for detecting the number of clusters
 5. ~~Provide spreadsheet software info (Excel, LibreOffice) on 000-setup-instructions page~~
+6. Add DFA section
 
 ##See: 
 ###PCA:
@@ -160,6 +161,10 @@ boxplot(formula = mandibular.ramus.height ~ species, data = otter)
 Our script should look like this:
 ```{r}
 ```
+
+***
+
+##Discriminant Function Analysis
 
 ***
 
