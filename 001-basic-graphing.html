@@ -207,10 +207,22 @@ plot(x = gapminder.2002$gdpPercap,
 </div>
 <div id="make-it-pretty" class="section level2">
 <h2>Make it pretty</h2>
+<p>Before we get to the next step we need to start using scripts, rather than typing directly into the console. This is the ideal way to save your work. You can create a new script in RStudio via File &gt; New File &gt; R Script (or the shortcut Ctrl+Shift+N / Cmd+Shift+N). Name the script something like “r-graphing.R” (without the quotes) - you will have to add the .R extension when you name the file. At the start of <em>every</em> script you write, you should provide at least this basic information:</p>
+<ul>
+<li>A brief description of what the script does</li>
+<li>Your name</li>
+<li>Contact information</li>
+<li>Date</li>
+</ul>
 <div id="fix-those-axes-titles" class="section level3">
 <h3>Fix those axes titles</h3>
-<p>A good start, but those axis labels are pretty unseemly. We can fix those up by setting values in the <code>plot</code> function call. Namely, we will be passing values to the <code>main</code>, <code>xlab</code> (x-axis label), and <code>ylab</code> (y-axis label) parameters.</p>
-<pre class="r"><code># Read in data
+<p>Our original graph was a good start, but those axis labels are pretty unseemly. We can fix those up by setting values in the <code>plot</code> function call. Namely, we will be passing values to the <code>main</code>, <code>xlab</code> (x-axis label), and <code>ylab</code> (y-axis label) parameters.</p>
+<pre class="r"><code># Graphing Life Expectancy vs. GDP
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2016-11-15
+
+# Read in data
 gapminder.all &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
 
 # Subset data
@@ -230,7 +242,12 @@ plot(x = gapminder.2002$gdpPercap,
 <div id="log-transform-data" class="section level3">
 <h3>Log-transform data</h3>
 <p>This does not look like a linear relationship, but we can try a simple log-transformation on the GDP data to see how that looks.</p>
-<pre class="r"><code># Read in data
+<pre class="r"><code># Graphing Life Expectancy vs. GDP
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2016-11-15
+
+# Read in data
 gapminder.all &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
 
 # Subset data
@@ -253,7 +270,12 @@ plot(x = gapminder.2002$Log10GDP,
 <div id="color-the-points" class="section level3">
 <h3>Color the points</h3>
 <p>We are not restricted to black and white colors. Here we will color points by the continent each country is located on.</p>
-<pre class="r"><code># Read in data
+<pre class="r"><code># Graphing Life Expectancy vs. GDP
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2016-11-15
+
+# Read in data
 gapminder.all &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
 
 # Subset data
@@ -301,7 +323,12 @@ legend(&quot;topleft&quot;,
 <div id="abstract-the-code" class="section level3">
 <h3>Abstract the code</h3>
 <p>When writing code, abstraction can be quite useful, to ensure consistency throughout your code.</p>
-<pre class="r"><code># Read in data
+<pre class="r"><code># Graphing Life Expectancy vs. GDP
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2016-11-15
+
+# Read in data
 gapminder.all &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
 
 # Subset data
@@ -355,7 +382,12 @@ abline(lifeExp.lm, lty = 2, lwd = 2)</code></pre>
 <div id="more-code-abstraction-loops" class="section level3">
 <h3>More code abstraction &amp; loops</h3>
 <p>Continuing with abstraction, we can simplify our code with control flow - here we use a <code>for</code> loop to accomplish the color assignment task.</p>
-<pre class="r"><code># Read in data
+<pre class="r"><code># Graphing Life Expectancy vs. GDP
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2016-11-15
+
+# Read in data
 gapminder.all &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
 
 # Subset data
@@ -406,7 +438,12 @@ abline(lifeExp.lm, lty = 2, lwd = 2)</code></pre>
 <div id="redirect-graphics-to-pdf-file" class="section level3">
 <h3>Redirect graphics to PDF file</h3>
 <p>To save the file, we can redirect the output to a graphics device. In this example we use a PDF writer; many other graphics devices are availble for writing different file formats, including <code>svg</code>, <code>jpeg</code>, and <code>png</code>.</p>
-<pre class="r"><code># Read in data
+<pre class="r"><code># Graphing Life Expectancy vs. GDP
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2016-11-15
+
+# Read in data
 gapminder.all &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
 
 # Subset data
@@ -461,7 +498,12 @@ dev.off()</code></pre>
 <div id="make-12-separate-pdf-graphs" class="section level3">
 <h3>Make 12 separate PDF graphs</h3>
 <p>Finally (well, almost finally, see below), we can automate this process to create a separate PDF of the same graph for each year of data in the gapminder datasets (there are 12 years of data for each country).</p>
-<pre class="r"><code># Read in data
+<pre class="r"><code># Graphing Life Expectancy vs. GDP
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2016-11-15
+
+# Read in data
 gapminder.all &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
 
 # Hold off on subsetting the data
@@ -525,7 +567,12 @@ for (curr.year in years) {
 <div id="add-transparency-to-points" class="section level3">
 <h3>Add transparency to points</h3>
 <p>And for advanced users, we can add some transparency to the points (skipping the step were the plot is saved to a PDF file).</p>
-<pre class="r"><code># Read in data
+<pre class="r"><code># Graphing Life Expectancy vs. GDP
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2016-11-15
+
+# Read in data
 gapminder.all &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
 
 # Subset data
