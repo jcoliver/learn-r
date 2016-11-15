@@ -5,7 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
-This brief tutorial will demonstrate how to create a basic plot in R from a text file of data.  This introduction provides an entry point for those unfamiliar with R (or a refresher for those who are rusty).  We will start with a very minimal piece of code and work our way up to code that automates the creation of 12 different pdf files, each with a different X-Y scatterplot.
+This brief tutorial will demonstrate how to create a basic plot in R from a text file of data.  This introduction provides an entry point for those unfamiliar with R (or a refresher for those who are rusty).  We will start with a very minimal piece of code and work our way up to code that automates the creation of 12 different PDF files, each with a different X-Y scatterplot.
 
 ####Learning objectives
 1. Gain familiarity with R
@@ -30,12 +30,9 @@ dir.create(path = "data")
 dir.create(path = "output")
 ```
 
-
-###Your first plot###
+##Your first plot
+###Plot the points!
 ```{r}
-#######################################
-# Plot points
-#######################################
 # Read in data
 gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
 ```
@@ -66,12 +63,10 @@ plot(x = gapminder.2002$gdpPercap,
 ```
 
 ***
-###Make it pretty###
+##Make it pretty
+###Fix those axes titles
 A good start, but those axis labels are pretty unseemly.  We can fix those up by setting values in the `plot` function call.  Namely, we will be passing values to the `main`, `xlab` (x-axis label), and `ylab` (y-axis label) parameters.
 ```{r}
-#######################################
-# Add better axis titles
-#######################################
 # Read in data
 gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
 
@@ -86,12 +81,10 @@ plot(x = gapminder.2002$gdpPercap,
 ```
 
 ***
-###Changing scales###
+##Changing scales
+###Log-transform data
 This does not look like a linear relationship, but we can try a simple log-transformation on the GDP data to see how that looks.
 ```{r}
-#######################################
-# Plot x-axis on log-scale
-#######################################
 # Read in data
 gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
 
@@ -109,12 +102,10 @@ plot(x = gapminder.2002$Log10GDP,
 ```
 
 ***
-###Make it <em>prettier</em>###
+##Make it <em>prettier</em>
+###Color the points
 We are not restricted to black and white colors.  Here we will color points by the continent each country is located on.
 ```{r}
-#######################################
-# Color points by continent + add legend
-#######################################
 # Read in data
 gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
 
@@ -162,12 +153,10 @@ legend("topleft",
 ```
 
 ***
-###Abstract code###
+##Prevent mistakes
+###Abstract the code
 When writing code, abstraction can be quite useful, to ensure consistency throughout your code.
 ```{r}
-#######################################
-# Abstraction + a regression line
-#######################################
 # Read in data
 gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
 
@@ -216,12 +205,10 @@ abline(lifeExp.lm, lty = 2, lwd = 2)
 ```
 
 ***
-###More abstraction & loops###
+##Even fewer mistakes via less code o.O
+###More code abstraction & loops
 Continuing with abstraction, we can simplify our code with control flow - here we use a `for` loop to accomplish the color assignment task.
 ```{r}
-#######################################
-# Control flow (a for loop)
-#######################################
 # Read in data
 gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
 
@@ -237,7 +224,7 @@ sym.size <- 1.2
 continents <- levels(gapminder.2002$continent)
 continent.colors <- c("red", "orange", "forestgreen", "darkblue", "violet")
 
-# Establish first color as default
+# Establish empty column to store colors
 gapminder.2002$colors <- NA
 # Loop over continents and assign colors
 for (i in 1:length(continents)) {
@@ -267,12 +254,10 @@ abline(lifeExp.lm, lty = 2, lwd = 2)
 ```
 
 ***
-###Saving graphical output###
-To save the file, we can redirect the output to a graphics device.  In this example we use a pdf writer; many other graphics devices are availble for writing different file formats, including `svg`, `jpeg`, and `png`.
+##Saving graphical output
+###Redirect graphics to PDF file
+To save the file, we can redirect the output to a graphics device.  In this example we use a PDF writer; many other graphics devices are availble for writing different file formats, including `svg`, `jpeg`, and `png`.
 ```{r eval = FALSE}
-#######################################
-# Send to pdf
-#######################################
 # Read in data
 gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
 
@@ -323,12 +308,10 @@ dev.off()
 ```
 
 ***
-###Automation!###
-Finally (well, almost finally, see below), we can automate this process to create a separate pdf of the same graph for each year of data in the gapminder datasets (there are 12 years of data for each country).
+##Automation!
+###Make 12 separate PDF graphs
+Finally (well, almost finally, see below), we can automate this process to create a separate PDF of the same graph for each year of data in the gapminder datasets (there are 12 years of data for each country).
 ```{r eval = FALSE}
-#######################################
-# Make one pdf for each of 12 years
-#######################################
 # Read in data
 gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
 
@@ -352,7 +335,7 @@ for (i in 1:length(continents)) {
 # Find the unique values in the gapminder.all$year vector
 years <- unique(gapminder.all$year)
 
-# Now loop over each of the different years to create the pdfs.
+# Now loop over each of the different years to create the PDFs.
 for (curr.year in years) {
   # Subset data
   gapminder.one.year <- gapminder.all[gapminder.all$year == curr.year, ]
@@ -388,12 +371,10 @@ for (curr.year in years) {
 ```
 
 ***
-###Advanced topic: making it even prettier###
+##Advanced topic: making it even prettier
+###Add transparency to points
 And for advanced users, we can add some transparency to the points (skipping the step were the plot is saved to a PDF file).
 ```{r}
-#######################################
-# Add transparency to colors
-#######################################
 # Read in data
 gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
 
