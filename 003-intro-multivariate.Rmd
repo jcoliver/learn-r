@@ -11,9 +11,11 @@ output:
 1. ~~Add instructions for downloading data then exporting as CSV file~~
 2. Break apart PCA code in stepwise fashion
 3. ~~Provide rationale for why PCA~~
-4. Add (advanced) code for detecting the number of clusters
+4. ~~Add (advanced) code for detecting the number of clusters~~
 5. ~~Provide spreadsheet software info (Excel, LibreOffice) on 000-setup-instructions page~~
 6. Add DFA section
+    + Add explanation of posterior probabilities (make a table?)
+    + Break apart graphics section
 
 ##See: 
 ###PCA:
@@ -165,6 +167,44 @@ Our script should look like this:
 ***
 
 ##Discriminant Function Analysis
+```{r}
+library("MASS")
+lda.fit <- lda(formula = species ~ ., 
+               data = otter, 
+               prior = c(1,1,1,1)/4, 
+               CV = TRUE)
+posteriors <- t(lda.fit$posterior)
+
+legend.cols <- c("black", "forestgreen", "cadetblue", "darkred") 
+
+tick.pos <- c(0, 
+              nrow(otter) - match(levels(otter$species)[1], rev(otter$species)) + 1, # last occurrence of first species
+              nrow(otter) - match(levels(otter$species)[2], rev(otter$species)) + 1, # last occurrence of second species
+              nrow(otter) - match(levels(otter$species)[3], rev(otter$species)) + 1, # last occurrence of third species
+              nrow(otter) - match(levels(otter$species)[4], rev(otter$species)) + 1)# last occurrence of fourth species)
+
+label.pos <- c(floor((tick.pos[2] - tick.pos[1]) / 2),
+               floor((tick.pos[3] - tick.pos[2]) / 2 + tick.pos[2]),
+               floor((tick.pos[4] - tick.pos[3]) / 2 + tick.pos[3]),
+               floor((tick.pos[5] - tick.pos[4]) / 2 + tick.pos[4]))
+
+mar.default <- c(5, 4, 4, 2) + 1 # from par documentation
+par(mar = mar.default + c(2, 0, 0, 0)) 
+
+barplot(posteriors,
+        ylab = "Posterior Probability",
+        space = 0,
+        border = NA,
+        xaxt = 'n',
+        xlim = c(0, ncol(posteriors) + 45),
+        col = legend.cols,
+        legend.text = levels(otter$species),
+        args.legend = list(cex = 0.7, x = ncol(posteriors) + 55, y = 0.6, xpd = TRUE))
+axis(side = 1, at = tick.pos, labels = FALSE) # tick marks
+axis(side = 1, at = label.pos, labels = levels(otter$species), tick = FALSE, par(las = 2, cex = 0.8))
+
+par(mar = mar.default)
+```
 
 ***
 
