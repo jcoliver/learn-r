@@ -242,15 +242,42 @@ legend("bottomleft", legend = species, pch = 19, col = legend.cols, cex = 0.8)
 ***
 
 ##Discriminant Function Analysis
-Principal Components Analysis is useful to describe variation, especially when groups of samples are not known _a priori_. However, when the groups _are_ known, one can use Discriminant Function Analysis, DFA, to see if the these groups can be differentiated based on a suite of variables.
+Principal Components Analysis is useful to describe variation, especially when groups of samples are not known _a priori_. However, when the groups _are_ known, one can use Discriminant Function Analysis, DFA, to see if the these groups can be differentiated based on a suite of variables. We will use the same otter data to see if we can differentiate among the four species based on the jaw measurements.
+```{r}
+# Read in data
+otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
+
+# Drop rows with NA
+otter <- na.omit(otter)
+```
+  
+To run a DFA, we use a function in the `MASS` library, an additional package of R functions. To load a package for use in R, we use the `library` function and include the name of the package (see below if you want to learn more about [installing packages](#installing-r-packages)):
 ```{r}
 library("MASS")
+```
+
+And we run DFA with a call to `lda` indicating which column contains our _a priori_ groups in via the `formula` parameter. In this case, we pass `formula = species ~ .`, which means `species` contains our grouping variable and the '.' means we want to use all remaining variables in the `otter` data frame as predictors in the analysis:
+```{r}
 lda.fit <- lda(formula = species ~ ., 
                data = otter, 
                prior = c(1,1,1,1)/4, 
                CV = TRUE)
-posteriors <- t(lda.fit$posterior)
+```
+We also indicate that assignment to each species is equally likely (25%) by setting the prior probabilities for group membership through the `prior` parameter. 
+  
+Finally, by setting `CV = TRUE`, R will perform cross-validation on the model and provide posterior probabilities of group membership in the `posterior` object returned by `lda`. Look at the first few rows of the posterior probabilities:
+```{r}
+head(lda.fit$posterior)
+```
+The `lda.fit$posterior` data frame holds the posterior probability of assignment to each of the four species for each row of data in the original `otter` data. The first row indicates that 
 
+```{r}
+posteriors <- t(lda.fit$posterior)
+```
+
+
+plottingdfa
+```{r}
 legend.cols <- c("black", "forestgreen", "cadetblue", "darkred") 
 
 tick.pos <- c(0, 
