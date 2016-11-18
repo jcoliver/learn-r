@@ -85,7 +85,7 @@ We are interested to know (1) what are the important factors that emerge from th
 ```{r}
 pca.summary$importance
 ```
-The second row, `Proportion of Variance`, shows how much variation in the data is described by each component; notice that the first component, PC1, explains the most variance, `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2), 4)`, or `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2) * 100, 2)`% of the total variance, the second components explains the second most variance (`r round(pca.summary$sdev[2]^2/sum(pca.summary$sdev^2) * 100, 2)`%), and so on, with each successive component explaining a lower proportion of the total variance. For the remainder of the lesson, we will focus on the first two principal components, which together explain `r round((pca.summary$sdev[1]^2 + pca.summary$sdev[2]^2)/sum(pca.summary$sdev^2) * 100, 2)`% of the observed variation in the skull measurements.
+The second row, `Proportion of Variance`, shows how much variation in the data is described by each component; notice that the first component, PC1, explains the most variance, `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2), 4)`, or `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2) * 100, 2)`% of the total variance, the second component explains the second most variance (`r round(pca.summary$sdev[2]^2/sum(pca.summary$sdev^2) * 100, 2)`%), and so on, with each successive component explaining a lower proportion of the total variance. For the remainder of the lesson, we will focus on the first two principal components, PC1 and PC2, which together explain `r round((pca.summary$sdev[1]^2 + pca.summary$sdev[2]^2)/sum(pca.summary$sdev^2) * 100, 2)`% of the observed variation in the skull measurements.
   
 But what about that variation? What are the principal components actually explaining? To address this (point 2 from above), we need to look at the loadings of the PCA. The `rotation` object from the summary call has the information we are interested in. Focus on the values in the PC1 column:
 ```{r}
@@ -122,10 +122,11 @@ Well, maybe that plot isn't so useful either. It does help a bit if we color the
 ```{r}
 # Pull out the unique values in the 'species' column
 species <- unique(otter$species)
-# Set up a vector of colors for the legend
+
+# Set up a vector of colors for the *legend*
 legend.cols <- c("black", "forestgreen", "cadetblue", "darkred") 
-################################################################################
-# Set up a vector of colors for the actual plot, based on values in the 
+
+# Set up a vector of colors for the actual *plot*, based on values in the 
 # 'species' column and the legend colors vector. This vector has one element 
 # corresponding to each row of the otter data frame. 
 pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
@@ -141,19 +142,43 @@ plot(x = pca.fit$x[, 1],
 legend("bottomleft", legend = species, pch = 19, col = legend.cols, cex = 0.8)
 ```
 
-Ah, now this is a little more interesting. Note the first principal component scores along the x-axis, and there is actually pretty clear separation among some of species. As mentioned above, this principal component is really an index of size, which we can visualize by looking at the actual skull measurements across the four species
+Ah, now this is a little more interesting. Note the first principal component scores along the x-axis, and there is actually pretty clear separation among some of species. As mentioned above, this principal component is really an index of size, which we can visualize by looking at the actual skull measurements across the four species. First note the distribution of the four species along the x-axis: _A. cinerea_ has the lowest values, _E. lutris_ and _P. brasiliensis_ have the highest values, and _L. canadensis_ has values in the middle. We can use `boxplot` to show the distributions of each measurement for each species:
 
 ```{r}
-par(mfrow = c(2, 3), las = 2) # To set-up a multi-panel graph (2 rows, 3 columns), filling row by row
+# Set-up a multi-panel graph (2 rows, 3 columns), filling row by row
+par(mfrow = c(2, 3), las = 2) 
+
+# Plot each of the six measurements in a different plot
 boxplot(formula = mandibular.ramus.width ~ species, data = otter)
 boxplot(formula = mandibular.ramus.height ~ species, data = otter)
 boxplot(formula = moment.arm.temporalis ~ species, data = otter)
 boxplot(formula = outlever.at.carnassial ~ species, data = otter)
 boxplot(formula = moment.arm.masseter ~ species, data = otter)
 boxplot(formula = jaw.length ~ species, data = otter)
-par(mfrow = c(1, 1), las = 0) # To restore graphing defaults
+
+# Restore graphing defaults
+par(mfrow = c(1, 1), las = 0)
 ```
 
+Looking at these boxplots, we see that indeed, for all six measurements, _A. cinerea_ has the lowest values, _E. lutris_ and _P. brasiliensis_ have the highest values, and _L. canadensis_ has values in the middle.
+  
+
+Remember that second principal component, PC2, the y-axis of our scatterplot: 
+
+```{r, echo = FALSE}
+plot(x = pca.fit$x[, 1],
+     y = pca.fit$x[, 2],
+     xlab = "PC 1",
+     ylab = "PC 2",
+     pch = 19,
+     col = pt.cols)
+legend("bottomleft", legend = species, pch = 19, col = legend.cols, cex = 0.8)
+```
+
+And the loadings for the first two components are:
+```{r, echo = FALSE}
+pca.summary$rotation[, 1:2]
+```
 
 ```{r}
 boxplot(formula = jaw.length ~ species, data = otter)
