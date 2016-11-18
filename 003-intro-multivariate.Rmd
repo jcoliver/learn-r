@@ -290,4 +290,16 @@ See: [Bibliographies in RStudio](http://rmarkdown.rstudio.com/authoring_bibliogr
 
 ***
 
+###Installing R packages
+Note that if a package is not installed on your machine, a call to `library` will throw an error, indicating the package has to be installed first. For example, if we were to load a package called `mustelid` without installing it first:
+```{r error = TRUE}
+library("mustelid")
+```
+So how do I install packages? you ask. With `install.packages`:
+```{r eval = FALSE}
+install.packages("mustelid")
+library("mustelid")
+```
+
+
 Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
