@@ -163,7 +163,7 @@ par(mfrow = c(1, 1), las = 0)
 Looking at these boxplots, we see that indeed, for all six measurements, _A. cinerea_ has the lowest values, _E. lutris_ and _P. brasiliensis_ have the highest values, and _L. canadensis_ has values in the middle.
   
 
-Remember that second principal component, PC2, the y-axis of our scatterplot: 
+Remember that second principal component, PC2, on the y-axis of our scatterplot: 
 
 ```{r, echo = FALSE}
 plot(x = pca.fit$x[, 1],
@@ -180,18 +180,69 @@ And the loadings for the first two components are:
 pca.summary$rotation[, 1:2]
 ```
 
-```{r}
-boxplot(formula = jaw.length ~ species, data = otter)
-boxplot(formula = mandibular.ramus.height ~ species, data = otter)
-```
+In this second principal component, as mentioned before, mandibular ramus width and outlever at carnassial don't contribute much to the component [the magnitudes of their respective loadings (.173 and .031) are small compared to the other four skull measurements]. The remaining four loadings indicate a shape difference, with one pair of variables having positive loadings and one pair having negative loadings. This component describes variation in the four variables: samples with high values of jaw length and moment arm temporalis have low values of mandibular ramus height and moment arm masseter and vice versa. You can confirm this looking again at a boxplot for these values, focusing only on those four variables of interest for the two species that are differentiated along PC2, _E. lutris_ and _P. brasiliensis_:
 
-Our script should look like this:
 ```{r}
+# Set-up a multi-panel graph (1 row, 4 columns), filling row by row
+par(mfrow = c(1, 4), las = 2) 
+
+# Plot each of the six measurements in a different plot
+boxplot(formula = mandibular.ramus.height ~ species, data = otter, main = "MRH", cex = 0.8)
+boxplot(formula = moment.arm.temporalis ~ species, data = otter, main = "MAT", cex = 0.8)
+boxplot(formula = moment.arm.masseter ~ species, data = otter, main = "MAM", cex = 0.8)
+boxplot(formula = jaw.length ~ species, data = otter, main = "JL", cex = 0.8)
+
+# Restore graphing defaults
+par(mfrow = c(1, 1), las = 0)
+```
+Indeed, where _E. lutris_ has higher values of mandibular ramus height ("MRH") and moment arm masseter ("MAM") than _P. brasiliensis_, the reverse is true for moment arm temporalis ("MAT") and jaw length("JL"). The second principal component is thus describing variation in relative sizes of these four different measurements.
+
+Our script for performing Principal Components Analysis and graphing the first two components should look like this:
+```{r, eval = FALSE}
+# PCA on otter jaw measurements
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-11-18
+
+# Read in data
+otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
+
+# Drop rows with NA
+otter <- na.omit(otter)
+
+# Run PCA
+pca.fit <- prcomp(x = otter[, -1], scale. = TRUE)
+pca.summary <- summary(pca.fit)
+
+# Plotting results
+# Pull out the unique values in the 'species' column for legend
+species <- unique(otter$species)
+
+# Set up a vector of colors for the *legend*
+legend.cols <- c("black", "forestgreen", "cadetblue", "darkred") 
+
+# Set up a vector of colors for the actual *plot*, based on values in the 
+# 'species' column and the legend colors vector. This vector has one element 
+# corresponding to each row of the otter data frame. 
+pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
+pt.cols[otter$species == species[2]] <- legend.cols[2]
+pt.cols[otter$species == species[3]] <- legend.cols[3]
+pt.cols[otter$species == species[4]] <- legend.cols[4]
+
+# Plot the first two components
+plot(x = pca.fit$x[, 1],
+     y = pca.fit$x[, 2],
+     xlab = "PC 1",
+     ylab = "PC 2",
+     pch = 19,
+     col = pt.cols)
+legend("bottomleft", legend = species, pch = 19, col = legend.cols, cex = 0.8)
 ```
 
 ***
 
 ##Discriminant Function Analysis
+Principal Components Analysis is useful to describe variation, especially when groups of samples are not known _a priori_. However, when the groups _are_ known, one can use Discriminant Function Analysis, DFA, to see if the these groups can be differentiated based on a suite of variables.
 ```{r}
 library("MASS")
 lda.fit <- lda(formula = species ~ ., 
