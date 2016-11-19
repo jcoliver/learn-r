@@ -269,7 +269,14 @@ Finally, by setting `CV = TRUE`, R will perform cross-validation on the model an
 ```{r}
 head(lda.fit$posterior)
 ```
-The `lda.fit$posterior` data frame holds the posterior probability of assignment to each of the four species for each row of data in the original `otter` data. The first row indicates that 
+The `lda.fit$posterior` data frame holds the posterior probability of assignment to each of the four species for each row of data in the original `otter` data. The first row indicates the probabilities that the first observation in `otter` is assigned to each species. For this first observation, the only non-negligible assignment probability is to _`r colnames(lda.fit$posterior)[which(lda.fit$posterior[1, ] == max(lda.fit$posterior[1, ]))]`_. 
+
+However, some probabilities are not so trivial. Look at the values for row 88 (rounding to three decimal places):
+```{r}
+round(lda.fit$posterior[88, ], 3)
+```
+
+
 
 ```{r}
 posteriors <- t(lda.fit$posterior)

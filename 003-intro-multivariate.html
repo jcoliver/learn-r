@@ -375,6 +375,11 @@ otter &lt;- na.omit(otter)</code></pre>
 ## 4  0.9999890 7.775338e-24  1.103396e-05    1.730129e-33
 ## 5  0.9999747 4.875762e-23  2.527825e-05    1.873520e-30
 ## 6  0.9996107 3.958971e-19  3.893433e-04    1.778982e-29</code></pre>
+<p>The <code>lda.fit$posterior</code> data frame holds the posterior probability of assignment to each of the four species for each row of data in the original <code>otter</code> data. The first row indicates the probabilities that the first observation in <code>otter</code> is assigned to each species. For this first observation, the only non-negligible assignment probability is to <em>A. cinerea</em>.</p>
+<p>However, some probabilities are not so trivial. Look at the values for row 88 (rounding to three decimal places):</p>
+<pre class="r"><code>round(lda.fit$posterior[88, ], 3)</code></pre>
+<pre><code>##      A. cinerea       E. lutris   L. canadensis P. brasiliensis 
+##           0.000           0.543           0.457           0.000</code></pre>
 <pre class="r"><code>posteriors &lt;- t(lda.fit$posterior)</code></pre>
 <p>plottingdfa</p>
 <pre class="r"><code>legend.cols &lt;- c(&quot;black&quot;, &quot;forestgreen&quot;, &quot;cadetblue&quot;, &quot;darkred&quot;) 
