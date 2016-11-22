@@ -10,10 +10,11 @@ output:
 ## TODO:
 1. ~~Add instructions for downloading data then exporting as CSV file~~
 2. Break apart PCA code in stepwise fashion
-3. ~~Provide rationale for why PCA~~
-4. ~~Add (advanced) code for detecting the number of clusters~~
-5. ~~Provide spreadsheet software info (Excel, LibreOffice) on 000-setup-instructions page~~
-6. Add DFA section
+3. Add subheadings to PCA & DFA sections
+4. ~~Provide rationale for why PCA~~
+5. ~~Add (advanced) code for detecting the number of clusters~~
+6. ~~Provide spreadsheet software info (Excel, LibreOffice) on 000-setup-instructions page~~
+7. Add DFA section
     + Add explanation of posterior probabilities (make a table?)
     + Break apart graphics section
 
@@ -283,7 +284,7 @@ posteriors <- t(lda.fit$posterior)
 ```
 
 
-plottingdfa
+###Plotting the results
 ```{r}
 legend.cols <- c("black", "forestgreen", "cadetblue", "darkred") 
 
