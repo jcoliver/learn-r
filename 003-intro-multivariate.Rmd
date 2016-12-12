@@ -8,15 +8,12 @@ output:
 ---
 
 ## TODO:
-1. ~~Add instructions for downloading data then exporting as CSV file~~
-2. Break apart PCA code in stepwise fashion
-3. Add subheadings to PCA & DFA sections
-4. ~~Provide rationale for why PCA~~
-5. ~~Add (advanced) code for detecting the number of clusters~~
-6. ~~Provide spreadsheet software info (Excel, LibreOffice) on 000-setup-instructions page~~
-7. Add DFA section
-    + Add explanation of posterior probabilities (make a table?)
-    + Break apart graphics section
+1. Break apart PCA plotting code in stepwise fashion
+2. **Add subheadings** to PCA & DFA sections
+3. In DFA section, add explanation of posterior probabilities (make a table?)
+    + Really want some means of comparing *a priori* classification to DFA
+4. Make DFA graph simpler
+5. Add references
 
 ##See: 
 ###PCA:
@@ -60,14 +57,6 @@ otter <- na.omit(otter)
 ```
 
 ##PCA
-+ Do pca
-+ point out
-    + summary for the proportion of variance (remember if you want to show how this is calculated, the standard deviation has to be squared to get variance)
-    + loadings for what points along an axis actually mean
-+ do call to biplot (ugly)?
-+ do plot from fit$x
-  + make plot nicer
-
 Why PCA? Very briefly, Principal Components Analysis is a way of re-describing the variation observed in your data. It serves as a means of reducing the dimensionality of data (i.e. reducing the number of predictor variables) and is often used for exploratory analyses. The full rationale and mathematically underpinnings are waaaaaaaay beyond the scope of this lesson, and other resources already do a fairly good job of explaining PCA. If you want a few perspectives for a relatively novice audience, check out this [Why PCA? (or "how to explain PCA to your grandmother")](http://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues) thread at Stack Overflow. If you are more inclined to print media, I highly recommend B.F.J. Manly's _Multivariate Statistical Methods: A primer_ [*TODO: REF*], which provides an excellent introduction to a variety of multivariate statistic topics.
   
 So, on to the code:

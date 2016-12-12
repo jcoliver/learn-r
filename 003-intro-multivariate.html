@@ -119,7 +119,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Introduction to Multivariate Statistics in R</h1>
 <h4 class="author"><em>Jeff Oliver</em></h4>
-<h4 class="date"><em>22 November, 2016</em></h4>
+<h4 class="date"><em>12 December, 2016</em></h4>
 
 </div>
 
@@ -127,17 +127,14 @@ $(document).ready(function () {
 <div id="todo" class="section level2">
 <h2>TODO:</h2>
 <ol style="list-style-type: decimal">
-<li><del>Add instructions for downloading data then exporting as CSV file</del></li>
-<li>Break apart PCA code in stepwise fashion</li>
-<li>Add subheadings to PCA &amp; DFA sections</li>
-<li><del>Provide rationale for why PCA</del></li>
-<li><del>Add (advanced) code for detecting the number of clusters</del></li>
-<li><del>Provide spreadsheet software info (Excel, LibreOffice) on 000-setup-instructions page</del></li>
-<li>Add DFA section
+<li>Break apart PCA plotting code in stepwise fashion</li>
+<li><strong>Add subheadings</strong> to PCA &amp; DFA sections</li>
+<li>In DFA section, add explanation of posterior probabilities (make a table?)
 <ul>
-<li>Add explanation of posterior probabilities (make a table?)</li>
-<li>Break apart graphics section</li>
+<li>Really want some means of comparing <em>a priori</em> classification to DFA</li>
 </ul></li>
+<li>Make DFA graph simpler</li>
+<li>Add references</li>
 </ol>
 </div>
 <div id="see" class="section level2">
@@ -191,17 +188,6 @@ dir.create(path = &quot;output&quot;)</code></pre>
 </div>
 <div id="pca-1" class="section level2">
 <h2>PCA</h2>
-<ul>
-<li>Do pca</li>
-<li>point out
-<ul>
-<li>summary for the proportion of variance (remember if you want to show how this is calculated, the standard deviation has to be squared to get variance)</li>
-<li>loadings for what points along an axis actually mean</li>
-</ul></li>
-<li>do call to biplot (ugly)?</li>
-<li>do plot from fit$x</li>
-<li>make plot nicer</li>
-</ul>
 <p>Why PCA? Very briefly, Principal Components Analysis is a way of re-describing the variation observed in your data. It serves as a means of reducing the dimensionality of data (i.e. reducing the number of predictor variables) and is often used for exploratory analyses. The full rationale and mathematically underpinnings are waaaaaaaay beyond the scope of this lesson, and other resources already do a fairly good job of explaining PCA. If you want a few perspectives for a relatively novice audience, check out this <a href="http://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues">Why PCA? (or “how to explain PCA to your grandmother”)</a> thread at Stack Overflow. If you are more inclined to print media, I highly recommend B.F.J. Manly’s <em>Multivariate Statistical Methods: A primer</em> [<em>TODO: REF</em>], which provides an excellent introduction to a variety of multivariate statistic topics.</p>
 <p>So, on to the code:</p>
 <pre class="r"><code>pca.fit &lt;- prcomp(x = otter[, -1], scale. = TRUE)</code></pre>
