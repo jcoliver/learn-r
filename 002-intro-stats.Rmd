@@ -110,6 +110,8 @@ sink()
 > ###Challenge 1  
 Use ANOVA to test for differences in sepal width among the three species. What is the value of the _F_-statistic?
 
+([Solution](#solution-to-challenge-1))
+
 ***
 
 ##Student's _t_
@@ -216,6 +218,8 @@ sink()
 
 > ###Challenge 2  
 Test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
+
+([Solution](#solution-to-challenge-2))
 
 ***
 
@@ -324,13 +328,14 @@ sink()
 > ###Challenge 3  
 Test for a relationship between life expectancy and log base 2 of GDP for the 1982 data. How does life expectancy change with a four-fold increase in GDP?
 
+([Solution](#solution-to-challenge-3))
+
 ***
 
-##Answers to challenges
-###Challenge 1  
+##Solutions to Challenges
+###Solution to Challenge 1  
 > Use ANOVA to test for differences in sepal width among the three species. What is the value of the _F_-statistic?
 
-###Solution
 ```{r}
 sepal.width.aov <- aov(formula = Sepal.Width ~ Species, data = iris)
 summary(object = sepal.width.aov)
@@ -345,10 +350,9 @@ The _F_-statistic = `r round(x = f.stat, digits = 2)`, and the p-value is quite 
 
 ***
 
-###Challenge 2  
+###Solution to Challenge 2
 > Test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
 
-###Solution
 ####First comparison: _I. setosa_ vs. _I. virginica_
 ```{r}
 # Subset setosa data
@@ -381,10 +385,9 @@ _I. versicolor_ and _I. virginica_ also have different significantly different p
 
 ***
 
-###Challenge 3  
+###Solution to Challenge 3  
 > Test for a relationship between life expectancy and log base 2 of GDP for the 1982 data. How does life expectancy change with a four-fold increase in GDP?
 
-###Solution
 ```{r}
 # Read data from comma-separated values file
 gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
