@@ -118,7 +118,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Introduction to R Statistics</h1>
 <h4 class="author"><em>Jeff Oliver</em></h4>
-<h4 class="date"><em>16 September, 2016</em></h4>
+<h4 class="date"><em>06 January, 2017</em></h4>
 
 </div>
 
@@ -232,6 +232,7 @@ sink()</code></pre>
 <h3 id="challenge-1">Challenge 1</h3>
 <p>Use ANOVA to test for differences in sepal width among the three species. What is the value of the <em>F</em>-statistic?</p>
 </blockquote>
+<p>(<a href="#solution-to-challenge-1">Solution</a>)</p>
 <hr />
 </div>
 <div id="students-t" class="section level2">
@@ -356,6 +357,7 @@ sink()</code></pre>
 <h3 id="challenge-2">Challenge 2</h3>
 <p>Test for significant differences in petal lengths between <em>I. setosa</em> and <em>I. virginica</em> and between <em>I. versicolor</em> and <em>I. virginica</em>.</p>
 </blockquote>
+<p>(<a href="#solution-to-challenge-2">Solution</a>)</p>
 <hr />
 </div>
 <div id="linear-regression" class="section level2">
@@ -476,18 +478,16 @@ sink()</code></pre>
 <h3 id="challenge-3">Challenge 3</h3>
 <p>Test for a relationship between life expectancy and log base 2 of GDP for the 1982 data. How does life expectancy change with a four-fold increase in GDP?</p>
 </blockquote>
+<p>(<a href="#solution-to-challenge-3">Solution</a>)</p>
 <hr />
 </div>
-<div id="answers-to-challenges" class="section level2">
-<h2>Answers to challenges</h2>
-<div id="challenge-1-1" class="section level3">
-<h3>Challenge 1</h3>
+<div id="solutions-to-challenges" class="section level2">
+<h2>Solutions to Challenges</h2>
+<div id="solution-to-challenge-1" class="section level3">
+<h3>Solution to Challenge 1</h3>
 <blockquote>
 <p>Use ANOVA to test for differences in sepal width among the three species. What is the value of the <em>F</em>-statistic?</p>
 </blockquote>
-</div>
-<div id="solution" class="section level3">
-<h3>Solution</h3>
 <pre class="r"><code>sepal.width.aov &lt;- aov(formula = Sepal.Width ~ Species, data = iris)
 summary(object = sepal.width.aov)</code></pre>
 <pre><code>##              Df Sum Sq Mean Sq F value Pr(&gt;F)    
@@ -498,14 +498,11 @@ summary(object = sepal.width.aov)</code></pre>
 <p>The <em>F</em>-statistic = 49.16, and the p-value is quite small, so there are significant sepal width differences among species.</p>
 <hr />
 </div>
-<div id="challenge-2-1" class="section level3">
-<h3>Challenge 2</h3>
+<div id="solution-to-challenge-2" class="section level3">
+<h3>Solution to Challenge 2</h3>
 <blockquote>
 <p>Test for significant differences in petal lengths between <em>I. setosa</em> and <em>I. virginica</em> and between <em>I. versicolor</em> and <em>I. virginica</em>.</p>
 </blockquote>
-</div>
-<div id="solution-1" class="section level3">
-<h3>Solution</h3>
 <div id="first-comparison-i.-setosa-vs.-i.-virginica" class="section level4">
 <h4>First comparison: <em>I. setosa</em> vs. <em>I. virginica</em></h4>
 <pre class="r"><code># Subset setosa data
@@ -555,14 +552,11 @@ versicolor.v.virginica</code></pre>
 <hr />
 </div>
 </div>
-<div id="challenge-3-1" class="section level3">
-<h3>Challenge 3</h3>
+<div id="solution-to-challenge-3" class="section level3">
+<h3>Solution to Challenge 3</h3>
 <blockquote>
 <p>Test for a relationship between life expectancy and log base 2 of GDP for the 1982 data. How does life expectancy change with a four-fold increase in GDP?</p>
 </blockquote>
-</div>
-<div id="solution-2" class="section level3">
-<h3>Solution</h3>
 <pre class="r"><code># Read data from comma-separated values file
 gapminder &lt;- read.csv(file = &quot;data/gapminder-FiveYearData.csv&quot;)
 
