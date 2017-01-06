@@ -264,9 +264,9 @@ To run a DFA, we use a function in the `MASS` library, an additional package of 
 library("MASS")
 ```
 
-And we run DFA with a call to `lda` indicating which column contains our _a priori_ groups in via the `formula` parameter. In this case, we pass `formula = species ~ .`, which means `species` contains our grouping variable and the '.' means we want to use all remaining variables in the `otter` data frame as predictors in the analysis:
+And we run DFA with a call to `lda` indicating which column contains our _a priori_ groups in via the `formula` parameter. In this case, we pass `formula = species ~ m1 + m2 + m3 + m4 + m5 + m6`, which means `species` contains our grouping variable and the 'm' variables are the predictors in the analysis:
 ```{r}
-lda.fit <- lda(formula = species ~ ., 
+lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6, 
                data = otter, 
                prior = c(1,1,1,1)/4, 
                CV = TRUE)
