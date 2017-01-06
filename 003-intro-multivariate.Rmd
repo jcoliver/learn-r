@@ -122,7 +122,7 @@ Well, maybe that plot isn't so useful either. It does help a bit if we color the
 species <- unique(otter$species)
 
 # Set up a vector of colors for the *legend*
-legend.cols <- c("black", "green4", "cadetblue", "red3") 
+legend.cols <- c("black", "green4", "cyan3", "red3") 
 
 # Set up a vector of colors for the actual *plot*, based on values in the 
 # 'species' column and the legend colors vector. This vector has one element 
@@ -242,7 +242,7 @@ pca.summary <- summary(pca.fit)
 species <- unique(otter$species)
 
 # Set up a vector of colors for the *legend*
-legend.cols <- c("black", "green4", "cadetblue", "red3") 
+legend.cols <- c("black", "green4", "cyan3", "red3") 
 
 # Set up a vector of colors for the actual *plot*, based on values in the 
 # 'species' column and the legend colors vector. This vector has one element 
@@ -345,7 +345,7 @@ posteriors <- t(lda.fit$posterior)
 
 
 ```{r}
-legend.cols <- c("black", "green4", "cadetblue", "red3") 
+legend.cols <- c("black", "green4", "cyan3", "red3") 
 
 tick.pos <- c(0, 
               nrow(otter) - match(levels(otter$species)[1], rev(otter$species)) + 1, # last occurrence of first species
