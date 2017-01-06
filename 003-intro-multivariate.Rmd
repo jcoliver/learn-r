@@ -122,7 +122,7 @@ Well, maybe that plot isn't so useful either. It does help a bit if we color the
 species <- unique(otter$species)
 
 # Set up a vector of colors for the *legend*
-legend.cols <- c("black", "forestgreen", "cadetblue", "darkred") 
+legend.cols <- c("black", "forestgreen", "cadetblue", "red3") 
 
 # Set up a vector of colors for the actual *plot*, based on values in the 
 # 'species' column and the legend colors vector. This vector has one element 
@@ -181,19 +181,40 @@ pca.summary$rotation[, 1:2]
 In this second principal component, as mentioned before, m1 and m4 don't contribute much to the component [the magnitudes of their respective loadings (.173 and .031) are small compared to the other four skull measurements]. The remaining four loadings indicate a shape difference, with one pair of variables having positive loadings and one pair having negative loadings. This component describes variation in the four variables: samples with high values of m6 and m3 have low values of m2 and m5 and vice versa. You can confirm this looking again at a boxplot for these values, focusing only on those four variables of interest for the two species that are differentiated along PC2, _E. lutris_ and _P. brasiliensis_:
 
 ```{r}
+# Pull out the data for the two species of interest
+two.species <- c("E. lutris", "P. brasiliensis")
+otter.two <- otter[otter$species %in% two.species, ]
+
+# Drop the levels corresponding to the two species we excluded
+otter.two$species <- factor(otter.two$species)
+
+# Prepare colors
+legend.cols <- c("black", "red3")
+pt.cols <- rep(x = legend.cols[1], length = nrow(otter.two))
+pt.cols[otter.two$species == two.species[2]] <- legend.cols[2]
+
+# Plot m6 against m5
+plot(x = otter.two$m5, 
+     y = otter.two$m6, 
+     xlab = "m5",
+     ylab = "m6",
+     pch = 19, 
+     col = pt.cols)
+legend("topright", legend = two.species, pch = 19, col = legend.cols, cex = 0.8)
+
 # Set-up a multi-panel graph (1 row, 4 columns), filling row by row
-par(mfrow = c(1, 4), las = 2) 
+#par(mfrow = c(1, 4), las = 2) 
 
 # Plot each of the four measurements in a different plot
-boxplot(formula = m2 ~ species, data = otter, main = "m2", cex = 0.8)
-boxplot(formula = m3 ~ species, data = otter, main = "m3", cex = 0.8)
-boxplot(formula = m5 ~ species, data = otter, main = "m5", cex = 0.8)
-boxplot(formula = m6 ~ species, data = otter, main = "m6", cex = 0.8)
+#boxplot(formula = m2 ~ species, data = two.species, main = "m2", cex = 0.8)
+#boxplot(formula = m3 ~ species, data = two.species, main = "m3", cex = 0.8)
+#boxplot(formula = m5 ~ species, data = two.species, main = "m5", cex = 0.8)
+#boxplot(formula = m6 ~ species, data = two.species, main = "m6", cex = 0.8)
 
 # Restore graphing defaults
-par(mfrow = c(1, 1), las = 0)
+#par(mfrow = c(1, 1), las = 0)
 ```
-Indeed, where _E. lutris_ has higher values of m2 and m5 than _P. brasiliensis_, the reverse is true for m3 and m6. The second principal component is thus describing variation in _relative_, not absolute, sizes of these four different measurements.
+Indeed, where _E. lutris_ has higher values of m5 than _P. brasiliensis_, the reverse is true for m6. The second principal component is thus describing variation in _relative_, not absolute, sizes of these four different measurements.
 
 ### Final script
 Our script for performing Principal Components Analysis and graphing the first two components should look like this:
@@ -221,7 +242,7 @@ pca.summary <- summary(pca.fit)
 species <- unique(otter$species)
 
 # Set up a vector of colors for the *legend*
-legend.cols <- c("black", "forestgreen", "cadetblue", "darkred") 
+legend.cols <- c("black", "forestgreen", "cadetblue", "red3") 
 
 # Set up a vector of colors for the actual *plot*, based on values in the 
 # 'species' column and the legend colors vector. This vector has one element 
@@ -324,7 +345,7 @@ posteriors <- t(lda.fit$posterior)
 
 
 ```{r}
-legend.cols <- c("black", "forestgreen", "cadetblue", "darkred") 
+legend.cols <- c("black", "forestgreen", "cadetblue", "red3") 
 
 tick.pos <- c(0, 
               nrow(otter) - match(levels(otter$species)[1], rev(otter$species)) + 1, # last occurrence of first species
