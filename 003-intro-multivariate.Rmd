@@ -178,7 +178,7 @@ And the loadings for the first two components are:
 pca.summary$rotation[, 1:2]
 ```
 
-In this second principal component, as mentioned before, m1 and m4 don't contribute much to the component [the magnitudes of their respective loadings (.173 and .031) are small compared to the other four skull measurements]. The remaining four loadings indicate a shape difference, with one pair of variables having positive loadings and one pair having negative loadings. This component describes variation in the four variables: samples with high values of m6 and m3 have low values of m2 and m5 and vice versa. You can confirm this looking again at a boxplot for these values, focusing only on those four variables of interest for the two species that are differentiated along PC2, _E. lutris_ and _P. brasiliensis_:
+In this second principal component, as mentioned before, m1 and m4 don't contribute much to the component [the magnitudes of their respective loadings (.173 and .031) are small compared to the other four skull measurements]. The remaining four loadings indicate a shape difference, with one pair of variables having positive loadings and one pair having negative loadings. This component describes variation in the four variables: species with high values of m6 and m3 have low values of m2 and m5 and vice versa. You can confirm this looking again at a boxplot for these values, focusing only on those four variables of interest for the two species that are differentiated along PC2, _E. lutris_ and _P. brasiliensis_:
 
 ```{r}
 # Pull out the data for the two species of interest
@@ -201,18 +201,6 @@ plot(x = otter.two$m5,
      pch = 19, 
      col = pt.cols)
 legend("topright", legend = two.species, pch = 19, col = legend.cols, cex = 0.8)
-
-# Set-up a multi-panel graph (1 row, 4 columns), filling row by row
-#par(mfrow = c(1, 4), las = 2) 
-
-# Plot each of the four measurements in a different plot
-#boxplot(formula = m2 ~ species, data = two.species, main = "m2", cex = 0.8)
-#boxplot(formula = m3 ~ species, data = two.species, main = "m3", cex = 0.8)
-#boxplot(formula = m5 ~ species, data = two.species, main = "m5", cex = 0.8)
-#boxplot(formula = m6 ~ species, data = two.species, main = "m6", cex = 0.8)
-
-# Restore graphing defaults
-#par(mfrow = c(1, 1), las = 0)
 ```
 Indeed, where _E. lutris_ has higher values of m5 than _P. brasiliensis_, the reverse is true for m6. The second principal component is thus describing variation in _relative_, not absolute, sizes of these four different measurements.
 
