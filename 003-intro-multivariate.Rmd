@@ -67,9 +67,9 @@ Why PCA? Very briefly, Principal Components Analysis is a way of re-describing t
 ### Running PCA
 So, on to the code:
 ```{r}
-pca.fit <- prcomp(x = otter[, -1], scale. = TRUE)
+pca.fit <- prcomp(x = otter[, -c(1:3)], scale. = TRUE)
 ```
-That's PCA. We pass the data to the `x` parameter, skipping the first column `[, -1]` because that has the name of the species the data came from (and is not something we can analyze with the PCA). We also set the `scale.` parameter to `TRUE` because we want to transform the data so each column has a mean of zero and a variance of one.
+That's PCA. We pass the data to the `x` parameter, skipping the first three columns `[, -c(1:3)]` because those columns have the specimen information (species identity and accession information). We also set the `scale.` parameter to `TRUE` because we want to transform the data so each column has a mean of zero and a variance of one.
   
 To look at the results, we use the `summary` command and assign the output to a variable.
 ```{r}
@@ -98,7 +98,7 @@ if (sum(pca.summary$rotation) < 0) {
 ```
 Looking at the signs of the loadings, we see they are all the same (`r direction`), thus this first component, explaining most of the variation in the measurements, is really just reflecting variation in size. That is, since all the loadings have the same sign, large values for one skull measurement generally coincide with large values for other skull measurements for this first component.
   
-The second principal component is a little more interesting. Two of the variables, mandibular ramus width and outlever at carnassial don't contribute much to the component (the magnitudes of their respective loadings (.173 and .031) are small compared to the other four skull measurements). The remaining four indicate a shape difference, with one pair of variables having positive loadings and one pair having negative loadings. This interpretation of the second principal component would benefit greatly from a graphical representation.
+The second principal component is a little more interesting. Two of the variables, m1 and m4 don't contribute much to the component (the magnitudes of their respective loadings (.173 and .031) are small compared to the other four skull measurements). The remaining four indicate a shape difference, with one pair of variables having positive loadings and one pair having negative loadings. This interpretation of the second principal component would benefit greatly from a graphical representation.
 
 ### Plotting PCA results  
 Plotting the results of a PCA can be done using a simple call to the `biplot` function:
@@ -148,12 +148,12 @@ Ah, now this is a little more interesting. Note the first principal component sc
 par(mfrow = c(2, 3), las = 2) 
 
 # Plot each of the six measurements in a different plot
-boxplot(formula = mandibular.ramus.width ~ species, data = otter)
-boxplot(formula = mandibular.ramus.height ~ species, data = otter)
-boxplot(formula = moment.arm.temporalis ~ species, data = otter)
-boxplot(formula = outlever.at.carnassial ~ species, data = otter)
-boxplot(formula = moment.arm.masseter ~ species, data = otter)
-boxplot(formula = jaw.length ~ species, data = otter)
+boxplot(formula = m1 ~ species, data = otter)
+boxplot(formula = m2 ~ species, data = otter)
+boxplot(formula = m3 ~ species, data = otter)
+boxplot(formula = m4 ~ species, data = otter)
+boxplot(formula = m5 ~ species, data = otter)
+boxplot(formula = m6 ~ species, data = otter)
 
 # Restore graphing defaults
 par(mfrow = c(1, 1), las = 0)
@@ -178,22 +178,22 @@ And the loadings for the first two components are:
 pca.summary$rotation[, 1:2]
 ```
 
-In this second principal component, as mentioned before, mandibular ramus width and outlever at carnassial don't contribute much to the component [the magnitudes of their respective loadings (.173 and .031) are small compared to the other four skull measurements]. The remaining four loadings indicate a shape difference, with one pair of variables having positive loadings and one pair having negative loadings. This component describes variation in the four variables: samples with high values of jaw length and moment arm temporalis have low values of mandibular ramus height and moment arm masseter and vice versa. You can confirm this looking again at a boxplot for these values, focusing only on those four variables of interest for the two species that are differentiated along PC2, _E. lutris_ and _P. brasiliensis_:
+In this second principal component, as mentioned before, m1 and m4 don't contribute much to the component [the magnitudes of their respective loadings (.173 and .031) are small compared to the other four skull measurements]. The remaining four loadings indicate a shape difference, with one pair of variables having positive loadings and one pair having negative loadings. This component describes variation in the four variables: samples with high values of m6 and m3 have low values of m2 and m5 and vice versa. You can confirm this looking again at a boxplot for these values, focusing only on those four variables of interest for the two species that are differentiated along PC2, _E. lutris_ and _P. brasiliensis_:
 
 ```{r}
 # Set-up a multi-panel graph (1 row, 4 columns), filling row by row
 par(mfrow = c(1, 4), las = 2) 
 
-# Plot each of the six measurements in a different plot
-boxplot(formula = mandibular.ramus.height ~ species, data = otter, main = "MRH", cex = 0.8)
-boxplot(formula = moment.arm.temporalis ~ species, data = otter, main = "MAT", cex = 0.8)
-boxplot(formula = moment.arm.masseter ~ species, data = otter, main = "MAM", cex = 0.8)
-boxplot(formula = jaw.length ~ species, data = otter, main = "JL", cex = 0.8)
+# Plot each of the four measurements in a different plot
+boxplot(formula = m2 ~ species, data = otter, main = "m2", cex = 0.8)
+boxplot(formula = m3 ~ species, data = otter, main = "m3", cex = 0.8)
+boxplot(formula = m5 ~ species, data = otter, main = "m5", cex = 0.8)
+boxplot(formula = m6 ~ species, data = otter, main = "m6", cex = 0.8)
 
 # Restore graphing defaults
 par(mfrow = c(1, 1), las = 0)
 ```
-Indeed, where _E. lutris_ has higher values of mandibular ramus height ("MRH") and moment arm masseter ("MAM") than _P. brasiliensis_, the reverse is true for moment arm temporalis ("MAT") and jaw length("JL"). The second principal component is thus describing variation in relative sizes of these four different measurements.
+Indeed, where _E. lutris_ has higher values of m2 and m5 than _P. brasiliensis_, the reverse is true for m3 and m6. The second principal component is thus describing variation in _relative_, not absolute, sizes of these four different measurements.
 
 ### Final script
 Our script for performing Principal Components Analysis and graphing the first two components should look like this:
@@ -213,7 +213,7 @@ otter <- na.omit(otter)
 rownames(otter) <- NULL
 
 # Run PCA
-pca.fit <- prcomp(x = otter[, -1], scale. = TRUE)
+pca.fit <- prcomp(x = otter[, -c(1:3)], scale. = TRUE)
 pca.summary <- summary(pca.fit)
 
 # Plotting results
