@@ -48,7 +48,6 @@ dir.create(path = "output")
 
 ![(A) Skull morphology of _Lutra lutra_. (B) Six mandible measurements used in this lesson: m1 = mandible ramus width, m2 = mandible ramus height, m3 = moment arm temporalis, m4 = outlever at carnassal, m5 = moment arm masseter, m6 = jaw length. Adapted from [https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png](https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png)].(images/otter-mandible.svg)
 
-
 ### Reading data into R
 ```{r}
 otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
@@ -205,6 +204,7 @@ plot(x = otter.two$m5,
      col = pt.cols)
 legend("topright", legend = two.species, pch = 19, col = legend.cols, cex = 0.8)
 ```
+
 Indeed, where _E. lutris_ has higher values of m5 than _P. brasiliensis_, the reverse is true for m6. The second principal component is thus describing variation in _relative_, not absolute, sizes of these four different measurements.
 
 ### Final script
@@ -324,10 +324,19 @@ And the corresponding values in our `unambiguous` object are:
 unambiguous[88, ]
 ```
 
-+ demonstrate apply to pull out only rows with all FALSE
-+ Extract the row indices for those ^^
-+ show posterior probabilities for those rows
+Because we are only interested in those samples where assignment was ambiguous, we need to identify those rows where all the values are `FALSE`:
+```{r}
+# New vector indicating whether sample had any assignment greater than minimum.prob
+unambiguous.rows <- apply(X = unambiguous, MARGIN = 1, FUN = "any")
+# The converse (i.e. vector indicating samples with *no* assignment greater than minimum.prob)
+ambiguous.rows <- !unambiguous.rows
+# Use this to retrieve sample information for those rows and probabilities
+```
 
++ show posterior probabilities for those rows
+  + new data frame? museum | accession | spp | A. cin | E. lut | L. can | P. bra
+  
+  
 ### Plotting the results
 ADD BRIEF EXPLANATION
 ```{r}
