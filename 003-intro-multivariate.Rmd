@@ -9,9 +9,13 @@ output:
 
 ## TODO:
 1. Break apart PCA plotting code in stepwise fashion
-2. **Add subheadings** to PCA & DFA sections
-3. In DFA section, add explanation of posterior probabilities (make a table?)
-    + Really want some means of comparing *a priori* classification to DFA
+2. Redo PCA section explaining the second principal component; skip the pairwise
+plot, maybe no plots altogether...
+3. In DFA section
+  + Brief interpretation (part one)
+  + Plot results (first two LDAs)
+  + Revise Brief interpretation (part two)
+  + Simplify graph of posterior probabilities
 4. Make DFA graph simpler
 5. Add references
 
@@ -288,7 +292,40 @@ We also indicate that assignment to each species is equally likely (25%) by sett
   
 Finally, by setting `CV = TRUE`, R will perform cross-validation on the model and provide posterior probabilities of group membership in the `posterior` object returned by `lda`. 
 
-### A brief interpretion of DFA results
+### A brief interpretion of DFA results (part one)
++ performance
+```{r}
+table(otter$species, lda.fit$class, dnn = c("a priori", "assignment"))
+```
+
+### Plotting DFA results
++ plot
+```{r}
+lda.for.plot <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6,
+                    data = otter,
+                    prior = c(1,1,1,1)/4,
+                    CV = FALSE)
+
+# Get values based on lda model
+plda <- predict(object = lda.for.plot,
+                newdata = otter)
+
+legend.cols <- c("black", "green4", "cyan3", "red3") 
+pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
+pt.cols[otter$species == levels(otter$species)[2]] <- legend.cols[2]
+pt.cols[otter$species == levels(otter$species)[3]] <- legend.cols[3]
+pt.cols[otter$species == levels(otter$species)[4]] <- legend.cols[4]
+
+plot(x = plda$x[, 1], 
+     y = plda$x[, 2], 
+     xlab = "LDA1", 
+     ylab = "LDA2",
+     pch = 19,
+     col = pt.cols)
+legend("topright", legend = levels(otter$species), cex = 0.8, col = legend.cols, pch = 19)
+```
+
+### A brief interpretion of DFA results (part two)
 Look at the first few rows of the posterior probabilities:
 ```{r}
 head(lda.fit$posterior)
@@ -332,13 +369,17 @@ unambiguous.rows <- apply(X = unambiguous, MARGIN = 1, FUN = "any")
 # The converse (i.e. vector indicating samples with *no* assignment greater than minimum.prob)
 ambiguous.rows <- !unambiguous.rows
 # Use this to retrieve sample information for those rows and probabilities
+ambiguous.results <- otter[ambiguous.rows, c(1:3)]
+ambiguous.results <- cbind(ambiguous.results, lda.fit$posterior[ambiguous.rows, ])
 ```
 
-+ show posterior probabilities for those rows
-  + new data frame? museum | accession | spp | A. cin | E. lut | L. can | P. bra
-  
-  
-### Plotting the results
+This new data frame, `ambiguous.results` contains the posterior probabilities for all those samples with no assignment probabilities higher than the `minimum.prob` threshold. It also has the metadata associated with those samples, which we extracted from the original `otter` data frame. Looking at this data frame, we see there were `r nrow(ambiguous.results)` samples could not be unambiguously assigned to a group (assuming a posterior probability threshold of `r minimum.prob`):
+
+```{r}
+ambiguous.results
+```
+
+### Plotting DFA assignment probabilities
 ADD BRIEF EXPLANATION
 ```{r}
 posteriors <- t(lda.fit$posterior)
