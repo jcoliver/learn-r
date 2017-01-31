@@ -33,7 +33,7 @@ An introduction to using the R statistics package and the RStudio interface for 
 1. Prepare data in spreadsheet program (e.g. Excel, LibreOffice Calc) for export to R
 2. Read data from files into R
 3. Run Principal Components Analysis (PCA) and graphically display results
-4. Run K-means clustering analysis
+4. Perform Discriminant Function Analysis (DFA) and interpret the results
 
 ## Setup
 ### Workspace organization
