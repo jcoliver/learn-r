@@ -44,7 +44,7 @@ dir.create(path = "output")
 ```
 
 ### Preparing data in a format R can read
-+ Download data file from [https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx](https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx) or [http://tinyurl.otter-data](http://tinyurl.otter-data) (the latter just re-directs to the former). These data are a subset of those used in a study on skull morphology and diet specialization in otters [doi: 10.1371/journal.pone.0143236](http://dx.doi.org/10.1371/journal.pone.0143236).
++ Download data file from [https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx](https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx) or [http://tinyurl.com/otter-data](http://tinyurl.com/otter-data) (the latter just re-directs to the former). These data are a subset of those used in a study on skull morphology and diet specialization in otters [doi: 10.1371/journal.pone.0143236](http://dx.doi.org/10.1371/journal.pone.0143236).
 + Open this file, otter-mandible-data.xlsx, in spreadsheet program like Microsoft Excel<sup>&reg;</sup> or LibreOffice Calc.
 + Save a copy of the file as a CSV (comma-separated values) file named 'otter-mandible-data.csv' in the data folder you created above:
     + In MS Excel<sup>&reg;</sup>, select File > Save As... and in the dialog that appears, select CSV from the type dropdown menu.
