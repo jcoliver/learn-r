@@ -8,7 +8,7 @@ output:
 ---
 
 ## TODO:
-1. Break apart PCA plotting code in stepwise fashion
+1. Fix figure - label for measurement m2
 2. In DFA section
   + Brief interpretation (part one) - explain `table`
   + Simplify graph of posterior probabilities
@@ -118,32 +118,41 @@ plot(x = pca.fit$x[, 1],
      ylab = "PC 2")
 ```
 
-Well, maybe that plot isn't so useful either. It does help a bit if we color the points by species, though.
+Well, maybe that plot isn't so useful either. It does help a bit if we color the points by species, though. We start by creating a small vector which only contains the species names; we'll use this for the legend and for assigning colors:
 ```{r}
 # Pull out the unique values in the 'species' column
-species <- unique(otter$species)
-
-# Set up a vector of colors for the *legend*
+species.names <- unique(otter$species)
+species.names # a quick look at the values in the vector
+```
+  
+We want a vector of colors, too, one for each species. Since there are four species, we have four colors:
+```{r}
 legend.cols <- c("black", "green4", "cyan3", "red3") 
+```
 
-# Set up a vector of colors for the actual *plot*, based on values in the 
-# 'species' column and the legend colors vector. This vector has one element 
-# corresponding to each row of the otter data frame. 
+The legend.cols vector will be used for the legend, but we still need a color vector for each _sample_. We can use the indexing of the `species.names` and `legend.cols` to create a vector which has a value for each of the points we want to plot. Here we first assign all values the same color (the first color in the `legend.cols` vector). Then we compare values in the `otter$species` column to the second, third, and fourth possible values in the `species.names` vector.
+```{r}
 pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
-pt.cols[otter$species == species[2]] <- legend.cols[2]
-pt.cols[otter$species == species[3]] <- legend.cols[3]
-pt.cols[otter$species == species[4]] <- legend.cols[4]
+pt.cols[otter$species == species.names[2]] <- legend.cols[2]
+pt.cols[otter$species == species.names[3]] <- legend.cols[3]
+pt.cols[otter$species == species.names[4]] <- legend.cols[4]
+```
+
+> Question: Why did we not do the assignment / comparison for the first element in `species.names` and `legend.cols`?
+
+And finally, we draw the plot, adding point colors through the `col` parameter and adding the legend after the plot is drawn.
+```{r}
 plot(x = pca.fit$x[, 1],
      y = pca.fit$x[, 2],
      xlab = "PC 1",
      ylab = "PC 2",
      pch = 19,
      col = pt.cols)
-legend("bottomleft", legend = species, pch = 19, col = legend.cols, cex = 0.8)
+legend("bottomleft", legend = species.names, pch = 19, col = legend.cols, cex = 0.8)
 ```
-
+  
 ### A brief interpretion of PCA results (part two)
-Ah, now this is a little more interesting. Note the first principal component scores along the x-axis, and there is actually pretty clear separation among some of species. As mentioned above, this principal component is really an index of size, which we can visualize by looking at the actual skull measurements across the four species. First note the distribution of the four species along the x-axis: _A. cinerea_ has the lowest values, _E. lutris_ and _P. brasiliensis_ have the highest values, and _L. canadensis_ has values in the middle. We can use `boxplot` to show the distributions of each measurement for each species:
+Ah, now this plot is a little more interesting. Note the first principal component scores along the x-axis, and there is actually pretty clear separation among some of species. As mentioned above, this principal component is really an index of size, which we can visualize by looking at the actual skull measurements across the four species. First note the distribution of the four species along the x-axis: _A. cinerea_ has the lowest values, _E. lutris_ and _P. brasiliensis_ have the highest values, and _L. canadensis_ has values in the middle. We can use `boxplot` to show the distributions of each measurement for each species:
 
 ```{r}
 # Set-up a multi-panel graph (2 rows, 3 columns), filling row by row
@@ -172,7 +181,7 @@ plot(x = pca.fit$x[, 1],
      ylab = "PC 2",
      pch = 19,
      col = pt.cols)
-legend("bottomleft", legend = species, pch = 19, col = legend.cols, cex = 0.8)
+legend("bottomleft", legend = species.names, pch = 19, col = legend.cols, cex = 0.8)
 ```
 
 And the loadings for the first two components are:
@@ -230,7 +239,7 @@ pca.summary <- summary(pca.fit)
 
 # Plotting results
 # Pull out the unique values in the 'species' column for legend
-species <- unique(otter$species)
+species.names <- unique(otter$species)
 
 # Set up a vector of colors for the *legend*
 legend.cols <- c("black", "green4", "cyan3", "red3") 
@@ -239,9 +248,9 @@ legend.cols <- c("black", "green4", "cyan3", "red3")
 # 'species' column and the legend colors vector. This vector has one element 
 # corresponding to each row of the otter data frame. 
 pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
-pt.cols[otter$species == species[2]] <- legend.cols[2]
-pt.cols[otter$species == species[3]] <- legend.cols[3]
-pt.cols[otter$species == species[4]] <- legend.cols[4]
+pt.cols[otter$species == species.names[2]] <- legend.cols[2]
+pt.cols[otter$species == species.names[3]] <- legend.cols[3]
+pt.cols[otter$species == species.names[4]] <- legend.cols[4]
 
 # Plot the first two components
 plot(x = pca.fit$x[, 1],
@@ -250,7 +259,7 @@ plot(x = pca.fit$x[, 1],
      ylab = "PC 2",
      pch = 19,
      col = pt.cols)
-legend("bottomleft", legend = species, pch = 19, col = legend.cols, cex = 0.8)
+legend("bottomleft", legend = species.names, pch = 19, col = legend.cols, cex = 0.8)
 ```
 
 ***
