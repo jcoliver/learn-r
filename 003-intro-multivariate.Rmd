@@ -9,15 +9,10 @@ output:
 
 ## TODO:
 1. Break apart PCA plotting code in stepwise fashion
-2. Redo PCA section explaining the second principal component; skip the pairwise
-plot, maybe no plots altogether...
-3. In DFA section
-  + Brief interpretation (part one)
-  + Plot results (first two LDAs)
-  + Revise Brief interpretation (part two)
+2. In DFA section
+  + Brief interpretation (part one) - explain `table`
   + Simplify graph of posterior probabilities
-4. Make DFA graph simpler
-5. Add references
+3. Add references
 
 ##See: 
 ###PCA:
@@ -293,29 +288,32 @@ We also indicate that assignment to each species is equally likely (25%) by sett
 Finally, by setting `CV = TRUE`, R will perform cross-validation on the model and provide posterior probabilities of group membership in the `posterior` object returned by `lda`. 
 
 ### A brief interpretion of DFA results (part one)
-+ performance
+To see how well the DFA does in categorizing each specimen, we use `table`.
 ```{r}
 table(otter$species, lda.fit$class, dnn = c("a priori", "assignment"))
 ```
 
 ### Plotting DFA results
-+ plot
+We can plot DFA results in a similar fashion as we did for PCA results. In this case we plot the scores for the first and second discriminant functions. For these purposes, though, we need to call the `lda` function again, this time passing `CV = FALSE`. This skips the cross-validation step and instead produces an object we can use to calculate individual specimens' scores for each discriminant function.
 ```{r}
+# Run DFA, skipping cross-validation
 lda.for.plot <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6,
                     data = otter,
                     prior = c(1,1,1,1)/4,
                     CV = FALSE)
 
-# Get values based on lda model
+# Get individual values based on lda model and original measurements
 plda <- predict(object = lda.for.plot,
                 newdata = otter)
 
+# Set up colors for each point, based on a priori identifications
 legend.cols <- c("black", "green4", "cyan3", "red3") 
 pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
 pt.cols[otter$species == levels(otter$species)[2]] <- legend.cols[2]
 pt.cols[otter$species == levels(otter$species)[3]] <- legend.cols[3]
 pt.cols[otter$species == levels(otter$species)[4]] <- legend.cols[4]
 
+# Plot scores for first (plda$x[, 1]) and second (plda$x[, 2]) discriminant functions
 plot(x = plda$x[, 1], 
      y = plda$x[, 2], 
      xlab = "LDA1", 
@@ -379,16 +377,61 @@ This new data frame, `ambiguous.results` contains the posterior probabilities fo
 ambiguous.results
 ```
 
-### Plotting DFA assignment probabilities
-ADD BRIEF EXPLANATION
+### Plotting DFA assignment probabilities (ADVANCED)
+One way to visualize how well the analysis performed at distinguishing among the groups is to plot the posterior probabilities for each sample. These can be done with a stacked bar graph (much like the graphs used to visualize [STRUCTURE](http://pritchardlab.stanford.edu/structure.html) results). The first thing we need is a two-dimensional matrix of the posterior probabilities, with each sample corresponding to a _column_. The `lda.fit$posteriors` object has samples in rows, so we can use transpose, `t`, to exchange the rows and columns:
 ```{r}
 posteriors <- t(lda.fit$posterior)
 ```
+  
+And we can plot these posteriors with `barplot`:
+```{r}
+barplot(posteriors,
+        ylab = "Posterior Probability")
+```
 
+Hmmm...that's a lot of gray. Let's start by eliminating space between bars and getting rid of the borders:
+```{r}
+barplot(posteriors,
+        ylab = "Posterior Probability",
+        space = 0,
+        border = NA)
+```
 
+And now we can add some color, making an adjustment to the x-axis (via `xlim`) so the legend shows up _outside_ the plot area:
 ```{r}
 legend.cols <- c("black", "green4", "cyan3", "red3") 
 
+barplot(posteriors,
+        ylab = "Posterior Probability",
+        space = 0,
+        border = NA,
+        xlim = c(0, ncol(posteriors) + 45),
+        col = legend.cols,
+        legend.text = levels(otter$species))
+```
+  
+The legend still overlaps the plot, so we'll need to pass some additional parameters to the legend maker.
+```{r}
+legend.cols <- c("black", "green4", "cyan3", "red3") 
+
+barplot(posteriors,
+        ylab = "Posterior Probability",
+        space = 0,
+        border = NA,
+        xlim = c(0, ncol(posteriors) + 45),
+        col = legend.cols,
+        legend.text = levels(otter$species),
+        args.legend = list(cex = 0.7, x = ncol(posteriors) + 55, y = 0.6, xpd = TRUE))
+```
+  
+The last thing we want is to show the _a priori_ assignments of the samples. This requires some creativity on our part. The code below assumes that the original data being fed into the `lda` function were already sorted by species. Two new vectors, `tick.pos` and `label.pos`, are used to add the _a priori_ identification information to the x-axis. 
+
++ `tick.pos` will draw five vertical tick marks on the x-axis, to serve as delimiters between species. 
++ `label.pos` vector determines where to put the labels on the x-axis.
+
+Because this isn't a standard way of labeling an axis, we tell R to skip labeling the x-axis in the `barplot` call (`xaxt = 'n'`), and instead, label the axis after the plot is drawn, with a pair of calls to the `axis` function. I'll leave it as an exercies for you to determin how `tick.pos` and `label.pos` are calculated (hint: documentation for `match` and `rev` will be helpful). Finally, we will need to add some more vertical space in our plot to prevent the species names on the x-axis from being cut off; we use the `par` function to temporarily change the margins of our plot, adding some space to the bottom margin.
+  
+```{r}
 tick.pos <- c(0, 
               nrow(otter) - match(levels(otter$species)[1], rev(otter$species)) + 1, # last occurrence of first species
               nrow(otter) - match(levels(otter$species)[2], rev(otter$species)) + 1, # last occurrence of second species
@@ -400,8 +443,10 @@ label.pos <- c(floor((tick.pos[2] - tick.pos[1]) / 2),
                floor((tick.pos[4] - tick.pos[3]) / 2 + tick.pos[3]),
                floor((tick.pos[5] - tick.pos[4]) / 2 + tick.pos[4]))
 
+legend.cols <- c("black", "green4", "cyan3", "red3") 
+
 mar.default <- c(5, 4, 4, 2) + 1 # from par documentation
-par(mar = mar.default + c(2, 0, 0, 0)) 
+par(mar = mar.default + c(2, 0, 0, 0)) # add space to bottom margin
 
 barplot(posteriors,
         ylab = "Posterior Probability",
@@ -415,8 +460,72 @@ barplot(posteriors,
 axis(side = 1, at = tick.pos, labels = FALSE) # tick marks
 axis(side = 1, at = label.pos, labels = levels(otter$species), tick = FALSE, par(las = 2, cex = 0.8))
 
+# Restore graphics defaults
 par(mar = mar.default)
 ```
+
+
+### Final script
+The final script for running the DFA and creating the barplot would then be:
+```{r, eval = FALSE}
+# DFA on otter jaw measurements
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-11-18
+
+# Read in data
+otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
+
+# Drop rows with NA
+otter <- na.omit(otter)
+
+# Renumber rows
+rownames(otter) <- NULL
+
+# Load MASS library
+library("MASS")
+
+# Run DFA
+lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6, 
+               data = otter, 
+               prior = c(1,1,1,1)/4, 
+               CV = TRUE)
+
+# Setup vectors for labeling x-axis with a priori assignments
+tick.pos <- c(0, 
+              nrow(otter) - match(levels(otter$species)[1], rev(otter$species)) + 1, # last occurrence of first species
+              nrow(otter) - match(levels(otter$species)[2], rev(otter$species)) + 1, # last occurrence of second species
+              nrow(otter) - match(levels(otter$species)[3], rev(otter$species)) + 1, # last occurrence of third species
+              nrow(otter) - match(levels(otter$species)[4], rev(otter$species)) + 1) # last occurrence of fourth species
+
+label.pos <- c(floor((tick.pos[2] - tick.pos[1]) / 2),
+               floor((tick.pos[3] - tick.pos[2]) / 2 + tick.pos[2]),
+               floor((tick.pos[4] - tick.pos[3]) / 2 + tick.pos[3]),
+               floor((tick.pos[5] - tick.pos[4]) / 2 + tick.pos[4]))
+
+legend.cols <- c("black", "green4", "cyan3", "red3") 
+
+# Store graphics defaults
+mar.default <- c(5, 4, 4, 2) + 1 # from par documentation
+par(mar = mar.default + c(2, 0, 0, 0)) # add space to bottom margin
+
+barplot(posteriors,
+        ylab = "Posterior Probability",
+        space = 0,
+        border = NA,
+        xaxt = 'n',
+        xlim = c(0, ncol(posteriors) + 45),
+        col = legend.cols,
+        legend.text = levels(otter$species),
+        args.legend = list(cex = 0.7, x = ncol(posteriors) + 55, y = 0.6, xpd = TRUE))
+# Add x-axis labels
+axis(side = 1, at = tick.pos, labels = FALSE) # tick marks
+axis(side = 1, at = label.pos, labels = levels(otter$species), tick = FALSE, par(las = 2, cex = 0.8))
+
+# Restore graphics defaults
+par(mar = mar.default)
+```
+
 
 ***
 
