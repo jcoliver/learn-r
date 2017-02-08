@@ -127,14 +127,13 @@ $(document).ready(function () {
 <div id="todo" class="section level2">
 <h2>TODO:</h2>
 <ol style="list-style-type: decimal">
-<li>Fix figure - label for measurement m2</li>
 <li>In DFA section</li>
 </ol>
 <ul>
 <li>Brief interpretation (part one) - explain <code>table</code></li>
 <li>Simplify graph of posterior probabilities</li>
 </ul>
-<ol start="3" style="list-style-type: decimal">
+<ol start="2" style="list-style-type: decimal">
 <li>Add references</li>
 </ol>
 </div>
@@ -404,6 +403,12 @@ rownames(otter) &lt;- NULL</code></pre>
 ##   E. lutris                0        67             0               0
 ##   L. canadensis            0         0            42               0
 ##   P. brasiliensis          0         0             0              17</code></pre>
+<p>In this case, we passed <code>table</code> two vectors:</p>
+<ul>
+<li>The <em>a priori</em> species identification of each sample, which is stored in <code>otter$species</code></li>
+<li>The <em>a posteriori</em> assignment of each sample from the DFA, stored in <code>lda.fit$class</code></li>
+</ul>
+<p>We also passed a value to the <code>dnn</code> parameter, which is used to label the table (“dnn” stands for <em>dimnames names</em>. Yes, that’s right, <em>dimnames names</em>. Seems repetitive to me, too). The first row of the table shows how the specimens identified as <em>A. cinerea</em> were assigned in the DFA - all were correctly assigned to <em>A. cinerea</em>. What should jump out at you in this table is that <em>all</em> specimens’ DFA assignments match their <em>a priori</em> identifications.</p>
 </div>
 <div id="plotting-dfa-results" class="section level3">
 <h3>Plotting DFA results</h3>
@@ -571,7 +576,7 @@ par(mar = mar.default)</code></pre>
 </div>
 <div id="final-script-1" class="section level3">
 <h3>Final script</h3>
-<p>The final script for running the DFA and creating the barplot would then be:</p>
+<p>The final script for running the DFA and creating the barplot of posterior probabilities would then be:</p>
 <pre class="r"><code># DFA on otter jaw measurements
 # Jeff Oliver
 # jcoliver@email.arizona.edu

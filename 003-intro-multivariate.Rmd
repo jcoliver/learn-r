@@ -8,11 +8,10 @@ output:
 ---
 
 ## TODO:
-1. Fix figure - label for measurement m2
-2. In DFA section
+1. In DFA section
   + Brief interpretation (part one) - explain `table`
   + Simplify graph of posterior probabilities
-3. Add references
+2. Add references
 
 ##See: 
 ###PCA:
@@ -301,6 +300,13 @@ To see how well the DFA does in categorizing each specimen, we use `table`.
 ```{r}
 table(otter$species, lda.fit$class, dnn = c("a priori", "assignment"))
 ```
+In this case, we passed `table` two vectors:
+
++ The _a priori_ species identification of each sample, which is stored in `otter$species`
++ The _a posteriori_ assignment of each sample from the DFA, stored in `lda.fit$class`
+
+We also passed a value to the `dnn` parameter, which is used to label the table ("dnn" stands for _dimnames names_. Yes, that's right, _dimnames names_. Seems repetitive to me, too). The first row of the table shows how the specimens identified as _A. cinerea_ were assigned in the DFA - all were correctly assigned to _A. cinerea_. What should jump out at you in this table is that *all* specimens' DFA assignments match their _a priori_ identifications.
+
 
 ### Plotting DFA results
 We can plot DFA results in a similar fashion as we did for PCA results. In this case we plot the scores for the first and second discriminant functions. For these purposes, though, we need to call the `lda` function again, this time passing `CV = FALSE`. This skips the cross-validation step and instead produces an object we can use to calculate individual specimens' scores for each discriminant function.
@@ -475,7 +481,7 @@ par(mar = mar.default)
 
 
 ### Final script
-The final script for running the DFA and creating the barplot would then be:
+The final script for running the DFA and creating the barplot of posterior probabilities would then be:
 ```{r, eval = FALSE}
 # DFA on otter jaw measurements
 # Jeff Oliver
