@@ -29,10 +29,9 @@ dir.create(path = "output")
 + Save a copy of the file as a CSV (comma-separated values) file named 'otter-mandible-data.csv' in the data folder you created above:
     + In MS Excel<sup>&reg;</sup>, select File > Save As... and in the dialog that appears, select CSV from the type dropdown menu.
     + In LibreOffice Calc, select File > Save As... and in the dialog that appears, select Text CSV (.csv) in the Format dropdown in the lower-right portion of the dialog.
-
+  
 ![(A) Skull morphology of _Lutra lutra_. (B) Six mandible measurements used in this lesson: m1 = mandible ramus width, m2 = mandible ramus height, m3 = moment arm temporalis, m4 = outlever at carnassal, m5 = moment arm masseter, m6 = jaw length. Adapted from [https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png](https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png).](images/otter-mandible.svg)
-
-
+  
 ### Reading data into R for PCA
 ```{r}
 otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
