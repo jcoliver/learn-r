@@ -7,20 +7,6 @@ output:
     css: stylesheets/markdown-styles.css
 ---
 
-## TODO:
-1. In DFA section
-  + Brief interpretation (part one) - explain `table`
-  + Simplify graph of posterior probabilities
-2. Add references
-
-##See: 
-###PCA:
-
-+ http://www.statmethods.net/advstats/factor.html
-+ https://www.r-bloggers.com/computing-and-visualizing-pca-in-r/
-+ [Why PCA? (or "how to explain PCA to your grandmother")](http://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues)
-+ [Principal Components Regression](https://www.r-bloggers.com/performing-principal-components-regression-pcr-in-r/)
-
 An introduction to using the R statistics package and the RStudio interface for multivariate statistics.
 
 #### Learning objectives
@@ -47,7 +33,7 @@ dir.create(path = "output")
 ![(A) Skull morphology of _Lutra lutra_. (B) Six mandible measurements used in this lesson: m1 = mandible ramus width, m2 = mandible ramus height, m3 = moment arm temporalis, m4 = outlever at carnassal, m5 = moment arm masseter, m6 = jaw length. Adapted from [https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png](https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png).](images/otter-mandible.svg)
 
 
-### Reading data into R
+### Reading data into R for PCA
 ```{r}
 otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
 ```
@@ -63,8 +49,8 @@ rownames(otter) <- NULL
 ```
 
 ## Principal Components Analysis
-Why PCA? Very briefly, Principal Components Analysis is a way of re-describing the variation observed in your data. It serves as a means of reducing the dimensionality of data (i.e. reducing the number of predictor variables) and is often used for exploratory analyses. The full rationale and mathematically underpinnings are waaaaaaaay beyond the scope of this lesson, and other resources already do a fairly good job of explaining PCA. If you want a few perspectives for a relatively novice audience, check out this [Why PCA? (or "how to explain PCA to your grandmother")](http://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues) thread at Stack Overflow. If you are more inclined to print media, I highly recommend B.F.J. Manly's _Multivariate Statistical Methods: A primer_ [*TODO: REF*], which provides an excellent introduction to a variety of multivariate statistic topics.
-  
+Why PCA? Very briefly, Principal Components Analysis is a way of re-describing the variation observed in your data. It serves as a means of reducing the dimensionality of data (i.e. reducing the number of predictor variables) and is often used for exploratory analyses. The full rationale and mathematically underpinnings are waaaaaaaay beyond the scope of this lesson, and other resources already do a fairly good job of explaining PCA. If you want a few perspectives for a relatively novice audience, check out this [Why PCA? (or "how to explain PCA to your grandmother")](http://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues) thread at Stack Overflow. If you are more inclined to print media, I highly recommend B.F.J. Manly's _Multivariate Statistical Methods: A primer_ (2004), which provides an excellent introduction to a variety of multivariate statistic topics.
+
 ### Running PCA
 So, on to the code:
 ```{r}
@@ -215,7 +201,7 @@ legend("topright", legend = two.species, pch = 19, col = legend.cols, cex = 0.8)
 
 Indeed, where _E. lutris_ has higher values of m5 than _P. brasiliensis_, the reverse is true for m6. The second principal component is thus describing variation in _relative_, not absolute, sizes of these four different measurements.
 
-### Final script
+### Final script for PCA plot
 Our script for performing Principal Components Analysis and graphing the first two components should look like this:
 ```{r, eval = FALSE}
 # PCA on otter jaw measurements
@@ -266,7 +252,7 @@ legend("bottomleft", legend = species.names, pch = 19, col = legend.cols, cex = 
 ## Discriminant Function Analysis
 Principal Components Analysis is useful to describe variation, especially when groups of samples are not known _a priori_. However, when the groups _are_ known, one can use Discriminant Function Analysis, DFA, to see if the these groups can be differentiated based on a suite of variables. We will use the same otter data to see if we can differentiate among the four species based on the jaw measurements.
 
-### Reading data into R
+### Reading data into R for DFA
 ```{r}
 # Read in data
 otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
@@ -480,7 +466,7 @@ par(mar = mar.default)
 ```
 
 
-### Final script
+### Final script for DFA posteriors
 The final script for running the DFA and creating the barplot of posterior probabilities would then be:
 ```{r, eval = FALSE}
 # DFA on otter jaw measurements
@@ -544,13 +530,24 @@ par(mar = mar.default)
 
 ***
 
-###References
+## Additional resources
 
-See: [Bibliographies in RStudio](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
+### General multivariate analyses:
++ Manly, B.F.J. 2004. _Multivariate Statistical Methods: a primer_. Chapman & Hall, Boca Raton.
+
+### PCA
++ [Quick-R page on PCA](http://www.statmethods.net/advstats/factor.html)
++ [Visualizing PCA results from r-bloggers](https://www.r-bloggers.com/computing-and-visualizing-pca-in-r/)
++ [Principal Components Regression from r-bloggers](https://www.r-bloggers.com/performing-principal-components-regression-pcr-in-r/)
++ [Why PCA? (or "how to explain PCA to your grandmother")](http://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues)
+
+### DFA
++ [Quick-R page on DFA](http://www.statmethods.net/advstats/discriminant.html)
++ [R-bloggers DFA with visualization](https://www.r-bloggers.com/computing-and-visualizing-lda-in-r/)
 
 ***
 
-###Installing R packages
+### Installing R packages
 Note that if a package is not installed on your machine, a call to `library` will throw an error, indicating the package has to be installed first. For example, if we were to load a package called `mustelid` without installing it first:
 ```{r error = TRUE}
 library("mustelid")
@@ -561,5 +558,6 @@ install.packages("mustelid")
 library("mustelid")
 ```
 
-
+<a href="index.html">Back to learn-r main page</a>
+  
 Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
