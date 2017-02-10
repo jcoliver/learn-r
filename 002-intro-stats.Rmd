@@ -416,4 +416,6 @@ the GDP data, so this coefficient indicates the change in life expectancy for ev
 
 ***
 
+<a href="index.html">Back to learn-r main page</a>
+  
 Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.

@@ -494,4 +494,6 @@ abline(lifeExp.lm, lty = 2, lwd = 2)
 ***
 For advanced graphing, the <a href="http://ggplot2.org/">ggplot2</a> package is *extremely* useful.
 
+<a href="index.html">Back to learn-r main page</a>
+  
 Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
