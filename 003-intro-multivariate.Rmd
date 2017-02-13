@@ -173,7 +173,13 @@ And the loadings for the first two components are:
 pca.summary$rotation[, 1:2]
 ```
 
+<<<<<<< HEAD
 In this second principal component, as mentioned before, m1 and m4 don't contribute much to the component [the magnitudes of their respective loadings (.173 and .031) are small compared to the other four skull measurements]. The remaining four loadings indicate a shape difference, with one pair of variables having positive loadings and one pair having negative loadings. This component describes variation in the four variables: species with high values of m6 and m3 have low values of m2 and m5 and vice versa. You can confirm this looking again at a boxplot for these values, focusing only on those four variables of interest for the two species that are differentiated along PC2, _E. lutris_ and _P. brasiliensis_:
+=======
+In this second principal component, as mentioned before, m1 and m4 don't contribute much to the component [the magnitudes of their respective loadings (.173 and .031) are small compared to the other four skull measurements]. The remaining four loadings indicate a shape difference, with one pair of variables having positive loadings and one pair having negative loadings. This component describes variation in the four variables: high values of PC1 correspond to 
+high values of m2 and m5 and low values of m3 and m6, while specimens with low values of PC1 have the opposite (low 
+m2 and m5, high m3 and m6). You can confirm this looking again at a boxplot for these values, focusing only on those four variables of interest for the two species that are differentiated along PC2, _E. lutris_ and _P. brasiliensis_:
+>>>>>>> 402d7bbdd562d15813a02944a7fae85445218d1e
 
 ```{r}
 # Pull out the data for the two species of interest
@@ -198,7 +204,15 @@ plot(x = otter.two$m5,
 legend("topright", legend = two.species, pch = 19, col = legend.cols, cex = 0.8)
 ```
 
+<<<<<<< HEAD
 Indeed, where _E. lutris_ has higher values of m5 than _P. brasiliensis_, the reverse is true for m6. The second principal component is thus describing variation in _relative_, not absolute, sizes of these four different measurements.
+=======
+Considering the scores of PC2, _P. brasilensis_ had low values, while _E. lutris_ had high values. If we consider 
+the loadings for just m5 and m6 (0.567 and -0.440, respectively), the plot above shows what we expect: specimens
+with high values of PC2 (i.e. those of _E. lutris_), should have relatively low values of m5 and high values of
+m6; this contrasts with specimens with low values of PC2 (i.e. those of _P. brasilensis_), which are characterized 
+by high values of m5 and low values of m6. The second principal component is thus describing variation in _relative_, not absolute, sizes of these four different measurements.
+>>>>>>> 402d7bbdd562d15813a02944a7fae85445218d1e
 
 ### Final script for PCA plot
 Our script for performing Principal Components Analysis and graphing the first two components should look like this:
