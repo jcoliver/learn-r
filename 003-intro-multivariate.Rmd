@@ -277,39 +277,18 @@ library("MASS")
 
 And we run DFA with a call to `lda` indicating which column contains our _a priori_ groups in via the `formula` parameter. In this case, we pass `formula = species ~ m1 + m2 + m3 + m4 + m5 + m6`, which means `species` contains our grouping variable and the 'm' variables are the predictors in the analysis:
 ```{r}
-lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6, 
-               data = otter, 
-               prior = c(1,1,1,1)/4, 
-               CV = TRUE)
+# Run DFA, allowing equal probability assignment for each of four groups
+lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6,
+                    data = otter,
+                    prior = c(1,1,1,1)/4)
 ```
 We also indicate that assignment to each species is equally likely (25%) by setting the prior probabilities for group membership through the `prior` parameter. 
   
-Finally, by setting `CV = TRUE`, R will perform cross-validation on the model and provide posterior probabilities of group membership in the `posterior` object returned by `lda`. 
-
-### A brief interpretion of DFA results (part one)
-To see how well the DFA does in categorizing each specimen, we use `table`.
-```{r}
-table(otter$species, lda.fit$class, dnn = c("a priori", "assignment"))
-```
-In this case, we passed `table` two vectors:
-
-+ The _a priori_ species identification of each sample, which is stored in `otter$species`
-+ The _a posteriori_ assignment of each sample from the DFA, stored in `lda.fit$class`
-
-We also passed a value to the `dnn` parameter, which is used to label the table ("dnn" stands for _dimnames names_. Yes, that's right, _dimnames names_. Seems repetitive to me, too). The first row of the table shows how the specimens identified as _A. cinerea_ were assigned in the DFA - all were correctly assigned to _A. cinerea_. What should jump out at you in this table is that *all* specimens' DFA assignments match their _a priori_ identifications.
-
-
 ### Plotting DFA results
-We can plot DFA results in a similar fashion as we did for PCA results. In this case we plot the scores for the first and second discriminant functions. For these purposes, though, we need to call the `lda` function again, this time passing `CV = FALSE`. This skips the cross-validation step and instead produces an object we can use to calculate individual specimens' scores for each discriminant function.
+We can plot DFA results in a similar fashion as we did for PCA results. In this case we plot the scores for the first and second discriminant functions.
 ```{r}
-# Run DFA, skipping cross-validation
-lda.for.plot <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6,
-                    data = otter,
-                    prior = c(1,1,1,1)/4,
-                    CV = FALSE)
-
 # Get individual values based on lda model and original measurements
-plda <- predict(object = lda.for.plot,
+plda <- predict(object = lda.fit,
                 newdata = otter)
 
 # Set up colors for each point, based on a priori identifications
@@ -329,8 +308,29 @@ plot(x = plda$x[, 1],
 legend("topright", legend = levels(otter$species), cex = 0.8, col = legend.cols, pch = 19)
 ```
 
+
+### A brief interpretion of DFA results (part one)
+Let's take a look at how well the DFA did in classifying the specimens. In order to do this, we are going to call `lda` again, this time passing an additional argument to the `CV` parameter. By setting `CV = TRUE`, R will perform cross-validation on the model and provide posterior probabilities of group membership in the `posterior` object returned by `lda`.
+```{r}
+lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6, 
+               data = otter, 
+               prior = c(1,1,1,1)/4, 
+               CV = TRUE)
+```
+
+To see how well the DFA does in categorizing each specimen, we use `table`.
+```{r}
+table(otter$species, lda.fit$class, dnn = c("a priori", "assignment"))
+```
+In this case, we passed `table` two vectors:
+
++ The _a priori_ species identification of each sample, which is stored in `otter$species`
++ The _a posteriori_ assignment of each sample from the DFA, stored in `lda.fit$class`
+
+We also passed a value to the `dnn` parameter, which is used to label the table ("dnn" stands for _dimnames names_. Yes, that's right, _dimnames names_. Seems repetitive to me, too). The first row of the table shows how the specimens identified as _A. cinerea_ were assigned in the DFA - all were correctly assigned to _A. cinerea_. What should jump out at you in this table is that *all* specimens' DFA assignments match their _a priori_ identifications.
+
 ### A brief interpretion of DFA results (part two)
-Look at the first few rows of the posterior probabilities:
+But let's take a *closer* look at the results. The first six rows show the assignment probabilities for six specimens:
 ```{r}
 head(lda.fit$posterior)
 ```
@@ -343,11 +343,13 @@ round(lda.fit$posterior[88, ], 3)
 
 How can we identify those with ambiguous assignments? We could go row-by-row to see which rows have assignment ambiguity, but R wasn't developed so we could do things by hand. So first we define our cutoff for the posterior probability. In this case, we'll say any sample with a posterior probability less than 0.95 has an ambiguous assignment.
 ```{r}
+# Set our cutoff value for what we call unambiguous
 minimum.prob <- 0.95
 ```
 
 We can then create a matrix of assignments based on this cutoff by comparing the values in `lda.fit$posterior` to our cutoff value, `minimum.prob`:
 ```{r}
+# A new matrix of logicals, with TRUE for all cells with posterior prob > minimum.prob
 unambiguous <- lda.fit$posterior > minimum.prob
 ```
 
@@ -370,8 +372,10 @@ Because we are only interested in those samples where assignment was ambiguous, 
 ```{r}
 # New vector indicating whether sample had any assignment greater than minimum.prob
 unambiguous.rows <- apply(X = unambiguous, MARGIN = 1, FUN = "any")
+
 # The converse (i.e. vector indicating samples with *no* assignment greater than minimum.prob)
 ambiguous.rows <- !unambiguous.rows
+
 # Use this to retrieve sample information for those rows and probabilities
 ambiguous.results <- otter[ambiguous.rows, c(1:3)]
 ambiguous.results <- cbind(ambiguous.results, lda.fit$posterior[ambiguous.rows, ])
@@ -380,6 +384,7 @@ ambiguous.results <- cbind(ambiguous.results, lda.fit$posterior[ambiguous.rows, 
 This new data frame, `ambiguous.results` contains the posterior probabilities for all those samples with no assignment probabilities higher than the `minimum.prob` threshold. It also has the metadata associated with those samples, which we extracted from the original `otter` data frame. Looking at this data frame, we see there were `r nrow(ambiguous.results)` samples could not be unambiguously assigned to a group (assuming a posterior probability threshold of `r minimum.prob`):
 
 ```{r}
+# Show only those samples which didn't have high assignment probability to any group
 ambiguous.results
 ```
 
@@ -451,6 +456,7 @@ label.pos <- c(floor((tick.pos[2] - tick.pos[1]) / 2),
 
 legend.cols <- c("black", "green4", "cyan3", "red3") 
 
+# Store graphics defaults
 mar.default <- c(5, 4, 4, 2) + 1 # from par documentation
 par(mar = mar.default + c(2, 0, 0, 0)) # add space to bottom margin
 
