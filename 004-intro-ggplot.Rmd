@@ -10,9 +10,9 @@ output:
 An introduction to using the R statistics package and the RStudio interface for multivariate statistics.
 
 #### Learning objectives
-1.
-2.
-3.
+1. Install and use third-party packages for R
+2. Use layering to add elements to a plot
+3. Format plots with faceting
 
 ## Setup
 ### Workspace organization
@@ -21,6 +21,22 @@ First we need to setup our development environment. We need to create two folder
 dir.create(path = "data")
 dir.create(path = "output")
 ```
+
+From this point on, we want to keep track of what we have done, so we will restrict our use of the console and instead use script files. Start a new script with some brief header information at the very top. We want, at the very least, to include:
+1. A short description of what the script does (no more than one line of text)
+2. Your name
+3. A means of contacting you (e.g. your e-mail address)
+4. The date, preferably in ISO format YYYY-MM-DD
+```{r}
+# Plot diamond data
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-02-23
+```
+
+### Installing additional packages
+
+## Plot!
 
 ***
 
