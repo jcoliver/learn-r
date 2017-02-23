@@ -1,0 +1,44 @@
+---
+title: "Introduction to data visualization with ggplot"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    css: stylesheets/markdown-styles.css
+---
+
+An introduction to using the R statistics package and the RStudio interface for multivariate statistics.
+
+#### Learning objectives
+1.
+2.
+3.
+
+## Setup
+### Workspace organization
+First we need to setup our development environment. We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses.
+```{r, eval = FALSE}
+dir.create(path = "data")
+dir.create(path = "output")
+```
+
+***
+
+## Additional resources
+
+***
+
+### Installing R packages
+Note that if a package is not installed on your machine, a call to `library` will throw an error, indicating the package has to be installed first. For example, if we were to load a package called `mustelid` without installing it first:
+```{r error = TRUE}
+library("mustelid")
+```
+So how do I install packages? you ask. With `install.packages`:
+```{r eval = FALSE}
+install.packages("mustelid")
+library("mustelid")
+```
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
