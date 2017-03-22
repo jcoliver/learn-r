@@ -28,32 +28,61 @@ From this point on, we want to keep track of what we have done, so we will restr
 3. A means of contacting you (e.g. your e-mail address)
 4. The date, preferably in ISO format YYYY-MM-DD
 ```{r}
-# Plot diamond data
+# Plot gapminder data
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-02-23
 ```
 
 ### Installing additional packages
+There are two steps to using additional packages in R:
+1. Install the package through `install.packages()`
+2. Load the package into active memory with `library()`
+
+For this exercise, we will install the `ggplot2` package:
+
+```{r eval = FALSE}
+install.packages("ggplot2")
+library("ggplot2")
+```
+
+It is important to note that for each computer you work on, the `install.packages` command need only be issued once, while the call to `library` will need to be issued for each session of R. Because of this, it is standard convention in scripts to comment out the `install.packages` command once it has been run on the machine, so our script now looks like:
+
+```{r}
+# Plot gapminder data
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-02-23
+
+#install.packages("ggplot2")
+library("ggplot2")
+```
 
 ## Plot!
+
+***
+
+### Scatterplot
+1. lifeExp vs. gdp
+2. lifeExp vs. log(gdp)
+3. lifeExp vs. log(gdp) color by continent
+4. lifeExp vs. log(gdp) color by continent with custom colors
+5. ggsave
+
+***
+
+### Violin plot
+1. Y: gdp, X: continent
+2. Y: log(gdp), X: continent
+3. Y: log(gdp), X: continent, color with scale_fill_gradient for log(gdp)
+4. Add theme_bw()
+ggsave
 
 ***
 
 ## Additional resources
 
 ***
-
-### Installing R packages
-Note that if a package is not installed on your machine, a call to `library` will throw an error, indicating the package has to be installed first. For example, if we were to load a package called `mustelid` without installing it first:
-```{r error = TRUE}
-library("mustelid")
-```
-So how do I install packages? you ask. With `install.packages`:
-```{r eval = FALSE}
-install.packages("mustelid")
-library("mustelid")
-```
 
 <a href="index.html">Back to learn-r main page</a>
   
