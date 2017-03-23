@@ -68,6 +68,14 @@ library("ggplot2")
 
 ***
 
+```{r}
+#install.packages("ggplot2")
+library("ggplot2")
+
+# Load data
+gapminder <- read.csv(file = "data/gapminder.csv")
+```
+
 ### Scatterplot
 1. lifeExp vs. gdp
 2. lifeExp vs. log(gdp)
@@ -75,7 +83,53 @@ library("ggplot2")
 4. lifeExp vs. log(gdp) color by continent with custom colors
 5. ggsave
 
+One thing of interest is to include additional information in the plot, such as which continent each point comes from. We can color points by another value in our data through the `aes` parameter in the initial call to `ggplot`. So in addition to telling R which data to use for the x and y axes, we indicate which data to use for point colors:
+
 ```{r}
+# Create plot object
+lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point() +
+  scale_x_log10()
+
+# Draw plot
+print(lifeExp.plot)  
+```
+
+At this point, we want to change the colors of the points in two ways: (1) we want to make them slightly transparent because there is considerable overlap in some part of the graph; we do this by setting the `alpha` parameter in the `geom_point` call; (2) we want to use custom colors for each continent; this is done with the `scale_color_manual` function:
+
+```{r}
+# Create plot object
+lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point(alpha = 0.5) +
+  scale_x_log10() +
+  scale_color_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet"))
+
+# Draw plot
+print(lifeExp.plot)  
+```
+
+And if we want to save the plot to a file, we call `ggsave`, passing a filename and the plot object we want to save (the latter is optional, if we don't indicate which plot to save, `ggsave` will save the last plot that was displayed):
+
+```{r, eval = FALSE}
+# Save plot to png file
+ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp.plot)
+```
+
+Also note that `ggsave` will guess the type of file to save from the extension. For example, if we instead wanted to save a TIF instead of a PNG, we change the extension for the `filename` argument:
+
+```{r, eval = FALSE}
+# Save plot to tif file
+ggsave(filename = "output/gdp-lifeExp-plot.tif", plot = lifeExp.plot)
+```
+
+Our final script for this scatterplot is then:
+
+```{r, eval = FALSE}
+# Plot gapminder data
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-02-23
+
 #install.packages("ggplot2")
 library("ggplot2")
 
@@ -88,12 +142,12 @@ lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color =
   scale_x_log10() +
   scale_color_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet"))
 
+# Draw plot
 print(lifeExp.plot)  
-```
-```{r, eval = FALSE}
+
+# Save plot to png file
 ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp.plot)
 ```
-
 
 ***
 
