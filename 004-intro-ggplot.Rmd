@@ -12,7 +12,7 @@ An introduction to using the R statistics package and the RStudio interface for 
 #### Learning objectives
 1. Install and use third-party packages for R
 2. Use layering to add elements to a plot
-3. Format plots with faceting
+3. **Format plots with faceting**???
 
 ## Setup
 ### Workspace organization
@@ -64,24 +64,44 @@ It is important to note that for each computer you work on, the `install.package
 library("ggplot2")
 ```
 
-## Plot!
-
-***
-
-```{r}
-#install.packages("ggplot2")
-library("ggplot2")
-
-# Load data
-gapminder <- read.csv(file = "data/gapminder.csv")
-```
+## Now plot!
 
 ### Scatterplot
-1. lifeExp vs. gdp
-2. lifeExp vs. log(gdp)
-3. lifeExp vs. log(gdp) color by continent
-4. lifeExp vs. log(gdp) color by continent with custom colors
-5. ggsave
+For our first plot, we will create an X-Y scatterplot to investigate a potential relationship between a country's gross domestic product (GDP) and the average life expectancy. We do so by creating a `ggplot` object, then calling `print` on that object:
+
+```{r}
+# Load data
+gapminder <- read.csv(file = "data/gapminder.csv")
+
+# Create plot object
+lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp))
+
+# Draw plot
+print(lifeExp.plot)  
+```
+
+_What happened?_ There are no points!? Here is where functionality of ggplot is evident. The way it works is by effectively drawing layer upon layer of graphics. So we have established the plot, but we need to add one more bit of information to tell ggplot what to put in that plot area. For a scatter plot, we use `geom_point()`, literally adding this to the ggplot object with a plus sign (+):
+
+```{r}
+# Create plot object
+lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point()
+
+# Draw plot
+print(lifeExp.plot)  
+```
+
+It is a little difficult to see how the points are distributed, as most are clustered on the left-hand side of the graph. To spread this distribution out, we can change the scale of the x-axis so GDP is displayed on a log scale by adding `scale_x_log10`:
+
+```{r}
+# Create plot object
+lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() +
+  scale_x_log10()
+
+# Draw plot
+print(lifeExp.plot)  
+```
 
 One thing of interest is to include additional information in the plot, such as which continent each point comes from. We can color points by another value in our data through the `aes` parameter in the initial call to `ggplot`. So in addition to telling R which data to use for the x and y axes, we indicate which data to use for point colors:
 
@@ -106,6 +126,21 @@ lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color =
 
 # Draw plot
 print(lifeExp.plot)  
+```
+
+Finally, we should make those axis labels a little nicer.
+
+```{r}
+# Create plot object
+lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point(alpha = 0.5) +
+  scale_x_log10() +
+  scale_color_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
+  xlab("GDP per capita") +
+  ylab("Life Expectancy")
+
+# Draw plot
+print(lifeExp.plot)
 ```
 
 And if we want to save the plot to a file, we call `ggsave`, passing a filename and the plot object we want to save (the latter is optional, if we don't indicate which plot to save, `ggsave` will save the last plot that was displayed):
@@ -140,7 +175,9 @@ gapminder <- read.csv(file = "data/gapminder.csv")
 lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
   geom_point(alpha = 0.5) +
   scale_x_log10() +
-  scale_color_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet"))
+  scale_color_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
+  xlab("GDP per capita") +
+  ylab("Life Expectancy")
 
 # Draw plot
 print(lifeExp.plot)  
