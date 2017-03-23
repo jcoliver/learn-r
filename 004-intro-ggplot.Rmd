@@ -22,6 +22,12 @@ dir.create(path = "data")
 dir.create(path = "output")
 ```
 
+With this workspace organization, we can download the data, either manually or use R to automatically download it. For this lesson we'll do the latter, saving the file in the `data` directory we just created, and name the file `gapminder.csv`:
+
+```{r, eval = FALSE}
+download.file(url = "http://tinyurl.com/qb83k3z", destfile = "data/gapminder.csv")
+```
+
 From this point on, we want to keep track of what we have done, so we will restrict our use of the console and instead use script files. Start a new script with some brief header information at the very top. We want, at the very least, to include:
 1. A short description of what the script does (no more than one line of text)
 2. Your name
@@ -68,6 +74,26 @@ library("ggplot2")
 3. lifeExp vs. log(gdp) color by continent
 4. lifeExp vs. log(gdp) color by continent with custom colors
 5. ggsave
+
+```{r}
+#install.packages("ggplot2")
+library("ggplot2")
+
+# Load data
+gapminder <- read.csv(file = "data/gapminder.csv")
+
+# Create plot object
+lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point(alpha = 0.5) +
+  scale_x_log10() +
+  scale_color_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet"))
+
+print(lifeExp.plot)  
+```
+```{r, eval = FALSE}
+ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp.plot)
+```
+
 
 ***
 
