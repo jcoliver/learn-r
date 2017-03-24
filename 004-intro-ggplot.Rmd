@@ -12,7 +12,7 @@ An introduction to using the R statistics package and the RStudio interface for 
 #### Learning objectives
 1. Install and use third-party packages for R
 2. Use layering to add elements to a plot
-3. **Format plots with faceting**???
+3. Format plots with faceting
 
 ## Setup
 ### Workspace organization
@@ -193,7 +193,8 @@ ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp.plot)
 2. Y: log(gdp), X: continent
 3. Y: log(gdp), X: continent, color with scale_fill_gradient for log(gdp)
 4. Add theme_bw()
-ggsave
+5. Facet on year
+(6. ggsave?)
 
 ***
 
