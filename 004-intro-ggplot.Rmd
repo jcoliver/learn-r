@@ -196,6 +196,48 @@ ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp.plot)
 5. Facet on year
 (6. ggsave?)
 
+# script.header?
+
+```{r, eval = FALSE}
+# Violin plot of GDP data
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-02-23
+
+rm(list = ls())
+
+#install.packages("ggplot2")
+library("ggplot2")
+```
+
+```{r}
+# Load data
+gapminder <- read.csv(file = "data/gapminder.csv")
+
+gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap, fill = continent)) +
+  geom_violin() +
+  # ^^^ one
+  scale_y_log10() +
+  xlab("Continent") +
+  ylab("GDP per capita") +
+  # ^^^ two
+  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet"))
+  # ^^^ three, but two-step, adding fill = continent to ggplot call as second step
+
+gdp.plot
+
+gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap, fill = continent)) +
+  geom_violin() +
+  # ^^^ one
+  scale_y_log10() +
+  xlab("Continent") +
+  ylab("GDP per capita") +
+  # ^^^ two
+  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet"))
+  # ^^^ three, but two-step, adding fill = continent to ggplot call as second step
+
+```
+
 ***
 
 ## Additional resources
