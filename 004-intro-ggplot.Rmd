@@ -210,33 +210,174 @@ rm(list = ls())
 library("ggplot2")
 ```
 
+Now with this call to `rm`, we have cleared out all our variables from memory, so we have to load the `gapminder` data again. To create a violin plot, we use the same approach as for a boxplot, but instead of `geom_point`, we use `geom_violin`:
+
 ```{r}
 # Load data
 gapminder <- read.csv(file = "data/gapminder.csv")
 
-gapminder <- gapminder[gapminder$continent != "Oceania", ]
-  # ^^^ six, drop oceania after looking at Oceania data (only two points per year)
+# Create violin plot object
+gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap)) +
+  geom_violin()
 
-gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap, fill = continent)) +
-  geom_violin() +
-  # ^^^ one
-  scale_y_log10() +
-  ylab("GDP per capita") +
-  # ^^^ two
-  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
-  # ^^^ three, but two-step, adding fill = continent to ggplot call as second step
-   theme_bw() +
-  # ^^^ four
-  facet_wrap(~ year) + #nrow = 
-  theme(axis.text.x = element_blank())
-  # ^^^ five
-
-gdp.plot
+# Print plot
+print(gdp.plot)
 ```
 
-***
+A good start, but we can see we need to clean some things up. We'll start by changing the Y-axis to a log scale with `scale_y_log10` and adding a nicer looking axis title with `ylab`. Also, we will remove the gray background that comes with the default theme by using `theme_bw`:
 
-## Additional resources
+```{r}
+# Create violin plot object
+gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap)) +
+  geom_violin() +
+  scale_y_log10() +
+  ylab("GDP per capita") +
+  theme_bw()
+
+# Print plot
+print(gdp.plot)
+```
+
+One of the issues we have in the plot is not obvious just by looking at it. If we take a look at the data using `summary`, note the values in the `year` vector:
+
+```{r}
+summary(gapminder)
+```
+
+There are actually multiple years of data (1952 - 2007, at five year increments). So rather than plotting GDP for all years together, we should separate out each year of data. The `ggplot2` package makes this _very_ easy with faceting. To break the data apart into separate graphs for each year, we use `facet_wrap`, passing `year` as the column in the `gapminder` data we want to use for each graph:
+
+```{r}
+# Create violin plot object
+gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap)) +
+  geom_violin() +
+  scale_y_log10() +
+  ylab("GDP per capita") +
+  theme_bw() +
+  facet_wrap(~ year)
+
+# Print plot
+print(gdp.plot)
+```
+
+One of the first things you might notice is that the X-axis is way to crowded now. Instead of using text to indicate each continent, we could instead use a separate color to indicate each continent, like we did in the scatterplot. We'll use `scale_fill_manual` for this purpose, and use the `theme` function to indicate that we do not want any x-axis text or an x-axis title.
+
+```{r}
+# Create violin plot object
+gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap)) +
+  geom_violin() +
+  scale_y_log10() +
+  ylab("GDP per capita") +
+  theme_bw() +
+  facet_wrap(~ year) +
+  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank())
+
+# Print plot
+print(gdp.plot)
+```
+
+Okay, the x-axis is cleaned up, but where are the colors? If we look at our code, note that we said what colors we wanted, but not what they corresponded to. We need to explicitly tell ggplot that we want to fill the shapes by continent; this happens in the very first `ggplot` call, by passing an additional argument, `fill` to the `aes` function:
+
+```{r}
+# Create violin plot object
+gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap, fill = continent)) +
+  geom_violin() +
+  scale_y_log10() +
+  ylab("GDP per capita") +
+  theme_bw() +
+  facet_wrap(~ year) +
+  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank())
+
+# Print plot
+print(gdp.plot)
+```
+
+Colors! But now you notice another problem with the plot - where's Oceania? We lost Australia and New Zealand! The problem is that there are now too few data points in the Oceania group in each map to create a violin plot (you need at least three points, and with only those two countries, there are only two points of data for each year). So for this plot, we are going to go ahead and explicitly omit the Oceania data from the plot. We do this by subsetting the `gapminder` data:
+
+```{r}
+# Load data
+gapminder <- read.csv(file = "data/gapminder.csv")
+
+# Subset data, omitting Oceania
+gapminder.no.oceania <- gapminder[gapminder$continent != "Oceania", ]
+
+# Create violin plot object
+gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap, fill = continent)) +
+  geom_violin() +
+  scale_y_log10() +
+  ylab("GDP per capita") +
+  theme_bw() +
+  facet_wrap(~ year) +
+  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank())
+
+# Print plot
+print(gdp.plot)
+```
+
+And yet there is still that empty space on the right-hand side of the graphs. Why? It's because we created a new data frame, called `gapminder.no.oceania`, but we did not refer to it in our `ggplot` call. Rather we were still referring to the original `gapminder` data, which still contains the Oceania data. So we need to update the `data` we pass to `ggplot`. We can also take out "violet" as the final color option, since we don't need it for Oceania in this plot:
+
+```{r}
+# Load data
+gapminder <- read.csv(file = "data/gapminder.csv")
+
+# Subset data, omitting Oceania
+gapminder.no.oceania <- gapminder[gapminder$continent != "Oceania", ]
+
+# Create violin plot object
+gdp.plot <- ggplot(data = gapminder.no.oceania, aes(x = continent, y = gdpPercap, fill = continent)) +
+  geom_violin() +
+  scale_y_log10() +
+  ylab("GDP per capita") +
+  theme_bw() +
+  facet_wrap(~ year) +
+  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue")) +
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank())
+
+# Print plot
+print(gdp.plot)
+```
+
+Success!
+
+Our final script for this violin plot is then:
+
+```{r eval = FALSE}
+# Violin plot of GDP data
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-02-23
+
+rm(list = ls())
+
+#install.packages("ggplot2")
+library("ggplot2")
+
+# Load data
+gapminder <- read.csv(file = "data/gapminder.csv")
+
+# Omit Oceania data
+gapminder.no.oceania <- gapminder[gapminder$continent != "Oceania", ]
+
+# Create violin plot object
+gdp.plot <- ggplot(data = gapminder.no.oceania, aes(x = continent, y = gdpPercap, fill = continent)) +
+  geom_violin() +
+  scale_y_log10() +
+  ylab("GDP per capita") +
+  theme_bw() +
+  facet_wrap(~ year) + 
+  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue")) +
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank())
+
+# Print plot
+print(gdp.plot)
+```
 
 ***
 
