@@ -261,17 +261,6 @@ ggsave(filename = &quot;output/gdp-lifeExp-plot.png&quot;, plot = lifeExp.plot)<
 </div>
 <div id="violin-plot" class="section level3">
 <h3>Violin plot</h3>
-<ol style="list-style-type: decimal">
-<li>Y: gdp, X: continent</li>
-<li>Y: log(gdp), X: continent</li>
-<li>Y: log(gdp), X: continent, color by continent</li>
-<li>Add theme_bw()</li>
-<li>Facet on year (6. ggsave?)</li>
-</ol>
-</div>
-</div>
-<div id="script.header" class="section level1">
-<h1>script.header?</h1>
 <pre class="r"><code># Violin plot of GDP data
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -436,6 +425,15 @@ gdp.plot &lt;- ggplot(data = gapminder.no.oceania, aes(x = continent, y = gdpPer
 
 # Print plot
 print(gdp.plot)</code></pre>
+<hr />
+</div>
+</div>
+<div id="additional-resources" class="section level2">
+<h2>Additional resources</h2>
+<ul>
+<li>Official <a href="http://docs.ggplot2.org/current/">ggplot documentation</a></li>
+<li>A handy <a href="https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf">cheatsheet for ggplot</a></li>
+</ul>
 <hr />
 <p><a href="index.html">Back to learn-r main page</a></p>
 <p>Questions? e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.</p>

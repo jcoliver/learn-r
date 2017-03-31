@@ -189,14 +189,6 @@ ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp.plot)
 ***
 
 ### Violin plot
-1. Y: gdp, X: continent
-2. Y: log(gdp), X: continent
-3. Y: log(gdp), X: continent, color by continent
-4. Add theme_bw()
-5. Facet on year
-(6. ggsave?)
-
-# script.header?
 
 ```{r, eval = FALSE}
 # Violin plot of GDP data
@@ -378,6 +370,13 @@ gdp.plot <- ggplot(data = gapminder.no.oceania, aes(x = continent, y = gdpPercap
 # Print plot
 print(gdp.plot)
 ```
+
+***
+
+## Additional resources
+
++ Official [ggplot documentation](http://docs.ggplot2.org/current/)
++ A handy [cheatsheet for ggplot](https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf)
 
 ***
 
