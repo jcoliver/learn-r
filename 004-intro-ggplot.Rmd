@@ -191,7 +191,7 @@ ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp.plot)
 ### Violin plot
 1. Y: gdp, X: continent
 2. Y: log(gdp), X: continent
-3. Y: log(gdp), X: continent, color with scale_fill_gradient for log(gdp)
+3. Y: log(gdp), X: continent, color by continent
 4. Add theme_bw()
 5. Facet on year
 (6. ggsave?)
@@ -214,28 +214,24 @@ library("ggplot2")
 # Load data
 gapminder <- read.csv(file = "data/gapminder.csv")
 
+gapminder <- gapminder[gapminder$continent != "Oceania", ]
+  # ^^^ six, drop oceania after looking at Oceania data (only two points per year)
+
 gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap, fill = continent)) +
   geom_violin() +
   # ^^^ one
   scale_y_log10() +
-  xlab("Continent") +
   ylab("GDP per capita") +
   # ^^^ two
-  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet"))
+  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
   # ^^^ three, but two-step, adding fill = continent to ggplot call as second step
+   theme_bw() +
+  # ^^^ four
+  facet_wrap(~ year) + #nrow = 
+  theme(axis.text.x = element_blank())
+  # ^^^ five
 
 gdp.plot
-
-gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap, fill = continent)) +
-  geom_violin() +
-  # ^^^ one
-  scale_y_log10() +
-  xlab("Continent") +
-  ylab("GDP per capita") +
-  # ^^^ two
-  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet"))
-  # ^^^ three, but two-step, adding fill = continent to ggplot call as second step
-
 ```
 
 ***
