@@ -2,7 +2,7 @@
 title: "Dynamic reports with knitr"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: pdf_document
+output: html_document
 ---
 
 An introduction to using the `knitr` package in R to produce reproducible, dynamic reports.
@@ -145,7 +145,8 @@ In this report we test for a relationship between different parts of morphology 
 Next we can add information about the data we will be using; in this case it is the built-in `iris` dataset. Add this to your R Markdown file:
 ```
 ## Materials & methods
-Analyses are based on built-in data for three _Iris_ species. We used linear regression to test for relationships.
+Analyses are based on built-in data for three _Iris_ species. We used linear regression to 
+test for relationships.
 ```
 
 > ## Materials & methods
@@ -216,11 +217,14 @@ Let's add one more thing to this report. Since these data were the same ones tha
 
 Change:
 ```
-Analyses are based on built-in data for three _Iris_ species. We used linear regression to test for relationships.
+Analyses are based on built-in data for three _Iris_ species. We used linear regression to 
+test for relationships.
 ```
 To:
 ```
-Analyses are based on data for three _Iris_ species from the work of [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to test for relationships.
+Analyses are based on data for three _Iris_ species from the work of 
+[R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to 
+test for relationships.
 ```
 
 > ## Materials & methods
