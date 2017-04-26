@@ -2,9 +2,7 @@
 title: "Dynamic reports with knitr"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: 
-  html_document:
-    css: stylesheets/markdown-styles.css
+output: pdf_document
 ---
 
 An introduction to using the `knitr` package in R to produce reproducible, dynamic reports.
@@ -122,6 +120,7 @@ Superscript: r^2^
 And the last thing to mention about formatting is that if you want to include equations, you can use LaTex syntax, surrounded by dollar signs (\$). Use single dollar signs for in-line equations, `$E = mc^2$` is rendered as $E = mc^2$. Equations in double dollar signs are displayed on their own line, so `$$E = mc^2$$` shows up as $$E = mc^2$$
 
 ***
+***
 
 ## What about code?
 The best part of knitr is the ability to include code and the output of that code. Let's start by making a new R Markdown file via `File > New File > R Markdown...` and give it the title "Iris shape analyses".
@@ -139,16 +138,18 @@ Start with a brief description of what this report is about:
 ## Introduction
 In this report we test for a relationship between different parts of morphology in _Iris_ flowers.
 ```
-## Introduction
-In this report we test for a relationship between different parts of morphology in _Iris_ flowers.
+
+> ## Introduction
+> In this report we test for a relationship between different parts of morphology in _Iris_ flowers.  
 
 Next we can add information about the data we will be using; in this case it is the built-in `iris` dataset. Add this to your R Markdown file:
 ```
 ## Materials & methods
 Analyses are based on built-in data for three _Iris_ species. We used linear regression to test for relationships.
 ```
-## Materials & methods
-Analyses are based on built-in data for three _Iris_ species. We used linear regression to test for relationships.
+
+> ## Materials & methods
+> Analyses are based on built-in data for three _Iris_ species. We used linear regression to test for relationships.  
 
 Now let's actually do some R. We start by plotting the relationship between petal width and petal length. To write an R code block, we use triple-backticks (`) and braces to indicate the language (R in our case, but other languages such as python and bash can also be supported). Here we add code to indicate the start of the Results section, as well as a plot of the two variables:
 
@@ -163,13 +164,15 @@ plot(x = iris$Petal.Length,
 &#96;&#96;&#96;
 </pre>
 
-## Results
+***
+> ## Results
 ```{r}
 plot(x = iris$Petal.Length, 
      y = iris$Petal.Width,
      xlab = "Petal length (cm)",
      ylab = "Petal width (cm)")
 ```
+***
 
 We can also do analyses, and reference the output with in-line code. For this example, let's find the correlation coefficient (r^2^) for the relationship between petal width and petal length. We can then reference this in the text of our report.
 
@@ -180,21 +183,113 @@ iris.model <- lm(Petal.Width ~ Petal.Length, data = iris)
 iris.model.summary <- summary(iris.model)
 corr.coef <- iris.model.summary$r.squared
 ```
+
+<pre>
+&#96;&#96;&#96;{r echo = FALSE}
+iris.model <- lm(Petal.Width ~ Petal.Length, data = iris)
+iris.model.summary <- summary(iris.model)
+corr.coef <- iris.model.summary$r.squared
+&#96;&#96;&#96;
+</pre>
 Note for this purpose, we added the qualifier `echo = FALSE` which tells knitr _not_ to include the actual code in the output. Even though the code runs, and because this code produces no output, we won't really see any changes to our document. Save and Knit the document to see this for yourself.
 
-However, we can reference products of that code through in-line code chunks. In this case, we want to reference the value stored in our `corr.coef` variable in our document text. We use in-line code to do so. In-line code is wrapped in single backticks (`) and we skip the braces, as opposed to triple backticks and braces we used for separate code blocks. So we add this to our Results section:
+You can also control code chunks in a number of other ways:  
++ `eval = FALSE` to show code but not to execute it
++ `results = "hide"` to suppress any results from being included in output
++ `warning = FALSE` and `message = FALSE` to suppress warnings and messages, respectively, from being shown
+
+Even if we set `echo = FALSE`, the code is still executed and we can reference products of that code through in-line code chunks. In this case, we want to reference the value stored in our `corr.coef` variable in our document text. We use in-line code to do so. In-line code is wrapped in single backticks (`) and we skip the braces, as opposed to triple backticks and braces we used for separate code blocks. So we add this to our Results section:
 
 ```
 Petal width and petal length were highly correlated (r^2^ = `r '\x60r corr.coef\x60'`).
 ```
-Petal width and petal length were highly correlated (r^2^ = `r corr.coef`).
+> Petal width and petal length were highly correlated (r^2^ = `r corr.coef`).  
 
 Hmmm...maybe we don't need r^2^ to seven digits, so update the code to only include two digits (using R's `round` function):
 
 ```
 Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(corr.coef, 2)\x60'`).
 ```
+> Petal width and petal length were highly correlated (r^2^ = `r round(corr.coef, 2)`).  
+
+Let's add one more thing to this report. Since these data were the same ones that R.A. Fisher used when developing statistical theory, let's provide a link to the Wikipedia page on R.A. Fisher. So go back to the Materials & Methods section and update it with a link:
+
+Change:
+```
+Analyses are based on built-in data for three _Iris_ species. We used linear regression to test for relationships.
+```
+To:
+```
+Analyses are based on data for three _Iris_ species from the work of [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to test for relationships.
+```
+
+> ## Materials & methods
+> Analyses are based on data for three _Iris_ species from the work of [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to test for relationships.
+
+Our R Markdown file should look like this:
+
+<pre>
+---
+title: "Iris shape analyses"
+author: "Jeff Oliver"
+date: "April 27, 2017"
+output: html_document
+---
+
+## Introduction
+In this report we test for a relationship between different parts of morphology in _Iris_ flowers.
+
+## Materials & methods
+Analyses are based on data for three _Iris_ species from the work of [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to test for relationships.
+
+## Results
+
+&#96;&#96;&#96;{r}
+plot(x = iris$Petal.Length, 
+     y = iris$Petal.Width,
+     xlab = "Petal length (cm)",
+     ylab = "Petal width (cm)")
+&#96;&#96;&#96;
+
+&#96;&#96;&#96;{r echo = FALSE}
+iris.model <- lm(Petal.Width ~ Petal.Length, data = iris)
+iris.model.summary <- summary(iris.model)
+corr.coef <- iris.model.summary$r.squared
+&#96;&#96;&#96;
+
 Petal width and petal length were highly correlated (r^2^ = `r round(corr.coef, 2)`).
+
+</pre>
+
+Which produces the following, albeit short, report:
+
+> # Iris shape analyses
+> ## _Jeff Oliver_
+> ## _April 27, 2017_
+> 
+> ## Introduction
+> In this report we test for a relationship between different parts of morphology in _Iris_ flowers.  
+> 
+> ## Materials & methods
+> Analyses are based on data for three _Iris_ species from the work of [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to test for relationships.
+> 
+## Results
+>```{r}
+plot(x = iris$Petal.Length, 
+     y = iris$Petal.Width,
+     xlab = "Petal length (cm)",
+     ylab = "Petal width (cm)")
+```
+> 
+> ```{r echo = FALSE}
+iris.model <- lm(Petal.Width ~ Petal.Length, data = iris)
+iris.model.summary <- summary(iris.model)
+corr.coef <- iris.model.summary$r.squared
+```
+> 
+> Petal width and petal length were highly correlated (r^2^ = `r round(corr.coef, 2)`).
+
+There is a lot more one can do with R Markdown. Check out the additional resources listed below for more information.
 
 ***
 
@@ -203,6 +298,7 @@ Petal width and petal length were highly correlated (r^2^ = `r round(corr.coef, 
 + Official [knitr documentation](https://yihui.name/knitr/)
 + Official [R Markdown documentation](http://rmarkdown.rstudio.com/)
 + A handy [cheatsheet for R Markdown syntax](http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
++ Guied to writing [bibliography sections](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html) in R Markdown documents
 
 ***
 
