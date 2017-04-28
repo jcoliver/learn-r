@@ -13,18 +13,45 @@ An introduction to using the `knitr` package in R to produce reproducible, dynam
 3. Write dynamic reports including code and visualizations
 
 ## Literate programming
-Rationale for why we use knitr
+**Rationale for why we use knitr**
 
 ***
 
 ## Getting started
-+ Create markdown file (title: knitr lesson)
-+ Show header information (point out that this is _not_ (?) markdown format?)
-+ Show quick overview (code blocks vs. text blocks)
+To create these reports, we will make heavy use of the `knitr` package for R. So if you have not already installed it, run this command in your R console:
 
-## Formatting basics
-+ Delete it all
-+ Update with info:
+```{r eval = FALSE}
+install.packages("knitr")
+```
+
+To make these reports, which are ultimately output in HTML, PDF, or Word format, we use a text format called R Markdown. The concept is to use pure text to indicate formatting like **bold**, _italics_, and ^superscripts^, and to combine this formatting with code that can be executed and output displayed. More on how we do that later. For now, let's start by creating a new R Markdown file via File > New File > R Markdown... You should then be prompted with a window like:
+
+![](images/r-markdown-dialog.png)
+
+<br />
+For the title, enter "knitr lesson" and add your name to the author field. Leave the default output format as HTML.
+
+At the top of the file is the header section, which includes basic information about your document. The only field that is absolutely required is the `output` field, but it is best to include the title, author, and date information, too. Note that immediately below this header is a chunk of code:
+
+<pre>
+&#96;&#96;&#96;{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+&#96;&#96;&#96;
+</pre>
+
+Followed by text:
+
+```
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```
+
+We will start with formatting in R Markdown syntax, followed by how to include R code in your document.
+
+## R Markdown
+
+To try out these formatting examples, start by deleting everything after the header section, so your document only includes:
 
 ```
 ---
@@ -33,7 +60,11 @@ author: "Jeff Oliver"
 date: "April 27, 2017"
 output: html_document
 ---
+```
 
+Below the header, add this text to your file:
+
+```
 # Introduction to knitr
 
 This is my first knitr document.
@@ -54,26 +85,25 @@ Numbered lists
 
 And the output file is created when we press the **Knit** button in the top-left part of the screen (or by pressing Shift-Ctrl-K):
 
-# Knitr lesson
-#### _Jeff Oliver_
-#### _April 27, 2017_
-
-# Introduction to knitr
-
-This is my first knitr document.
-
-Bulleted lists
-
-+ Regular font
-+ **bold font**
-+ _italic font_
-
-Numbered lists
-
-1. one
-2. two
-2. three
-
+> # Knitr lesson
+> #### _Jeff Oliver_
+> #### _April 27, 2017_
+> 
+> # Introduction to knitr
+> 
+> This is my first knitr document.
+> 
+> Bulleted lists
+> 
+> + Regular font
+> + **bold font**
+> + _italic font_
+> 
+> Numbered lists
+> 
+> 1. one
+> 2. two
+> 2. three
 
 Notice the large font of "Introduction to knitr". Because we used a single pound sign (#) at the start of the line, this text is formated as a level 1 header. To format lower headers, we add pound signs:
 
@@ -85,7 +115,7 @@ Notice the large font of "Introduction to knitr". Because we used a single pound
 ```
 Which are rendered as:
 
-# header 1
+> # header 1
 ## header 2
 ### header 3
 #### header 4
@@ -99,25 +129,41 @@ Here I use an image from [Wikimedia](https://commons.wikimedia.org) and include 
 ![The white rhinoceros, (_Ceratotherium simum_) (photo by Rob Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
 ```
 
-![The white rhinoceros, (_Ceratotherium simum_) (photo by Rob Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
+> ![The white rhinoceros, (_Ceratotherium simum_) (photo by Rob Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
 
 Subscripts and superscripts are also supported by wrapping the font in tildes (~) and carets (^), respectively:
 ```
 Subscript: log~10~
 Superscript: r^2^
 ```
-Subscript: log~10~
-Superscript: r^2^
+
+> Subscript: log~10~
+> Superscript: r^2^
 
 Now what happened there? Why aren't those two on separate lines? When the R Markdown file is interpreted, it assumes adjascent lines should all be part of the same paragraph, unless you indicate otherwise. The way we do this is by adding two blank spaces at the end of a line to indicate a paragraph break:
 ```
 Subscript: log~10~  <!-- Two spaces at end of line -->
 Superscript: r^2^
 ```
-Subscript: log~10~  
-Superscript: r^2^
+> Subscript: log~10~  
+> Superscript: r^2^
 
-And the last thing to mention about formatting is that if you want to include equations, you can use LaTex syntax, surrounded by dollar signs (\$). Use single dollar signs for in-line equations, `$E = mc^2$` is rendered as $E = mc^2$. Equations in double dollar signs are displayed on their own line, so `$$E = mc^2$$` shows up as $$E = mc^2$$
+And the last thing to mention about formatting is that if you want to include equations, you can use Tex syntax, surrounded by dollar signs (\$). Use single dollar signs for in-line equations, `$E = mc^2$` is rendered as $E = mc^2$. Equations in double dollar signs are displayed on their own line, so `$$E = mc^2$$` shows up as $$E = mc^2$$
+
+And if you know LaTex, you can use that, too (remembering to bracket your LaTeX code with double dollar signs):
+
+```
+$$
+\begin{equation}
+A = \frac{\pi r^2}{2}
+\end{equation}
+$$
+```
+
+$$\begin{equation} 
+A = \frac{\pi r^2}{2}
+\end{equation}
+$$
 
 ***
 ***
@@ -199,7 +245,7 @@ You can also control code chunks in a number of other ways:
 + `results = "hide"` to suppress any results from being included in output
 + `warning = FALSE` and `message = FALSE` to suppress warnings and messages, respectively, from being shown
 
-Even if we set `echo = FALSE`, the code is still executed and we can reference products of that code through in-line code chunks. In this case, we want to reference the value stored in our `corr.coef` variable in our document text. We use in-line code to do so. In-line code is wrapped in single backticks (`) and we skip the braces, as opposed to triple backticks and braces we used for separate code blocks. So we add this to our Results section:
+Even though we set `echo = FALSE`, the code is still executed and we can reference products of that code through in-line code chunks. In this case, we want to reference the value stored in our `corr.coef` variable in our document text. We use in-line code to do so. In-line code is wrapped in single backticks (`) and we skip the braces, as opposed to triple backticks and braces we used for separate code blocks. So we add this to our Results section:
 
 ```
 Petal width and petal length were highly correlated (r^2^ = `r '\x60r corr.coef\x60'`).
