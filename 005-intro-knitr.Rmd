@@ -13,7 +13,7 @@ An introduction to using the `knitr` package in R to produce reproducible, dynam
 3. Write dynamic reports including code and visualizations
 
 ## Literate programming
-**Rationale for why we use knitr**
+What if there was a way to include text _and_ all the code we used for our analyses in a single document? What about a report that includes not only data visualization, but the actual code used to produce those visualizations? With literate programming, we write text and code in a single document - this way, we can update reports and manuscripts with new data or corrections with minimal effort.
 
 ***
 
@@ -126,10 +126,10 @@ Images are also supported, whether they are local files or images on the web. Th
 
 Here I use an image from [Wikimedia](https://commons.wikimedia.org) and include a caption:
 ```
-![The white rhinoceros, (_Ceratotherium simum_) (photo by Rob Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
+![The white rhinoceros (_Ceratotherium simum_) (photo by Rob Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
 ```
 
-> ![The white rhinoceros, (_Ceratotherium simum_) (photo by Rob Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
+> ![The white rhinoceros (_Ceratotherium simum_) (photo by Rob Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
 
 Subscripts and superscripts are also supported by wrapping the font in tildes (~) and carets (^), respectively:
 ```
@@ -148,20 +148,29 @@ Superscript: r^2^
 > Subscript: log~10~  
 > Superscript: r^2^
 
-And the last thing to mention about formatting is that if you want to include equations, you can use Tex syntax, surrounded by dollar signs (\$). Use single dollar signs for in-line equations, `$E = mc^2$` is rendered as $E = mc^2$. Equations in double dollar signs are displayed on their own line, so `$$E = mc^2$$` shows up as $$E = mc^2$$
+And the last thing to mention about formatting is that if you want to include equations, you can use [LaTeX](http://www.latex-project.org/) syntax, surrounded by dollar signs (\$). Use single dollar signs for in-line equations, `$E = mc^2$` is rendered as $E = mc^2$. Equations in double dollar signs are displayed on their own line, so `$$E = mc^2$$` shows up as $$E = mc^2$$
 
-And if you know LaTex, you can use that, too (remembering to bracket your LaTeX code with double dollar signs):
+You can also write more complex equations, too (remembering to bracket your LaTeX code with double dollar signs):
 
 ```
 $$
 \begin{equation}
-A = \frac{\pi r^2}{2}
+\begin{array}{l}
+\displaystyle \int 1 = x + C\\
+\displaystyle \int x = \frac{x^2}{2} + C \\
+\displaystyle \int x^2 = \frac{x^3}{3} + C
+\end{array} 
 \end{equation}
 $$
 ```
 
-$$\begin{equation} 
-A = \frac{\pi r^2}{2}
+$$
+\begin{equation}
+\begin{array}{l}
+\displaystyle \int 1 = x + C\\
+\displaystyle \int x = \frac{x^2}{2} + C \\
+\displaystyle \int x^2 = \frac{x^3}{3} + C
+\end{array} 
 \end{equation}
 $$
 
@@ -219,6 +228,7 @@ plot(x = iris$Petal.Length,
      xlab = "Petal length (cm)",
      ylab = "Petal width (cm)")
 ```
+
 ***
 
 We can also do analyses, and reference the output with in-line code. For this example, let's find the correlation coefficient (r^2^) for the relationship between petal width and petal length. We can then reference this in the text of our report.
@@ -307,15 +317,15 @@ iris.model.summary <- summary(iris.model)
 corr.coef <- iris.model.summary$r.squared
 &#96;&#96;&#96;
 
-Petal width and petal length were highly correlated (r^2^ = `r round(corr.coef, 2)`).
+Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(corr.coef, 2)\x60'`).
 
 </pre>
 
 Which produces the following, albeit short, report:
 
 > # Iris shape analyses
-> ## _Jeff Oliver_
-> ## _April 27, 2017_
+> #### _Jeff Oliver_
+> #### _April 27, 2017_
 > 
 > ## Introduction
 > In this report we test for a relationship between different parts of morphology in _Iris_ flowers.  
@@ -382,6 +392,7 @@ output: pdf_document
 + [R Markdown documentation](http://rmarkdown.rstudio.com/)
 + A handy [cheatsheet for R Markdown syntax](http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
 + Guied to writing [bibliography sections](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html) in R Markdown documents
++ Software Carpentry's [knitr lesson](http://swcarpentry.github.io/r-novice-gapminder/15-knitr-markdown/)
 
 ***
 
