@@ -1,0 +1,41 @@
+---
+title: "Heatmaps in R"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+A worked example of making heatmaps in R with the `ggplot` package, as well as some data wrangling to easily format the data needed for the plot.
+
+#### Learning objectives
+1. Manipulate data into a 'tidy' format
+2. Visualize data in a heatmap
+3. Become familiar with `ggplot` syntax for customizing plots
+
+## Heatmaps & data wrangling
+Heatmaps are a great way of displaying three-dimensional data in only two dimensions. But how can we easily translate tabular data into a format for heatmap plotting? By taking advantage of "data munging" and graphics packages, heatmaps are relatively easy to produce in R. 
+
+***
+
+## Getting started
+
+***
+
+## [TOPIC ONE]
+
+***
+
+## [TOPIC TWO]
+
+***
+
+## Additional resources
+
++ [resource one](url-one)
++ [resource two](url-two)
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.

@@ -1,0 +1,47 @@
+---
+title: "Introduction to Functional Programming"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+An introduction to writing functions to improve your coding efficiency and optimize performance.
+
+#### Learning objectives
+1. Replace loops with functions optimized for vector calculations
+2. Write and use functions in R
+3. Document functions for easy re-use
+
+## Don't Repeat Yourself
+The [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) aims to reduce repetition in software engineering. By writing and using functions to accomplish a set of instructions multiple times, you reduce the opportunities for mistakes and often improve performance of the code you write. Functional programming makes it easy to apply the same analyses to different sets of data, without excessive copy-paste-update cycles that can introduce hard-to-detect errors.
+
+***
+
+## Getting started
+
+***
+
+## [TOPIC ONE]
+Deal with scope? Like global variables and those inside the function; check out python rules for variables
+Introduce at least some of the \*apply or \*aply functions
+
+***
+
+## [TOPIC TWO]
+
+***
+
+## Additional resources
+
++ [resource one](url-one)
++ [resource two](url-two)
+
+H. Wickham chapter: http://adv-r.had.co.nz/Functional-programming.html
+http://www.brodrigues.co/fput/
+tidyr lesson: https://github.com/datasciencelabs/2016/blob/master/lectures/wrangling/data-wrangling-with-tidyr.Rmd
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
