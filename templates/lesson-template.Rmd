@@ -12,8 +12,7 @@ output: html_document
 2. two
 3. three
 
-## [DESCRIPTION OR MOTIVATION]
-What if there was a way to include text _and_ all the code we used for our analyses in a single document? What about a report that includes not only data visualization, but the actual code used to produce those visualizations? With literate programming, we write text and code in a single document - this way, we can update reports and manuscripts with new data or corrections with minimal effort.
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
 
 ***
 
