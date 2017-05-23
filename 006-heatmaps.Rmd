@@ -40,21 +40,37 @@ mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
 
 mine.long$Sample.name <- factor(mine.long$Sample.name, levels = c("1-S", "2-S", "3-S", "1-M", "2-M", "3-M", "2-B", "3-B"))
 
-mine.long$Class <- factor(mine.long$Class, levels = rev(levels(as.factor(mine.long$Class))))
+# mine.long$Class <- factor(mine.long$Class, levels = rev(levels(as.factor(mine.long$Class))))
 
 mine.heatmap <- ggplot(data = mine.long, aes(x = Sample.name,
                                              y = Class,
                                              fill = Sqrt.abundance)) +
   geom_tile() +
-  ggtitle(label = "Microbe Class Diversity") + 
   scale_fill_gradient(name = "Sqrt(Abundance)",
                       low = "#FFFFFF",
                       high = "#012345") +
   scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class)))) +
+  ggtitle(label = "Microbe Class Diversity") + 
   theme_bw() +
+  xlab(label = "Depth(m)") +
+  facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") + 
   theme(plot.title = element_text(hjust = 0.5),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(size = 8))
+        axis.text.y = element_text(size = 8),
+        strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF"),
+        panel.grid = element_blank(),
+        # panel.border = element_rect(color = "#333333"),
+        # panel.border = element_blank(),
+        # panel.spacing.x = unit(x = -0.5, units = "lines"),
+        strip.placement = "outside")
+  # xlab(label = "Depth(m)") +
+  # facet_wrap(~ Depth, strip.position = "bottom", scales = "free_x") + 
+  # theme(plot.title = element_text(hjust = 0.5),
+  #       axis.title.y = element_blank(),
+  #       axis.text.y = element_text(size = 8),
+  #       panel.spacing = unit(0, "lines"),
+  #       strip.background = element_blank(),
+  #       strip.placement = "outside")
 
 mine.heatmap
 
