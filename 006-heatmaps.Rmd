@@ -18,10 +18,16 @@ Heatmaps are a great way of displaying three-dimensional data in only two dimens
 ***
 
 ## Getting started
-+ Set up project with data & output folders
-+ Describe the data (source et al) 
-[doi: 10.1016/j.gdata.2016.11.004](https://doi.org/10.1016/j.gdata.2016.11.004)
-[Chrysotile asbestos](https://en.wikipedia.org/wiki/Chrysotile) mine
+Start by creating a new project in RStudio and creating two folders we'll use to organize our efforts. The two folders should be `data` and `output` and will store...data and output.
+```{r eval = FALSE}
+dir.create("data")
+dir.create("output")
+```
+
+For this lesson we will use data from a diversity survey of microbial life in a [chrysotile asbestos](https://en.wikipedia.org/wiki/Chrysotile) mine. Driscoll and colleagues [doi: 10.1016/j.gdata.2016.11.004](https://doi.org/10.1016/j.gdata.2016.11.004) used next generation sequencing to identify and categorize bacterial diversity in a flooded pit of the abandoned mine. The data are normalized read counts for Classes of microbe found at the sites.
+
+https://jcoliver.github.io/learn-r/data/mine-microbe-class-data.csv
+
 + Download mine data (get tinyurl)
 + Quick peek at data
 
