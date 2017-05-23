@@ -24,16 +24,18 @@ dir.create("data")
 dir.create("output")
 ```
 
-For this lesson we will use data from a diversity survey of microbial life in a [chrysotile asbestos](https://en.wikipedia.org/wiki/Chrysotile) mine. Driscoll and colleagues [doi: 10.1016/j.gdata.2016.11.004](https://doi.org/10.1016/j.gdata.2016.11.004) used next generation sequencing to identify and categorize bacterial diversity in a flooded pit of the abandoned mine. The data are normalized read counts for Classes of microbe found at the sites.
-
-https://jcoliver.github.io/learn-r/data/mine-microbe-class-data.csv
-
-+ Download mine data (get tinyurl)
-+ Quick peek at data
+For this lesson we will use data from a diversity survey of microbial life in a [chrysotile asbestos](https://en.wikipedia.org/wiki/Chrysotile) mine. Driscoll and colleagues [doi: 10.1016/j.gdata.2016.11.004](https://doi.org/10.1016/j.gdata.2016.11.004) used next generation sequencing to identify and categorize bacterial diversity in a flooded pit of the abandoned mine. The data are normalized read counts for microbes found at the sites. A subset of the data can be downloaded from [https://tinyurl.com/mine-data-csv](https://tinyurl.com/mine-data-csv) (which itself redirects to [https://jcoliver.github.io/learn-r/data/mine-microbe-class-data.csv](https://jcoliver.github.io/learn-r/data/mine-microbe-class-data.csv)). You can download this file to your computer with the `download.file` function:
+```{r eval = FALSE}
+download.file(url = https://tinyurl.com/mine-data-csv, 
+              destfile = "data/mine-microbe-class-data.csv")
+```
+This downloads the data and saves it in the `data` directory as `mine-microbe-class-data.csv`.  
 
 ***
 
 ## [TOPIC ONE]
++ Quick peek at the data
++ Describe the type of data we need (effectively a data frame with an x, y, and z column)
 Need to have data set with an id column and another column we want to preserve, but not the id column
 
 ***
