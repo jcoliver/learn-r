@@ -25,7 +25,7 @@ dir.create(path = "output")
 With this workspace organization, we can download the data, either manually or use R to automatically download it. For this lesson we'll do the latter, saving the file in the `data` directory we just created, and name the file `gapminder.csv`:
 
 ```{r, eval = FALSE}
-download.file(url = "http://tinyurl.com/qb83k3z", destfile = "data/gapminder.csv")
+download.file(url = "http://tinyurl.com/gapminder-five-year-csv", destfile = "data/gapminder.csv")
 ```
 
 From this point on, we want to keep track of what we have done, so we will restrict our use of the console and instead use script files. Start a new script with some brief header information at the very top. We want, at the very least, to include:
