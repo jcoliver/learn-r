@@ -26,25 +26,224 @@ dir.create("output")
 
 For this lesson we will use data from a diversity survey of microbial life in a [chrysotile asbestos](https://en.wikipedia.org/wiki/Chrysotile) mine. Driscoll and colleagues [doi: 10.1016/j.gdata.2016.11.004](https://doi.org/10.1016/j.gdata.2016.11.004) used next generation sequencing to identify and categorize bacterial diversity in a flooded pit of the abandoned mine. The data are normalized read counts for microbes found at the sites. A subset of the data can be downloaded from [https://tinyurl.com/mine-data-csv](https://tinyurl.com/mine-data-csv) (which itself redirects to [https://jcoliver.github.io/learn-r/data/mine-microbe-class-data.csv](https://jcoliver.github.io/learn-r/data/mine-microbe-class-data.csv)). You can download this file to your computer with the `download.file` function:
 ```{r eval = FALSE}
-download.file(url = https://tinyurl.com/mine-data-csv, 
+download.file(url = "https://tinyurl.com/mine-data-csv", 
               destfile = "data/mine-microbe-class-data.csv")
 ```
 This downloads the data and saves it in the `data` directory as `mine-microbe-class-data.csv`.  
 
 ***
 
-## [TOPIC ONE]
-+ Quick peek at the data
-+ Describe the type of data we need (effectively a data frame with an x, y, and z column)
-Need to have data set with an id column and another column we want to preserve, but not the id column
+## Data Wrangling
+We'll need to start by reading the data into memory then formatting it for use by the ggplot package. We want all our work to be reproducible, so create a script where we can store all the commands we use to create the heatmap. We begin this script with brief information about the purpose of the script:
 
-***
+```{r}
+# Heatmap of mine pit microbe diversity
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-06-05
+```
 
-## [TOPIC TWO]
+Now we read those abundance data into memory:
+
+```{r}
+mine.data <- read.csv(file = "data/mine-microbe-class-data.csv")
+```
+
+Take a quick look at the structure of the data, using the `str` command:
+```{r}
+str(mine.data)
+```
+
+The data frame has `r nrow(mine.data)` rows ("obs.") and `r ncol(mine.data)` columns ("variables"). The first three columns have information about the observation (`r colnames(mine.data)[1:3]`), and the remaining columns have the abundance for each of `r ncol(mine.data) - 3` classes of bacteria.
+
+We ultimately want a heatmap where the different sites are shown along the x-axis, the classes of bacteria are shown along the y-axis, and the shading of the cell reflects the abundance. This latter value, the abundance of a bacteria at specific depths at different site, is really just a third dimension. However, instead of creating a 3-dimensional plot that can be difficult to visualize, we instead use shading for our "z-axis". To this end, we need our data formatted so we have a column corresponding to each of these three dimensions:
+
++ X: Sample identity
++ Y: Bacterial class
++ Z: Abundance
+
+The challenge is that our data are _not_ formatted like this. While the `Sample.name` column corresponds to what we would like for our x-axis, we do not have columns that correspond to what is needed for the y- and z-axes. All the data are in our data frame, but we need to take a table that looks like this:
+
+| Site.name | Actinobacteria | Cytophagia |
+|:----------|:---------------|:-----------|
+| 1-S       | 373871         | 8052       |
+| 2-S       | 332856         | 28561      |
+| ...       | ...            | ...        |
+
+And transform it to one with a column for bacterial class and a column for abundance, like this:
+
+| Site.name | Class          | Abundance |
+|:----------|:---------------|:----------|
+| 1-S       | Actinobacteria | 373871    |
+| 1-S       | Cytophagia     | 8052      |
+| 2-S       | Actinobacteria | 332856    |
+| 2-S       | Cytophagia     | 28561     |
+| ...       | ...            | ...       |
+
+Thankfully, there is an R package that does this for us! The `tidyr` package is designed for creating this type of "tidy"" data. 
+
+```{r eval = FALSE}
+install.packages("tidyr")
+```
 
 ```{r}
 library("tidyr")
+```
+
+In fact, we can do this transformation in one line with the `gather` function:
+
+```{r, warning = FALSE}
+mine.long <- gather(data = mine.data, key = Class, value = Abundance)
+```
+
+Take a look at this new data frame:
+
+```{r}
+head(mine.long)
+```
+
+Uh oh. Something's not right. The `Class` column should only have bacterical classes in it, but one of our columns (`Site`) ended up in that `Class` column. In fact, the `Class` column actually has _all_ the columns of the original data set, not just the bacterial classes. Considering our original data structure:
+
+```{r}
+str(mine.data)
+```
+
+Notice there are columns that don't need to be transformed for our heatmap. Namely, Site, Depth, and Sample.name can all remain as-is. To do this, we instruct `gather` to ignore the first three columns of the data frame by negating those columns (`-c(1:3`):
+
+```{r}
+mine.long <- gather(data = mine.data, key = Class, value = Abundance, -c(1:3))
+head(mine.long)
+```
+
+Another approach, to accomplish the same thing, especially if the columns to ignore are not adjacent, is to explicitly name the columns to ignore:
+
+```{r, eval = FALSE}
+mine.long <- gather(data = mine.data, key = Class, value = Abundance, -Site, -Depth, -Sample.name)
+```
+
+To recap, at this point we read in the data and transformed it for easy use with heatmap tools:
+
+```{r, eval = FALSE}
+# Heatmap of mine pit microbe diversity
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-06-05
+
+# Load dependancies
+library("tidyr")
+
+# Read data and format for heatmap
+mine.data <- read.csv(file = "data/mine-microbe-class-data.csv")
+mine.long <- gather(data = mine.data, key = Class, value = Abundance, -c(1:3))
+```
+
+Now the data are ready - on to the plot!
+
+***
+
+## Plotting heatmaps
+To plot a heatmap, we are going to use the `ggplot2` package.
+
+```{r eval = FALSE}
+install.packages("ggplot2")
+```
+```{r}
 library("ggplot2")
+```
+
+For this plot, we are going to first create the heatmap object with the `ggplot` function, then print the plot. We create the object by assigning the output of the `ggplot` call to the variable `mine.heatmap`, then entering the name of this object to print it to the screen.
+
+```{r}
+mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+                                                       y = Class,
+                                                       fill = Abundance)) +
+  geom_tile() +
+  xlab(label = "Sample")
+
+mine.heatmap
+
+```
+
+Let's dissect these commands:
+
++ `ggplot` is the initial call, where we provide the following information:
+    + `data` is the data frame that contains the data we want to plot
+    + `mapping` tells ggplot what to plot where; that is, in this call, it says we want the `Sample.name` column on the x-axis, the bacterial `Class` on the y-axis, and the shading, or fill, (the z-axis) to reflect the value in the `Abundance` column.
++ `geom_tile`, which is appended to `ggplot` with a plus sign (+), tells ggplot that we want a heatmap
++ `xlab` provides a label to use for the x-axis
+
++ Plotting the heatmap
+    + x, y, and fill (z)
+    + geom_tile
+    + xlab
++ Faceting by Depth
+    + facet grid
++ Custom colors
+    + transforming for display (sqrt)
+    + scale_fill_gradient (colors)
++ Cleaning up with theme
+    + theme_bw
+    + axis.title.y, axis.text.y
+    + strip.placement
++ Plot title
+    + ggtitle
+    + making title center-justified via theme
++ Misc. debris
+    + ordering of y-axis
+    + strip.background
+    + panel.grid
+
+```{r}
+# Load dependancies
+library("tidyr")
+library("ggplot2")
+
+mine.long <- gather(data = mine.data, key = Class, value = Abundance, -c(1:3))
+# Alternative means of skipping columns by name
+# mine.long <- gather(data = mine.data, key = Class, value = Abundance, -Site, -Depth, -Sample.name)
+
+mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
+
+# Plot abundance
+mine.heatmap <- ggplot(data = mine.long, aes(x = Sample.name,
+                                             y = Class,
+                                             fill = Sqrt.abundance)) +
+  geom_tile() +
+  xlab(label = "Depth(m)") +
+  facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") + 
+  scale_fill_gradient(name = "Sqrt(Abundance)",
+                      low = "#FFFFFF",
+                      high = "#012345") +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8),
+        strip.placement = "outside",
+        plot.title = element_text(hjust = 0.5),
+        strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF"),
+        panel.grid = element_blank()) +
+  ggtitle(label = "Microbe Class Diversity") + 
+  scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
+
+mine.heatmap
+
+```
+
+
+Our final script for this heatmap is then:
+
+```{r, eval = FALSE}
+# Heatmap of mine pit microbe diversity
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-06-05
+
+rm(list = ls())
+
+# Load dependancies
+library("tidyr")
+library("ggplot2")
+
+# Read data and format for heatmap
 mine.data <- read.csv(file = "data/mine-microbe-class-data.csv")
 
 mine.long <- gather(data = mine.data, key = Class, value = Abundance, -c(1:3))
@@ -53,27 +252,25 @@ mine.long <- gather(data = mine.data, key = Class, value = Abundance, -c(1:3))
 
 mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
 
+# Plot abundance
 mine.heatmap <- ggplot(data = mine.long, aes(x = Sample.name,
                                              y = Class,
                                              fill = Sqrt.abundance)) +
   geom_tile() +
+  xlab(label = "Depth(m)") +
+  facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") + 
   scale_fill_gradient(name = "Sqrt(Abundance)",
                       low = "#FFFFFF",
                       high = "#012345") +
-  scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class)))) +
-  ggtitle(label = "Microbe Class Diversity") + 
   theme_bw() +
-  xlab(label = "Depth(m)") +
-  facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") + 
-  theme(plot.title = element_text(hjust = 0.5),
-        axis.title.y = element_blank(),
+  theme(axis.title.y = element_blank(),
         axis.text.y = element_text(size = 8),
+        strip.placement = "outside",
+        plot.title = element_text(hjust = 0.5),
         strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF"),
-        panel.grid = element_blank(),
-        # panel.border = element_rect(color = "#333333"),
-        # panel.border = element_blank(),
-        # panel.spacing.x = unit(x = -0.5, units = "lines"),
-        strip.placement = "outside")
+        panel.grid = element_blank()) +
+  ggtitle(label = "Microbe Class Diversity") + 
+  scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
 
 mine.heatmap
 
@@ -85,6 +282,11 @@ mine.heatmap
 
 + [resource one](url-one)
 + [resource two](url-two)
+
+tidyr link
+[tidy data paper](https://www.jstatsoft.org/article/view/v059i10)
+ggplot link
+examples?
 
 ***
 
