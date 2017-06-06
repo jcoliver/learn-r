@@ -2,7 +2,7 @@
 title: "Heatmaps in R"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output: pdf_document
 ---
 
 A worked example of making heatmaps in R with the `ggplot` package, as well as some data wrangling to easily format the data needed for the plot.
@@ -434,20 +434,16 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
   scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class)))) # Reverse order of y-axis
 
 mine.heatmap
-
 ```
 
 ***
 
 ## Additional resources
-
-+ [resource one](url-one)
-+ [resource two](url-two)
-
-tidyr link
-[tidy data paper](https://www.jstatsoft.org/article/view/v059i10)
-ggplot link
-examples?
++ Paper describing [tidy data](https://www.jstatsoft.org/article/view/v059i10)
++ A great introduction to [data tidying](http://garrettgman.github.io/tidying/)
++ A [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) for data wrangling
++ [Official documentation](http://ggplot2.tidyverse.org/reference/) for ggplot
++ A [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) for ggplot
 
 ***
 
