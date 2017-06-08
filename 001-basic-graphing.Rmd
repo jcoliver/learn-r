@@ -13,7 +13,7 @@ This brief tutorial will demonstrate how to create a basic plot in R from a text
 3. Visualize data in a graph
 4. Understand the principle of control flow
 
-In this tutorial, we will be using the 'gapminder' dataset, available here: <a href="http://tinyurl.com/qb83k3z"> http://tinyurl.com/qb83k3z</a> (right-click or Ctrl-click on link and Save As...).
+In this tutorial, we will be using the 'gapminder' dataset, available here: [http://tinyurl.com/gapminder-five-year-csv](http://tinyurl.com/gapminder-five-year-csv) (right-click or Ctrl-click on link and Save As...).
 
 ##Setup
 First we need to setup our development environment. Open RStudio and create a new project via:
@@ -29,6 +29,8 @@ We need to create two folders: 'data' will store the data we will be analyzing, 
 dir.create(path = "data")
 dir.create(path = "output")
 ```
+
+Finally, move the file you downloaded into the `data` folder you just created.
 
 ##Your first plot
 ###Plot the points!
