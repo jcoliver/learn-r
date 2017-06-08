@@ -2,7 +2,7 @@
 title: "Heatmaps in R"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: pdf_document
+output: html_document
 ---
 
 A worked example of making heatmaps in R with the `ggplot` package, as well as some data wrangling to easily format the data needed for the plot.
@@ -392,8 +392,7 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
 
 mine.heatmap
 ```
-
-
+  
 Our final script for this heatmap is then:
 
 ```{r, eval = FALSE}
@@ -444,6 +443,7 @@ mine.heatmap
 + A [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) for data wrangling
 + [Official documentation](http://ggplot2.tidyverse.org/reference/) for ggplot
 + A [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) for ggplot
++ [Documentation](http://ggplot2.tidyverse.org/reference/geom_bin2d.html) for `geom_bin2d`, to create heatmaps for continuous x- and y-axes
 
 ***
 
