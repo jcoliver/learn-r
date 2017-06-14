@@ -21,13 +21,25 @@ The [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) aims 
 
 ***
 
-## [TOPIC ONE]
-Deal with scope? Like global variables and those inside the function; check out python rules for variables
+## R is built for vectors
+
+Loop first, then apply
 Introduce at least some of the \*apply or \*aply functions
+Use airquality data and get the column means (colMeans) for each month separately? `by(airquality[, 1:4], airquality$Month, colMeans)`
 
 ***
 
-## [TOPIC TWO]
+## Writing your own functions
+
+Do linear regression with multiple variables, get output for all of them...
+
+Maybe regression predicting Ozone with Solar.R, Wind, and Temp in the `airquality` dataset?
+
++ Write some functions to do something, ideally some sort of 2-5 step process that we need to do some data manipulation for, then produce a result.
++ Create something then class it and add a print.<class> method. See [Programmers' Niche](https://cran.r-project.org/doc/Rnews/Rnews_2004-1.pdf)
++ Deal with scope? Like global variables and those inside the function; check out python rules for variables
++ If possible, get to the point where we return a `list`
++ Deal with `require` and `stop`?
 
 ***
 
@@ -36,9 +48,17 @@ Introduce at least some of the \*apply or \*aply functions
 + [resource one](url-one)
 + [resource two](url-two)
 
+Example showing timing difference between loop and apply:
+https://gist.github.com/KevCaz/d1b252265209be63d1e2
+
+
 H. Wickham chapter: http://adv-r.had.co.nz/Functional-programming.html
 http://www.brodrigues.co/fput/
+
 tidyr lesson: https://github.com/datasciencelabs/2016/blob/master/lectures/wrangling/data-wrangling-with-tidyr.Rmd
+
+H. Wickham's take on naming things (see 'Object names' section in: http://adv-r.had.co.nz/Style.html)
+
 
 ***
 
