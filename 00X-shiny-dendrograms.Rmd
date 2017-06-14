@@ -1,0 +1,51 @@
+---
+title: "LESSON TITLE"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+[INTRODUCTORY SENTENCE]
+
+Rationale: A workshop on creating dendrograms with shiny
+See:
+[GitHub Shiny Tutorial](http://rstudio.github.io/shiny/tutorial/)
+[Video Shiny Tutorial](https://shiny.rstudio.com/tutorial/)
+[Clustering example](https://www.joyofdata.de/blog/hierarchical-clustering-with-r/)
+[Implementation of above example](https://joyofdata.shinyapps.io/hclust-shiny/)
+
+Ideas:
+Do a dendrogram of individual observations from the otter mandible data set
+Some [examples](http://www.sthda.com/english/wiki/beautiful-dendrogram-visualizations-in-r-5-must-known-methods-unsupervised-machine-learning)
+
+#### Learning objectives
+1. one
+2. two
+3. three
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+***
+
+## Getting started
+
+***
+
+## [TOPIC ONE]
+
+***
+
+## [TOPIC TWO]
+
+***
+
+## Additional resources
+
++ [resource one](url-one)
++ [resource two](url-two)
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
