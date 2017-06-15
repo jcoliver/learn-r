@@ -1,0 +1,44 @@
+---
+title: "LESSON TITLE"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+[INTRODUCTORY SENTENCE]
+Rationale: Make nice looking graphics that combine heatmaps and clustering graphic. The two would likely be produced from different sources. That is, the clustering dendrogram might not be created by the graphics package.
+
++ Consider the `ggdendro` package? See: https://stackoverflow.com/questions/6673162/reproducing-lattice-dendrogram-graph-with-ggplot2
++ [ggdendro page](https://cran.r-project.org/web/packages/ggdendro/vignettes/ggdendro.html)
+
+#### Learning objectives
+1. one
+2. two
+3. three
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+***
+
+## Getting started
+
+***
+
+## [TOPIC ONE]
+
+***
+
+## [TOPIC TWO]
+
+***
+
+## Additional resources
+
++ [resource one](url-one)
++ [resource two](url-two)
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
