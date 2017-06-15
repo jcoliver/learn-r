@@ -41,6 +41,92 @@ Maybe regression predicting Ozone with Solar.R, Wind, and Temp in the `airqualit
 + If possible, get to the point where we return a `list`
 + Deal with `require` and `stop`?
 
+```{r}
+# Analyze air quality data
+# Jeffrey Oliver
+# jcoliver@email.arizona.edu
+# 2017-06-15
+
+# Loop over each predictor and get ....
+
+# predictors <- c("Solar.R", "Wind", "Temp")
+
+simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
+simple.summary <- summary(simple)
+simple.r2 <- simple.summary$r.squared
+simple.p <- simple.summary$coefficients[2, 4]
+cat("Solar r^2 =", simple.r2)
+cat("Solar p =", simple.p)  
+    
+simple <- lm(airquality[, "Ozone"] ~ airquality[, "Wind"])
+simple.summary <- summary(simple)
+simple.r2 <- simple.summary$r.squared
+simple.p <- simple.summary$coefficients[2, 4]
+cat("Wind r^2 =", simple.r2)
+cat("Wind p =", simple.p)  
+
+simple <- lm(airquality[, "Ozone"] ~ airquality[, "Temp"])
+simple.summary <- summary(simple)
+simple.r2 <- simple.summary$r.squared
+simple.p <- simple.summary$coefficients[2, 4]
+cat("Temp r^2 =", simple.r2)
+cat("Temp p =", simple.p)
+
+# Remember to ONLY pass variables we want to analyze; so omit Month and Day when passing data
+RegressSimple <- function(data, response) {
+  response.index <- which(colnames(data) == response)
+  predictors <- colnames(data)[-response.index]
+  model.summaries <- list()
+  
+  # model.results <- data.frame(variable = predictors,
+  #                          r2 = 0,
+  #                          p = 0)
+  for (predictor in predictors) { # Run this once with just cat("Predictor: ", predictor, "\n")
+    simple <- lm(airquality[, "Ozone"] ~ airquality[, predictor])
+    simple.summary <- summary(simple)
+    model.summaries[[predictor]] <- simple.summary
+    
+    # simple.r2 <- simple.summary$r.squared
+    # simple.p <- simple.summary$coefficients[2, 4]
+    # model.results[predictor, "r2"] <- simple.r2
+    # model.results[predictor, "p"] <- simple.p
+  }
+  
+  # Don't do class statement until after we've run the function once
+  class(model.summaries) <- "RegressSimple"
+  return(model.summaries)
+}
+
+print.RegressSimple <- function(x, ...) {
+  # Get a vector of the elements' names
+  predictors <- names(x)
+  # Set up a dataframe for results of interest
+  model.results <- data.frame(variable = predictors,
+                           r2 = 0,
+                           p = 0)
+  # Loop over all the elements in x and extract r-squared and p values
+  for (predictor in predictors) {
+    simple.model <- x[[predictor]]
+    row.number <- which(model.results$variable == predictor)
+    model.results[row.number, "r2"] <- simple.model$r.squared
+    model.results[row.number, "p"] <- simple.model$coefficients[2, 4]
+  }
+  # for (one.model in x) {
+  #   cat("Model: ", names(one.model), "\n")
+  # }
+  # simple.r2 <- simple.summary$r.squared
+  # simple.p <- simple.summary$coefficients[2, 4]
+  # model.results[predictor, "r2"] <- simple.r2
+  # model.results[predictor, "p"] <- simple.p
+  cat("Regression results: ", "\n")
+  print(as.matrix(model.results), quote = FALSE)
+}
+
+ozone.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+ozone.models
+
+```
+
 ***
 
 ## Additional resources
