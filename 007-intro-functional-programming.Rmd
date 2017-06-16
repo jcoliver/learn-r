@@ -49,8 +49,6 @@ Maybe regression predicting Ozone with Solar.R, Wind, and Temp in the `airqualit
 
 # Loop over each predictor and get ....
 
-# predictors <- c("Solar.R", "Wind", "Temp")
-
 simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
 simple.summary <- summary(simple)
 simple.r2 <- simple.summary$r.squared
@@ -71,25 +69,25 @@ simple.r2 <- simple.summary$r.squared
 simple.p <- simple.summary$coefficients[2, 4]
 cat("Temp r^2 =", simple.r2)
 cat("Temp p =", simple.p)
+```
 
+```{r}
+# Functions to automate linear regression
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-06-15
+
+################################################################################
 # Remember to ONLY pass variables we want to analyze; so omit Month and Day when passing data
 RegressSimple <- function(data, response) {
   response.index <- which(colnames(data) == response)
   predictors <- colnames(data)[-response.index]
   model.summaries <- list()
   
-  # model.results <- data.frame(variable = predictors,
-  #                          r2 = 0,
-  #                          p = 0)
   for (predictor in predictors) { # Run this once with just cat("Predictor: ", predictor, "\n")
     simple <- lm(airquality[, "Ozone"] ~ airquality[, predictor])
     simple.summary <- summary(simple)
     model.summaries[[predictor]] <- simple.summary
-    
-    # simple.r2 <- simple.summary$r.squared
-    # simple.p <- simple.summary$coefficients[2, 4]
-    # model.results[predictor, "r2"] <- simple.r2
-    # model.results[predictor, "p"] <- simple.p
   }
   
   # Don't do class statement until after we've run the function once
@@ -97,6 +95,7 @@ RegressSimple <- function(data, response) {
   return(model.summaries)
 }
 
+################################################################################
 print.RegressSimple <- function(x, ...) {
   # Get a vector of the elements' names
   predictors <- names(x)
@@ -106,18 +105,14 @@ print.RegressSimple <- function(x, ...) {
                            p = 0)
   # Loop over all the elements in x and extract r-squared and p values
   for (predictor in predictors) {
+    # Pull out the model from the list
     simple.model <- x[[predictor]]
+    # Find the corresponding row in the model.results data.frame
     row.number <- which(model.results$variable == predictor)
+    # Store the values of interest in the data frame
     model.results[row.number, "r2"] <- simple.model$r.squared
     model.results[row.number, "p"] <- simple.model$coefficients[2, 4]
   }
-  # for (one.model in x) {
-  #   cat("Model: ", names(one.model), "\n")
-  # }
-  # simple.r2 <- simple.summary$r.squared
-  # simple.p <- simple.summary$coefficients[2, 4]
-  # model.results[predictor, "r2"] <- simple.r2
-  # model.results[predictor, "p"] <- simple.p
   cat("Regression results: ", "\n")
   print(as.matrix(model.results), quote = FALSE)
 }
@@ -136,7 +131,6 @@ ozone.models
 
 Example showing timing difference between loop and apply:
 https://gist.github.com/KevCaz/d1b252265209be63d1e2
-
 
 H. Wickham chapter: http://adv-r.had.co.nz/Functional-programming.html
 http://www.brodrigues.co/fput/
