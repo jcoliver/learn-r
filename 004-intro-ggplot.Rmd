@@ -3,7 +3,6 @@ title: "Introduction to data visualization with ggplot"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
-  pdf_document: default
   html_document:
     css: stylesheets/markdown-styles.css
 ---
