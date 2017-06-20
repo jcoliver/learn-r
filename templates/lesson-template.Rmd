@@ -32,6 +32,7 @@ output: html_document
 
 + [resource one](url-one)
 + [resource two](url-two)
++ A [PDF version](https://jcoliver.github.io/lesson-name.pdf) of this lesson
 
 ***
 
