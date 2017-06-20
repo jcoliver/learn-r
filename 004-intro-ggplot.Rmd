@@ -347,7 +347,7 @@ print(gdp.plot)
 
 + Official [ggplot documentation](http://docs.ggplot2.org/current/)
 + A handy [cheatsheet for ggplot](https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf)
-+ A [PDF version](https://jcoliver.github.io/004-intro-ggplot.pdf) of this lesson
++ A [PDF version](https://jcoliver.github.io/learn-r/004-intro-ggplot.pdf) of this lesson
 
 ***
 
