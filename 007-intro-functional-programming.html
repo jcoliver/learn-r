@@ -295,21 +295,51 @@ source(file = &quot;regression-functions.R&quot;)
 <pre class="r"><code>airquality.models &lt;- RegressSimple(data = airquality, response = &quot;Ozone&quot;)</code></pre>
 <pre><code>## Warning in summary.lm(simple): essentially perfect fit: summary may be
 ## unreliable</code></pre>
-<p>Hmmmm…that’s an odd warning. Take a look at the elements of the object:</p>
-<pre class="r"><code>ls(airquality.models)</code></pre>
-<pre><code>## [1] &quot;Day&quot;     &quot;Month&quot;   &quot;Ozone&quot;   &quot;Solar.R&quot; &quot;Temp&quot;    &quot;Wind&quot;</code></pre>
+<p>Hmmmm…that’s an odd warning. Let’s add some reporting code to see if we can figure out what it’s doing. Update the <code>RegressSimple</code> function to print the name of the predictor:</p>
+<pre class="r"><code># Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple &lt;- function(data, response) {
+  model.summaries &lt;- list()
+  for (predictor in 1:ncol(data)) {
+    simple &lt;- lm(data[, response] ~ data[, predictor])
+    element.name &lt;- colnames(data)[predictor]
+    model.summaries[[element.name]] &lt;- summary(simple)
+    cat(&quot;Predictor:&quot;, element.name, &quot;\n&quot;)
+  }
+  return(model.summaries)
+}</code></pre>
+<p>Now go back our airquality-regression.R script and run the <code>RegressSimple</code> command again.</p>
+<pre class="r"><code>airquality.models &lt;- RegressSimple(data = airquality, response = &quot;Ozone&quot;)</code></pre>
+<pre><code>## Warning in summary.lm(simple): essentially perfect fit: summary may be
+## unreliable</code></pre>
+<p>Drat. Same warning, but no message printed? Why not? Because we made changes to the regression-functions.R file, but did not load them into memory with the <code>source</code> command, R is using the old version of the <code>RegressSimple</code> function. So we need to run the <code>source</code> command first:</p>
+<pre class="r"><code>source(file = &quot;regression-functions.R&quot;)</code></pre>
+<p>Then the <code>RegressSimple</code> command:</p>
+<pre class="r"><code>airquality.models &lt;- RegressSimple(data = airquality, response = &quot;Ozone&quot;)</code></pre>
+<pre><code>## Warning in summary.lm(simple): essentially perfect fit: summary may be
+## unreliable</code></pre>
+<pre><code>## Predictor: Ozone 
+## Predictor: Solar.R 
+## Predictor: Wind 
+## Predictor: Temp 
+## Predictor: Month 
+## Predictor: Day</code></pre>
 <p>OK, so there are some problems. First, we aren’t really interested in the effect of <code>Day</code> or <code>Month</code> on ozone levels, so when we call <code>RegressSimple</code>, we should only pass it data we want to analyze. Here we drop the fifth and sixth columns, which are the Month and Day columns, respectively:</p>
 <pre class="r"><code>airquality.models &lt;- RegressSimple(data = airquality[, -c(5:6)], response = &quot;Ozone&quot;)</code></pre>
-<p>But look at the output from that <code>ls</code> call again. The elements named are each of those that we used as a predictor. And one of those elements is named “Ozone”. So we actually ran regression on a model using ozone to predict ozone - that’s probably what caused the warning message “summary may be unreliable”. But we don’t want to exclude ozone, because that is the response variable. We therefore need to update our function definition so we don’t run an <code>ozone ~ ozone</code> model. More generally, we need to make sure our response variable is not treated as a predictor. To do this, we:</p>
+<p>But look at the output from function call again. Our function actually ran regression on a model using ozone to predict ozone - that’s probably what caused the warning message “summary may be unreliable”. But we don’t want to exclude ozone from the data we pass to the function, because that is the response variable. We therefore need to update our function definition so we don’t run an <code>ozone ~ ozone</code> model. More generally, we need to make sure our response variable is not treated as a predictor. To do this, we:</p>
 <ol style="list-style-type: decimal">
 <li>Find out which column is the <code>response</code> variable</li>
 <li>Create a vector of predictor variable names using <code>colnames</code></li>
 <li>Update our <code>for</code> loop to only use those predictor variables</li>
 <li>Use the predictor variable name for the <code>model.summaries</code> list element name</li>
 </ol>
+<p>Open the regression-functions.R file and update <code>RegressSimple</code>:</p>
 <pre class="r"><code># Run linear regression for all predictors and a response variable in a data frame
 # data: the data frame to analyze
 # response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
 RegressSimple &lt;- function(data, response) {
   response.index &lt;- which(colnames(data) == response)
   predictors &lt;- colnames(data)[-response.index]
@@ -317,34 +347,26 @@ RegressSimple &lt;- function(data, response) {
   for (predictor in predictors) {
     simple &lt;- lm(data[, response] ~ data[, predictor])
     model.summaries[[predictor]] &lt;- summary(simple)
+    cat(&quot;Predictor:&quot;, predictor, &quot;\n&quot;)
   }
   return(model.summaries)
 }</code></pre>
-<p>Now when we run <code>RegressSimple</code>, there are only three elements in the list, as we expect:</p>
-<pre class="r"><code>airquality.models &lt;- RegressSimple(data = airquality[, -c(5:6)], response = &quot;Ozone&quot;)
-ls(airquality.models)</code></pre>
-<pre><code>## [1] &quot;Solar.R&quot; &quot;Temp&quot;    &quot;Wind&quot;</code></pre>
-<p>============================================================================= ======================= Active Above ====================================== =============================================================================</p>
-<pre class="r"><code># Run linear regression for all predictors and a response variable in a data frame
-# data: the data frame to analyze
-# response: the name of the response variable
-RegressSimple &lt;- function(data, response) {
-  model.summaries &lt;- list()
-  for (predictor in 1:ncol(data)) {
-    simple &lt;- lm(data[, response] ~ data[, predictor])
-    element.name &lt;- colnames(data)[predictor]
-    model.summaries[[element.name]] &lt;- summary(simple)
-  }
-}</code></pre>
-<p>Do linear regression with multiple variables, get output for all of them…</p>
-<p>Maybe regression predicting Ozone with Solar.R, Wind, and Temp in the <code>airquality</code> dataset?</p>
+<p>Now when we run <code>RegressSimple</code>, there are only three predictors used in the models, as we expect:</p>
+<pre class="r"><code>source(file = &quot;regression-functions.R&quot;)
+airquality.models &lt;- RegressSimple(data = airquality[, -c(5:6)], response = &quot;Ozone&quot;)</code></pre>
+<pre><code>## Predictor: Solar.R 
+## Predictor: Wind 
+## Predictor: Temp</code></pre>
+</div>
+<div id="todo" class="section level2">
+<h2>TODO:</h2>
 <ul>
-<li>Write some functions to do something, ideally some sort of 2-5 step process that we need to do some data manipulation for, then produce a result.</li>
-<li>Create something then class it and add a print.<class> method. See <a href="https://cran.r-project.org/doc/Rnews/Rnews_2004-1.pdf">Programmers’ Niche</a></li>
-<li>Deal with scope? Like global variables and those inside the function; check out python rules for variables</li>
-<li>If possible, get to the point where we return a <code>list</code></li>
-<li>Deal with <code>require</code> and <code>stop</code>?</li>
+<li>Access individual elements of the output to print p &amp; r</li>
+<li>Write print.RegressSimple function</li>
 </ul>
+<p>=============================================================================<br />
+======================= Active Above ======================================<br />
+=============================================================================</p>
 <pre class="r"><code># Analyze air quality data
 # Jeffrey Oliver
 # jcoliver@email.arizona.edu

@@ -238,10 +238,57 @@ And we can now use this function, passing `airquality` as the `data` and `"Ozone
 airquality.models <- RegressSimple(data = airquality, response = "Ozone")
 ```
 
-Hmmmm...that's an odd warning. Take a look at the elements of the object:
+Hmmmm...that's an odd warning. Let's add some reporting code to see if we can figure out what it's doing. Update the `RegressSimple` function to print the name of the predictor:
+
+```{r, eval = FALSE}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple <- function(data, response) {
+  model.summaries <- list()
+  for (predictor in 1:ncol(data)) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    element.name <- colnames(data)[predictor]
+    model.summaries[[element.name]] <- summary(simple)
+    cat("Predictor:", element.name, "\n")
+  }
+  return(model.summaries)
+}
+```
+
+Now go back our airquality-regression.R script and run the `RegressSimple` command again.
 
 ```{r}
-ls(airquality.models)
+airquality.models <- RegressSimple(data = airquality, response = "Ozone")
+```
+
+Drat. Same warning, but no message printed? Why not? Because we made changes to the regression-functions.R file, but did not load them into memory with the `source` command, R is using the old version of the `RegressSimple` function. So we need to run the `source` command first:
+
+```{r, eval = FALSE}
+source(file = "regression-functions.R")
+```
+
+```{r, echo = FALSE}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple <- function(data, response) {
+  model.summaries <- list()
+  for (predictor in 1:ncol(data)) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    element.name <- colnames(data)[predictor]
+    model.summaries[[element.name]] <- summary(simple)
+    cat("Predictor:", element.name, "\n")
+  }
+  return(model.summaries)
+}
+```
+
+Then the `RegressSimple` command:
+```{r}
+airquality.models <- RegressSimple(data = airquality, response = "Ozone")
 ```
 
 OK, so there are some problems. First, we aren't really interested in the effect of `Day` or `Month` on ozone levels, so when we call `RegressSimple`, we should only pass it data we want to analyze. Here we drop the fifth and sixth columns, which are the Month and Day columns, respectively:
@@ -250,17 +297,20 @@ OK, so there are some problems. First, we aren't really interested in the effect
 airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
 ```
 
-But look at the output from that `ls` call again. The elements named are each of those that we used as a predictor. And one of those elements is named "Ozone". So we actually ran regression on a model using ozone to predict ozone - that's probably what caused the warning message "summary may be unreliable". But we don't want to exclude ozone, because that is the response variable. We therefore need to update our function definition so we don't run an `ozone ~ ozone` model. More generally, we need to make sure our response variable is not treated as a predictor. To do this, we:
+But look at the output from function call again. Our function actually ran regression on a model using ozone to predict ozone - that's probably what caused the warning message "summary may be unreliable". But we don't want to exclude ozone from the data we pass to the function, because that is the response variable. We therefore need to update our function definition so we don't run an `ozone ~ ozone` model. More generally, we need to make sure our response variable is not treated as a predictor. To do this, we:
 
 1. Find out which column is the `response` variable
 2. Create a vector of predictor variable names using `colnames`
 3. Update our `for` loop to only use those predictor variables
 4. Use the predictor variable name for the `model.summaries` list element name
 
+Open the regression-functions.R file and update `RegressSimple`:
+
 ```{r}
 # Run linear regression for all predictors and a response variable in a data frame
 # data: the data frame to analyze
 # response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
 RegressSimple <- function(data, response) {
   response.index <- which(colnames(data) == response)
   predictors <- colnames(data)[-response.index]
@@ -268,32 +318,31 @@ RegressSimple <- function(data, response) {
   for (predictor in predictors) {
     simple <- lm(data[, response] ~ data[, predictor])
     model.summaries[[predictor]] <- summary(simple)
+    cat("Predictor:", predictor, "\n")
   }
   return(model.summaries)
 }
 ```
 
-Now when we run `RegressSimple`, there are only three elements in the list, as we expect:
+Now when we run `RegressSimple`, there are only three predictors used in the models, as we expect:
 
-```{r}
+```{r, eval = FALSE}
+source(file = "regression-functions.R")
 airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
-ls(airquality.models)
 ```
 
+```{r, echo = FALSE}
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+```
+
+## TODO: 
+
++ Access individual elements of the output to print p & r
++ Write print.RegressSimple function
+
+=============================================================================  
+=======================  Active Above  ======================================  
 =============================================================================
-=======================  Active Above  ======================================
-=============================================================================
-
-
-Do linear regression with multiple variables, get output for all of them...
-
-Maybe regression predicting Ozone with Solar.R, Wind, and Temp in the `airquality` dataset?
-
-+ Write some functions to do something, ideally some sort of 2-5 step process that we need to do some data manipulation for, then produce a result.
-+ Create something then class it and add a print.<class> method. See [Programmers' Niche](https://cran.r-project.org/doc/Rnews/Rnews_2004-1.pdf)
-+ Deal with scope? Like global variables and those inside the function; check out python rules for variables
-+ If possible, get to the point where we return a `list`
-+ Deal with `require` and `stop`?
 
 ```{r}
 # Analyze air quality data
