@@ -8,24 +8,12 @@ output: html_document
 An introduction to writing functions to improve your coding efficiency and optimize performance.
 
 #### Learning objectives
-1. Replace loops with functions optimized for vector calculations
-2. Write and use functions in R
-3. Document functions for easy re-use
+1. Write and use functions in R
+2. Document functions for easy re-use
+3. Replace loops with functions optimized for vector calculations
 
 ## Don't Repeat Yourself
 The [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) aims to reduce repetition in software engineering. By writing and using functions to accomplish a set of instructions multiple times, you reduce the opportunities for mistakes and often improve performance of the code you write. Functional programming makes it easy to apply the same analyses to different sets of data, without excessive copy-paste-update cycles that can introduce hard-to-detect errors.
-
-***
-
-## Getting started
-
-***
-
-## R is built for vectors
-
-Loop first, then apply
-Introduce at least some of the \*apply or \*aply functions
-Use airquality data and get the column means (colMeans) for each month separately? `by(airquality[, 1:4], airquality$Month, colMeans)`
 
 ***
 
@@ -62,7 +50,7 @@ simple.p <- simple.summary$coefficients[2, 4]
 
 And finally we can print out these two values with the `cat` command:
 
-```{r}
+```{r, results = "hold"}
 cat("Solar r^2 =", simple.r2)
 cat("Solar p =", simple.p)  
 ```
@@ -339,9 +327,28 @@ airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozo
 airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
 ```
 
-Because `airquality.models` is a list, we can access the objects using double-bracket notation:
+Since it `RegressSimple` is now only running the models we want, remove the `cat` command from the function:
 
 ```{r}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple <- function(data, response) {
+  response.index <- which(colnames(data) == response)
+  predictors <- colnames(data)[-response.index]
+  model.summaries <- list()
+  for (predictor in predictors) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    model.summaries[[predictor]] <- summary(simple)
+  }
+  return(model.summaries)
+}
+```
+
+Because `airquality.models` is a list, we can access the objects using double-bracket notation:
+
+```{r, results = "hold"}
 solar.model <- airquality.models[["Solar.R"]]
 solar.corr <- solar.model$r.squared
 solar.p <- solar.model$coefficients[2, 4]
@@ -373,9 +380,10 @@ cat("  ", "variable", "r2  ", "p", "\n",
 ## [3,] Temp     0.4877072 2.931897e-18
 ```
 
-Start by getting the names of the variables and set up a data frame to hold the values we want to print:
+Add a brief explanation of what this function does, then add code to get the names of the variables and set up a data frame to hold the values we want to print:
 
 ```{r, eval = FALSE}
+# Print values of interest from each predictor in a RegressSimple object
 print.RegressSimple <- function(x, ...) {
   # Get a vector of the elements' names
   predictors <- names(x)
@@ -386,82 +394,143 @@ print.RegressSimple <- function(x, ...) {
 }
 ```
 
+Now extract the values we want to print for each element in the `RegressSimple` object (which is the variable `x` in `print.RegressSimple`):
 
-  # Loop over all the elements in x and extract r-squared and p values
-  for (predictor in predictors) {
-    # Pull out the model from the list
-    simple.model <- x[[predictor]]
-    # Find the corresponding row in the model.results data.frame
-    row.number <- which(model.results$variable == predictor)
-    # Store the values of interest in the data frame
-    model.results[row.number, "r2"] <- simple.model$r.squared
-    model.results[row.number, "p"] <- simple.model$coefficients[2, 4]
-  }
+```{r, eval = FALSE}
+# Print values of interest from each predictor in a RegressSimple object
+print.RegressSimple <- function(x, ...) {
+  # Get a vector of the elements' names
+  predictors <- names(x)
+  # Set up a dataframe for results of interest
+  model.results <- data.frame(variable = predictors,
+                           r2 = 0,
+                           p = 0)
+  # Extract r-squared and p-values
+  model.results$r2 <- sapply(airquality.models, "[[", "r.squared")
+  model.coeffs <- sapply(airquality.models, "[[", "coefficients")
+  model.results$p <- model.coeffs[8, ]
+}
+```
 
-
-
-+ Access individual elements of the output to print p & r
-+ Write print.RegressSimple function
-
-=============================================================================  
-=======================  Active Above  ======================================  
-=============================================================================
+Finally, we add `cat` and `print` statements to output the values.
 
 ```{r}
+# Print values of interest from each predictor in a RegressSimple object
+print.RegressSimple <- function(x, ...) {
+  # Get a vector of the elements' names
+  predictors <- names(x)
+  # Set up a dataframe for results of interest
+  model.results <- data.frame(variable = predictors,
+                           r2 = 0,
+                           p = 0)
+  # Extract r-squared and p-values
+  model.results$r2 <- sapply(airquality.models, "[[", "r.squared")
+  model.coeffs <- sapply(airquality.models, "[[", "coefficients")
+  model.results$p <- model.coeffs[8, ]
+
+  # Print values
+  cat("Regression results: ", "\n")
+  print(as.matrix(model.results), quote = FALSE)
+}
+```
+
+Now when we run our code, we can just enter the name of the variable to have it print out our nice table of just the r^2^ and p-values.
+
+```{r, eval = FALSE}
+source(file = "regression-functions.R")
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+airquality.models
+```
+
+```{r, echo = FALSE}
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+airquality.models
+```
+
+Well that didn't work. It just printed out the each element of the list. That's because we need to take one final step. The `print.RegressSimple` only works on objects that are of `class RegressSimple`. So what is the class of our `airquality.models`?
+
+```{r}
+class(airquality.models)
+```
+
+It's a `r class(airquality.models)`, _not_ a `RegressSimple` object. So how do we instruct R to make the output of `RegressSimple` to be an object of `class RegressSimple`? Big surprise here, we use the `class` function! In our `RegressSimple` function, right before we return the `model.summaries` list, we set the class to be "RegressSimple":
+
+```{r}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple <- function(data, response) {
+  response.index <- which(colnames(data) == response)
+  predictors <- colnames(data)[-response.index]
+  model.summaries <- list()
+  for (predictor in predictors) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    model.summaries[[predictor]] <- summary(simple)
+  }
+  
+  # Set class and return results
+  class(model.summaries) <- "RegressSimple"
+  return(model.summaries)
+}
+```
+
+Now re-run the lines in our regression script:
+```{r, eval = FALSE}
+source(file = "regression-functions.R")
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+airquality.models
+```
+
+```{r, echo = FALSE}
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+airquality.models
+```
+
+There it is, our table of values! Our final two files will then be:
+
+airquality-regression.R:
+
+```{r, eval = FALSE}
 # Analyze air quality data
 # Jeffrey Oliver
 # jcoliver@email.arizona.edu
-# 2017-06-15
+# 2017-06-22
 
-# Loop over each predictor and get ....
-
-simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
-simple.summary <- summary(simple)
-simple.r2 <- simple.summary$r.squared
-simple.p <- simple.summary$coefficients[2, 4]
-cat("Solar r^2 =", simple.r2)
-cat("Solar p =", simple.p)  
-    
-simple <- lm(airquality[, "Ozone"] ~ airquality[, "Wind"])
-simple.summary <- summary(simple)
-simple.r2 <- simple.summary$r.squared
-simple.p <- simple.summary$coefficients[2, 4]
-cat("Wind r^2 =", simple.r2)
-cat("Wind p =", simple.p)  
-
-simple <- lm(airquality[, "Ozone"] ~ airquality[, "Temp"])
-simple.summary <- summary(simple)
-simple.r2 <- simple.summary$r.squared
-simple.p <- simple.summary$coefficients[2, 4]
-cat("Temp r^2 =", simple.r2)
-cat("Temp p =", simple.p)
+source(file = "regression-functions.R")
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+airquality.models
 ```
 
-```{r}
+regression-functions.R:
+
+```{r, eval = FALSE}
 # Functions to automate linear regression
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-06-15
 
 ################################################################################
-# Remember to ONLY pass variables we want to analyze; so omit Month and Day when passing data
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
 RegressSimple <- function(data, response) {
   response.index <- which(colnames(data) == response)
   predictors <- colnames(data)[-response.index]
   model.summaries <- list()
-  
-  for (predictor in predictors) { # Run this once with just cat("Predictor: ", predictor, "\n")
-    simple <- lm(airquality[, response] ~ airquality[, predictor])
-    simple.summary <- summary(simple)
-    model.summaries[[predictor]] <- simple.summary
+  for (predictor in predictors) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    model.summaries[[predictor]] <- summary(simple)
   }
   
-  # Don't do class statement until after we've run the function once
+  # Set class and return results
   class(model.summaries) <- "RegressSimple"
   return(model.summaries)
 }
 
 ################################################################################
+# Print values of interest from each predictor in a RegressSimple object
 print.RegressSimple <- function(x, ...) {
   # Get a vector of the elements' names
   predictors <- names(x)
@@ -469,23 +538,15 @@ print.RegressSimple <- function(x, ...) {
   model.results <- data.frame(variable = predictors,
                            r2 = 0,
                            p = 0)
-  # Loop over all the elements in x and extract r-squared and p values
-  for (predictor in predictors) {
-    # Pull out the model from the list
-    simple.model <- x[[predictor]]
-    # Find the corresponding row in the model.results data.frame
-    row.number <- which(model.results$variable == predictor)
-    # Store the values of interest in the data frame
-    model.results[row.number, "r2"] <- simple.model$r.squared
-    model.results[row.number, "p"] <- simple.model$coefficients[2, 4]
-  }
+  # Extract r-squared and p-values
+  model.results$r2 <- sapply(airquality.models, "[[", "r.squared")
+  model.coeffs <- sapply(airquality.models, "[[", "coefficients")
+  model.results$p <- model.coeffs[8, ]
+
+  # Print values
   cat("Regression results: ", "\n")
   print(as.matrix(model.results), quote = FALSE)
 }
-
-ozone.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
-ozone.models
-
 ```
 
 ***

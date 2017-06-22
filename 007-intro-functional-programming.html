@@ -127,23 +127,14 @@ $(document).ready(function () {
 <div id="learning-objectives" class="section level4">
 <h4>Learning objectives</h4>
 <ol style="list-style-type: decimal">
-<li>Replace loops with functions optimized for vector calculations</li>
 <li>Write and use functions in R</li>
 <li>Document functions for easy re-use</li>
+<li>Replace loops with functions optimized for vector calculations</li>
 </ol>
 </div>
 <div id="dont-repeat-yourself" class="section level2">
 <h2>Don’t Repeat Yourself</h2>
 <p>The <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY principle</a> aims to reduce repetition in software engineering. By writing and using functions to accomplish a set of instructions multiple times, you reduce the opportunities for mistakes and often improve performance of the code you write. Functional programming makes it easy to apply the same analyses to different sets of data, without excessive copy-paste-update cycles that can introduce hard-to-detect errors.</p>
-<hr />
-</div>
-<div id="getting-started" class="section level2">
-<h2>Getting started</h2>
-<hr />
-</div>
-<div id="r-is-built-for-vectors" class="section level2">
-<h2>R is built for vectors</h2>
-<p>Loop first, then apply Introduce at least some of the *apply or *aply functions Use airquality data and get the column means (colMeans) for each month separately? <code>by(airquality[, 1:4], airquality$Month, colMeans)</code></p>
 <hr />
 </div>
 <div id="writing-functions" class="section level2">
@@ -171,10 +162,9 @@ simple.summary &lt;- summary(simple)
 simple.r2 &lt;- simple.summary$r.squared
 simple.p &lt;- simple.summary$coefficients[2, 4]</code></pre>
 <p>And finally we can print out these two values with the <code>cat</code> command:</p>
-<pre class="r"><code>cat(&quot;Solar r^2 =&quot;, simple.r2)</code></pre>
-<pre><code>## Solar r^2 = 0.1213419</code></pre>
-<pre class="r"><code>cat(&quot;Solar p =&quot;, simple.p)  </code></pre>
-<pre><code>## Solar p = 0.0001793109</code></pre>
+<pre class="r"><code>cat(&quot;Solar r^2 =&quot;, simple.r2)
+cat(&quot;Solar p =&quot;, simple.p)  </code></pre>
+<pre><code>## Solar r^2 = 0.1213419Solar p = 0.0001793109</code></pre>
 <p>If we want to do the same thing for the relationship between ozone and wind, we can copy/paste this code and just change the predictor column specification in the <code>lm</code> command from <code>&quot;Solar.R&quot;</code> to <code>&quot;Wind&quot;</code> and update the message in the <code>cat</code> commands:</p>
 <pre class="r"><code>simple &lt;- lm(airquality[, &quot;Ozone&quot;] ~ airquality[, &quot;Wind&quot;])
 simple.summary &lt;- summary(simple)
@@ -362,14 +352,29 @@ airquality.models &lt;- RegressSimple(data = airquality[, -c(5:6)], response = &
 <pre><code>## Predictor: Solar.R 
 ## Predictor: Wind 
 ## Predictor: Temp</code></pre>
+<p>Since it <code>RegressSimple</code> is now only running the models we want, remove the <code>cat</code> command from the function:</p>
+<pre class="r"><code># Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple &lt;- function(data, response) {
+  response.index &lt;- which(colnames(data) == response)
+  predictors &lt;- colnames(data)[-response.index]
+  model.summaries &lt;- list()
+  for (predictor in predictors) {
+    simple &lt;- lm(data[, response] ~ data[, predictor])
+    model.summaries[[predictor]] &lt;- summary(simple)
+  }
+  return(model.summaries)
+}</code></pre>
 <p>Because <code>airquality.models</code> is a list, we can access the objects using double-bracket notation:</p>
 <pre class="r"><code>solar.model &lt;- airquality.models[[&quot;Solar.R&quot;]]
 solar.corr &lt;- solar.model$r.squared
 solar.p &lt;- solar.model$coefficients[2, 4]
-cat(&quot;Solar r^2 = &quot;, solar.corr, &quot;\n&quot;)</code></pre>
-<pre><code>## Solar r^2 =  0.1213419</code></pre>
-<pre class="r"><code>cat(&quot;Solar p = &quot;, solar.p, &quot;\n&quot;)</code></pre>
-<pre><code>## Solar p =  0.0001793109</code></pre>
+cat(&quot;Solar r^2 = &quot;, solar.corr, &quot;\n&quot;)
+cat(&quot;Solar p = &quot;, solar.p, &quot;\n&quot;)</code></pre>
+<pre><code>## Solar r^2 =  0.1213419 
+## Solar p =  0.0001793109</code></pre>
 </div>
 <div id="make-it-class-y" class="section level3">
 <h3>Make it Class-y</h3>
@@ -377,85 +382,13 @@ cat(&quot;Solar r^2 = &quot;, solar.corr, &quot;\n&quot;)</code></pre>
 <p>In the file with our <code>RegressSimple</code> function, create <em>another</em> function, and call it <code>print.RegressSimple</code>:</p>
 <pre class="r"><code>print.RegressSimple &lt;- function(x, ...) {
 }</code></pre>
-<p>Briefly, what we are doing is creating a function that specifies the output of anything that is <code>class RegressSimple</code> (we’ll get to how we make that happen in a moment). The thing to note now is that in a <code>print.____</code> function, the first argument, <code>x</code> is the object we wish to print; in this case, a product of the function <code>RegressSimple</code>. Stick with me here, it will become clearer. For the purposes of this lesson, just remember that in the <code>print.RegressSimple</code> function, the variable <code>x</code> is the list that is produced from a call to <code>RegressSimple</code>. What we want this function to do is extract the r<sup>2</sup> and p-values for each model and display a table of those values for each predictor variable. Something like:</p>
+<p>Briefly, what we are doing is creating a function that specifies the output of anything that is <code>class RegressSimple</code> (we’ll get to how we make that happen in a moment). The thing to note now is that in a <code>print.____</code> function, the first argument, <code>x</code> is the object we wish to print; in this case, a product of the function <code>RegressSimple</code>. Stick with me here, it will become clearer. For the purposes of this lesson, just remember that in the <code>print.RegressSimple</code> function, the variable <code>x</code> is the list that is produced from a call to <code>RegressSimple</code>. We want this function to extract the r<sup>2</sup> and p-values for each model and display a table of those values for each predictor variable. Something like:</p>
 <pre><code>##      variable    r2      p   
 ##      Solar.R     0.12    1.7e-04 
 ##      Wind        0.36    9.2e-13 
 ##      Temp        0.48    2.9e-18 </code></pre>
-<pre class="r"><code>print.RegressSimple &lt;- function(x, ...) {
-  # Get a vector of the elements' names
-  predictors &lt;- names(x)
-  # Set up a dataframe for results of interest
-  model.results &lt;- data.frame(variable = predictors,
-                           r2 = 0,
-                           p = 0)
-}</code></pre>
-</div>
-</div>
-<div id="todo" class="section level2">
-<h2>TODO:</h2>
-<ul>
-<li>Access individual elements of the output to print p &amp; r</li>
-<li>Write print.RegressSimple function</li>
-</ul>
-<p>=============================================================================<br />
-======================= Active Above ======================================<br />
-=============================================================================</p>
-<pre class="r"><code># Analyze air quality data
-# Jeffrey Oliver
-# jcoliver@email.arizona.edu
-# 2017-06-15
-
-# Loop over each predictor and get ....
-
-simple &lt;- lm(airquality[, &quot;Ozone&quot;] ~ airquality[, &quot;Solar.R&quot;])
-simple.summary &lt;- summary(simple)
-simple.r2 &lt;- simple.summary$r.squared
-simple.p &lt;- simple.summary$coefficients[2, 4]
-cat(&quot;Solar r^2 =&quot;, simple.r2)</code></pre>
-<pre><code>## Solar r^2 = 0.1213419</code></pre>
-<pre class="r"><code>cat(&quot;Solar p =&quot;, simple.p)  </code></pre>
-<pre><code>## Solar p = 0.0001793109</code></pre>
-<pre class="r"><code>simple &lt;- lm(airquality[, &quot;Ozone&quot;] ~ airquality[, &quot;Wind&quot;])
-simple.summary &lt;- summary(simple)
-simple.r2 &lt;- simple.summary$r.squared
-simple.p &lt;- simple.summary$coefficients[2, 4]
-cat(&quot;Wind r^2 =&quot;, simple.r2)</code></pre>
-<pre><code>## Wind r^2 = 0.3618582</code></pre>
-<pre class="r"><code>cat(&quot;Wind p =&quot;, simple.p)  </code></pre>
-<pre><code>## Wind p = 9.271974e-13</code></pre>
-<pre class="r"><code>simple &lt;- lm(airquality[, &quot;Ozone&quot;] ~ airquality[, &quot;Temp&quot;])
-simple.summary &lt;- summary(simple)
-simple.r2 &lt;- simple.summary$r.squared
-simple.p &lt;- simple.summary$coefficients[2, 4]
-cat(&quot;Temp r^2 =&quot;, simple.r2)</code></pre>
-<pre><code>## Temp r^2 = 0.4877072</code></pre>
-<pre class="r"><code>cat(&quot;Temp p =&quot;, simple.p)</code></pre>
-<pre><code>## Temp p = 2.931897e-18</code></pre>
-<pre class="r"><code># Functions to automate linear regression
-# Jeff Oliver
-# jcoliver@email.arizona.edu
-# 2017-06-15
-
-################################################################################
-# Remember to ONLY pass variables we want to analyze; so omit Month and Day when passing data
-RegressSimple &lt;- function(data, response) {
-  response.index &lt;- which(colnames(data) == response)
-  predictors &lt;- colnames(data)[-response.index]
-  model.summaries &lt;- list()
-  
-  for (predictor in predictors) { # Run this once with just cat(&quot;Predictor: &quot;, predictor, &quot;\n&quot;)
-    simple &lt;- lm(airquality[, response] ~ airquality[, predictor])
-    simple.summary &lt;- summary(simple)
-    model.summaries[[predictor]] &lt;- simple.summary
-  }
-  
-  # Don't do class statement until after we've run the function once
-  class(model.summaries) &lt;- &quot;RegressSimple&quot;
-  return(model.summaries)
-}
-
-################################################################################
+<p>Add a brief explanation of what this function does, then add code to get the names of the variables and set up a data frame to hold the values we want to print:</p>
+<pre class="r"><code># Print values of interest from each predictor in a RegressSimple object
 print.RegressSimple &lt;- function(x, ...) {
   # Get a vector of the elements' names
   predictors &lt;- names(x)
@@ -463,28 +396,192 @@ print.RegressSimple &lt;- function(x, ...) {
   model.results &lt;- data.frame(variable = predictors,
                            r2 = 0,
                            p = 0)
-  # Loop over all the elements in x and extract r-squared and p values
-  for (predictor in predictors) {
-    # Pull out the model from the list
-    simple.model &lt;- x[[predictor]]
-    # Find the corresponding row in the model.results data.frame
-    row.number &lt;- which(model.results$variable == predictor)
-    # Store the values of interest in the data frame
-    model.results[row.number, &quot;r2&quot;] &lt;- simple.model$r.squared
-    model.results[row.number, &quot;p&quot;] &lt;- simple.model$coefficients[2, 4]
-  }
+}</code></pre>
+<p>Now extract the values we want to print for each element in the <code>RegressSimple</code> object (which is the variable <code>x</code> in <code>print.RegressSimple</code>):</p>
+<pre class="r"><code># Print values of interest from each predictor in a RegressSimple object
+print.RegressSimple &lt;- function(x, ...) {
+  # Get a vector of the elements' names
+  predictors &lt;- names(x)
+  # Set up a dataframe for results of interest
+  model.results &lt;- data.frame(variable = predictors,
+                           r2 = 0,
+                           p = 0)
+  # Extract r-squared and p-values
+  model.results$r2 &lt;- sapply(airquality.models, &quot;[[&quot;, &quot;r.squared&quot;)
+  model.coeffs &lt;- sapply(airquality.models, &quot;[[&quot;, &quot;coefficients&quot;)
+  model.results$p &lt;- model.coeffs[8, ]
+}</code></pre>
+<p>Finally, we add <code>cat</code> and <code>print</code> statements to output the values.</p>
+<pre class="r"><code># Print values of interest from each predictor in a RegressSimple object
+print.RegressSimple &lt;- function(x, ...) {
+  # Get a vector of the elements' names
+  predictors &lt;- names(x)
+  # Set up a dataframe for results of interest
+  model.results &lt;- data.frame(variable = predictors,
+                           r2 = 0,
+                           p = 0)
+  # Extract r-squared and p-values
+  model.results$r2 &lt;- sapply(airquality.models, &quot;[[&quot;, &quot;r.squared&quot;)
+  model.coeffs &lt;- sapply(airquality.models, &quot;[[&quot;, &quot;coefficients&quot;)
+  model.results$p &lt;- model.coeffs[8, ]
+
+  # Print values
   cat(&quot;Regression results: &quot;, &quot;\n&quot;)
   print(as.matrix(model.results), quote = FALSE)
-}
-
-ozone.models &lt;- RegressSimple(data = airquality[, -c(5:6)], response = &quot;Ozone&quot;)
-ozone.models</code></pre>
+}</code></pre>
+<p>Now when we run our code, we can just enter the name of the variable to have it print out our nice table of just the r<sup>2</sup> and p-values.</p>
+<pre class="r"><code>source(file = &quot;regression-functions.R&quot;)
+airquality.models &lt;- RegressSimple(data = airquality[, -c(5:6)], response = &quot;Ozone&quot;)
+airquality.models</code></pre>
+<pre><code>## $Solar.R
+## 
+## Call:
+## lm(formula = data[, response] ~ data[, predictor])
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -48.292 -21.361  -8.864  16.373 119.136 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       18.59873    6.74790   2.756 0.006856 ** 
+## data[, predictor]  0.12717    0.03278   3.880 0.000179 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 31.33 on 109 degrees of freedom
+##   (42 observations deleted due to missingness)
+## Multiple R-squared:  0.1213, Adjusted R-squared:  0.1133 
+## F-statistic: 15.05 on 1 and 109 DF,  p-value: 0.0001793
+## 
+## 
+## $Wind
+## 
+## Call:
+## lm(formula = data[, response] ~ data[, predictor])
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -51.572 -18.854  -4.868  15.234  90.000 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)        96.8729     7.2387   13.38  &lt; 2e-16 ***
+## data[, predictor]  -5.5509     0.6904   -8.04 9.27e-13 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 26.47 on 114 degrees of freedom
+##   (37 observations deleted due to missingness)
+## Multiple R-squared:  0.3619, Adjusted R-squared:  0.3563 
+## F-statistic: 64.64 on 1 and 114 DF,  p-value: 9.272e-13
+## 
+## 
+## $Temp
+## 
+## Call:
+## lm(formula = data[, response] ~ data[, predictor])
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -40.729 -17.409  -0.587  11.306 118.271 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -146.9955    18.2872  -8.038 9.37e-13 ***
+## data[, predictor]    2.4287     0.2331  10.418  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 23.71 on 114 degrees of freedom
+##   (37 observations deleted due to missingness)
+## Multiple R-squared:  0.4877, Adjusted R-squared:  0.4832 
+## F-statistic: 108.5 on 1 and 114 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Well that didn’t work. It just printed out the each element of the list. That’s because we need to take one final step. The <code>print.RegressSimple</code> only works on objects that are of <code>class RegressSimple</code>. So what is the class of our <code>airquality.models</code>?</p>
+<pre class="r"><code>class(airquality.models)</code></pre>
+<pre><code>## [1] &quot;list&quot;</code></pre>
+<p>It’s a list, <em>not</em> a <code>RegressSimple</code> object. So how do we instruct R to make the output of <code>RegressSimple</code> to be an object of <code>class RegressSimple</code>? Big surprise here, we use the <code>class</code> function! In our <code>RegressSimple</code> function, right before we return the <code>model.summaries</code> list, we set the class to be “RegressSimple”:</p>
+<pre class="r"><code># Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple &lt;- function(data, response) {
+  response.index &lt;- which(colnames(data) == response)
+  predictors &lt;- colnames(data)[-response.index]
+  model.summaries &lt;- list()
+  for (predictor in predictors) {
+    simple &lt;- lm(data[, response] ~ data[, predictor])
+    model.summaries[[predictor]] &lt;- summary(simple)
+  }
+  
+  # Set class and return results
+  class(model.summaries) &lt;- &quot;RegressSimple&quot;
+  return(model.summaries)
+}</code></pre>
+<p>Now re-run the lines in our regression script:</p>
+<pre class="r"><code>source(file = &quot;regression-functions.R&quot;)
+airquality.models &lt;- RegressSimple(data = airquality[, -c(5:6)], response = &quot;Ozone&quot;)
+airquality.models</code></pre>
 <pre><code>## Regression results:  
 ##      variable r2        p           
 ## [1,] Solar.R  0.1213419 1.793109e-04
 ## [2,] Wind     0.3618582 9.271974e-13
 ## [3,] Temp     0.4877072 2.931897e-18</code></pre>
+<p>There it is, our table of values! Our final two files will then be:</p>
+<p>airquality-regression.R:</p>
+<pre class="r"><code># Analyze air quality data
+# Jeffrey Oliver
+# jcoliver@email.arizona.edu
+# 2017-06-22
+
+source(file = &quot;regression-functions.R&quot;)
+airquality.models &lt;- RegressSimple(data = airquality[, -c(5:6)], response = &quot;Ozone&quot;)
+airquality.models</code></pre>
+<p>regression-functions.R:</p>
+<pre class="r"><code># Functions to automate linear regression
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-06-15
+
+################################################################################
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple &lt;- function(data, response) {
+  response.index &lt;- which(colnames(data) == response)
+  predictors &lt;- colnames(data)[-response.index]
+  model.summaries &lt;- list()
+  for (predictor in predictors) {
+    simple &lt;- lm(data[, response] ~ data[, predictor])
+    model.summaries[[predictor]] &lt;- summary(simple)
+  }
+  
+  # Set class and return results
+  class(model.summaries) &lt;- &quot;RegressSimple&quot;
+  return(model.summaries)
+}
+
+################################################################################
+# Print values of interest from each predictor in a RegressSimple object
+print.RegressSimple &lt;- function(x, ...) {
+  # Get a vector of the elements' names
+  predictors &lt;- names(x)
+  # Set up a dataframe for results of interest
+  model.results &lt;- data.frame(variable = predictors,
+                           r2 = 0,
+                           p = 0)
+  # Extract r-squared and p-values
+  model.results$r2 &lt;- sapply(airquality.models, &quot;[[&quot;, &quot;r.squared&quot;)
+  model.coeffs &lt;- sapply(airquality.models, &quot;[[&quot;, &quot;coefficients&quot;)
+  model.results$p &lt;- model.coeffs[8, ]
+
+  # Print values
+  cat(&quot;Regression results: &quot;, &quot;\n&quot;)
+  print(as.matrix(model.results), quote = FALSE)
+}</code></pre>
 <hr />
+</div>
 </div>
 <div id="additional-resources" class="section level2">
 <h2>Additional resources</h2>
