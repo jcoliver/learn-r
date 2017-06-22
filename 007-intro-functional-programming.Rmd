@@ -29,7 +29,7 @@ Use airquality data and get the column means (colMeans) for each month separatel
 
 ***
 
-## Writing your own functions
+## Writing functions
 Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy/pasting that code and changing the variable names. Then more copy/paste. Then we forget to change one of the variables and spend a day figuring out why our results don't make sense.
 
 For example, consider the `airquality` data set:
@@ -79,6 +79,8 @@ cat("Wind p =", simple.p)
 ```
 
 This isn't too great an effort, but as the number of predictors grows, the time and opportunty for mistakes also grows. Since we are doing the same exact process for each predictor variable (run `lm`, run `summary`, extract values of interest, then print values of interest), we can encapsulate this in a function.
+
+### Behold, a function!
 
 To define a function, create a new file called "regression-functions.R". While functions do not necessarily have to exist outside of the R script in which they are called, it is generally considered good practice. Start this file with the usual header containing information about the contents:
 
@@ -211,6 +213,8 @@ RegressSimple <- function(data, response) {
 }
 ```
 
+### Using our function
+
 So how do we use this? We need to load this function into memory so we can use it. Go back to the script with our original regression analyses, "airquality-regression.R". Comment out our previous linear regression code and add a call to `source` to load our function file. Hint: in RStudio, you can select multiple lines and comment them out with the shortcut Shift-Ctrl-C.
 
 ```{r, eval = FALSE}
@@ -335,7 +339,66 @@ airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozo
 airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
 ```
 
-## TODO: 
+Because `airquality.models` is a list, we can access the objects using double-bracket notation:
+
+```{r}
+solar.model <- airquality.models[["Solar.R"]]
+solar.corr <- solar.model$r.squared
+solar.p <- solar.model$coefficients[2, 4]
+cat("Solar r^2 = ", solar.corr, "\n")
+cat("Solar p = ", solar.p, "\n")
+```
+
+### Make it Class-y
+
+But now we're back to the copy-paste-update cycle if we want to get all the correlation coefficients and p-values. If we know that's all we want, we can create another function, one that does the work of heavy lifting of extracting coefficients and printing them out to the screen.
+
+In the file with our `RegressSimple` function, create _another_ function, and call it `print.RegressSimple`:
+
+```{r, eval = FALSE}
+print.RegressSimple <- function(x, ...) {
+}
+```
+
+Briefly, what we are doing is creating a function that specifies the output of anything that is `class RegressSimple` (we'll get to how we make that happen in a moment). The thing to note now is that in a `print.____` function, the first argument, `x` is the object we wish to print; in this case, a product of the function `RegressSimple`. Stick with me here, it will become clearer. For the purposes of this lesson, just remember that in the `print.RegressSimple` function, the variable `x` is the list that is produced from a call to `RegressSimple`. We want this function to extract the r^2^ and p-values for each model and display a table of those values for each predictor variable. Something like:
+
+```{r, echo = FALSE}
+cat("  ", "variable", "r2  ", "p", "\n", 
+    "  ", "Solar.R ", "0.12", "1.7e-04", "\n",
+    "  ", "Wind    ", "0.36", "9.2e-13", "\n", 
+    "  ", "Temp    ", "0.48", "2.9e-18", "\n", sep = "\t")
+##      variable r2        p           
+## [1,] Solar.R  0.1213419 1.793109e-04
+## [2,] Wind     0.3618582 9.271974e-13
+## [3,] Temp     0.4877072 2.931897e-18
+```
+
+Start by getting the names of the variables and set up a data frame to hold the values we want to print:
+
+```{r, eval = FALSE}
+print.RegressSimple <- function(x, ...) {
+  # Get a vector of the elements' names
+  predictors <- names(x)
+  # Set up a dataframe for results of interest
+  model.results <- data.frame(variable = predictors,
+                           r2 = 0,
+                           p = 0)
+}
+```
+
+
+  # Loop over all the elements in x and extract r-squared and p values
+  for (predictor in predictors) {
+    # Pull out the model from the list
+    simple.model <- x[[predictor]]
+    # Find the corresponding row in the model.results data.frame
+    row.number <- which(model.results$variable == predictor)
+    # Store the values of interest in the data frame
+    model.results[row.number, "r2"] <- simple.model$r.squared
+    model.results[row.number, "p"] <- simple.model$coefficients[2, 4]
+  }
+
+
 
 + Access individual elements of the output to print p & r
 + Write print.RegressSimple function

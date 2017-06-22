@@ -146,8 +146,8 @@ $(document).ready(function () {
 <p>Loop first, then apply Introduce at least some of the *apply or *aply functions Use airquality data and get the column means (colMeans) for each month separately? <code>by(airquality[, 1:4], airquality$Month, colMeans)</code></p>
 <hr />
 </div>
-<div id="writing-your-own-functions" class="section level2">
-<h2>Writing your own functions</h2>
+<div id="writing-functions" class="section level2">
+<h2>Writing functions</h2>
 <p>Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy/pasting that code and changing the variable names. Then more copy/paste. Then we forget to change one of the variables and spend a day figuring out why our results don’t make sense.</p>
 <p>For example, consider the <code>airquality</code> data set:</p>
 <pre><code>##   Ozone Solar.R Wind Temp Month Day
@@ -183,6 +183,8 @@ simple.p &lt;- simple.summary$coefficients[2, 4]
 cat(&quot;Wind r^2 =&quot;, simple.r2)
 cat(&quot;Wind p =&quot;, simple.p)  </code></pre>
 <p>This isn’t too great an effort, but as the number of predictors grows, the time and opportunty for mistakes also grows. Since we are doing the same exact process for each predictor variable (run <code>lm</code>, run <code>summary</code>, extract values of interest, then print values of interest), we can encapsulate this in a function.</p>
+<div id="behold-a-function" class="section level3">
+<h3>Behold, a function!</h3>
 <p>To define a function, create a new file called “regression-functions.R”. While functions do not necessarily have to exist outside of the R script in which they are called, it is generally considered good practice. Start this file with the usual header containing information about the contents:</p>
 <pre class="r"><code># Functions to automate linear regression
 # Jeff Oliver
@@ -274,6 +276,9 @@ RegressSimple &lt;- function(data, response) {
   }
   return(model.summaries)
 }</code></pre>
+</div>
+<div id="using-our-function" class="section level3">
+<h3>Using our function</h3>
 <p>So how do we use this? We need to load this function into memory so we can use it. Go back to the script with our original regression analyses, “airquality-regression.R”. Comment out our previous linear regression code and add a call to <code>source</code> to load our function file. Hint: in RStudio, you can select multiple lines and comment them out with the shortcut Shift-Ctrl-C.</p>
 <pre class="r"><code># Analyze air quality data
 # Jeffrey Oliver
@@ -357,6 +362,35 @@ airquality.models &lt;- RegressSimple(data = airquality[, -c(5:6)], response = &
 <pre><code>## Predictor: Solar.R 
 ## Predictor: Wind 
 ## Predictor: Temp</code></pre>
+<p>Because <code>airquality.models</code> is a list, we can access the objects using double-bracket notation:</p>
+<pre class="r"><code>solar.model &lt;- airquality.models[[&quot;Solar.R&quot;]]
+solar.corr &lt;- solar.model$r.squared
+solar.p &lt;- solar.model$coefficients[2, 4]
+cat(&quot;Solar r^2 = &quot;, solar.corr, &quot;\n&quot;)</code></pre>
+<pre><code>## Solar r^2 =  0.1213419</code></pre>
+<pre class="r"><code>cat(&quot;Solar p = &quot;, solar.p, &quot;\n&quot;)</code></pre>
+<pre><code>## Solar p =  0.0001793109</code></pre>
+</div>
+<div id="make-it-class-y" class="section level3">
+<h3>Make it Class-y</h3>
+<p>But now we’re back to the copy-paste-update cycle if we want to get all the correlation coefficients and p-values. If we know that’s all we want, we can create another function, one that does the work of heavy lifting of extracting coefficients and printing them out to the screen.</p>
+<p>In the file with our <code>RegressSimple</code> function, create <em>another</em> function, and call it <code>print.RegressSimple</code>:</p>
+<pre class="r"><code>print.RegressSimple &lt;- function(x, ...) {
+}</code></pre>
+<p>Briefly, what we are doing is creating a function that specifies the output of anything that is <code>class RegressSimple</code> (we’ll get to how we make that happen in a moment). The thing to note now is that in a <code>print.____</code> function, the first argument, <code>x</code> is the object we wish to print; in this case, a product of the function <code>RegressSimple</code>. Stick with me here, it will become clearer. For the purposes of this lesson, just remember that in the <code>print.RegressSimple</code> function, the variable <code>x</code> is the list that is produced from a call to <code>RegressSimple</code>. What we want this function to do is extract the r<sup>2</sup> and p-values for each model and display a table of those values for each predictor variable. Something like:</p>
+<pre><code>##      variable    r2      p   
+##      Solar.R     0.12    1.7e-04 
+##      Wind        0.36    9.2e-13 
+##      Temp        0.48    2.9e-18 </code></pre>
+<pre class="r"><code>print.RegressSimple &lt;- function(x, ...) {
+  # Get a vector of the elements' names
+  predictors &lt;- names(x)
+  # Set up a dataframe for results of interest
+  model.results &lt;- data.frame(variable = predictors,
+                           r2 = 0,
+                           p = 0)
+}</code></pre>
+</div>
 </div>
 <div id="todo" class="section level2">
 <h2>TODO:</h2>
