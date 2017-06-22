@@ -1,0 +1,6 @@
+---
+title: "Multiple output formats"
+output: pdf_document
+---
+
+# This document should be rendered as an html file and as a pdf file
