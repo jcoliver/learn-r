@@ -553,19 +553,10 @@ print.RegressSimple <- function(x, ...) {
 
 ## Additional resources
 
-+ [resource one](url-one)
-+ [resource two](url-two)
-
-Example showing timing difference between loop and apply:
-https://gist.github.com/KevCaz/d1b252265209be63d1e2
-
-H. Wickham chapter: http://adv-r.had.co.nz/Functional-programming.html
-http://www.brodrigues.co/fput/
-
-tidyr lesson: https://github.com/datasciencelabs/2016/blob/master/lectures/wrangling/data-wrangling-with-tidyr.Rmd
-
-H. Wickham's take on naming things (see 'Object names' section in: http://adv-r.had.co.nz/Style.html)
-
++ A deeper dive to [functional programming](http://adv-r.had.co.nz/Functional-programming.html)
++ An _even deeper_ dive into [functional programming](http://www.brodrigues.co/fput/)
++ Some [opinions and suggestions](http://adv-r.had.co.nz/Style.html) for naming things like functions (see the 'Object names' section)
++ A [PDF version](https://jcoliver.github.io/learn-r/007-intro-functional-programming.pdf) of this lesson
 
 ***
 
