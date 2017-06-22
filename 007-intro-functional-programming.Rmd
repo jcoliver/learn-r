@@ -2,7 +2,9 @@
 title: "Introduction to Functional Programming"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output: 
+  html_document: default
+  pdf_document: default
 ---
 
 An introduction to writing functions to improve your coding efficiency and optimize performance.
@@ -230,7 +232,7 @@ And we can now use this function, passing `airquality` as the `data` and `"Ozone
 airquality.models <- RegressSimple(data = airquality, response = "Ozone")
 ```
 
-Hmmmm...that's an odd warning. Let's add some reporting code to see if we can figure out what it's doing. Update the `RegressSimple` function to print the name of the predictor:
+Hmmmm...that's an odd warning. Let's add some reporting code to see if we can figure out what it's doing. Update the `RegressSimple` function to print the name of the predictor using the `cat` function:
 
 ```{r, eval = FALSE}
 # Run linear regression for all predictors and a response variable in a data frame
@@ -406,8 +408,8 @@ print.RegressSimple <- function(x, ...) {
                            r2 = 0,
                            p = 0)
   # Extract r-squared and p-values
-  model.results$r2 <- sapply(airquality.models, "[[", "r.squared")
-  model.coeffs <- sapply(airquality.models, "[[", "coefficients")
+  model.results$r2 <- sapply(x, "[[", "r.squared")
+  model.coeffs <- sapply(x, "[[", "coefficients")
   model.results$p <- model.coeffs[8, ]
 }
 ```
@@ -424,8 +426,8 @@ print.RegressSimple <- function(x, ...) {
                            r2 = 0,
                            p = 0)
   # Extract r-squared and p-values
-  model.results$r2 <- sapply(airquality.models, "[[", "r.squared")
-  model.coeffs <- sapply(airquality.models, "[[", "coefficients")
+  model.results$r2 <- sapply(x, "[[", "r.squared")
+  model.coeffs <- sapply(x, "[[", "coefficients")
   model.results$p <- model.coeffs[8, ]
 
   # Print values
@@ -539,8 +541,8 @@ print.RegressSimple <- function(x, ...) {
                            r2 = 0,
                            p = 0)
   # Extract r-squared and p-values
-  model.results$r2 <- sapply(airquality.models, "[[", "r.squared")
-  model.coeffs <- sapply(airquality.models, "[[", "coefficients")
+  model.results$r2 <- sapply(x, "[[", "r.squared")
+  model.coeffs <- sapply(x, "[[", "coefficients")
   model.results$p <- model.coeffs[8, ]
 
   # Print values

@@ -118,7 +118,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Introduction to Functional Programming</h1>
 <h4 class="author"><em>Jeff Oliver</em></h4>
-<h4 class="date"><em>21 June, 2017</em></h4>
+<h4 class="date"><em>22 June, 2017</em></h4>
 
 </div>
 
@@ -290,7 +290,7 @@ source(file = &quot;regression-functions.R&quot;)
 <pre class="r"><code>airquality.models &lt;- RegressSimple(data = airquality, response = &quot;Ozone&quot;)</code></pre>
 <pre><code>## Warning in summary.lm(simple): essentially perfect fit: summary may be
 ## unreliable</code></pre>
-<p>Hmmmm…that’s an odd warning. Let’s add some reporting code to see if we can figure out what it’s doing. Update the <code>RegressSimple</code> function to print the name of the predictor:</p>
+<p>Hmmmm…that’s an odd warning. Let’s add some reporting code to see if we can figure out what it’s doing. Update the <code>RegressSimple</code> function to print the name of the predictor using the <code>cat</code> function:</p>
 <pre class="r"><code># Run linear regression for all predictors and a response variable in a data frame
 # data: the data frame to analyze
 # response: the name of the response variable
@@ -407,8 +407,8 @@ print.RegressSimple &lt;- function(x, ...) {
                            r2 = 0,
                            p = 0)
   # Extract r-squared and p-values
-  model.results$r2 &lt;- sapply(airquality.models, &quot;[[&quot;, &quot;r.squared&quot;)
-  model.coeffs &lt;- sapply(airquality.models, &quot;[[&quot;, &quot;coefficients&quot;)
+  model.results$r2 &lt;- sapply(x, &quot;[[&quot;, &quot;r.squared&quot;)
+  model.coeffs &lt;- sapply(x, &quot;[[&quot;, &quot;coefficients&quot;)
   model.results$p &lt;- model.coeffs[8, ]
 }</code></pre>
 <p>Finally, we add <code>cat</code> and <code>print</code> statements to output the values.</p>
@@ -421,8 +421,8 @@ print.RegressSimple &lt;- function(x, ...) {
                            r2 = 0,
                            p = 0)
   # Extract r-squared and p-values
-  model.results$r2 &lt;- sapply(airquality.models, &quot;[[&quot;, &quot;r.squared&quot;)
-  model.coeffs &lt;- sapply(airquality.models, &quot;[[&quot;, &quot;coefficients&quot;)
+  model.results$r2 &lt;- sapply(x, &quot;[[&quot;, &quot;r.squared&quot;)
+  model.coeffs &lt;- sapply(x, &quot;[[&quot;, &quot;coefficients&quot;)
   model.results$p &lt;- model.coeffs[8, ]
 
   # Print values
@@ -572,8 +572,8 @@ print.RegressSimple &lt;- function(x, ...) {
                            r2 = 0,
                            p = 0)
   # Extract r-squared and p-values
-  model.results$r2 &lt;- sapply(airquality.models, &quot;[[&quot;, &quot;r.squared&quot;)
-  model.coeffs &lt;- sapply(airquality.models, &quot;[[&quot;, &quot;coefficients&quot;)
+  model.results$r2 &lt;- sapply(x, &quot;[[&quot;, &quot;r.squared&quot;)
+  model.coeffs &lt;- sapply(x, &quot;[[&quot;, &quot;coefficients&quot;)
   model.results$p &lt;- model.coeffs[8, ]
 
   # Print values
@@ -586,13 +586,11 @@ print.RegressSimple &lt;- function(x, ...) {
 <div id="additional-resources" class="section level2">
 <h2>Additional resources</h2>
 <ul>
-<li><a href="url-one">resource one</a></li>
-<li><a href="url-two">resource two</a></li>
+<li>A deeper dive to <a href="http://adv-r.had.co.nz/Functional-programming.html">functional programming</a></li>
+<li>An <em>even deeper</em> dive into <a href="http://www.brodrigues.co/fput/">functional programming</a></li>
+<li>Some <a href="http://adv-r.had.co.nz/Style.html">opinions and suggestions</a> for naming things like functions (see the ‘Object names’ section)</li>
+<li>A <a href="https://jcoliver.github.io/learn-r/007-intro-functional-programming.pdf">PDF version</a> of this lesson</li>
 </ul>
-<p>Example showing timing difference between loop and apply: <a href="https://gist.github.com/KevCaz/d1b252265209be63d1e2" class="uri">https://gist.github.com/KevCaz/d1b252265209be63d1e2</a></p>
-<p>H. Wickham chapter: <a href="http://adv-r.had.co.nz/Functional-programming.html" class="uri">http://adv-r.had.co.nz/Functional-programming.html</a> <a href="http://www.brodrigues.co/fput/" class="uri">http://www.brodrigues.co/fput/</a></p>
-<p>tidyr lesson: <a href="https://github.com/datasciencelabs/2016/blob/master/lectures/wrangling/data-wrangling-with-tidyr.Rmd" class="uri">https://github.com/datasciencelabs/2016/blob/master/lectures/wrangling/data-wrangling-with-tidyr.Rmd</a></p>
-<p>H. Wickham’s take on naming things (see ‘Object names’ section in: <a href="http://adv-r.had.co.nz/Style.html" class="uri">http://adv-r.had.co.nz/Style.html</a>)</p>
 <hr />
 <p><a href="index.html">Back to learn-r main page</a></p>
 <p>Questions? e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.</p>
