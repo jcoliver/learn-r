@@ -1,0 +1,567 @@
+---
+title: "Introduction to Functional Programming"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document: default
+  pdf_document: default
+---
+
+An introduction to writing functions to improve your coding efficiency and optimize performance.
+
+#### Learning objectives
+1. Write and use functions in R
+2. Document functions for easy re-use
+3. Replace loops with functions optimized for vector calculations
+
+## Don't Repeat Yourself
+The [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) aims to reduce repetition in software engineering. By writing and using functions to accomplish a set of instructions multiple times, you reduce the opportunities for mistakes and often improve performance of the code you write. Functional programming makes it easy to apply the same analyses to different sets of data, without excessive copy-paste-update cycles that can introduce hard-to-detect errors.
+
+***
+
+## Writing functions
+Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy/pasting that code and changing the variable names. Then more copy/paste. Then we forget to change one of the variables and spend a day figuring out why our results don't make sense.
+
+For example, consider the `airquality` data set:
+
+```{r, echo = FALSE}
+head(airquality)
+```
+
+Let's start by writing a script to run linear regression to see if the solar radiation (the `Solar.R` column) predicts the ozone level (the `Ozone` column). Create a new file called "airquality-regression.R":
+
+```{r}
+# Analyze air quality data
+# Jeffrey Oliver
+# jcoliver@email.arizona.edu
+# 2017-06-22
+
+# Relationship between ozone and solar radiation
+simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
+
+```
+
+Now we are interested in just the correlation coefficient (r^2^) and the p-value for this relationship, so we use `summary` and extract those values:
+
+```{r}
+# Extract the model parameters
+simple.summary <- summary(simple)
+simple.r2 <- simple.summary$r.squared
+simple.p <- simple.summary$coefficients[2, 4]
+```
+
+And finally we can print out these two values with the `cat` command:
+
+```{r, results = "hold"}
+cat("Solar r^2 =", simple.r2)
+cat("Solar p =", simple.p)  
+```
+
+If we want to do the same thing for the relationship between ozone and wind, we can copy/paste this code and just change the predictor column specification in the `lm` command from `"Solar.R"` to `"Wind"` and update the message in the `cat` commands:
+
+```{r, eval = FALSE}
+simple <- lm(airquality[, "Ozone"] ~ airquality[, "Wind"])
+simple.summary <- summary(simple)
+simple.r2 <- simple.summary$r.squared
+simple.p <- simple.summary$coefficients[2, 4]
+cat("Wind r^2 =", simple.r2)
+cat("Wind p =", simple.p)  
+```
+
+This isn't too great an effort, but as the number of predictors grows, the time and opportunty for mistakes also grows. Since we are doing the same exact process for each predictor variable (run `lm`, run `summary`, extract values of interest, then print values of interest), we can encapsulate this in a function.
+
+### Behold, a function!
+
+To define a function, create a new file called "regression-functions.R". While functions do not necessarily have to exist outside of the R script in which they are called, it is generally considered good practice. Start this file with the usual header containing information about the contents:
+
+```{r, eval = FALSE}
+# Functions to automate linear regression
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-06-15
+```
+
+And we define a function pretty much the same way we assign values to a variable, but here we use the `function` function:
+
+```{r, eval = FALSE}
+RegressSimple <- function() {
+}
+```
+
+We have a general idea of what the function should do, so write that as a brief comment above the function:
+
+```{r, eval = FALSE}
+# Run linear regression for all predictors and a response variable in a data frame
+RegressSimple <- function() {
+}
+```
+
+Now what do we do? How does one actually go about writing functions? Maybe you know exactly what your function should do and all the inputs and outputs. I rarely find myself in that case. Rather, I start by doing the same thing as I did before: I copy paste the portion of code I want to run. So in this case, from the airquality-regression.R file, copy the section for the solar radiation analysis and paste it into the body of the `RegressSimple` function. That is, paste it between the pair of curly braces `{ }`:
+
+```{r, eval = FALSE}
+# Run linear regression for all predictors and a response variable in a data frame
+RegressSimple <- function() {
+  simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
+  simple.summary <- summary(simple)
+  simple.r2 <- simple.summary$r.squared
+  simple.p <- simple.summary$coefficients[2, 4]
+  cat("Solar r^2 =", simple.r2)
+  cat("Solar p =", simple.p)  
+}
+```
+
+We don't want the function to print out values from the models, so delete the code that extracts the values and prints them with the two `cat` statements:
+```{r, eval = FALSE}
+# Run linear regression for all predictors and a response variable in a data frame
+RegressSimple <- function() {
+  simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
+  simple.summary <- summary(simple)
+}
+```
+
+At this point, we can consider input and output of the function. We'll need to give the function two pieces of input: the data to work with and which variable to use as the response. We specify input by declaring the names of the values (`data` and `response`) in the `function` call:
+
+```{r, eval = FALSE}
+# Run linear regression for all predictors and a response variable in a data frame
+RegressSimple <- function(data, response) {
+  simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
+  simple.summary <- summary(simple)
+}
+```
+
+And while we're at it, we need to document these inputs:
+```{r, eval = FALSE}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+RegressSimple <- function(data, response) {
+  simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
+  simple.summary <- summary(simple)
+}
+```
+
+Now that we have inputs, we can update the variables in the code we copied from the regression script. What do we need to update?
+
++ The name of the data frame we used, `airquality` is replaced by `data`
++ The model specification now uses the abstracted response variable, stored in `response` instead of the hard coded `"Ozone"`; note that we _do not_ put `response` in double quotes
+
+```{r, eval = FALSE}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+RegressSimple <- function(data, response) {
+  simple <- lm(data[, response] ~ data[, "Solar.R"])
+  simple.summary <- summary(simple)
+}
+```
+
+The goal of the function is to run linear regression for _all_ the predictors in the data frame, so how can we do this? The simplest way is to use a `for` loop for all the columns in the data frame, updating the `lm` call with the column specification of the predictor variable:
+
+```{r, eval = FALSE}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+RegressSimple <- function(data, response) {
+  for (predictor in 1:ncol(data)) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    simple.summary <- summary(simple)
+  }
+}
+```
+
+For output, we probably want the results of the linear model for each of our predictors. In this case, we'll use a `list` object and assigning the output of `summary` to an element in that list. Note because we are using a list, we use two-bracket notation `[[ ]]` to indicate an element in the list. And finally, we sent back these results with the `return` function:
+
+```{r, eval = FALSE}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+RegressSimple <- function(data, response) {
+  model.summaries <- list()
+  for (predictor in 1:ncol(data)) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    element.name <- colnames(data)[predictor]
+    model.summaries[[element.name]] <- summary(simple)
+  }
+  return(model.summaries)
+}
+```
+
+Before we try this out, update the documentation with a description of the output
+```{r}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple <- function(data, response) {
+  model.summaries <- list()
+  for (predictor in 1:ncol(data)) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    element.name <- colnames(data)[predictor]
+    model.summaries[[element.name]] <- summary(simple)
+  }
+  return(model.summaries)
+}
+```
+
+### Using our function
+
+So how do we use this? We need to load this function into memory so we can use it. Go back to the script with our original regression analyses, "airquality-regression.R". Comment out our previous linear regression code and add a call to `source` to load our function file. Hint: in RStudio, you can select multiple lines and comment them out with the shortcut Shift-Ctrl-C.
+
+```{r, eval = FALSE}
+# Analyze air quality data
+# Jeffrey Oliver
+# jcoliver@email.arizona.edu
+# 2017-06-22
+
+source(file = "regression-functions.R")
+
+# Relationship between ozone and solar radiation
+# simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
+
+# Extract the model parameters
+# simple.summary <- summary(simple)
+# simple.r2 <- simple.summary$r.squared
+# simple.p <- simple.summary$coefficients[2, 4]
+# cat("Solar r^2 =", simple.r2)
+# cat("Solar p =", simple.p)  
+```
+
+And we can now use this function, passing `airquality` as the `data` and `"Ozone"` as the `response`:
+
+```{r}
+airquality.models <- RegressSimple(data = airquality, response = "Ozone")
+```
+
+Hmmmm...that's an odd warning. Let's add some reporting code to see if we can figure out what it's doing. Update the `RegressSimple` function to print the name of the predictor using the `cat` function:
+
+```{r, eval = FALSE}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple <- function(data, response) {
+  model.summaries <- list()
+  for (predictor in 1:ncol(data)) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    element.name <- colnames(data)[predictor]
+    model.summaries[[element.name]] <- summary(simple)
+    cat("Predictor:", element.name, "\n")
+  }
+  return(model.summaries)
+}
+```
+
+Now go back our airquality-regression.R script and run the `RegressSimple` command again.
+
+```{r}
+airquality.models <- RegressSimple(data = airquality, response = "Ozone")
+```
+
+Drat. Same warning, but no message printed? Why not? Because we made changes to the regression-functions.R file, but did not load them into memory with the `source` command, R is using the old version of the `RegressSimple` function. So we need to run the `source` command first:
+
+```{r, eval = FALSE}
+source(file = "regression-functions.R")
+```
+
+```{r, echo = FALSE}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple <- function(data, response) {
+  model.summaries <- list()
+  for (predictor in 1:ncol(data)) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    element.name <- colnames(data)[predictor]
+    model.summaries[[element.name]] <- summary(simple)
+    cat("Predictor:", element.name, "\n")
+  }
+  return(model.summaries)
+}
+```
+
+Then the `RegressSimple` command:
+```{r}
+airquality.models <- RegressSimple(data = airquality, response = "Ozone")
+```
+
+OK, so there are some problems. First, we aren't really interested in the effect of `Day` or `Month` on ozone levels, so when we call `RegressSimple`, we should only pass it data we want to analyze. Here we drop the fifth and sixth columns, which are the Month and Day columns, respectively:
+
+```{r, eval = FALSE}
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+```
+
+But look at the output from function call again. Our function actually ran regression on a model using ozone to predict ozone - that's probably what caused the warning message "summary may be unreliable". But we don't want to exclude ozone from the data we pass to the function, because that is the response variable. We therefore need to update our function definition so we don't run an `ozone ~ ozone` model. More generally, we need to make sure our response variable is not treated as a predictor. To do this, we:
+
+1. Find out which column is the `response` variable
+2. Create a vector of predictor variable names using `colnames`
+3. Update our `for` loop to only use those predictor variables
+4. Use the predictor variable name for the `model.summaries` list element name
+
+Open the regression-functions.R file and update `RegressSimple`:
+
+```{r}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple <- function(data, response) {
+  response.index <- which(colnames(data) == response)
+  predictors <- colnames(data)[-response.index]
+  model.summaries <- list()
+  for (predictor in predictors) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    model.summaries[[predictor]] <- summary(simple)
+    cat("Predictor:", predictor, "\n")
+  }
+  return(model.summaries)
+}
+```
+
+Now when we run `RegressSimple`, there are only three predictors used in the models, as we expect:
+
+```{r, eval = FALSE}
+source(file = "regression-functions.R")
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+```
+
+```{r, echo = FALSE}
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+```
+
+Since it `RegressSimple` is now only running the models we want, remove the `cat` command from the function:
+
+```{r}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple <- function(data, response) {
+  response.index <- which(colnames(data) == response)
+  predictors <- colnames(data)[-response.index]
+  model.summaries <- list()
+  for (predictor in predictors) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    model.summaries[[predictor]] <- summary(simple)
+  }
+  return(model.summaries)
+}
+```
+
+Because `airquality.models` is a list, we can access the objects using double-bracket notation:
+
+```{r, results = "hold"}
+solar.model <- airquality.models[["Solar.R"]]
+solar.corr <- solar.model$r.squared
+solar.p <- solar.model$coefficients[2, 4]
+cat("Solar r^2 = ", solar.corr, "\n")
+cat("Solar p = ", solar.p, "\n")
+```
+
+### Make it Class-y
+
+But now we're back to the copy-paste-update cycle if we want to get all the correlation coefficients and p-values. If we know that's all we want, we can create another function, one that does the work of heavy lifting of extracting coefficients and printing them out to the screen.
+
+In the file with our `RegressSimple` function, create _another_ function, and call it `print.RegressSimple`:
+
+```{r, eval = FALSE}
+print.RegressSimple <- function(x, ...) {
+}
+```
+
+Briefly, what we are doing is creating a function that specifies the output of anything that is `class RegressSimple` (we'll get to how we make that happen in a moment). The thing to note now is that in a `print.____` function, the first argument, `x` is the object we wish to print; in this case, a product of the function `RegressSimple`. Stick with me here, it will become clearer. For the purposes of this lesson, just remember that in the `print.RegressSimple` function, the variable `x` is the list that is produced from a call to `RegressSimple`. We want this function to extract the r^2^ and p-values for each model and display a table of those values for each predictor variable. Something like:
+
+```{r, echo = FALSE}
+cat("  ", "variable", "r2  ", "p", "\n", 
+    "  ", "Solar.R ", "0.12", "1.7e-04", "\n",
+    "  ", "Wind    ", "0.36", "9.2e-13", "\n", 
+    "  ", "Temp    ", "0.48", "2.9e-18", "\n", sep = "\t")
+##      variable r2        p           
+## [1,] Solar.R  0.1213419 1.793109e-04
+## [2,] Wind     0.3618582 9.271974e-13
+## [3,] Temp     0.4877072 2.931897e-18
+```
+
+Add a brief explanation of what this function does, then add code to get the names of the variables and set up a data frame to hold the values we want to print:
+
+```{r, eval = FALSE}
+# Print values of interest from each predictor in a RegressSimple object
+print.RegressSimple <- function(x, ...) {
+  # Get a vector of the elements' names
+  predictors <- names(x)
+  # Set up a dataframe for results of interest
+  model.results <- data.frame(variable = predictors,
+                           r2 = 0,
+                           p = 0)
+}
+```
+
+Now extract the values we want to print for each element in the `RegressSimple` object (which is the variable `x` in `print.RegressSimple`):
+
+```{r, eval = FALSE}
+# Print values of interest from each predictor in a RegressSimple object
+print.RegressSimple <- function(x, ...) {
+  # Get a vector of the elements' names
+  predictors <- names(x)
+  # Set up a dataframe for results of interest
+  model.results <- data.frame(variable = predictors,
+                           r2 = 0,
+                           p = 0)
+  # Extract r-squared and p-values
+  model.results$r2 <- sapply(x, "[[", "r.squared")
+  model.coeffs <- sapply(x, "[[", "coefficients")
+  model.results$p <- model.coeffs[8, ]
+}
+```
+
+Finally, we add `cat` and `print` statements to output the values.
+
+```{r}
+# Print values of interest from each predictor in a RegressSimple object
+print.RegressSimple <- function(x, ...) {
+  # Get a vector of the elements' names
+  predictors <- names(x)
+  # Set up a dataframe for results of interest
+  model.results <- data.frame(variable = predictors,
+                           r2 = 0,
+                           p = 0)
+  # Extract r-squared and p-values
+  model.results$r2 <- sapply(x, "[[", "r.squared")
+  model.coeffs <- sapply(x, "[[", "coefficients")
+  model.results$p <- model.coeffs[8, ]
+
+  # Print values
+  cat("Regression results: ", "\n")
+  print(as.matrix(model.results), quote = FALSE)
+}
+```
+
+Now when we run our code, we can just enter the name of the variable to have it print out our nice table of just the r^2^ and p-values.
+
+```{r, eval = FALSE}
+source(file = "regression-functions.R")
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+airquality.models
+```
+
+```{r, echo = FALSE}
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+airquality.models
+```
+
+Well that didn't work. It just printed out the each element of the list. That's because we need to take one final step. The `print.RegressSimple` only works on objects that are of `class RegressSimple`. So what is the class of our `airquality.models`?
+
+```{r}
+class(airquality.models)
+```
+
+It's a `r class(airquality.models)`, _not_ a `RegressSimple` object. So how do we instruct R to make the output of `RegressSimple` to be an object of `class RegressSimple`? Big surprise here, we use the `class` function! In our `RegressSimple` function, right before we return the `model.summaries` list, we set the class to be "RegressSimple":
+
+```{r}
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple <- function(data, response) {
+  response.index <- which(colnames(data) == response)
+  predictors <- colnames(data)[-response.index]
+  model.summaries <- list()
+  for (predictor in predictors) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    model.summaries[[predictor]] <- summary(simple)
+  }
+  
+  # Set class and return results
+  class(model.summaries) <- "RegressSimple"
+  return(model.summaries)
+}
+```
+
+Now re-run the lines in our regression script:
+```{r, eval = FALSE}
+source(file = "regression-functions.R")
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+airquality.models
+```
+
+```{r, echo = FALSE}
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+airquality.models
+```
+
+There it is, our table of values! Our final two files will then be:
+
+airquality-regression.R:
+
+```{r, eval = FALSE}
+# Analyze air quality data
+# Jeffrey Oliver
+# jcoliver@email.arizona.edu
+# 2017-06-22
+
+source(file = "regression-functions.R")
+airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
+airquality.models
+```
+
+regression-functions.R:
+
+```{r, eval = FALSE}
+# Functions to automate linear regression
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-06-15
+
+################################################################################
+# Run linear regression for all predictors and a response variable in a data frame
+# data: the data frame to analyze
+# response: the name of the response variable
+# returns: a list where each element is the output from summary(lm)
+RegressSimple <- function(data, response) {
+  response.index <- which(colnames(data) == response)
+  predictors <- colnames(data)[-response.index]
+  model.summaries <- list()
+  for (predictor in predictors) {
+    simple <- lm(data[, response] ~ data[, predictor])
+    model.summaries[[predictor]] <- summary(simple)
+  }
+  
+  # Set class and return results
+  class(model.summaries) <- "RegressSimple"
+  return(model.summaries)
+}
+
+################################################################################
+# Print values of interest from each predictor in a RegressSimple object
+print.RegressSimple <- function(x, ...) {
+  # Get a vector of the elements' names
+  predictors <- names(x)
+  # Set up a dataframe for results of interest
+  model.results <- data.frame(variable = predictors,
+                           r2 = 0,
+                           p = 0)
+  # Extract r-squared and p-values
+  model.results$r2 <- sapply(x, "[[", "r.squared")
+  model.coeffs <- sapply(x, "[[", "coefficients")
+  model.results$p <- model.coeffs[8, ]
+
+  # Print values
+  cat("Regression results: ", "\n")
+  print(as.matrix(model.results), quote = FALSE)
+}
+```
+
+***
+
+## Additional resources
+
++ A deeper dive to [functional programming](http://adv-r.had.co.nz/Functional-programming.html)
++ An _even deeper_ dive into [functional programming](http://www.brodrigues.co/fput/)
++ Some [opinions and suggestions](http://adv-r.had.co.nz/Style.html) for naming things like functions (see the 'Object names' section)
++ A [PDF version](https://jcoliver.github.io/learn-r/007-intro-functional-programming.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
