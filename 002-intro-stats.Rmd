@@ -2,7 +2,9 @@
 title: "Introduction to R Statistics"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 An introduction to using the R statistics package and the RStudio interface.
@@ -21,7 +23,7 @@ dir.create(path = "output")
 ```
 
 ##Analysis of Variance (ANOVA)
-For our first set of analyses, we'll use a dataset that comes pre-loaded in R. The `iris` data is from early statistical work of R.A. Fisher [doi: 10.1111%2Fj.1469-1809.1936.tb02137.x](https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x), who used three species of _Iris_ flowers to develop linear discriminant analysis. Start by looking at the data with the `head` command:
+For our first set of analyses, we'll use a dataset that comes pre-loaded in R. The `iris` data is from early statistical work of R.A. Fisher, who used three species of _Iris_ flowers to develop linear discriminant analysis. Start by looking at the data with the `head` command:
 ```{r}
 head(x = iris)
 ```
@@ -415,6 +417,11 @@ The coefficient for log~2~ GDP in the model is positive, with increases in GDP c
 the GDP data, so this coefficient indicates the change in life expectancy for every two-fold increase in per capita GDP. For a four-fold increase in GDP, we multiply this coefficient by two (because four is two two-fold changes) to conclude that a four-fold increase in GDP results in an increase of `r round(x = (2 * lifeExp.v.gdp$coefficients['log2GDP']), digits = 2)` years in life expectancy.
 
 ***
+
+## Additional resources
+
++ Early work by R.A. Fisher: [doi: 10.1111%2Fj.1469-1809.1936.tb02137.x](https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x)
++ A [PDF version](https://jcoliver.github.io/learn-r/002-intro-stats.pdf) of this lesson
 
 <a href="index.html">Back to learn-r main page</a>
   
