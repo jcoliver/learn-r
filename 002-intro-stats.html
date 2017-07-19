@@ -118,7 +118,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Introduction to R Statistics</h1>
 <h4 class="author"><em>Jeff Oliver</em></h4>
-<h4 class="date"><em>11 July, 2017</em></h4>
+<h4 class="date"><em>19 July, 2017</em></h4>
 
 </div>
 
@@ -140,7 +140,7 @@ dir.create(path = &quot;output&quot;)</code></pre>
 </div>
 <div id="analysis-of-variance-anova" class="section level2">
 <h2>Analysis of Variance (ANOVA)</h2>
-<p>For our first set of analyses, we’ll use a dataset that comes pre-loaded in R. The <code>iris</code> data is from early statistical work of R.A. Fisher <a href="https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x">doi: 10.1111%2Fj.1469-1809.1936.tb02137.x</a>, who used three species of <em>Iris</em> flowers to develop linear discriminant analysis. Start by looking at the data with the <code>head</code> command:</p>
+<p>For our first set of analyses, we’ll use a dataset that comes pre-loaded in R. The <code>iris</code> data is from early statistical work of R.A. Fisher, who used three species of <em>Iris</em> flowers to develop linear discriminant analysis. Start by looking at the data with the <code>head</code> command:</p>
 <pre class="r"><code>head(x = iris)</code></pre>
 <pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 ## 1          5.1         3.5          1.4         0.2  setosa
@@ -593,9 +593,16 @@ summary(lifeExp.v.gdp)</code></pre>
 </blockquote>
 <p>The coefficient for log<sub>2</sub> GDP in the model is positive, with increases in GDP correlating with increased life expectancy. The estimated coefficient for the relationship is 5.19. Remember that we log<sub>2</sub>-tranformed the GDP data, so this coefficient indicates the change in life expectancy for every two-fold increase in per capita GDP. For a four-fold increase in GDP, we multiply this coefficient by two (because four is two two-fold changes) to conclude that a four-fold increase in GDP results in an increase of 10.39 years in life expectancy.</p>
 <hr />
+</div>
+</div>
+<div id="additional-resources" class="section level2">
+<h2>Additional resources</h2>
+<ul>
+<li>Early work by R.A. Fisher: <a href="https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x">doi: 10.1111%2Fj.1469-1809.1936.tb02137.x</a></li>
+<li>A <a href="https://jcoliver.github.io/learn-r/002-intro-stats.pdf">PDF version</a> of this lesson</li>
+</ul>
 <p><a href="index.html">Back to learn-r main page</a></p>
 <p>Questions? e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.</p>
-</div>
 </div>
 
 
