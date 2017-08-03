@@ -2,7 +2,9 @@
 title: "LESSON TITLE"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output: 
+  html_document: default
+  pdf_document: default
 ---
 
 [INTRODUCTORY SENTENCE]
@@ -10,6 +12,11 @@ Rationale: Make nice looking graphics that combine heatmaps and clustering graph
 
 + Consider the `ggdendro` package? See: https://stackoverflow.com/questions/6673162/reproducing-lattice-dendrogram-graph-with-ggplot2
 + [ggdendro page](https://cran.r-project.org/web/packages/ggdendro/vignettes/ggdendro.html)
+
+0. What are the data? (the otter data?)
+1. Clustering approach (e.g. `hclust`)
+2. Drawing just a cluster
+3. Drawing just a heatmap (`geom_tile`); individuals on Y, measurement on X
 
 #### Learning objectives
 1. one
