@@ -7,8 +7,7 @@ output:
   pdf_document: default
 ---
 
-[INTRODUCTORY SENTENCE]
-Rationale: Make nice looking graphics that combine heatmaps and clustering graphic. The two would likely be produced from different sources. That is, the clustering dendrogram might not be created by the graphics package.
+Want to combine the visualization of quantitative data with clustering algorithms? Unsatisfied with the options provided by the base R packages? In this hands-on workshop, we'll use the `ggendro` package for R to make publication-quality graphics.
 
 + Consider the `ggdendro` package? See: https://stackoverflow.com/questions/6673162/reproducing-lattice-dendrogram-graph-with-ggplot2
 + [ggdendro page](https://cran.r-project.org/web/packages/ggdendro/vignettes/ggdendro.html)
