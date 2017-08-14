@@ -27,15 +27,82 @@ Want to combine the visualization of quantitative data with clustering algorithm
 ***
 
 ## Getting started
+Start by creating a new project in RStudio and creating two folders we'll use to organize our efforts. The two folders should be `data` and `output` and will store...data and output.
+```{r eval = FALSE}
+dir.create("data")
+dir.create("output")
+```
+
+For this lesson we will use data from a diversity survey of microbial life in a [chrysotile asbestos](https://en.wikipedia.org/wiki/Chrysotile) mine. Driscoll and colleagues [doi: 10.1016/j.gdata.2016.11.004](https://doi.org/10.1016/j.gdata.2016.11.004) used next generation sequencing to identify and categorize bacterial diversity in a flooded pit of the abandoned mine. The data are normalized read counts for microbes found at the sites. A subset of the data can be downloaded from [https://tinyurl.com/mine-data-csv](https://tinyurl.com/mine-data-csv) (which itself redirects to [https://jcoliver.github.io/learn-r/data/mine-microbe-class-data.csv](https://jcoliver.github.io/learn-r/data/mine-microbe-class-data.csv)). You can download this file to your computer with the `download.file` function:
+```{r eval = FALSE}
+download.file(url = "https://tinyurl.com/mine-data-csv", 
+              destfile = "data/mine-microbe-class-data.csv")
+```
+This downloads the data and saves it in the `data` directory as `mine-microbe-class-data.csv`.  
 
 ***
 
-## [TOPIC ONE]
+## Clustering
+
+***
+## Clustering
 
 ***
 
-## [TOPIC TWO]
+## Heatmap
 
+***
+
+## Putting it all together
+
+***
+
+## Final-ish
+
+```{r}
+otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
+two.species <- c("A. cinerea", "L. canadensis")
+otter <- otter[otter$species %in% two.species, ]
+otter <- na.omit(otter)
+otter.scaled <- otter
+otter.scaled[, c(4:9)] <- scale(otter.scaled[, 4:9])
+otter.scaled$accession <- factor(otter.scaled$accession)
+
+# Renumber rows
+rownames(otter) <- NULL
+
+# Run clustering
+library("ggdendro")
+otter.matrix <- as.matrix(otter.scaled[, -c(1:3)])
+otter.dendro <- as.dendrogram(hclust(d = dist(x = otter.matrix)))
+otter.dendro.data <- dendro_data(otter.dendro)
+otter.order <- order.dendrogram(otter.dendro)
+
+# Create dendro
+library("ggplot2")
+dendro.plot <- ggplot(data = segment(otter.dendro.y)) +
+  geom_segment(aes(x = x, y = y, xend = xend, yend=yend)) +
+  coord_flip() + 
+  theme_dendro()
+# print(dendro.plot)
+
+# Heatmap
+# Data wrangling
+library("reshape2")
+otter.long <- melt(otter.scaled, id = c("species", "museum", "accession"))
+# Order the levels according to their position in the cluster
+otter.long$accession <- factor(x = otter.long$accession, levels = otter.scaled$accession[otter.order], ordered = TRUE)
+heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
+  geom_tile(aes(fill = value)) +
+  scale_fill_gradient2()
+# print(heatmap.plot)
+
+# All together
+library("grid")
+grid.newpage()
+print(heatmap.plot, vp = viewport(x = 0.4, y = 0.4, width = 0.8, height = 0.8))
+print(dendro.plot, vp = viewport(x = 0.9, y = 0.41, width = 0.2, height = 0.85))
+```
 ***
 
 ## Additional resources
