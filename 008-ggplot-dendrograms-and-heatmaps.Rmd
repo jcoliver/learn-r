@@ -155,7 +155,9 @@ print(dendro.plot, vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 0.92
 
 OK, that's a start, but there are a few things we need to address:
 
-1. 
+1. Notice the tips of the dendrogram are not in the same order as the y-axis of the heatmap. We'll need to re-order the heatmap to match the structure of the clustering.
+2. It would be nice to have the dendrogram and heatmap closer together, without a legend separating them.
+3. The dendrogram should be vertically stretched so each tip lines up with a row in the heatmap plot.
 
 ***
 
