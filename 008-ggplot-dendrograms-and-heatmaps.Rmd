@@ -74,17 +74,6 @@ two.species <- c("A. cinerea", "L. canadensis")
 otter <- otter[otter$species %in% two.species, ]
 ```
 
-We also want to use the specimen accession number for categorizing specimens, so we convert this column to be of type `factor`.
-
-```{r}
-otter$accession <- factor(otter$accession)
-```
-
-Missing data can cause problems in downstream analyses, so we will just remove any rows that have missing data. Here we replace the original data object `otter` with one in which there are no missing values.
-```{r}
-otter <- na.omit(otter)
-```
-
 Because R _does not_ automatically re-number the rows when we drop those with `NA` values, we can force re-numbering via:
 ```{r}
 rownames(otter) <- NULL
@@ -108,7 +97,6 @@ library("ggdendro")
 otter.matrix <- as.matrix(otter.scaled[, -c(1:3)])
 rownames(otter.matrix) <- otter.scaled$accession
 otter.dendro <- as.dendrogram(hclust(d = dist(x = otter.matrix)))
-otter.dendro.data <- dendro_data(otter.dendro)
 
 # Create dendro
 library("ggplot2")
@@ -144,8 +132,6 @@ we want to transform it to this format:
 # Data wrangling
 library("reshape2")
 otter.long <- melt(otter.scaled, id = c("species", "museum", "accession"))
-# Order the levels according to their position in the cluster
-# otter.long$accession <- factor(x = otter.long$accession, levels = otter.scaled$accession[otter.order], ordered = TRUE)
 heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
   geom_tile(aes(fill = value)) +
   scale_fill_gradient2() +
@@ -172,7 +158,7 @@ OK, that's a start, but there are a few things we need to address:
 2. It would be nice to have the dendrogram and heatmap closer together, without a legend separating them.
 3. The dendrogram should be vertically stretched so each tip lines up with a row in the heatmap plot.
 
-### Aligning the two plots
+### Re-order heatmap rows to match dendrogram
 
 We'll use the order of the tips in the dendrogram to re-order the rows in our heatmap. The order of those tips are stored in the `otter.dendro` object, and we can extract it with the `order.dendro` function:
 
@@ -205,7 +191,7 @@ print(heatmap.plot)
 
 Now the rows have been re-arranged and we can see right away that the heatmap now does a better job of grouping "red" rows together and "blue" rows together.
 
-Take a look at the combined figure:
+The combined figure shows the accession numbers in the heatmap are now in the same order as the acession numbers in the dendrogram:
 
 ```{r}
 grid.newpage()
@@ -213,12 +199,70 @@ print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
 print(dendro.plot, vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
 ```
 
+### Re-position legend
+
+We would like the legend to be somewere else besides in between the two graphs, so we will move it to the top of the heatmap. We do this with through the `theeme` layer when creating the heatmap, setting the value of `legend.position` to "top":
+
+```{r}
+# Heatmap
+heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
+  geom_tile(aes(fill = value)) +
+  scale_fill_gradient2() +
+  theme(axis.text.y = element_text(size = 6),
+        legend.position = "top")
+
+# Preview the heatmap
+print(heatmap.plot)
+```
+
+The combined figure now has the heatmap and dendrogram closer together:
+
+```{r}
+grid.newpage()
+print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
+print(dendro.plot, vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
+```
+
+### Align dendrogram tips with heatmap rows
+
+Finally, we will need to adjust the height and alignment of dendrogram to ensure the tips line up with the corresponding rows in the heatmap. Unfortunately, because the two figures are actually independent graphics objects, this part involves considerable trial and error. In general, we will need to change two parameters in the `viewport` function when we call `print` on `dendro.plot`:  
+
+1. `y`: This argument sets the vertical justification. A value of 0.5 centers the graphic in the middle of the viewport to which it is assigned. Values closer to zero move the graphic towards the bottom of the viewport and values closer to one move the graphic towards the top of the viewport. In our case, we will probably want to move the dendrogram down a little bit, so we use a value below 0.5.
+2. `height`: This is the proportion of the viewport's vertical space the graphic should use. We initially set it to use all the vertical space (`height = 1.0`), but since the legend now occupies the real estate at the top of the graphic, we will need to make the dendrogram height smaller.
+
+**Note:** The actual values you use will depend on the graphics device you ultimately use; that is, the values presented here are designed for an html to be viewed on the web, but if you are displaying on the screen or writing to a pdf file, you may need to use different values for `y` and `height`.
+
+```{r}
+grid.newpage()
+print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
+print(dendro.plot, vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92))
+```
+
+And lastly, as a bonus, we can remove the accession numbers from the heatmap, as they are already displayed at the tips of the dendrogram (and we made sure the heatmap rows and dendrogram tips match, above). We do so by setting the relevant theme elements to `element_blank()` in our call to `ggplot`:
+
+```{r}
+# Heatmap
+heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
+  geom_tile(aes(fill = value)) +
+  scale_fill_gradient2() +
+  theme(axis.text.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = "top")
+
+grid.newpage()
+print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
+print(dendro.plot, vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92))
+```
+
+
+
 
 ***
 
 ## Final-ish
 
-```{r}
+```{r eval = FALSE}
 otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
 two.species <- c("A. cinerea", "L. canadensis")
 otter <- otter[otter$species %in% two.species, ]
@@ -266,8 +310,8 @@ print(dendro.plot, vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 0.92
 
 ## Additional resources
 
-+ [resource one](url-one)
-+ [resource two](url-two)
++ Documentation for the [ggdendro package](https://cran.r-project.org/web/packages/ggdendro/vignettes/ggdendro.html)
++ An [example](https://stackoverflow.com/questions/6673162/reproducing-lattice-dendrogram-graph-with-ggplot2) on StackOverflow
 
 ***
 
