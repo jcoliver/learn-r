@@ -109,15 +109,19 @@ otter.matrix <- as.matrix(otter.scaled[, -c(1:3)])
 rownames(otter.matrix) <- otter.scaled$accession
 otter.dendro <- as.dendrogram(hclust(d = dist(x = otter.matrix)))
 otter.dendro.data <- dendro_data(otter.dendro)
-# otter.order <- order.dendrogram(otter.dendro)
 
 # Create dendro
 library("ggplot2")
-# dendro.plot <- ggplot(data = segment(otter.dendro.data)) +
-#   geom_segment(aes(x = x, y = y, xend = xend, yend=yend)) +
-#   coord_flip()
-
 dendro.plot <- ggdendrogram(data = otter.dendro, rotate = TRUE)
+
+# Preview the plot
+print(dendro.plot)
+```
+
+We can make those labels a bit smaller and closer to the dendrogram:
+
+```{r}
+dendro.plot <- dendro.plot + theme(axis.text.y = element_text(size = 6))
 
 # Preview the plot
 print(dendro.plot)
@@ -126,6 +130,14 @@ print(dendro.plot)
 ***
 
 ## Heatmap
+
+We need to start by transforming data to a "long" format, where each row only contains values for one measurement. For example, if our first two rows of data are:
+
+**insert table here**
+
+we want to transform it to this format:
+
+**insert table here**
 
 ```{r}
 # Heatmap
@@ -136,7 +148,8 @@ otter.long <- melt(otter.scaled, id = c("species", "museum", "accession"))
 # otter.long$accession <- factor(x = otter.long$accession, levels = otter.scaled$accession[otter.order], ordered = TRUE)
 heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
   geom_tile(aes(fill = value)) +
-  scale_fill_gradient2()
+  scale_fill_gradient2() +
+  theme(axis.text.y = element_text(size = 6))
 
 # Preview the heatmap
 print(heatmap.plot)
@@ -150,7 +163,7 @@ print(heatmap.plot)
 library("grid")
 grid.newpage()
 print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 0.92))
+print(dendro.plot, vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
 ```
 
 OK, that's a start, but there are a few things we need to address:
@@ -158,6 +171,48 @@ OK, that's a start, but there are a few things we need to address:
 1. Notice the tips of the dendrogram are not in the same order as the y-axis of the heatmap. We'll need to re-order the heatmap to match the structure of the clustering.
 2. It would be nice to have the dendrogram and heatmap closer together, without a legend separating them.
 3. The dendrogram should be vertically stretched so each tip lines up with a row in the heatmap plot.
+
+### Aligning the two plots
+
+We'll use the order of the tips in the dendrogram to re-order the rows in our heatmap. The order of those tips are stored in the `otter.dendro` object, and we can extract it with the `order.dendro` function:
+
+```{r}
+otter.order <- order.dendrogram(otter.dendro)
+```
+
+And now for the fun part. By default, `ggplot` use the level order of the y-axis labels as the means of ordering the rows in the heatmap. That is, level 1 of the factor is plotted in the top row, level 2 is plotted in the second row, level 3 in the third row and so on. So we can dictate the order in which these rows are plotted by _setting_ the order of the levels in the column we use for the y-axis labels in the heatmap. The data we used for the heatmap was the long-format, `otter.long` object, and the column we used for the y-axis is `accession`. Using the order of the dendrogram tips (we stored this above in the `otter.order` vector), we can re-level the `otter.long$accession` column to match the order of the tips in the trees.
+
+```{r}
+# Order the levels according to their position in the cluster
+otter.long$accession <- factor(x = otter.long$accession,
+                               levels = otter.scaled$accession[otter.order], 
+                               ordered = TRUE)
+
+```
+
+At this point, we need to re-create the heatmap, because the underlying data (`otter.long`) has changed:
+
+```{r}
+# Heatmap
+heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
+  geom_tile(aes(fill = value)) +
+  scale_fill_gradient2() +
+  theme(axis.text.y = element_text(size = 6))
+
+# Preview the heatmap
+print(heatmap.plot)
+```
+
+Now the rows have been re-arranged and we can see right away that the heatmap now does a better job of grouping "red" rows together and "blue" rows together.
+
+Take a look at the combined figure:
+
+```{r}
+grid.newpage()
+print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
+print(dendro.plot, vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
+```
+
 
 ***
 
