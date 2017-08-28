@@ -2,7 +2,9 @@
 title: "Introduction to R Graphing"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output: 
+  html_document: default
+  pdf_document: default
 ---
 
 This brief tutorial will demonstrate how to create a basic plot in R from a text file of data.  This introduction provides an entry point for those unfamiliar with R (or a refresher for those who are rusty).  We will start with a very minimal piece of code and work our way up to code that automates the creation of 12 different PDF files, each with a different X-Y scatterplot.
