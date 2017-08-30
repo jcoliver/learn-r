@@ -2,7 +2,9 @@
 title: "Dynamic reports with knitr"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output: 
+  html_document: default
+  pdf_document: default
 ---
 
 An introduction to using the `knitr` package in R to produce reproducible, dynamic reports.
@@ -154,27 +156,26 @@ You can also write more complex equations, too (remembering to bracket your LaTe
 
 ```
 $$
-\begin{equation}
+\begin{aligned}
 \begin{array}{l}
 \displaystyle \int 1 = x + C\\
 \displaystyle \int x = \frac{x^2}{2} + C \\
 \displaystyle \int x^2 = \frac{x^3}{3} + C
-\end{array} 
-\end{equation}
+\end{array}
+\end{aligned}
 $$
 ```
 
 $$
-\begin{equation}
+\begin{aligned}
 \begin{array}{l}
 \displaystyle \int 1 = x + C\\
 \displaystyle \int x = \frac{x^2}{2} + C \\
 \displaystyle \int x^2 = \frac{x^3}{3} + C
 \end{array} 
-\end{equation}
+\end{aligned}
 $$
 
-***
 ***
 
 ## What about code?
