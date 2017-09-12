@@ -1,0 +1,88 @@
+---
+title: "LESSON TITLE"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+  latex_engine: xelatex
+---
+
+[INTRODUCTORY SENTENCE]
+
+#### Learning objectives
+1. one
+2. two
+3. three
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+***
+
+## Getting started
+
+***
+
+## [TOPIC ONE]
+
+***
+
+## [TOPIC TWO]
+
+```{r}
+library("tidyr")
+library("ggplot2")
+
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+
+exp.data <- exp.data[c(1, 3, 5, 7, 9, 2, 4, 6, 8, 10), ]
+
+control.means <- colMeans(exp.data[c(1, 3, 5, 7), c(3:1002)])
+
+col.var <- apply(X = exp.data[, c(3:1002)], MARGIN = 2, FUN = var)
+
+# exp.data <- exp.data[, c(1, 2, order(control.means) + 2)]
+exp.data <- exp.data[, c(1, 2, order(col.var, decreasing = TRUE) + 2)]
+
+# exp.data <- exp.data[, c(1, 2, order(exp.data[1, c(3:1002)], decreasing = TRUE) + 2)]
+
+# exp.data <- exp.data[, c(1, 2, sample(x = 3:ncol(exp.data), size = 100, replace = FALSE))]
+exp.data <- exp.data[, c(1, 2, 102:201)]
+
+exp.long <- gather(data = exp.data, key = gene, value = expression, -subject, -group)
+exp.long$log.expression <- log(exp.long$expression)
+
+exp.long$gene <- factor(exp.long$gene, levels = colnames(exp.data)[3:1002])
+exp.long$subject <- factor(exp.long$subject, levels = exp.data$subject)
+
+
+exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+                                                     y = gene,
+                                                     fill = log.expression)) +
+  geom_tile() +
+  xlab(label = "Subject") +
+  theme(axis.text.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(angle = 45)) +
+  scale_fill_gradient(name = "log(expresion)",
+                      low = "#FFFFFF",
+                      high = "#000000")
+
+exp.heatmap
+
+
+```
+
+***
+
+## Additional resources
+
++ [resource one](url-one)
++ [resource two](url-two)
++ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
