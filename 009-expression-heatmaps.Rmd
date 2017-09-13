@@ -1,11 +1,11 @@
 ---
-title: "LESSON TITLE"
+title: "Heatmaps - the gene expression edition"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document: default
   pdf_document:
-  latex_engine: xelatex
+    latex_engine: xelatex
 ---
 
 [INTRODUCTORY SENTENCE]
@@ -29,7 +29,119 @@ output:
 
 ## [TOPIC TWO]
 
+Install two packages (in console)
+```{r eval = FALSE}
+install.packages("ggplot2")
+install.packages("tidyr")
+```
+
+Create a script that will save all our work; also, load additional packages
 ```{r}
+# Expression heatmap
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-09-14
+
+library("tidyr")
+library("ggplot2")
+```
+
+Read in the data
+```{r}
+# Expression heatmap
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-09-14
+
+library("tidyr")
+library("ggplot2")
+
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+```
+
+Investigate data with `summary`
+```{r}
+summary(exp.data)
+```
+
+Transform data to long format
+```{r}
+# Expression heatmap
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-09-14
+
+library("tidyr")
+library("ggplot2")
+
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+
+exp.long <- gather(data = exp.data, 
+                   key = gene, 
+                   value = expression, 
+                   -subject, -treatment)
+```
+
+Look at the top of the long data:
+```{r}
+head(exp.long)
+```
+
+Plot!
+```{r}
+# Expression heatmap
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-09-14
+
+library("tidyr")
+library("ggplot2")
+
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+
+exp.long <- gather(data = exp.data, 
+                   key = gene, 
+                   value = expression, 
+                   -subject, -treatment)
+
+exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+                                                     y = gene,
+                                                     fill = expression))
+exp.heatmap
+```
+
+Add `geom_tile`
+```{r}
+# Expression heatmap
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-09-14
+
+library("tidyr")
+library("ggplot2")
+
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+
+exp.long <- gather(data = exp.data, 
+                   key = gene, 
+                   value = expression, 
+                   -subject, -treatment)
+
+exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+                                                     y = gene,
+                                                     fill = expression)) +
+  geom_tile()
+
+exp.heatmap
+```
+
+Do log transformation and graph that instead
+```{r}
+# Expression heatmap
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-09-14
+
 library("tidyr")
 library("ggplot2")
 
@@ -42,7 +154,63 @@ exp.long <- gather(data = exp.data,
 
 exp.long$log.expression <- log(exp.long$expression)
 
-exp.long$subject <- factor(exp.long$subject, levels = exp.long$subject[c(1, 3, 5, 7, 9, 2, 4, 6, 8, 10)])
+exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+                                                     y = gene,
+                                                     fill = log.expression)) +
+  geom_tile()
+
+exp.heatmap
+```
+
+Clean up x-axis
+```{r}
+# Expression heatmap
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-09-14
+
+library("tidyr")
+library("ggplot2")
+
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+
+exp.long <- gather(data = exp.data, 
+                   key = gene, 
+                   value = expression, 
+                   -subject, -treatment)
+
+exp.long$log.expression <- log(exp.long$expression)
+
+exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+                                                     y = gene,
+                                                     fill = log.expression)) +
+  geom_tile() +
+  xlab(label = "Subject") +
+  theme(axis.title.y = element_blank(),
+        axis.text.x = element_text(angle = 45, vjust = 0.5))
+
+exp.heatmap
+```
+
+Add facet to separate control from flu
+Final (without saving)
+```{r}
+# Expression heatmap
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-09-14
+
+library("tidyr")
+library("ggplot2")
+
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+
+exp.long <- gather(data = exp.data, 
+                   key = gene, 
+                   value = expression, 
+                   -subject, -treatment)
+
+exp.long$log.expression <- log(exp.long$expression)
 
 exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
                                                      y = gene,
@@ -55,7 +223,38 @@ exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
 
 exp.heatmap
 
+```
 
+
+Final script:
+```{r eval = FALSE}
+# Expression heatmap
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-09-14
+
+library("tidyr")
+library("ggplot2")
+
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+
+exp.long <- gather(data = exp.data, 
+                   key = gene, 
+                   value = expression, 
+                   -subject, -treatment)
+
+exp.long$log.expression <- log(exp.long$expression)
+
+exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+                                                     y = gene,
+                                                     fill = log.expression)) +
+  geom_tile() +
+  xlab(label = "Subject") +
+  facet_grid(~ treatment, switch = "x", scales = "free_x", space = "free_x") +
+  theme(axis.title.y = element_blank(),
+        axis.text.x = element_text(angle = 45, vjust = 0.5))
+
+ggsave(filename = "output/expression-heatmap.pdf", plot = exp.heatmap)
 ```
 
 ***
@@ -64,7 +263,7 @@ exp.heatmap
 
 + [resource one](url-one)
 + [resource two](url-two)
-+ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
++ A [PDF version](https://jcoliver.github.io/learn-r/009-expression-heatmaps.pdf) of this lesson
 
 ***
 
