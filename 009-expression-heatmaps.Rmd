@@ -35,6 +35,15 @@ install.packages("ggplot2")
 install.packages("tidyr")
 ```
 
+Create places for data and output
+```{r eval = FALSE}
+dir.create("data")
+dir.create("output")
+```
+
+Download data and put it in the `data` folder.
+Data is at: [http://tinyurl.com/flu-expression-data](http://tinyurl.com/flu-expression-data) or [https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv](https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv)
+
 Create a script that will save all our work; also, load additional packages
 ```{r}
 # Expression heatmap
