@@ -8,45 +8,41 @@ output:
     latex_engine: xelatex
 ---
 
-[INTRODUCTORY SENTENCE]
+An application of heatmap visualization to investigate differential gene expression.
 
 #### Learning objectives
-1. one
-2. two
-3. three
+1. Manipulate data into a 'tidy' format
+2. Visualize data in a heatmap
+3. Become familiar with `ggplot` syntax for customizing plots
 
-## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+## Heatmaps for differential gene expression
+Heatmaps are a great way of displaying three-dimensional data in only two dimensions. But how can we easily translate tabular data into a format for heatmap plotting? By taking advantage of "data munging" and graphics packages, heatmaps are relatively easy to produce in R. 
 
 ***
 
 ## Getting started
-
-***
-
-## [TOPIC ONE]
-
-***
-
-## [TOPIC TWO]
-
-Install two packages (in console)
-```{r eval = FALSE}
-install.packages("ggplot2")
-install.packages("tidyr")
-```
-
-Create places for data and output
+We are going to start by isolating different types of information by imposing structure in our file managment. That is, we are going to put our input data in one folder and any output such as plots or analytical results in a different folder. We can use the `dir.create` to create these two folders:
 ```{r eval = FALSE}
 dir.create("data")
 dir.create("output")
 ```
 
-Download data and put it in the `data` folder.
-Data is at: [http://tinyurl.com/flu-expression-data](http://tinyurl.com/flu-expression-data) or [https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv](https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv)
+For this lesson, we will use a subset of data on a study of gene expression in cells infected with the influenza virus ([doi: 10.4049/jimmunol.1501557](https://doi.org/10.4049/jimmunol.1501557)). The study infected human plasmacytoid dendritic cells with the influenza virus, and compared gene expression in those cells to gene expression in uninfected cells. The goal was to see how the flu virus affected the function of these immune system cells.  
+The data for this lesson is available at: [http://tinyurl.com/flu-expression-data](http://tinyurl.com/flu-expression-data) or [https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv](https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv). Download this comma separated file and put it in the `data` folder. 
 
-Create a script that will save all our work; also, load additional packages
+Finally, we will be using two packages that are not distributed with the base R software, so we need to install them. Note that you only have to install packages once on your machine.
+```{r eval = FALSE}
+install.packages("ggplot2")
+install.packages("tidyr")
+```
+
+***
+
+## Data Wrangling
+We'll need to start by reading the data into memory then formatting it for use by the ggplot package. We want all our work to be reproducible, so create a script where we can store all the commands we use to create the heatmap. We begin this script with brief information about the purpose of the script and load those two packages so we can use them:
+
 ```{r}
-# Expression heatmap
+# Gene expression heatmap
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-09-14
@@ -55,27 +51,28 @@ library("tidyr")
 library("ggplot2")
 ```
 
-Read in the data
+And then we read the data into memory:
 ```{r}
-# Expression heatmap
-# Jeff Oliver
-# jcoliver@email.arizona.edu
-# 2017-09-14
-
-library("tidyr")
-library("ggplot2")
-
 exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
 ```
 
-Investigate data with `summary`
+Take a quick look at the data with the `str` command:
 ```{r}
-summary(exp.data)
+str(exp.data)
 ```
+
+talk about structure of data
+talk about what we **want** structure to be (in general)
+show long format table
+show wide format table
+use tidyr's gather to transform data (without excluding columns)
+show what went wrong
+use gather again, ignoring subject & treatment
+Show script again at this point
 
 Transform data to long format
 ```{r}
-# Expression heatmap
+# Gene expression heatmap
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-09-14
@@ -96,46 +93,25 @@ Look at the top of the long data:
 head(exp.long)
 ```
 
-Plot!
+
+
+
+***
+
+## Visualize the data!
+
+For this plot, we are going to first create the heatmap object with the `ggplot` function, then print the plot. We create the object by assigning the output of the `ggplot` call to the variable `exp.heatmap`, then entering the name of this object to print it to the screen.
+
 ```{r}
-# Expression heatmap
-# Jeff Oliver
-# jcoliver@email.arizona.edu
-# 2017-09-14
-
-library("tidyr")
-library("ggplot2")
-
-exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
-
-exp.long <- gather(data = exp.data, 
-                   key = gene, 
-                   value = expression, 
-                   -subject, -treatment)
-
 exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
                                                      y = gene,
                                                      fill = expression))
 exp.heatmap
 ```
 
-Add `geom_tile`
+_What happened?_ Our plot doesn't show any data!? Here is where functionality of ggplot is evident. The way it works is by effectively drawing layer upon layer of graphics. So we have established the plot, we told R what to put on the X and Y axes, but we need to add one more bit of information to tell ggplot _how_ to display data in the plot area. For a heat map, we use `geom_tile()`, literally adding this to the ggplot object with a plus sign (+):
+
 ```{r}
-# Expression heatmap
-# Jeff Oliver
-# jcoliver@email.arizona.edu
-# 2017-09-14
-
-library("tidyr")
-library("ggplot2")
-
-exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
-
-exp.long <- gather(data = exp.data, 
-                   key = gene, 
-                   value = expression, 
-                   -subject, -treatment)
-
 exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
                                                      y = gene,
                                                      fill = expression)) +
@@ -146,7 +122,7 @@ exp.heatmap
 
 Do log transformation and graph that instead
 ```{r}
-# Expression heatmap
+# Gene expression heatmap
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-09-14
@@ -173,7 +149,7 @@ exp.heatmap
 
 Clean up x-axis
 ```{r}
-# Expression heatmap
+# Gene expression heatmap
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-09-14
@@ -204,7 +180,7 @@ exp.heatmap
 Add facet to separate control from flu
 Final (without saving)
 ```{r}
-# Expression heatmap
+# Gene expression heatmap
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-09-14
@@ -237,7 +213,7 @@ exp.heatmap
 
 Final script:
 ```{r eval = FALSE}
-# Expression heatmap
+# Gene expression heatmap
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-09-14
@@ -273,6 +249,7 @@ ggsave(filename = "output/expression-heatmap.pdf", plot = exp.heatmap)
 + [resource one](url-one)
 + [resource two](url-two)
 + A [PDF version](https://jcoliver.github.io/learn-r/009-expression-heatmaps.pdf) of this lesson
++ The entire data set from NCBI is available at: [https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE68849](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE68849)
 
 ***
 
