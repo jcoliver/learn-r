@@ -19,13 +19,17 @@ geo2r <- read.delim(file = "data/GSE68849-geo2r.txt", stringsAsFactors = FALSE)
 # Drop any data missing a gene symbol
 geo2r <- geo2r[geo2r$Gene.symbol != "", ]
 
-# Grab five genes from the top 10
+# Grab three genes from the top 10
 set.seed(20170912)
-geo2r.subset <- geo2r[sample(x = 1:10, size = 5, replace = FALSE), ]
+geo2r.subset <- geo2r[sample(x = 1:50, size = 3, replace = FALSE), ]
 
-# Grab five genes from the bottom 1000
+# Grab four genes from the middle 12000
 geo2r.subset <- rbind(geo2r.subset,
-                      geo2r[sample(x = 30267:31266, size = 5, replace = FALSE), ])
+                      geo2r[sample(x = 8001:20000, size = 4, replace = FALSE), ])
+
+# Grab three genes from the bottom 10000
+geo2r.subset <- rbind(geo2r.subset,
+                      geo2r[sample(x = 20001:31266, size = 3, replace = FALSE), ])
 rownames(geo2r.subset) <- NULL
 
 # Just pull out the ID and symbol columns
@@ -58,3 +62,4 @@ rownames(exp.transposed) <- NULL
 
 # Write to data file
 write.csv(x = exp.transposed, file = "data/GSE68849-expression.csv", quote = FALSE, row.names = FALSE)
+rm(list = ls())
