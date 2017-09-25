@@ -8,51 +8,106 @@ output:
     latex_engine: xelatex
 ---
 
-[INTRODUCTORY SENTENCE]
-
-
-# Background
-git vs. github
-
-# Setup
-R studio, R, and Git
-GitHub account
-
-# Decisions:
-- Start a new repository
-- Use an existing GitHub repository
-- Use an existing local repository
-
-# Resources
-RStudio & GitHub page
-Library Carpentry Git lesson
-Software Carpentry Git lesson
+Ready to stop e-mailing code to your collaborators? Want a better way of keeping track of the changes you make on your programming projects? The Git system is designed to make collaboration easier and more transparent. This lesson provides an introduction to the version control system Git, one central sharing point called GitHub, and how you can use the two in RStudio.
 
 #### Learning objectives
-1. one
-2. two
-3. three
+1. Be able to explain the difference between Git and GitHub
+2. Track changes made to local copies of code
+3. Contribute code to a public repository on GitHub
 
-## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+## Git vs. GitHub
+The oft-asked question: _What is the difference between Git and GitHub?_ has a relatively simple answer. 
+
++ **Git**: a version control system. It is an open-source piece of software that acts a lot like the "Track Changes" functionality on your favorite word processing program.
++ **GitHub**: a website where you store your work and collaborate with others. GitHub has an instance of Git running on the website, keeping track of your changes as well as your collaborators' changes.
+  
+Git was originally developed for keeping track of changes in computer programming code, but is now used for much more, including open access journals, blogs, and text books.
+
+Throughout the rest of the lesson, you'll see the word "repository" (or "repo", for short). A repository can be considered a storage system (like a folder on your computer) where your work is kept.
 
 ***
 
 ## Getting started
+You'll need some software to effectively follow along with this lesson. The first is Git; head to the [Downloads page on the Git website](https://git-scm.com/downloads) and install whichever version is appropriate for your operating system. Next you'll need [R _and_ RStudio](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
+  
+Next, if you have not already, [sign up for a GitHub account](https://github.com/join?source=header-home). Registration is free and simple. Make sure you remember your GitHub ID and password - we'll need those later in the lesson.
 
 ***
 
-## [TOPIC ONE]
+## Decision Time
+At this point, you'll want to decide how you are going to connect to GitHub. This lesson covers three options:
+
+1. Start a new repository on GitHub
+2. Use an existing GitHub repository
+3. Use an existing local repository
+
+After you connect using one of these three options, we'll deal with communication between RStudio and GitHub.
 
 ***
 
-## [TOPIC TWO]
+### Starting from scratch
+1. If you are just starting a project and want to use GitHub for collaboration, it is easiest to start on GitHub. Using your favorite web browser, log into your [GitHub account](https://github.com) and create a new repository. There is usually a big green button "New repository" you can click on.
+![](images/new-repo.png)  
+Give your repository a name and a description, and click the "Create repository" button.
+You should next see a set of instructions for connecting to this repository. The thing to keep track of is the URL in the "Quick setup section":
+![](images/github-quick-setup.png)  
+At this point, leave the browser open and open RStudio. We want to make a new project, using the GitHub repository we just created.
+
+2. Create a new project (File > New Project...)
+3. Select the **Version Control** option  
+![](images/version-control-project.png)
+4. Select the **Git** option  
+![](images/git-project.png)
+5. Finally, in the dialog that opens, you need only fill in information for the Repository URL (it is your repository URL we saw in the Quick setup section and should end in ".git").  
+![](images/git-project-details.png)  
+6. Click "Create Project" and you'll be connected. Jump to the [Collaborate!](#collaborate) section below to use Git in RStudio.
+
+***
+
+## Use an existing GitHub repository
+
+If you are going to use a repository that already exists on GitHub, you can head to that repository GitHub site, and click the "Clone or download" button:  
+![](images/clone-or-download.png)
+  
+That should open a dialog with the repository URL. Copy the URL to the clipboard.  
+![](images/clone-url.png)
+
+At this point, follow steps 2-6 in the previous section ([Starting from scratch](#starting-from-scratch)).
+
+***
+
+### Use an existing local repository
+
+Let's say you have code on your machine that you want to push to GitHub. First, log into [GitHub](https://github.com) and create a new repository (see step 1 in [Staring from scratch](#starting-from-scratch), above). Then, to connect RStudio to this repository through the command line interface of RStudio (Tools > Shell...). 
+
+```{bash eval = FALSE}
+echo "# sample-repository" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/jcoliver/sample-repository.git
+git push -u origin master
+```
+
+Make sure to substitute your GitHub repository URL in the `git remote add origin` line.
+
+At this point, shut down and restart RStudio to complete the integration with GitHub.
+
+***
+
+## Collaborate!
+
+By now you have linked your RStudio project with a GitHub page. For the collaboration
 
 ***
 
 ## Additional resources
 
-+ [resource one](url-one)
-+ [resource two](url-two)
++ RStudio & GitHub page
++ Library Carpentry Git lesson
++ Software Carpentry Git lesson
+
+
 + A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
 
 ***
