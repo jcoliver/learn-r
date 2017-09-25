@@ -1,0 +1,62 @@
+---
+title: "Git and GitHub in RStudio"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+---
+
+[INTRODUCTORY SENTENCE]
+
+
+# Background
+git vs. github
+
+# Setup
+R studio, R, and Git
+GitHub account
+
+# Decisions:
+- Start a new repository
+- Use an existing GitHub repository
+- Use an existing local repository
+
+# Resources
+RStudio & GitHub page
+Library Carpentry Git lesson
+Software Carpentry Git lesson
+
+#### Learning objectives
+1. one
+2. two
+3. three
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+***
+
+## Getting started
+
+***
+
+## [TOPIC ONE]
+
+***
+
+## [TOPIC TWO]
+
+***
+
+## Additional resources
+
++ [resource one](url-one)
++ [resource two](url-two)
++ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
