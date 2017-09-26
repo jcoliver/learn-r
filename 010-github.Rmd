@@ -29,6 +29,16 @@ Throughout the rest of the lesson, you'll see the word "repository" (or "repo", 
 
 ## Getting started
 You'll need some software to effectively follow along with this lesson. The first is Git; head to the [Downloads page on the Git website](https://git-scm.com/downloads) and install whichever version is appropriate for your operating system. Next you'll need [R _and_ RStudio](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
+
+After installing RStudio, R, and Git, you'll need to configure Git. You can do this through RStudio or in your command line interface of choice. You can access the command line interface in RStudio via Tools > Shell...  
+
+In the shell, type:
+```{bash eval = FALSE}
+git config --global user.name 'Your Name'
+git config --global user.email 'your@email.com'
+```
+  
+Replacing 'Your Name' and 'your@email.com' with your actual name and e-mail (surrounded by single-quotes).
   
 Next, if you have not already, [sign up for a GitHub account](https://github.com/join?source=header-home). Registration is free and simple. Make sure you remember your GitHub ID and password - we'll need those later in the lesson.
 
@@ -46,10 +56,10 @@ After you connect using one of these three options, we'll deal with communicatio
 ***
 
 ### Starting from scratch
-1. If you are just starting a project and want to use GitHub for collaboration, it is easiest to start on GitHub. Using your favorite web browser, log into your [GitHub account](https://github.com) and create a new repository. There is usually a big green button "New repository" you can click on.
+1. If you are just starting a project and want to use GitHub for collaboration, it is easiest to start on GitHub. Using your favorite web browser, log into your [GitHub account](https://github.com) and create a new repository. There is usually a big green button "New repository" you can click on.  
 ![](images/new-repo.png)  
-Give your repository a name and a description, and click the "Create repository" button.
-You should next see a set of instructions for connecting to this repository. The thing to keep track of is the URL in the "Quick setup section":
+Give your repository a name and a description, and click the "Create repository" button.  
+You should next see a set of instructions for connecting to this repository. The thing to keep track of is the URL in the "Quick setup section":  
 ![](images/github-quick-setup.png)  
 At this point, leave the browser open and open RStudio. We want to make a new project, using the GitHub repository we just created.
 
@@ -97,21 +107,33 @@ At this point, shut down and restart RStudio to complete the integration with Gi
 
 ## Collaborate!
 
-By now you have linked your RStudio project with a GitHub page. For the collaboration
+By now you have linked your RStudio project with a GitHub page. For the purposes of this lesson, we want to consider two Git repositories:
+
++ Your _local_ repository, i.e. the files on your computer
++ The _remote_ repository, i.e. the files that live on the GitHub website
+
+The general process of working with remote repositories is:
+
+**Pull** > Make changes > **Add** > **Commit** > **Push** > Repeat  
+  
+The steps in bold are actual Git commands. We'll go through all these in a bit more detail:
+
++ **Pull**: This downloads any file updates from the GitHub repository and tries to incorporate them into your local copy. This step is often forgotten, which can cause some headaches later on, so try to remember to start your session with a _pull_. You can pull the latest code from GitHub with the blue Pull button in the **Git** tab of the (usually) top-right panel in RStudio.
++ Make changes: At this point you can add more files, change files that exist, or delete files you don't need any more. Just remember to save your changes.
++ **Add**: The _add_ command instructs Git that you would like to make Git aware of any changes you made to files on your local repository (saving _isn't_ enough in this case). After you have made your changes (and saved them!), add them by clicking the "Staged" box next to the file name in the **Git** tab of RStudio.
++ **Commit**: And the last thing you'll need to do to record those changes on your local Git repository is to _commit_ the changes. In RStudio, click the "Commit" button in the **Git** tab. The dialog that opens will show the changes you are about to commit; be sure to write a commit message in the "Commit message:" dialog. Make it brief but informative. _Do not_ skip the commit message, regardless of what [Randall Munroe might say](https://xkcd.com/1296/). Note only those changes that were added will be included in the commit.
++ **Push**: Finally, you want to move those committed changes up to the remote (GitHub) repository. The green Push button will send any changes to GitHub. Note that you will need your GitHub ID and password to push changes to the remote repository. Also note that if you are pushing to a GitHub repository that you did not create, you will need to be [added as a collaborator](https://help.github.com/articles/inviting-collaborators-to-a-personal-repository/) by the repository owner.
++ Repeat: This step is pretty self-explanatory.  
 
 ***
 
 ## Additional resources
 
-+ RStudio & GitHub page
-+ Library Carpentry Git lesson
-+ Software Carpentry Git lesson
-
-
-+ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
++ Official RStudio Git [support page](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN)
++ Software Carpentry [Git and RStudio lesson](http://swcarpentry.github.io/git-novice/14-supplemental-rstudio/)
++ Library Carpentry [Git lesson](https://data-lessons.github.io/library-git/)
++ A [PDF version](https://jcoliver.github.io/learn-r/010-github.pdf) of this lesson
 
 ***
 
-<a href="index.html">Back to learn-r main page</a>
-  
 Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
