@@ -61,6 +61,34 @@ Take a quick look at the data with the `str` command:
 str(exp.data)
 ```
 
+The data frame has `r nrow(exp.data)` rows (or subjects) and `r ncol(exp.data)` columns (or variables). The first two columns have information about the observation (`r colnames(exp.data)[1:2]`), and the remaining columns have measurements for the expression of `r ncol(exp.data) - 2` genes.
+
+We ultimately want a heatmap where the different subjects are shown along the x-axis, the genes are shown along the y-axis, and the shading of the cell reflects how much each gene is expressed within a subject. This latter value, the measure of gene expression, is really just a third dimension. However, instead of creating a 3-dimensional plot that can be difficult to visualize, we instead use shading for our "z-axis". To this end, we need our data formatted so we have a column corresponding to each of these three dimensions:
+
++ X: Subject ID
++ Y: Gene symbol
++ Z: Expression
+
+The challenge is that our data are _not_ formatted like this. While the `subject` column corresponds to what we would like for our x-axis, we do not have columns that correspond to what is needed for the y- and z-axes. All the data are in our data frame, but we need to take a table that looks like this:
+
+| `r colnames(exp.data)[1]` | `r colnames(exp.data)[2]` | `r colnames(exp.data)[3]` | `r colnames(exp.data)[4]` | `r colnames(exp.data)[5]` |
+|:-------------------|:-------------------|:------------------------------|:------------------------------------|:------------------------------------|
+| `r exp.data[1, 1]` | `r exp.data[1, 2]` |  `r round(exp.data[1, 3], 3)` | `r round(exp.data[1, 4], 3)` | `r round(exp.data[1, 5], 3)` |
+| `r exp.data[2, 1]` | `r exp.data[2, 2]` |  `r round(exp.data[2, 3], 3)` | `r round(exp.data[2, 4], 3)` | `r round(exp.data[1, 5], 3)` |
+| ...                | ...                | ...                           | ...                                 |                                     |
+
+And transform it to one with a column for the gene and a column for expression, like this:
+
+| subject             | gene                      | expression |
+|:--------------------|:--------------------------|:----------|
+|  `r exp.data[1, 1]` | `r colnames(exp.data)[3]` |  `r round(exp.data[1, 3], 3)` |
+|  `r exp.data[1, 1]` | `r colnames(exp.data)[4]` |  `r round(exp.data[1, 4], 3)` |
+|  `r exp.data[1, 1]` | `r colnames(exp.data)[5]` |  `r round(exp.data[1, 5], 3)` |
+|  `r exp.data[2, 1]` | `r colnames(exp.data)[3]` |  `r round(exp.data[2, 3], 3)` |
+|  `r exp.data[2, 1]` | `r colnames(exp.data)[4]` |  `r round(exp.data[2, 4], 3)` |
+|  `r exp.data[2, 1]` | `r colnames(exp.data)[5]` |  `r round(exp.data[2, 5], 3)` |
+| ...                 | ...            | ...       |
+
 talk about structure of data
 talk about what we **want** structure to be (in general)
 show long format table
