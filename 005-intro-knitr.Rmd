@@ -4,7 +4,8 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   html_document: default
-  pdf_document: default
+  pdf_document:
+    latex_engine: xelatex
 ---
 
 An introduction to using the `knitr` package in R to produce reproducible, dynamic reports.
@@ -46,7 +47,8 @@ Followed by text:
 ```
 ## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, 
+PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 ```
 
 We will start with formatting in R Markdown syntax, followed by how to include R code in your document.
@@ -128,7 +130,9 @@ Images are also supported, whether they are local files or images on the web. Th
 
 Here I use an image from [Wikimedia](https://commons.wikimedia.org) and include a caption:
 ```
-![The white rhinoceros (_Ceratotherium simum_) (photo by Rob Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
+![The white rhinoceros (_Ceratotherium simum_) (photo by Rob
+Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4
+/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
 ```
 
 > ![The white rhinoceros (_Ceratotherium simum_) (photo by Rob Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
@@ -221,7 +225,8 @@ plot(x = iris$Petal.Length,
 &#96;&#96;&#96;
 </pre>
 
-***
+When we knit our document, the above code is rendered as:  
+
 > ## Results
 ```{r}
 plot(x = iris$Petal.Length, 
