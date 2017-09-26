@@ -212,7 +212,18 @@ test for relationships.
 > ## Materials & methods
 > Analyses are based on built-in data for three _Iris_ species. We used linear regression to test for relationships.  
 
-Now let's actually do some R. We start by plotting the relationship between petal width and petal length. To write an R code block, we use triple-backticks (`) and braces to indicate the language (R in our case, but other languages such as python and bash can also be supported). Here we add code to indicate the start of the Results section, as well as a plot of the two variables:
+Now let's actually do some R. We start by plotting the relationship between petal width and petal length. To write an R code block, we use triple-backticks (`` ``` ``) and braces to indicate the language (R in our case, but other languages such as python and bash can also be supported). Here we add code to indicate the start of the Results section, as well as a plot of the two variables:
+
+```
+## Results
+
+` ```{r} `
+plot(x = iris$Petal.Length, 
+     y = iris$Petal.Width,
+     xlab = "Petal length (cm)",
+     ylab = "Petal width (cm)")
+` ``` `
+```
 
 <pre>
 &#35; Results

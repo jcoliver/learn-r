@@ -118,7 +118,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Dynamic reports with knitr</h1>
 <h4 class="author"><em>Jeff Oliver</em></h4>
-<h4 class="date"><em>18 September, 2017</em></h4>
+<h4 class="date"><em>25 September, 2017</em></h4>
 
 </div>
 
@@ -289,7 +289,9 @@ test for relationships.</code></pre>
 <h2 id="materials-methods">Materials &amp; methods</h2>
 <p>Analyses are based on built-in data for three <em>Iris</em> species. We used linear regression to test for relationships.</p>
 </blockquote>
-<p>Now let’s actually do some R. We start by plotting the relationship between petal width and petal length. To write an R code block, we use triple-backticks (`) and braces to indicate the language (R in our case, but other languages such as python and bash can also be supported). Here we add code to indicate the start of the Results section, as well as a plot of the two variables:</p>
+<p>Now let’s actually do some R. We start by plotting the relationship between petal width and petal length. To write an R code block, we use triple-backticks (<code>```</code>) and braces to indicate the language (R in our case, but other languages such as python and bash can also be supported). Here we add code to indicate the start of the Results section, as well as a plot of the two variables:</p>
+<p>``` ## Results</p>
+<p><code>{r} ` plot(x = iris$Petal.Length,       y = iris$Petal.Width,      xlab = &quot;Petal length (cm)&quot;,      ylab = &quot;Petal width (cm)&quot;)</code> ```</p>
 <pre>
 # Results
 
