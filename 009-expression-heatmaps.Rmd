@@ -1,0 +1,269 @@
+---
+title: "Heatmaps - the gene expression edition"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+---
+
+An application of heatmap visualization to investigate differential gene expression.
+
+#### Learning objectives
+1. Manipulate data into a 'tidy' format
+2. Visualize data in a heatmap
+3. Become familiar with `ggplot` syntax for customizing plots
+
+## Heatmaps for differential gene expression
+Heatmaps are a great way of displaying three-dimensional data in only two dimensions. But how can we easily translate tabular data into a format for heatmap plotting? By taking advantage of "data munging" and graphics packages, heatmaps are relatively easy to produce in R. 
+
+***
+
+## Getting started
+We are going to start by isolating different types of information by imposing structure in our file managment. That is, we are going to put our input data in one folder and any output such as plots or analytical results in a different folder. We can use the `dir.create` to create these two folders:
+```{r eval = FALSE}
+dir.create("data")
+dir.create("output")
+```
+
+For this lesson, we will use a subset of data on a study of gene expression in cells infected with the influenza virus ([doi: 10.4049/jimmunol.1501557](https://doi.org/10.4049/jimmunol.1501557)). The study infected human plasmacytoid dendritic cells with the influenza virus, and compared gene expression in those cells to gene expression in uninfected cells. The goal was to see how the flu virus affected the function of these immune system cells.  
+The data for this lesson is available at: [http://tinyurl.com/flu-expression-data](http://tinyurl.com/flu-expression-data) or [https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv](https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv). Download this comma separated file and put it in the `data` folder. 
+
+Finally, we will be using two packages that are not distributed with the base R software, so we need to install them. Note that you only have to install packages once on your machine.
+```{r eval = FALSE}
+install.packages("ggplot2")
+install.packages("tidyr")
+```
+
+***
+
+## Data Wrangling
+We'll need to start by reading the data into memory then formatting it for use by the ggplot package. We want all our work to be reproducible, so create a script where we can store all the commands we use to create the heatmap. We begin this script with brief information about the purpose of the script and load those two packages so we can use them:
+
+```{r}
+# Gene expression heatmap
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-09-14
+
+library("tidyr")
+library("ggplot2")
+```
+
+And then we read the data into memory:
+```{r}
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+```
+
+Take a quick look at the data with the `str` command:
+```{r}
+str(exp.data)
+```
+
+The data frame has `r nrow(exp.data)` rows (or subjects) and `r ncol(exp.data)` columns (or variables). The first two columns have information about the observation (`r colnames(exp.data)[1:2]`), and the remaining columns have measurements for the expression of `r ncol(exp.data) - 2` genes.
+
+We ultimately want a heatmap where the different subjects are shown along the x-axis, the genes are shown along the y-axis, and the shading of the cell reflects how much each gene is expressed within a subject. This latter value, the measure of gene expression, is really just a third dimension. However, instead of creating a 3-dimensional plot that can be difficult to visualize, we instead use shading for our "z-axis". To this end, we need our data formatted so we have a column corresponding to each of these three dimensions:
+
++ X: Subject ID
++ Y: Gene symbol
++ Z: Expression
+
+The challenge is that our data are _not_ formatted like this. While the `subject` column corresponds to what we would like for our x-axis, we do not have columns that correspond to what is needed for the y- and z-axes. All the data are in our data frame, but we need to take a table that looks like this:
+
+| `r colnames(exp.data)[1]` | `r colnames(exp.data)[2]` | `r colnames(exp.data)[3]` | `r colnames(exp.data)[4]` | `r colnames(exp.data)[5]` |
+|:-------------------|:-------------------|:------------------------------|:------------------------------------|:------------------------------------|
+| `r exp.data[1, 1]` | `r exp.data[1, 2]` |  `r round(exp.data[1, 3], 3)` | `r round(exp.data[1, 4], 3)` | `r round(exp.data[1, 5], 3)` |
+| `r exp.data[2, 1]` | `r exp.data[2, 2]` |  `r round(exp.data[2, 3], 3)` | `r round(exp.data[2, 4], 3)` | `r round(exp.data[1, 5], 3)` |
+| ...                | ...                | ...                           | ...                                 |                                     |
+
+And transform it to one with a column for the gene and a column for expression, like this:
+
+| subject             | gene                      | expression |
+|:--------------------|:--------------------------|:----------|
+|  `r exp.data[1, 1]` | `r colnames(exp.data)[3]` |  `r round(exp.data[1, 3], 3)` |
+|  `r exp.data[1, 1]` | `r colnames(exp.data)[4]` |  `r round(exp.data[1, 4], 3)` |
+|  `r exp.data[1, 1]` | `r colnames(exp.data)[5]` |  `r round(exp.data[1, 5], 3)` |
+|  `r exp.data[2, 1]` | `r colnames(exp.data)[3]` |  `r round(exp.data[2, 3], 3)` |
+|  `r exp.data[2, 1]` | `r colnames(exp.data)[4]` |  `r round(exp.data[2, 4], 3)` |
+|  `r exp.data[2, 1]` | `r colnames(exp.data)[5]` |  `r round(exp.data[2, 5], 3)` |
+| ...                 | ...            | ...       |
+
+Thankfully, there is a function in the `tidyr` package called `gather` that is designed for creating this type of "tidy"" data. 
+
+```{r}
+exp.long <- gather(data = exp.data, 
+                   key = gene, 
+                   value = expression)
+```
+
+Take a look at this new data frame:
+
+```{r}
+head(exp.long)
+```
+
+Uh oh. Looks like something went wrong. Things didn't quite turn out the way we intended - there are only two columns, and "subject" ended up in the gene column and the subject ID is in the expression column. We will need to tell `gather` to ignore those two columns in our original data frame during the transformation. By ignoring them, R will carry their values over into our new data frame. We ignore the columns by adding their names, preceded by a negation symbol("-"), to the `gather` call (we're going to ignore the treatment column, too, to make sure it ends up in our `exp.long` data frame):
+
+```{r}
+exp.long <- gather(data = exp.data, 
+                   key = gene, 
+                   value = expression,
+                   -subject, # Ignores the subject column
+                   -treatment) # Ignores the treatment column
+head(exp.long)
+```
+
+Aha! Much better. 
+
+To recap, at this point we loaded in the libraries we are dependent on, read in data from a file, and transformed the data for easy use with heatmap tools:
+
+```{r eval = FALSE}
+# Gene expression heatmap
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-09-14
+
+library("tidyr")
+library("ggplot2")
+
+# Read in the data
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+
+# Transform to "long" format
+exp.long <- gather(data = exp.data, 
+                   key = gene, 
+                   value = expression,
+                   -subject,
+                   -treatment)
+```
+
+***
+
+## Visualize the data!
+
+For this plot, we are going to first create the heatmap object with the `ggplot` function, then print the plot. We create the object by assigning the output of the `ggplot` call to the variable `exp.heatmap`, then entering the name of this object to print it to the screen.
+
+```{r}
+exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+                                                     y = gene,
+                                                     fill = expression))
+exp.heatmap
+```
+
+_What happened?_ Our plot doesn't show any data!? Here is where functionality of ggplot is evident. The way it works is by effectively drawing layer upon layer of graphics. So we have established the plot, we told R what to put on the X and Y axes, but we need to add one more bit of information to tell ggplot _how_ to display data in the plot area. For a heat map, we use `geom_tile()`, literally adding this to the ggplot object with a plus sign (+):
+
+```{r}
+exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+                                                     y = gene,
+                                                     fill = expression)) +
+  geom_tile()
+
+exp.heatmap
+```
+
+OK, that's a good start. But we need to fix a few things:
+
+1. The scale of the expression values is dominated by a few very large values. We should transform the data to so it is easier to see the variation among low expression values.
+2. The axes could be displayed better.
+3. It would be nice to have all the infected cells on one side of the graph and the control cells on the other side of the graph.
+4. Finally, we should be able to save this plot to a pdf file.
+
+To better visualize the variation of lower expression values, we can create a new column in our data frame with the log~10~ expression values and use that for the heatmap shading:
+```{r}
+exp.long$log.expression <- log(exp.long$expression)
+
+exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+                                                     y = gene,
+                                                     fill = log.expression)) +
+  geom_tile()
+
+exp.heatmap
+```
+
+Note we also had to update the value we pass to the `fill` parameter in the `aes` call of `ggplot`.
+  
+For the axes clean up, we'll use a nicer label for the x-axis title, rotate the values of the x-axis labels, and omit the title of the y-axis entirely:
+```{r}
+exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+                                                     y = gene,
+                                                     fill = log.expression)) +
+  geom_tile() +
+  xlab(label = "Subject") + # Add a nicer x-axis title
+  theme(axis.title.y = element_blank(), # Remove the y-axis title
+        axis.text.x = element_text(angle = 45, vjust = 0.5)) # Rotate the x-axis labels
+
+exp.heatmap
+```
+
+To separate out the control cells from flu cells, we use the `facet_grid` layer of ggplot:
+```{r}
+exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+                                                     y = gene,
+                                                     fill = log.expression)) +
+  geom_tile() +
+  xlab(label = "Subject") +
+  # facet_grid makes two panels, one for control, one for flu:
+  facet_grid(~ treatment, switch = "x", scales = "free_x", space = "free_x") + 
+  theme(axis.title.y = element_blank(),
+        axis.text.x = element_text(angle = 45, vjust = 0.5))
+
+exp.heatmap
+```
+
+And the last thing is to save the image to a file. We can do this in a variety of ways, but the `ggsave` function will work fine in this case:
+```{r eval = FALSE}
+ggsave(filename = "output/expression-heatmap.pdf", plot = exp.heatmap)
+```
+
+Our final script for this heatmap is then:
+
+```{r eval = FALSE}
+# Gene expression heatmap
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2017-09-14
+
+library("tidyr")
+library("ggplot2")
+
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+
+exp.long <- gather(data = exp.data, 
+                   key = gene, 
+                   value = expression, 
+                   -subject, 
+                   -treatment)
+
+exp.long$log.expression <- log(exp.long$expression)
+
+exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+                                                     y = gene,
+                                                     fill = log.expression)) +
+  geom_tile() +
+  xlab(label = "Subject") +
+  facet_grid(~ treatment, switch = "x", scales = "free_x", space = "free_x") +
+  theme(axis.title.y = element_blank(),
+        axis.text.x = element_text(angle = 45, vjust = 0.5))
+
+ggsave(filename = "output/expression-heatmap.pdf", plot = exp.heatmap)
+```
+
+***
+
+## Additional resources
+
++ The entire data set of gene expression from NCBI is available at: [https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE68849](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE68849)
++ Paper describing [tidy data](https://www.jstatsoft.org/article/view/v059i10)
++ A great introduction to [data tidying](http://garrettgman.github.io/tidying/)
++ A [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) for data wrangling
++ [Official documentation](http://ggplot2.tidyverse.org/reference/) for ggplot
++ A [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) for ggplot
++ [Documentation](http://ggplot2.tidyverse.org/reference/geom_bin2d.html) for `geom_bin2d`, to create heatmaps for continuous x- and y-axes
++ A [PDF version](https://jcoliver.github.io/learn-r/009-expression-heatmaps.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
