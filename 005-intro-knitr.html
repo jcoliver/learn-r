@@ -118,7 +118,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Dynamic reports with knitr</h1>
 <h4 class="author"><em>Jeff Oliver</em></h4>
-<h4 class="date"><em>28 September, 2017</em></h4>
+<h4 class="date"><em>09 October, 2017</em></h4>
 
 </div>
 
@@ -290,7 +290,7 @@ test for relationships.</code></pre>
 <p>Analyses are based on built-in data for three <em>Iris</em> species. We used linear regression to test for relationships.</p>
 </blockquote>
 <p>Now let’s actually do some R. We start by plotting the relationship between petal width and petal length. To write an R code block, we use triple-backticks (<code>```</code>) and braces to indicate the language (R in our case, but other languages such as python and bash can also be supported). Here we add code to indicate the start of the Results section, as well as a plot of the two variables:</p>
-<p>Try one:</p>
+<p>Try one (doesn’t work for either format):</p>
 <pre><code>## Results
  
  ```r
@@ -301,7 +301,7 @@ test for relationships.</code></pre>
  ```
  
  &lt;img src=&quot;005-intro-knitr_files/figure-html/unnamed-chunk-2-1.png&quot; width=&quot;672&quot; /&gt;</code></pre>
-<p>Try two:</p>
+<p>Try two (works for pdf, not for html):</p>
 <pre><code>## Results</code></pre>
 <p><code>```</code>{r}</p>
 <pre><code>plot(x = iris$Petal.Length, 
@@ -309,7 +309,7 @@ test for relationships.</code></pre>
      xlab = &quot;Petal length (cm)&quot;,
      ylab = &quot;Petal width (cm)&quot;)</code></pre>
 <p><code>```</code></p>
-<p>Try three:</p>
+<p>Try three (works for html, not for pdf):</p>
 <pre>
 # Results
 
@@ -452,7 +452,7 @@ output: pdf_document
 <li><a href="https://yihui.name/knitr/">knitr documentation</a></li>
 <li><a href="http://rmarkdown.rstudio.com/">R Markdown documentation</a></li>
 <li>A handy <a href="http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf">cheatsheet for R Markdown syntax</a></li>
-<li>Guied to writing <a href="http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html">bibliography sections</a> in R Markdown documents</li>
+<li>Guide to writing <a href="http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html">bibliography sections</a> in R Markdown documents</li>
 <li>Software Carpentry’s <a href="http://swcarpentry.github.io/r-novice-gapminder/15-knitr-markdown/">knitr lesson</a></li>
 </ul>
 <hr />

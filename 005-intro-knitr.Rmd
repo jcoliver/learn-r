@@ -426,7 +426,7 @@ output: pdf_document
 + [knitr documentation](https://yihui.name/knitr/)
 + [R Markdown documentation](http://rmarkdown.rstudio.com/)
 + A handy [cheatsheet for R Markdown syntax](http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
-+ Guied to writing [bibliography sections](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html) in R Markdown documents
++ Guide to writing [bibliography sections](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html) in R Markdown documents
 + Software Carpentry's [knitr lesson](http://swcarpentry.github.io/r-novice-gapminder/15-knitr-markdown/)
 
 ***
