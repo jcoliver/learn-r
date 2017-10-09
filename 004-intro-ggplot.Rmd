@@ -5,7 +5,13 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   html_document:
     css: stylesheets/markdown-styles.css
+  pdf_document:
+    latex_engine: xelatex
 ---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(fig.height = 4)
+```
 
 An introduction to using the `ggplot` package in R to produce publication-quality graphics.
 
@@ -25,7 +31,8 @@ dir.create(path = "output")
 With this workspace organization, we can download the data, either manually or use R to automatically download it. For this lesson we'll do the latter, saving the file in the `data` directory we just created, and name the file `gapminder.csv`:
 
 ```{r, eval = FALSE}
-download.file(url = "http://tinyurl.com/gapminder-five-year-csv", destfile = "data/gapminder.csv")
+download.file(url = "http://tinyurl.com/gapminder-five-year-csv", 
+              destfile = "data/gapminder.csv")
 ```
 
 From this point on, we want to keep track of what we have done, so we will restrict our use of the console and instead use script files. Start a new script with some brief header information at the very top. We want, at the very least, to include:
@@ -74,7 +81,8 @@ For our first plot, we will create an X-Y scatterplot to investigate a potential
 gapminder <- read.csv(file = "data/gapminder.csv")
 
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp))
+lifeExp.plot <- ggplot(data = gapminder, 
+                       mapping = aes(x = gdpPercap, y = lifeExp))
 
 # Draw plot
 print(lifeExp.plot)  
@@ -84,7 +92,8 @@ _What happened?_ There are no points!? Here is where functionality of ggplot is 
 
 ```{r}
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
+lifeExp.plot <- ggplot(data = gapminder, 
+                       mapping = aes(x = gdpPercap, y = lifeExp)) +
   geom_point()
 
 # Draw plot
@@ -95,7 +104,8 @@ It is a little difficult to see how the points are distributed, as most are clus
 
 ```{r}
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
+lifeExp.plot <- ggplot(data = gapminder, 
+                       mapping = aes(x = gdpPercap, y = lifeExp)) +
   geom_point() +
   scale_x_log10()
 
@@ -107,7 +117,8 @@ One thing of interest is to include additional information in the plot, such as 
 
 ```{r}
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+lifeExp.plot <- ggplot(data = gapminder, 
+                       mapping = aes(x = gdpPercap, y = lifeExp, color = continent)) +
   geom_point() +
   scale_x_log10()
 
@@ -119,7 +130,8 @@ At this point, we want to change the colors of the points in two ways: (1) we wa
 
 ```{r}
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+lifeExp.plot <- ggplot(data = gapminder, 
+                       mapping = aes(x = gdpPercap, y = lifeExp, color = continent)) +
   geom_point(alpha = 0.5) +
   scale_x_log10() +
   scale_color_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet"))
@@ -132,7 +144,8 @@ Finally, we should make those axis labels a little nicer.
 
 ```{r}
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+lifeExp.plot <- ggplot(data = gapminder, 
+                       mapping = aes(x = gdpPercap, y = lifeExp, color = continent)) +
   geom_point(alpha = 0.5) +
   scale_x_log10() +
   scale_color_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
@@ -172,7 +185,8 @@ library("ggplot2")
 gapminder <- read.csv(file = "data/gapminder.csv")
 
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+lifeExp.plot <- ggplot(data = gapminder, 
+                       mapping = aes(x = gdpPercap, y = lifeExp, color = continent)) +
   geom_point(alpha = 0.5) +
   scale_x_log10() +
   scale_color_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
@@ -204,12 +218,13 @@ library("ggplot2")
 
 Now with this call to `rm`, we have cleared out all our variables from memory, so we have to load the `gapminder` data again. To create a violin plot, we use the same approach as for a boxplot, but instead of `geom_point`, we use `geom_violin`:
 
-```{r}
+```{r fig.height = 3}
 # Load data
 gapminder <- read.csv(file = "data/gapminder.csv")
 
 # Create violin plot object
-gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap)) +
+gdp.plot <- ggplot(data = gapminder, 
+                   mapping = aes(x = continent, y = gdpPercap)) +
   geom_violin()
 
 # Print plot
@@ -218,9 +233,10 @@ print(gdp.plot)
 
 A good start, but we can see we need to clean some things up. We'll start by changing the Y-axis to a log scale with `scale_y_log10` and adding a nicer looking axis title with `ylab`. Also, we will remove the gray background that comes with the default theme by using `theme_bw`:
 
-```{r}
+```{r fig.height = 3}
 # Create violin plot object
-gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap)) +
+gdp.plot <- ggplot(data = gapminder, 
+                   mapping = aes(x = continent, y = gdpPercap)) +
   geom_violin() +
   scale_y_log10() +
   ylab("GDP per capita") +
@@ -240,7 +256,8 @@ There are actually multiple years of data (1952 - 2007, at five year increments)
 
 ```{r}
 # Create violin plot object
-gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap)) +
+gdp.plot <- ggplot(data = gapminder, 
+                   mapping = aes(x = continent, y = gdpPercap)) +
   geom_violin() +
   scale_y_log10() +
   ylab("GDP per capita") +
@@ -255,7 +272,8 @@ One of the first things you might notice is that the X-axis is way to crowded no
 
 ```{r}
 # Create violin plot object
-gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap)) +
+gdp.plot <- ggplot(data = gapminder, 
+                   mapping = aes(x = continent, y = gdpPercap)) +
   geom_violin() +
   scale_y_log10() +
   ylab("GDP per capita") +
@@ -273,7 +291,8 @@ Okay, the x-axis is cleaned up, but where are the colors? If we look at our code
 
 ```{r}
 # Create violin plot object
-gdp.plot <- ggplot(data = gapminder, aes(x = continent, y = gdpPercap, fill = continent)) +
+gdp.plot <- ggplot(data = gapminder, 
+                   mapping = aes(x = continent, y = gdpPercap, fill = continent)) +
   geom_violin() +
   scale_y_log10() +
   ylab("GDP per capita") +
@@ -294,7 +313,8 @@ Colors! But now you notice another problem with the plot - where's Oceania? We l
 gapminder <- read.csv(file = "data/gapminder.csv")
 
 # Create violin plot object
-gdp.plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ], aes(x = continent, y = gdpPercap, fill = continent)) +
+gdp.plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ], 
+                   mapping = aes(x = continent, y = gdpPercap, fill = continent)) +
   geom_violin() +
   scale_y_log10() +
   ylab("GDP per capita") +
@@ -327,7 +347,8 @@ library("ggplot2")
 gapminder <- read.csv(file = "data/gapminder.csv")
 
 # Create violin plot object
-gdp.plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ], aes(x = continent, y = gdpPercap, fill = continent)) +
+gdp.plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ], 
+                   mapping = aes(x = continent, y = gdpPercap, fill = continent)) +
   geom_violin() +
   scale_y_log10() +
   ylab("GDP per capita") +
