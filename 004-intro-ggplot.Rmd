@@ -167,7 +167,7 @@ Also note that `ggsave` will guess the type of file to save from the extension. 
 
 ```{r, eval = FALSE}
 # Save plot to tif file
-ggsave(filename = "output/gdp-lifeExp-plot.tif", plot = lifeExp.plot)
+ggsave(filename = "output/gdp-lifeExp-plot.tiff", plot = lifeExp.plot)
 ```
 
 Our final script for this scatterplot is then:
