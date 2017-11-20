@@ -74,7 +74,7 @@ At this point, leave the browser open and open RStudio. We want to make a new pr
 
 ***
 
-## Use an existing GitHub repository
+### Use an existing GitHub repository
 
 If you are going to use a repository that already exists on GitHub, you can head to that repository GitHub site, and click the "Clone or download" button:  
 ![](images/clone-or-download.png)
