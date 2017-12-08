@@ -214,45 +214,27 @@ test for relationships.
 
 Now let's actually do some R. We start by plotting the relationship between petal width and petal length. To write an R code block, we use triple-backticks (`` ``` ``) and braces to indicate the language (R in our case, but other languages such as python and bash can also be supported). Here we add code to indicate the start of the Results section, as well as a plot of the two variables:
 
-Try one (doesn't work for either format):
-
     ## Results
-     ``` {r}
+    
+    ```{r}`r ''`
     plot(x = iris$Petal.Length, 
         y = iris$Petal.Width,
         xlab = "Petal length (cm)",
         ylab = "Petal width (cm)")
-     ```
+    ```
 
-Try two (works for pdf, not for html):
-
-```
+<!-- An alternative approach to get backticks to show up in pdf and html formats
+````
 ## Results
-```
 
-`` ``` ``{r}
-
-```
+```{r}`r ''`
 plot(x = iris$Petal.Length, 
-     y = iris$Petal.Width,
-     xlab = "Petal length (cm)",
-     ylab = "Petal width (cm)")
-```     
-   
-`` ``` ``
-
-Try three (works for html, not for pdf):
-
-<pre>
-&#35; Results
-
-&#96;&#96;&#96;{r}
-plot(x = iris$Petal.Length, 
-     y = iris$Petal.Width,
-     xlab = "Petal length (cm)",
-     ylab = "Petal width (cm)")
-&#96;&#96;&#96;
-</pre>
+    y = iris$Petal.Width,
+    xlab = "Petal length (cm)",
+    ylab = "Petal width (cm)")
+```
+````
+-->
 
 When we knit our document, the above code is rendered as:  
 
@@ -317,45 +299,49 @@ Analyses are based on data for three _Iris_ species from the work of
 [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to 
 test for relationships.
 ```
-
+And the markdown for the Materials & methods sections will be rendered as:
 > ## Materials & methods
 > Analyses are based on data for three _Iris_ species from the work of [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to test for relationships.
 
 Our R Markdown file should look like this:
 
-<pre>
----
-title: "Iris shape analyses"
-author: "Jeff Oliver"
-date: "April 27, 2017"
-output: html_document
----
+````
+    ---
+    title: "Iris shape analyses"
+    author: "Jeff Oliver"
+    date: "April 27, 2017"
+    output: html_document
+    ---
+    
+    ## Introduction
+    In this report we test for a relationship between different parts of morphology 
+    in _Iris_ flowers.
 
-## Introduction
-In this report we test for a relationship between different parts of morphology in _Iris_ flowers.
+    ## Materials & methods
+    Analyses are based on data for three _Iris_ species from the work of 
+    [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used 
+    linear regression to test for relationships.
 
-## Materials & methods
-Analyses are based on data for three _Iris_ species from the work of [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to test for relationships.
+    ## Results
 
-## Results
+    ```{r}`r ''`
+    plot(x = iris$Petal.Length, 
+        y = iris$Petal.Width,
+        xlab = "Petal length (cm)",
+        ylab = "Petal width (cm)")
+    ```
 
-&#96;&#96;&#96;{r}
-plot(x = iris$Petal.Length, 
-     y = iris$Petal.Width,
-     xlab = "Petal length (cm)",
-     ylab = "Petal width (cm)")
-&#96;&#96;&#96;
+    ```{r echo = FALSE}`r ''`
+    iris.model <- lm(Petal.Width ~ Petal.Length, data = iris)
+    iris.model.summary <- summary(iris.model)
+    corr.coef <- iris.model.summary$r.squared
+    ```
+    
+    Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(corr.coef, 2)\x60'`).
 
-&#96;&#96;&#96;{r echo = FALSE}
-iris.model <- lm(Petal.Width ~ Petal.Length, data = iris)
-iris.model.summary <- summary(iris.model)
-corr.coef <- iris.model.summary$r.squared
-&#96;&#96;&#96;
-
-Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(corr.coef, 2)\x60'`).
-
-</pre>
-
+````
+  
+***
 Which produces the following, albeit short, report:
 
 > # Iris shape analyses
@@ -428,6 +414,7 @@ output: pdf_document
 + A handy [cheatsheet for R Markdown syntax](http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
 + Guide to writing [bibliography sections](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html) in R Markdown documents
 + Software Carpentry's [knitr lesson](http://swcarpentry.github.io/r-novice-gapminder/15-knitr-markdown/)
++ A [PDF version](https://jcoliver.github.io/learn-r/005-intro-knitr.pdf) of this lesson
 
 ***
 
