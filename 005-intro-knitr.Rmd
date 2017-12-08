@@ -378,6 +378,7 @@ There is a lot more one can do with R Markdown. Check out the [additional resour
 These HTML reports are great (as a matter of fact, all these lessons are written in R Markdown and converted to HTML with the `knitr` package), but what about other formats? The other two commonly used formats are documents for word processing (i.e. Word .doc files) and PDF files. These other formats require additional software to be installed on your machine:
 
 + For Word documents, you will need Word or another piece of software that can interpret .docx files (e.g. LibreOffice or OpenOffice).
+    + If you want the resulting document to have styles other than the default styles produced by `knitr`, first create a .docx file with the styles you want to apply to your output document, then refer to that file in the header (see example below and links in [Additional resources](#additional-resources)).
 + For PDF documents, the requirement is dependent on your operating system:
     + Windows: [Tex for Windows](http://miktex.org/2.9/setup)
     + Mac OS X: [Tex for Mac](http://tug.org/mactex)
@@ -391,7 +392,9 @@ A Word document header:
 title: "Iris shape analyses"
 author: "Jeff Oliver"
 date: "April 27, 2017"
-output: word_document
+output:
+    word_document:
+        reference_docx: docs/word-template.docx
 ---
 ```
 
@@ -411,6 +414,7 @@ output: pdf_document
 
 + [knitr documentation](https://yihui.name/knitr/)
 + [R Markdown documentation](http://rmarkdown.rstudio.com/)
++ Creating [Word templates](http://rmarkdown.rstudio.com/articles_docx.html) to apply to knitr documents
 + A handy [cheatsheet for R Markdown syntax](http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
 + Guide to writing [bibliography sections](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html) in R Markdown documents
 + Software Carpentry's [knitr lesson](http://swcarpentry.github.io/r-novice-gapminder/15-knitr-markdown/)

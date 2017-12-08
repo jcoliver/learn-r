@@ -412,7 +412,10 @@ test for relationships.</code></pre>
 <h2>Other formats</h2>
 <p>These HTML reports are great (as a matter of fact, all these lessons are written in R Markdown and converted to HTML with the <code>knitr</code> package), but what about other formats? The other two commonly used formats are documents for word processing (i.e. Word .doc files) and PDF files. These other formats require additional software to be installed on your machine:</p>
 <ul>
-<li>For Word documents, you will need Word or another piece of software that can interpret .docx files (e.g. LibreOffice or OpenOffice).</li>
+<li>For Word documents, you will need Word or another piece of software that can interpret .docx files (e.g. LibreOffice or OpenOffice).
+<ul>
+<li>If you want the resulting document to have styles other than the default styles produced by <code>knitr</code>, first create a .docx file with the styles you want to apply to your output document, then refer to that file in the header (see example below and links in <a href="#additional-resources">Additional resources</a>).</li>
+</ul></li>
 <li>For PDF documents, the requirement is dependent on your operating system:
 <ul>
 <li>Windows: <a href="http://miktex.org/2.9/setup">Tex for Windows</a></li>
@@ -426,7 +429,9 @@ test for relationships.</code></pre>
 title: &quot;Iris shape analyses&quot;
 author: &quot;Jeff Oliver&quot;
 date: &quot;April 27, 2017&quot;
-output: word_document
+output:
+    word_document:
+        reference_docx: docs/word-template.docx
 ---</code></pre>
 <p>A PDF document header:</p>
 <pre><code>---
@@ -442,6 +447,7 @@ output: pdf_document
 <ul>
 <li><a href="https://yihui.name/knitr/">knitr documentation</a></li>
 <li><a href="http://rmarkdown.rstudio.com/">R Markdown documentation</a></li>
+<li>Creating <a href="http://rmarkdown.rstudio.com/articles_docx.html">Word templates</a> to apply to knitr documents</li>
 <li>A handy <a href="http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf">cheatsheet for R Markdown syntax</a></li>
 <li>Guide to writing <a href="http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html">bibliography sections</a> in R Markdown documents</li>
 <li>Software Carpentry’s <a href="http://swcarpentry.github.io/r-novice-gapminder/15-knitr-markdown/">knitr lesson</a></li>
