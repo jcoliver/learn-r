@@ -71,6 +71,9 @@ We ultimately want a heatmap where the different subjects are shown along the x-
 
 The challenge is that our data are _not_ formatted like this. While the `subject` column corresponds to what we would like for our x-axis, we do not have columns that correspond to what is needed for the y- and z-axes. All the data are in our data frame, but we need to take a table that looks like this:
 
+```{r set-scipen}
+options(scipen = 999)
+```
 | `r colnames(exp.data)[1]` | `r colnames(exp.data)[2]` | `r colnames(exp.data)[3]` | `r colnames(exp.data)[4]` | `r colnames(exp.data)[5]` |
 |:-------------------|:-------------------|:------------------------------|:------------------------------------|:------------------------------------|
 | `r exp.data[1, 1]` | `r exp.data[1, 2]` |  `r round(exp.data[1, 3], 3)` | `r round(exp.data[1, 4], 3)` | `r round(exp.data[1, 5], 3)` |
@@ -88,6 +91,10 @@ And transform it to one with a column for the gene and a column for expression, 
 |  `r exp.data[2, 1]` | `r colnames(exp.data)[4]` |  `r round(exp.data[2, 4], 3)` |
 |  `r exp.data[2, 1]` | `r colnames(exp.data)[5]` |  `r round(exp.data[2, 5], 3)` |
 | ...                 | ...            | ...       |
+
+```{r reset-scipen}
+options(scipen = 0)
+```
 
 Thankfully, there is a function in the `tidyr` package called `gather` that is designed for creating this type of "tidy"" data. 
 
