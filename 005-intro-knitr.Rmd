@@ -2,7 +2,10 @@
 title: "Dynamic reports with knitr"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output: 
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
 ---
 
 An introduction to using the `knitr` package in R to produce reproducible, dynamic reports.
@@ -44,7 +47,8 @@ Followed by text:
 ```
 ## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, 
+PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 ```
 
 We will start with formatting in R Markdown syntax, followed by how to include R code in your document.
@@ -126,7 +130,9 @@ Images are also supported, whether they are local files or images on the web. Th
 
 Here I use an image from [Wikimedia](https://commons.wikimedia.org) and include a caption:
 ```
-![The white rhinoceros (_Ceratotherium simum_) (photo by Rob Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
+![The white rhinoceros (_Ceratotherium simum_) (photo by Rob
+Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4
+/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
 ```
 
 > ![The white rhinoceros (_Ceratotherium simum_) (photo by Rob Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
@@ -154,27 +160,26 @@ You can also write more complex equations, too (remembering to bracket your LaTe
 
 ```
 $$
-\begin{equation}
+\begin{aligned}
 \begin{array}{l}
 \displaystyle \int 1 = x + C\\
 \displaystyle \int x = \frac{x^2}{2} + C \\
 \displaystyle \int x^2 = \frac{x^3}{3} + C
-\end{array} 
-\end{equation}
+\end{array}
+\end{aligned}
 $$
 ```
 
 $$
-\begin{equation}
+\begin{aligned}
 \begin{array}{l}
 \displaystyle \int 1 = x + C\\
 \displaystyle \int x = \frac{x^2}{2} + C \\
 \displaystyle \int x^2 = \frac{x^3}{3} + C
 \end{array} 
-\end{equation}
+\end{aligned}
 $$
 
-***
 ***
 
 ## What about code?
@@ -207,20 +212,32 @@ test for relationships.
 > ## Materials & methods
 > Analyses are based on built-in data for three _Iris_ species. We used linear regression to test for relationships.  
 
-Now let's actually do some R. We start by plotting the relationship between petal width and petal length. To write an R code block, we use triple-backticks (`) and braces to indicate the language (R in our case, but other languages such as python and bash can also be supported). Here we add code to indicate the start of the Results section, as well as a plot of the two variables:
+Now let's actually do some R. We start by plotting the relationship between petal width and petal length. To write an R code block, we use triple-backticks (`` ``` ``) and braces to indicate the language (R in our case, but other languages such as python and bash can also be supported). Here we add code to indicate the start of the Results section, as well as a plot of the two variables:
 
-<pre>
-&#35; Results
+    ## Results
+    
+    ```{r}`r ''`
+    plot(x = iris$Petal.Length, 
+        y = iris$Petal.Width,
+        xlab = "Petal length (cm)",
+        ylab = "Petal width (cm)")
+    ```
 
-&#96;&#96;&#96;{r}
+<!-- An alternative approach to get backticks to show up in pdf and html formats
+````
+## Results
+
+```{r}`r ''`
 plot(x = iris$Petal.Length, 
-     y = iris$Petal.Width,
-     xlab = "Petal length (cm)",
-     ylab = "Petal width (cm)")
-&#96;&#96;&#96;
-</pre>
+    y = iris$Petal.Width,
+    xlab = "Petal length (cm)",
+    ylab = "Petal width (cm)")
+```
+````
+-->
 
-***
+When we knit our document, the above code is rendered as:  
+
 > ## Results
 ```{r}
 plot(x = iris$Petal.Length, 
@@ -282,45 +299,49 @@ Analyses are based on data for three _Iris_ species from the work of
 [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to 
 test for relationships.
 ```
-
+And the markdown for the Materials & methods sections will be rendered as:
 > ## Materials & methods
 > Analyses are based on data for three _Iris_ species from the work of [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to test for relationships.
 
 Our R Markdown file should look like this:
 
-<pre>
----
-title: "Iris shape analyses"
-author: "Jeff Oliver"
-date: "April 27, 2017"
-output: html_document
----
+````
+    ---
+    title: "Iris shape analyses"
+    author: "Jeff Oliver"
+    date: "April 27, 2017"
+    output: html_document
+    ---
+    
+    ## Introduction
+    In this report we test for a relationship between different parts of morphology 
+    in _Iris_ flowers.
 
-## Introduction
-In this report we test for a relationship between different parts of morphology in _Iris_ flowers.
+    ## Materials & methods
+    Analyses are based on data for three _Iris_ species from the work of 
+    [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used 
+    linear regression to test for relationships.
 
-## Materials & methods
-Analyses are based on data for three _Iris_ species from the work of [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to test for relationships.
+    ## Results
 
-## Results
+    ```{r}`r ''`
+    plot(x = iris$Petal.Length, 
+        y = iris$Petal.Width,
+        xlab = "Petal length (cm)",
+        ylab = "Petal width (cm)")
+    ```
 
-&#96;&#96;&#96;{r}
-plot(x = iris$Petal.Length, 
-     y = iris$Petal.Width,
-     xlab = "Petal length (cm)",
-     ylab = "Petal width (cm)")
-&#96;&#96;&#96;
+    ```{r echo = FALSE}`r ''`
+    iris.model <- lm(Petal.Width ~ Petal.Length, data = iris)
+    iris.model.summary <- summary(iris.model)
+    corr.coef <- iris.model.summary$r.squared
+    ```
+    
+    Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(corr.coef, 2)\x60'`).
 
-&#96;&#96;&#96;{r echo = FALSE}
-iris.model <- lm(Petal.Width ~ Petal.Length, data = iris)
-iris.model.summary <- summary(iris.model)
-corr.coef <- iris.model.summary$r.squared
-&#96;&#96;&#96;
-
-Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(corr.coef, 2)\x60'`).
-
-</pre>
-
+````
+  
+***
 Which produces the following, albeit short, report:
 
 > # Iris shape analyses
@@ -357,6 +378,7 @@ There is a lot more one can do with R Markdown. Check out the [additional resour
 These HTML reports are great (as a matter of fact, all these lessons are written in R Markdown and converted to HTML with the `knitr` package), but what about other formats? The other two commonly used formats are documents for word processing (i.e. Word .doc files) and PDF files. These other formats require additional software to be installed on your machine:
 
 + For Word documents, you will need Word or another piece of software that can interpret .docx files (e.g. LibreOffice or OpenOffice).
+    + If you want the resulting document to have styles other than the default styles produced by `knitr`, first create a .docx file with the styles you want to apply to your output document, then refer to that file in the header (see example below and links in [Additional resources](#additional-resources)).
 + For PDF documents, the requirement is dependent on your operating system:
     + Windows: [Tex for Windows](http://miktex.org/2.9/setup)
     + Mac OS X: [Tex for Mac](http://tug.org/mactex)
@@ -370,7 +392,9 @@ A Word document header:
 title: "Iris shape analyses"
 author: "Jeff Oliver"
 date: "April 27, 2017"
-output: word_document
+output:
+    word_document:
+        reference_docx: docs/word-template.docx
 ---
 ```
 
@@ -390,9 +414,11 @@ output: pdf_document
 
 + [knitr documentation](https://yihui.name/knitr/)
 + [R Markdown documentation](http://rmarkdown.rstudio.com/)
++ Creating [Word templates](http://rmarkdown.rstudio.com/articles_docx.html) to apply to knitr documents
 + A handy [cheatsheet for R Markdown syntax](http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
-+ Guied to writing [bibliography sections](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html) in R Markdown documents
++ Guide to writing [bibliography sections](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html) in R Markdown documents
 + Software Carpentry's [knitr lesson](http://swcarpentry.github.io/r-novice-gapminder/15-knitr-markdown/)
++ A [PDF version](https://jcoliver.github.io/learn-r/005-intro-knitr.pdf) of this lesson
 
 ***
 
