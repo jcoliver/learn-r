@@ -1,0 +1,90 @@
+---
+title: "A very brief introduction to species distribution models in R"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+---
+
+Outline:
+
++ What they are (introductory stuff + description)
++ What do we need?
+    + Data
+    + Dependencies
++ Preparing data?
++ Quick plot of points on map
++ Pseudo-absence points
++ Models
+    + Quick glance at loadings?
++ Maps
+
+[INTRODUCTORY SENTENCE]
+
+#### Learning objectives
+1. Install packages for species distribution modeling
+2. Run species distribution models using `bioclim` approach
+3. Visualize model predictions on a map
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+***
+
+## Getting started
+Before we do anything, we will need to set up our workspace, download example data, and install additional packages that are necessary to run the models and visualize their output. 
+### Workspace organization
+So, to start, create a pair of folders in your workspace:
+```{r workspace-setup, eval = FALSE}
+dir.create(path = "data")
+dir.create(path = "output")
+```
+It is good practice to keep input (i.e. the data) and output separate. Furthermore, any work that ends up in the 'output' folder should be completely disposable. That is, the combination of data and the code we write should allow us (or anyone else, for that matter) to reproduce any output.
+
+### Example data
+The data we are working with are observations of the Saguaro, _Carnegiea gigantea_. They include specimen data from the [University of Arizona Herbarium](https://cals.arizona.edu/herbarium/content/specimens) and the [Consortium of California Herbaria](http://ucjeps.berkeley.edu/consortium/).
+
+### Install additional R packages
+Next, there are _five_ additional R packages that will need to be installed:
+
++ dismo
++ maptools
++ rgdal
++ raster
++ sp
+
+To install these, run:
+```{r install-dependencies, eval = FALSE}
+install.packages("dismo")
+install.packages("maptools")
+install.packages("rgdal")
+install.packages("raster")
+install.packages("sp")
+```
+
+***
+
+## [TOPIC ONE]
+
+***
+
+## [TOPIC TWO]
+
+***
+
+## Additional resources
+
++ [Vignette for `dismo` package](https://cran.r-project.org/web/packages/dismo/vignettes/sdm.pdf)
++ [Fast and flexible Bayesian species distribution modelling using Gaussian processes](http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12523/pdf)
++ [Species distribution models in R](http://www.molecularecologist.com/2013/04/species-distribution-models-in-r/)
++ [Run a range of species distribution models](https://rdrr.io/cran/biomod2/man/BIOMOD_Modeling.html)
++ [SDM polygons on a Google map](https://rdrr.io/rforge/dismo/man/gmap.html)
++ [R package 'maxnet' for functionality of Java maxent package](https://cran.r-project.org/web/packages/maxnet/maxnet.pdf)
++ A [PDF version](https://jcoliver.github.io/learn-r/011-species-distribution-models.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
