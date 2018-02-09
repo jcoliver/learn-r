@@ -43,7 +43,7 @@ dir.create(path = "output")
 It is good practice to keep input (i.e. the data) and output separate. Furthermore, any work that ends up in the 'output' folder should be completely disposable. That is, the combination of data and the code we write should allow us (or anyone else, for that matter) to reproduce any output.
 
 ### Example data
-The data we are working with are observations of the Saguaro, _Carnegiea gigantea_. They include specimen data from the [University of Arizona Herbarium](https://cals.arizona.edu/herbarium/content/specimens) and the [Consortium of California Herbaria](http://ucjeps.berkeley.edu/consortium/).
+The data we are working with are observations of the Saguaro, _Carnegiea gigantea_, downloaded from [GBIF](https://www.gbif.org/), the Global Biodiversity Information Facility. You can download the data from [](); save it in the 'data' folder that you created in the step above.
 
 ### Install additional R packages
 Next, there are _five_ additional R packages that will need to be installed:
@@ -70,6 +70,70 @@ install.packages("sp")
 ***
 
 ## [TOPIC TWO]
+
+***
+
+
+```{r}
+library("sp") # required by raster
+library("raster") # extent
+library("maptools") # wrld_simpl
+library("rgdal")
+library("dismo")
+
+obs.data <- read.delim(file = "data/Carnegiea-gigantea-GBIF.csv")
+summary(obs.data)
+obs.data <- obs.data[!is.na(obs.data$latitude), ]
+obs.data <- obs.data[, -1]
+
+# Determine geographic extent of our data
+max.lat = ceiling(max(obs.data$latitude))
+min.lat = floor(min(obs.data$latitude))
+max.lon = ceiling(max(obs.data$longitude))
+min.lon = floor(min(obs.data$longitude))
+geographic.extent <- extent(x = c(min.lon, max.lon, min.lat, max.lat))
+
+# Reality check - plot points
+data(wrld_simpl)
+# Debugging note: Have to run multiple successive plotting lines all at once for it to work
+plot(wrld_simpl, xlim = c(min.lon, max.lon), ylim = c(min.lat, max.lat), axes = TRUE, col = "lightyellow")
+points(obs.data$longitude, obs.data$latitude, col = "olivedrab", pch = 20, cex = 0.75)
+box()
+
+# Get the biolim data
+bioclim.data <- getData(name = "worldclim",
+                        var = "bio",
+                        res = 2.5,
+                        path = "data/")
+bioclim.data <- crop(x = bioclim.data, y = geographic.extent)
+
+
+obs.data <- obs.data[, c(2:1)]
+
+# Do species distribution model and draw a plot
+bc <- bioclim(x = bioclim.data, p = obs.data)
+# bc.eval <- evaluate(presence.test, bg.test, bc, bioclim.data)
+# bc.threshold <- threshold(bc.eval, "spec_sens")
+predict.presence <- predict(x = bioclim.data, object = bc, ext = geographic.extent, progress = "")
+
+
+plot(predict.presence, main = "BIOCLIM, raw")
+plot(wrld_simpl, add = TRUE, border = "dark grey")
+points(obs.data$longitude, obs.data$latitude, col = "olivedrab", pch = "+", cex = 0.25)
+box()
+
+
+
+# Create pseudo-absence points
+raster.files <- list.files(path = paste0(system.file(package = "dismo"), "/ex"),
+                           pattern = "grd", full.names = TRUE)
+mask <- raster(raster.files[1])
+# Random points (same number as our observed points)
+bg <- randomPoints(mask = mask, n = nrow(obs.data), ext = geographic.extent, extf = 1.25)
+plot(wrld_simpl, xlim = c(min.lon, max.lon), ylim = c(min.lat, max.lat), axes = TRUE, col = "light yellow")
+points(bg, cex = 0.5)
+
+```
 
 ***
 
