@@ -151,7 +151,7 @@ plot(wrld_simpl,
      xlim = c(min.lon, max.lon),
      ylim = c(min.lat, max.lat),
      axes = TRUE, 
-     col = "lightyellow")
+     col = "grey95")
 
 # asp = 0 will restrict xlim, but RStudio stretches out the map
 
@@ -217,6 +217,33 @@ obs.data <- obs.data[, c(2, 1)]
 bc.model <- bioclim(x = bioclim.data, p = obs.data)
 ```
 Woo-hoo! No errors here (hopefully).
+
+There's one more step we need to take before we plot the model on a map. We need to generate an object that has the model's probability of occurrence for saguaros. We use the `predict` model from the `dismo` package:
+
+```{r predict-presence}
+# Predict presence from model
+predict.presence <- dismo::predict(object = bc.model, x = bioclim.data, ext = geographic.extent)
+```
+You might be wondering about why we use `dismo::predict` rather than just `predict`. Not surprisingly, different packages sometimes use the same function name to perform very different operations. In the case of `predict`, there are at least three packages loaded into memory that have a `predict` function: `dismo`, `sp`, and `stats`. Although we _probably_ would have been fine just using `predict` (R would have use the `dismo` version), specifying the `dismo` version explicitly communicates this fact to anyone else reading the code. So, rather than leaving others (or your future self!) guessing, we can use the `dismo::predict` syntax.
+
+Enough! It's time to plot. We start as we did before, with a blank gray map, add the model, and if we feel like it, add the original observations as points.
+```{r plot-sdm-01}
+# Plot base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95")
+
+# Add model probabilities
+plot(predict.presence, add = TRUE)
+
+plot(wrld_simpl, add = TRUE, border = "dark grey")
+
+# Add original observations
+points(obs.data$longitude, obs.data$latitude, col = "olivedrab", pch = 20, cex = 0.75)
+box()
+```
 
 ***
 
