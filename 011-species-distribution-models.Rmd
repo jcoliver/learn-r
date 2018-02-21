@@ -138,11 +138,10 @@ min.lat = floor(min(obs.data$latitude))
 max.lon = ceiling(max(obs.data$longitude))
 min.lon = floor(min(obs.data$longitude))
 geographic.extent <- extent(x = c(min.lon, max.lon, min.lat, max.lat))
-
 ```
 
 Before we do any modeling, it is also a good idea to run a reality check on your occurrence data by plotting the points on a map.
-```{r plot-occurrence}
+```{r plot-occurrence-01}
 # Load the data to use for our base map
 data(wrld_simpl)
 
@@ -153,8 +152,6 @@ plot(wrld_simpl,
      axes = TRUE, 
      col = "grey95")
 
-# asp = 0 will restrict xlim, but RStudio stretches out the map
-
 # Add the points for individual observation
 points(x = obs.data$longitude, 
        y = obs.data$latitude, 
@@ -163,7 +160,6 @@ points(x = obs.data$longitude,
        cex = 0.75)
 # And draw a little box around the graph
 box()
-
 ```
 
 ***
@@ -227,7 +223,7 @@ predict.presence <- dismo::predict(object = bc.model, x = bioclim.data, ext = ge
 You might be wondering about why we use `dismo::predict` rather than just `predict`. Not surprisingly, different packages sometimes use the same function name to perform very different operations. In the case of `predict`, there are at least three packages loaded into memory that have a `predict` function: `dismo`, `sp`, and `stats`. Although we _probably_ would have been fine just using `predict` (R would have use the `dismo` version), specifying the `dismo` version explicitly communicates this fact to anyone else reading the code. So, rather than leaving others (or your future self!) guessing, we can use the `dismo::predict` syntax.
 
 Enough! It's time to plot. We start as we did before, with a blank gray map, add the model, and if we feel like it, add the original observations as points.
-```{r plot-sdm-01}
+```{r plot-sdm-probabilities}
 # Plot base map
 plot(wrld_simpl, 
      xlim = c(min.lon, max.lon),
@@ -238,10 +234,167 @@ plot(wrld_simpl,
 # Add model probabilities
 plot(predict.presence, add = TRUE)
 
+# Redraw those country borders
 plot(wrld_simpl, add = TRUE, border = "dark grey")
 
 # Add original observations
 points(obs.data$longitude, obs.data$latitude, col = "olivedrab", pch = 20, cex = 0.75)
+box()
+```
+
+This plot shows the probability of occurrence of saguaros across the map. Note the values are all quite below 1.0; in fact, the maximum probability anywhere on the map is only `r round(predict.presence@data@max, 2)`, according to the model. However, we are pretty sure that saguaros are found across a pretty broad area of the Sonoran Desert - after all, we have the observations to prove that! If we want our map to better reflect this, we will need to re-run our analyses, but this time include some absence points, where saguaros are known to _not_ occur. The problem is, we only have presence data for saguaros.
+
+```{r plot-occurrence-02, echo = FALSE}
+# Plot the base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95",
+     main = "Saguaro observations")
+
+# Add the points for individual observation
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "olivedrab", 
+       pch = 20, 
+       cex = 0.75)
+# And draw a little box around the graph
+box()
+```
+
+## The pseudo-absence point
+One common work around for coercing presence-only data for use with presence/absence approaches is to use pseudo-absence, or "background" points. While "pseudo-absence" sounds fancy, it really just means that one randomly samples points from a given geographic area and treats them like locations where the species of interest is absent. A great resource investigating the influence and best practices of pseudo-absence points is a study by Barbet-Massin _et al._ (2012) (see [References](#references) below for full details).
+
+For our purposes, we are going to create a set of background (aka pseudo-absence) points at random, with as many points as we have observations. We are going to use the bioclim data files for determining spatial resolution of the points, and restrict the sampling area to the general region of the observations of saguaros.
+
+```{r pseudo-absence-sampling}
+# Use the bioclim data files for sampling resolution
+bil.files <- list.files(path = "data/wc2-5", 
+                          pattern = "*.bil$", 
+                          full.names = TRUE)
+
+# We only need one file, so use the first one in the list of .bil files
+mask <- raster(bil.files[1])
+
+# Randomly sample points (same number as our observed points)
+background <- randomPoints(mask = mask,     # Provides resolution of sampling points
+                   n = nrow(obs.data),      # Number of random points
+                   ext = geographic.extent, # Spatially restricts sampling
+                   extf = 1.25)             # Expands sampling a little bit
+```
+
+Take a quick look at the `background` object we just created:
+```{r pseudo-absence-check}
+head(background)
+```
+
+We can also visualize them on a map, like we did for the observed points:
+```{r pseudo-absence-plot}
+# Plot the base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95",
+     main = "Presence and pseudo-absence points")
+
+# Add the background points
+points(background, col = "grey30", pch = 1, cex = 0.75)
+
+# Add the observations
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "olivedrab", 
+       pch = 20, 
+       cex = 0.75)
+
+box()
+```
+
+Now that we have our pseudo-absence points, we need to take one more step. Getting a more traditional-range-map-looking figure requires _post hoc_ evaluation of the model. To do this evaluation, we are going to build the model using only _part_ of our data (the **training** data), reserving a portion of the data for evaluation of the model after it is build (the **testing** data). We are going to reserve 20% of the data for testing, so we use the `kfold` function in the `dismo` package to evenly assign each observation to a random group.
+
+```{r separate-training-testing-01}
+# Arbitrarily assign group 1 as the testing data group
+testing.group <- 1
+
+# Create vector of group memberships
+group.presence <- kfold(x = obs.data, k = 5) # kfold is in dismo package
+```
+
+Now pause for a minute and take a look at that `group.presence` vector we just created:
+```{r check-training-testing}
+head(group.presence)
+
+# Should see even representation in each group
+table(group.presence)
+```
+
+The output of `table` shows how many points have been assigned to each of the five groups.
+  
+We use the `group.presence` vector with the observed data to separate our observations into a training data set and a testing data set:
+```{r separate-training-testing-02}
+# Separate observations into training and testing groups
+presence.train <- obs.data[group.presence != testing.group, ]
+presence.test <- obs.data[group.presence == testing.group, ]
+
+# Repeat the process for pseudo-absence points
+group.background <- kfold(x = background, k = 5)
+background.train <- background[group.background != testing.group, ]
+background.test <- background[group.background == testing.group, ]
+```
+
+## Training and testing the model
+Now that we have (1) our pseudo-absence points and (2) separate training and testing data, we can re-build the model, evaluate its performance, and draw a more aesthetically pleasing map. We build the model with the `bioclim` function as before, but instead of using all the observations in `obs.data` we only use the training data stored in `presence.train`:
+
+```{r bioclim-training}
+# Build a model using training data
+bc.model <- bioclim(x = bioclim.data, p = presence.train)
+```
+
+We now take that model, and evaluate it using the observation data and the pseudo-absence points we reserved for model _testing_. We then use this test to establish a cutoff of occurrence probability to determine the boundaries of the saguaro range.
+```{r testing-model}
+# Use testing data for model evaluation
+bc.eval <- evaluate(p = presence.test,   # The presence testing data
+                    a = background.test, # The absence testing data
+                    model = bc.model,    # The model we are evaluating
+                    x = bioclim.data)    # Climatic variables for use by model
+
+# Determine minimum threshold for "presence"
+bc.threshold <- threshold(x = bc.eval, stat = "spec_sens")
+```
+
+The `threshold` functions offers a number of means of determining the threshold cutoff through the `stat` parameter. Here we chose `"spec_sens"`, which sets "the threshold at which the sum of the sensitivity (true positive rate) and specificity (true negative rate) is highest." For more information, check out the documentation for `threshold` (`?threshold`, remember?).
+  
+And _finally_, we can use that threshold to paint a map with the predicted range of the saguaro!
+```{r plot-sdm-threshold}
+# Predict presence from model (same as previously, but with the update model)
+predict.presence <- dismo::predict(object = bc.model, 
+                                   x = bioclim.data, 
+                                   ext = geographic.extent)
+
+# Plot base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95")
+
+# Only plot areas where probability of occurrence is greater than the threshold
+plot(predict.presence > bc.threshold, 
+     add = TRUE, 
+     legend = FALSE, 
+     col = c(NA, "olivedrab"))
+
+# And add those observations
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "black",
+       pch = "+", 
+       cex = 0.75)
+
+# Redraw those country borders
+plot(wrld_simpl, add = TRUE, border = "dark grey")
 box()
 ```
 
