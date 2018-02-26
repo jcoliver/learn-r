@@ -25,7 +25,7 @@ Outline:
     + Do just probability map, without any pseudo-absence points
     + Do threshold map, with pseudo-absence points
 
-[INTRODUCTORY SENTENCE]
+Predicting ranges' of species from latitude and longitude coordinates has become increasingly easier with a suite of R packages. This introductory tutorial will show you how to turn your coordinate data into a range map.
 
 #### Learning objectives
 1. Install packages for species distribution modeling
@@ -33,6 +33,8 @@ Outline:
 3. Visualize model predictions on a map
 
 ## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+An introduction to predicting species' geographic ranges based on occurrence and climate data. We'll be using publicly available data to build models of species distributions and to generate distribution maps.
 
 ***
 
@@ -367,7 +369,46 @@ bc.threshold <- threshold(x = bc.eval, stat = "spec_sens")
 The `threshold` functions offers a number of means of determining the threshold cutoff through the `stat` parameter. Here we chose `"spec_sens"`, which sets "the threshold at which the sum of the sensitivity (true positive rate) and specificity (true negative rate) is highest." For more information, check out the documentation for `threshold` (`?threshold`, remember?).
   
 And _finally_, we can use that threshold to paint a map with the predicted range of the saguaro!
-```{r plot-sdm-threshold}
+```{r plot-sdm-threshold-bad-color}
+# Predict presence from model (same as previously, but with the update model)
+predict.presence <- dismo::predict(object = bc.model, 
+                                   x = bioclim.data, 
+                                   ext = geographic.extent)
+
+# Plot base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95")
+
+# Only plot areas where probability of occurrence is greater than the threshold
+plot(predict.presence > bc.threshold, 
+     add = TRUE, 
+     legend = FALSE, 
+     col = "olivedrab")
+
+# And add those observations
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "black",
+       pch = "+", 
+       cex = 0.75)
+
+# Redraw those country borders
+plot(wrld_simpl, add = TRUE, border = "dark grey")
+box()
+```
+
+Hmmm...that doesn't look right. It plotted a large portion of the map green. Let's look at what we actually asked R to plot, that is, we plot the value of `predict.presence > bc.threshold`. So what is that?
+
+```{r investigate-raster-comparison}
+predict.presence > bc.threshold
+```
+
+The comparison of these two rasters produces another raster with values of only 0 or 1: 0 where the comparison evaluates as `FALSE` (i.e., when the value in a grid cell of predict.presence is less than or equal to the value in the corresponding grid cell of bc.threshold) and 1 where the comparison evaluates at `TRUE`. Since there are two values in this comparison (the 0 and 1 in the `values` field), we need to update what we pass to the `col` parameter in our plot call. Instead of just passing a single value, we provide a color for 0 (`NA`) and a color for 1 (`"olivedrab"`):
+
+```{r plot-sdm-threshold-good-color}
 # Predict presence from model (same as previously, but with the update model)
 predict.presence <- dismo::predict(object = bc.model, 
                                    x = bioclim.data, 
@@ -398,97 +439,9 @@ plot(wrld_simpl, add = TRUE, border = "dark grey")
 box()
 ```
 
-***
-
-```{r dev-chunk, eval = FALSE}
-library("sp") # required by raster
-library("raster") # extent
-library("maptools") # wrld_simpl
-library("rgdal")
-library("dismo")
-
-obs.data <- read.csv(file = "data/Carnegiea-gigantea-GBIF.csv")
-summary(obs.data)
-
-# Determine geographic extent of our data
-max.lat = ceiling(max(obs.data$latitude))
-min.lat = floor(min(obs.data$latitude))
-max.lon = ceiling(max(obs.data$longitude))
-min.lon = floor(min(obs.data$longitude))
-geographic.extent <- extent(x = c(min.lon, max.lon, min.lat, max.lat))
-
-# Reality check - plot points
-data(wrld_simpl)
-# Debugging note: Have to run multiple successive plotting lines all at once for it to work
-plot(wrld_simpl, xlim = c(min.lon, max.lon), ylim = c(min.lat, max.lat), axes = TRUE, col = "lightyellow")
-points(obs.data$longitude, obs.data$latitude, col = "olivedrab", pch = 20, cex = 0.75)
-box()
-
-# Get the biolim data
-bioclim.data <- getData(name = "worldclim",
-                        var = "bio",
-                        res = 2.5,
-                        path = "data/")
-bioclim.data <- crop(x = bioclim.data, y = geographic.extent)
-
-# TODO: run this without re-ordering first
-# Have to swap order of latitude & longitude, as bioclim method 
-# expects first column to be longitude, second to be latitude
-obs.data <- obs.data[, c(2:1)]
-
-# Do species distribution model and draw a plot
-bc.model <- bioclim(x = bioclim.data, p = obs.data)
-predict.presence <- predict(x = bioclim.data, object = bc.model, ext = geographic.extent, progress = "")
-
-# TODO: May need some more graphics massaging here
-plot(predict.presence, xlim = c(min.lon, max.lon), ylim = c(min.lat, max.lat), main = "BIOCLIM, raw")
-plot(wrld_simpl, add = TRUE, border = "dark grey")
-points(obs.data$longitude, obs.data$latitude, col = "olivedrab", pch = "+", cex = 0.75)
-box()
-
-# Create pseudo-absence points
-bil.files <- list.files(path = "data/wc2-5", 
-                          pattern = "*.bil$", 
-                          full.names = TRUE)
-mask <- raster(bil.files[1])
-
-# Random points (same number as our observed points)
-bg <- randomPoints(mask = mask, n = nrow(obs.data), ext = geographic.extent, extf = 1.25)
-
-# Do a quick plot to see the points
-plot(wrld_simpl, xlim = c(min.lon, max.lon), ylim = c(min.lat, max.lat), axes = TRUE, col = "light yellow")
-points(bg, col = "grey30", pch = "+", cex = 0.75)
-points(obs.data, col = "olivedrab", pch = 20, cex = 0.75)
-box()
-
-# Now re-run model with only the training data
-
-# Data for observation sites (presence and background)
-presence.values <- extract(x = bioclim.data, y = obs.data)
-absence.values <- extract(x = bioclim.data, y = bg)
-
-# Separate training & testing data
-group.presence <- kfold(x = obs.data, k = 5) # kfold is in dismo package
-testing.group <- 1
-presence.train <- obs.data[group.presence != testing.group, ]
-presence.test <- obs.data[group.presence == testing.group, ]
-group.bg <- kfold(x = bg, k = 5)
-bg.train <- bg[group.bg != testing.group, ]
-bg.test <- bg[group.bg == testing.group, ]
-
-# Do species distribution model and draw a plot
-bc.model <- bioclim(x = bioclim.data, p = presence.train)
-
-
-bc.eval <- evaluate(p = presence.test, a = bg.test, model = bc.model, x = bioclim.data)
-bc.threshold <- threshold(x = bc.eval, stat = "spec_sens")
-predict.presence <- predict(x = bioclim.data, object = bc.model, ext = geographic.extent, progress = "")
-plot(predict.presence > bc.threshold, main = "Presence/Absence")
-plot(wrld_simpl, add = TRUE, border = "dark grey")
-box()
-```
 
 ***
+
 
 ## Additional resources
 
