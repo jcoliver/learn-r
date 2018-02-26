@@ -50,7 +50,7 @@ dir.create(path = "output")
 It is good practice to keep input (i.e. the data) and output separate. Furthermore, any work that ends up in the `output` folder should be completely disposable. That is, the combination of data and the code we write should allow us (or anyone else, for that matter) to reproduce any output.
 
 ### Example data
-The data we are working with are observations of the [Saguaro, _Carnegiea gigantea_](https://en.wikipedia.org/wiki/Saguaro). We are using a subset of records available from [GBIF](https://www.gbif.org/), the Global Biodiversity Information Facility. You can download the data from [](); save it in the `data` folder that you created in the step above.
+The data we are working with are observations of the [Saguaro, _Carnegiea gigantea_](https://en.wikipedia.org/wiki/Saguaro). We are using a subset of records available from [GBIF](https://www.gbif.org/), the Global Biodiversity Information Facility. You can download the data from [https://tinyurl.com/saguaro-obs](https://tinyurl.com/saguaro-obs); save it in the `data` folder that you created in the step above.
 
 ### Install additional R packages
 Next, there are _five_ additional R packages that will need to be installed:
@@ -406,7 +406,7 @@ Hmmm...that doesn't look right. It plotted a large portion of the map green. Let
 predict.presence > bc.threshold
 ```
 
-The comparison of these two rasters produces another raster with values of only 0 or 1: 0 where the comparison evaluates as `FALSE` (i.e., when the value in a grid cell of predict.presence is less than or equal to the value in the corresponding grid cell of bc.threshold) and 1 where the comparison evaluates at `TRUE`. Since there are two values in this comparison (the 0 and 1 in the `values` field), we need to update what we pass to the `col` parameter in our plot call. Instead of just passing a single value, we provide a color for 0 (`NA`) and a color for 1 (`"olivedrab"`):
+The comparison of these two rasters produces another raster with values of only 0 or 1: 0 where the comparison evaluates as `FALSE` (i.e., when the value in a grid cell of `predict.presence` is less than or equal to the value in the corresponding grid cell of `bc.threshold`) and 1 where the comparison evaluates at `TRUE`. Since there are two values in this comparison (the 0 and 1 in the `values` field), we need to update what we pass to the `col` parameter in our plot call. Instead of just passing a single value, we provide a color for 0 (`NA`) and a color for 1 (`"olivedrab"`):
 
 ```{r plot-sdm-threshold-good-color}
 # Predict presence from model (same as previously, but with the update model)
