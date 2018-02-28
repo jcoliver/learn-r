@@ -1,0 +1,556 @@
+---
+title: "A very brief introduction to species distribution models in R"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+---
+
+Predicting ranges of species from latitude and longitude coordinates has become increasingly easier with a suite of R packages. This introductory tutorial will show you how to turn your coordinate data into a range map.
+
+#### Learning objectives
+1. Install packages for species distribution modeling
+2. Run species distribution models using `bioclim` approach
+3. Visualize model predictions on a map
+
+Species distribution modeling in becoming an increasingly important tool to understand how organisms might respond to current and future environmental changes. There is an ever-growing number of approaches and literature for species distribution models (SDMs), and you are encouraged to check out the [Additional Resources](#additional-resources) section for a few of these resources. The vignette for the `dismo` package is especially useful, and Jeremy Yoder's introduction is another great place to start. In this tutorial, we'll use publicly available data to build, evaluate, and visualize a distribution model for the saguaro cactus.
+
+***
+
+## Getting started
+Before we do anything, we will need to set up our workspace, download example data, and install additional packages that are necessary to run the models and visualize their output. 
+
+### Workspace organization
+So, to start, create a pair of folders in your workspace:
+```{r workspace-setup, eval = FALSE}
+dir.create(path = "data")
+dir.create(path = "output")
+```
+It is good practice to keep input (i.e. the data) and output separate. Furthermore, any work that ends up in the `output` folder should be completely disposable. That is, the combination of data and the code we write should allow us (or anyone else, for that matter) to reproduce any output.
+
+### Example data
+The data we are working with are observations of the [saguaro, _Carnegiea gigantea_](https://en.wikipedia.org/wiki/Saguaro). We are using a subset of records available from [GBIF](https://www.gbif.org/), the Global Biodiversity Information Facility. You can download the data from [https://tinyurl.com/saguaro-obs](https://tinyurl.com/saguaro-obs); save it in the `data` folder that you created in the step above.
+
+### Install additional R packages
+Next, there are _five_ additional R packages that will need to be installed:
+
++ dismo
++ maptools
++ rgdal
++ raster
++ sp
+
+To install these, run:
+```{r install-dependencies, eval = FALSE}
+install.packages("dismo")
+install.packages("maptools")
+install.packages("rgdal")
+install.packages("raster")
+install.packages("sp")
+```
+
+***
+
+## Components of the model
+The basic idea behind species distribution models is to take two sources of information to model the conditions in which a species is expected to occur. The two sources of information are:
+
+1. Occurrence data: these are usually latitude and longitude geographic coordinates where the species of interest has been observed. These are known as 'presence' data. Some models also make use of 'absence' data, which are geographic coordinates of locations where the species is known to _not_ occur. Absence data are a bit harder to come by, but are required by some modeling approaches. For this lesson, we will use the occurrence data of the saguaro that you downloaded earlier.
+2. Environmental data: these are descriptors of the environment, and can include abiotic measurements of temperature and precipitation as well as biotic factors, such as the presence or absence of other species (like predators, competitors, or food sources). In this lesson we will focus on the 19 abiotic variables available from [WorldClim](http://www.worldclim.org/bioclim). Rather than downloading the data from WorldClim, we'll use functions from the `dismo` package to download these data (see below).
+
+***
+
+## Data and quality control
+We'll start our script by loading those five libraries we need. And of course adding a little bit of information at the very top of our script that says what the script does and who is responsible!
+
+```{r load-dependancies}
+# Species distribution modeling for saguaro
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2018-02-27
+
+library("sp")
+library("raster")
+library("maptools")
+library("rgdal")
+library("dismo")
+```
+
+There is a good chance you might have seen some red messages print out to the screen, especially when loading the `maptools` or `rgdal` libraries. This is normal, and as long as none of the messages include "<span style="color:red">ERROR</span>", you can just hum right through those messages. If loading the libraries _does_ result in an <span style="color:red">ERROR</span> message, check to see that the libraries were installed properly.
+
+Now that we have those packages loaded, we can download the bioclimatic variable data with the `getData` function:
+```{r get-bioclim-data}
+bioclim.data <- getData(name = "worldclim",
+                        var = "bio",
+                        res = 2.5,
+                        path = "data/")
+```
+We're giving `getData` four critical pieces of information:
+
+1. `name = "worldclim"`: This indicates the name of the data set we would like to download
+2. `var = "bio"`: This tells `getData` that we want to download all 19 of the bioclimatic variables, rather than individual temperature or precipitation measurements
+3. `res = 2.5`: This is the resolution of the data we want to download; in this case, it is 2.5 minutes of a degree. For other resolutions, you can check the documentation by typing `?getData` into the console.
+4. `path = "data/"`: Finally, this sets the location to which the files are downloaded. In our case, it is the `data` folder we created at the beginning.
+
+Note also that after the files are downloaded to the `data` folder, the are read into memory and stored in the variable called `bioclim.data`
+
+```{r load-saguaro-data}
+# Read in saguaro observations
+obs.data <- read.csv(file = "data/Carnegiea-gigantea-GBIF.csv")
+
+# Check the data to make sure it loaded correctly
+summary(obs.data)
+```
+
+Notice that there are three `NA` values in the `latitude` and `longitude` columns. Those records will not be of any use to us, so we can remove them from our data frame:
+```{r remove-NAs}
+# Notice NAs - drop them before proceeding
+obs.data <- obs.data[!is.na(obs.data$latitude), ]
+
+# Make sure those NA's went away
+summary(obs.data)
+```
+When we look at the `obs.data` data frame now there are no `NA` values, so we are ready to proceed.
+
+To make species distribution modeling more streamlined, it is useful to have an idea of how widely our species is geographically distributed. We are going to find general latitudinal and longitudinal boundaries and store this information for later use:
+```{r geographic-extent}
+# Determine geographic extent of our data
+max.lat = ceiling(max(obs.data$latitude))
+min.lat = floor(min(obs.data$latitude))
+max.lon = ceiling(max(obs.data$longitude))
+min.lon = floor(min(obs.data$longitude))
+geographic.extent <- extent(x = c(min.lon, max.lon, min.lat, max.lat))
+```
+
+Before we do any modeling, it is also a good idea to run a reality check on your occurrence data by plotting the points on a map.
+```{r plot-occurrence-01}
+# Load the data to use for our base map
+data(wrld_simpl)
+
+# Plot the base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95")
+
+# Add the points for individual observation
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "olivedrab", 
+       pch = 20, 
+       cex = 0.75)
+# And draw a little box around the graph
+box()
+```
+  
+Looking good!
+
+***
+
+## Building a model and visualizing results
+Now that our occurrence data look OK, we can use the bioclimatic variables to create a model. The first thing we want to do though is limit our consideration to a reasonable geographic area. That is, for our purposes we are not looking to model saguaro habitat suitability _globally_, but rather to the general southwest region. So we can restrict the biolimatic variable data to the geographic extent of our occurrence data:
+
+```{r bioclim-crop, error = TRUE}
+# Crop bioclim data to geographic extent of saguaro
+bioclim.data <- crop(x = bioclim.data, y = geographic.extent)
+
+# Build species distribution model
+bc.model <- bioclim(x = bioclim.data, p = obs.data)
+```
+
+Uh oh. That's not good. It looks like the data we passed to `bioclim` is not in the right format. The clue comes in the second line of the error message: `## Found these dimensions: 400, 3`. This is referring to the `obs.data` data frame, which does indeed have 400 rows and three columns. From the documentation from `bioclim` (see for yourself via `?bioclim` in the console): 
+
+>**Usage**  
+bioclim(x, p, ...)  
+**Arguments**  
+x	Raster* object or matrix  
+p	two column matrix or SpatialPoints* object  
+...	Additional arguments
+
+So whatever we pass to `p` should only have **two** columns. Let's modify the `obs.data` so it only has two columns. The first column is the GBIF identifier, which we will not need, so we drop it using the negation operator (i.e. the minus sign). Then we can run the species distribution model.
+```{r drop-gbif-id, error = TRUE}
+# Drop unused column
+obs.data <- obs.data[, -1]
+
+# Build species distribution model
+bc.model <- bioclim(x = bioclim.data, p = obs.data)
+```
+
+What the...? OK, this error message is tougher to figure out. But let's consider what our `obs.data` data frame looks like now:
+```{r check-obs-data}
+head(obs.data)
+```
+
+The first column is latitude and the second column is longitude, which seems fine. That is, until we think about how R generally deals with coordinates. When we plot something, we generally use syntax like this:
+```{r plot-syntax-example, eval = FALSE}
+plot(x, y)
+```
+
+The thing to note is that the first argument we pass is data for the **x-axis** and the second argument is for the **y-axis**. The `bioclim` function is looking for data in the _same order_. That is, it looks at whatever we passed to `p` and assumes the first column is for the x-axis and the second column is for the y-axis. But our data is in the opposite order: the first column is _latitude_, essentially the y-axis data, and our second column is longitude, corresponding to x-axis data. So we need to reverse the column order before we pass `obs.data` to `bioclim`:
+
+```{r reorder-columns}
+# Reverse order of columns
+obs.data <- obs.data[, c(2, 1)]
+
+# Build species distribution model
+bc.model <- bioclim(x = bioclim.data, p = obs.data)
+```
+Woo-hoo! No errors here (hopefully).
+
+There's one more step we need to take before we plot the model on a map. We need to generate an object that has the model's probability of occurrence for saguaros. We use the `predict` model from the `dismo` package:
+
+```{r predict-presence}
+# Predict presence from model
+predict.presence <- dismo::predict(object = bc.model, x = bioclim.data, ext = geographic.extent)
+```
+You might be wondering about why we use `dismo::predict` rather than just `predict`. Not surprisingly, different packages sometimes use the same function name to perform very different operations. In the case of `predict`, there are at least three packages loaded into memory that have a `predict` function: `dismo`, `sp`, and `stats`. Although we _probably_ would have been fine just using `predict` (R would have use the `dismo` version), specifying the `dismo` version explicitly communicates this fact to anyone else reading the code. So, rather than leaving others (or your future self!) guessing, we can use the `dismo::predict` syntax.
+
+Enough! It's time to plot. We start as we did before, with a blank gray map, add the model, and if we feel like it, add the original observations as points.
+```{r plot-sdm-probabilities}
+# Plot base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95")
+
+# Add model probabilities
+plot(predict.presence, add = TRUE)
+
+# Redraw those country borders
+plot(wrld_simpl, add = TRUE, border = "grey5")
+
+# Add original observations
+points(obs.data$longitude, obs.data$latitude, col = "olivedrab", pch = 20, cex = 0.75)
+box()
+```
+
+This plot shows the probability of occurrence of saguaros across the map. Note the values are all quite below 1.0; in fact, the maximum probability anywhere on the map is only `r round(predict.presence@data@max, 2)`, according to the model. However, we are pretty sure that saguaros are found across a pretty broad area of the Sonoran Desert - after all, we have the observations to prove that! If we want our map to better reflect this, we will need to re-run our analyses, but this time include some absence points, where saguaros are known to _not_ occur. The problem is, we only have presence data for saguaros.
+
+```{r plot-occurrence-02, echo = FALSE}
+# Plot the base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95",
+     main = "Saguaro observations")
+
+# Add the points for individual observation
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "olivedrab", 
+       pch = 20, 
+       cex = 0.75)
+# And draw a little box around the graph
+box()
+```
+
+## The pseudo-absence point
+One common work around for coercing presence-only data for use with presence/absence approaches is to use pseudo-absence, or "background" points. While "pseudo-absence" sounds fancy, it really just means that one randomly samples points from a given geographic area and treats them like locations where the species of interest is absent. A great resource investigating the influence and best practices of pseudo-absence points is a study by Barbet-Massin _et al._ (2012) (see [Additional Resources](#additional-resources) below for full details).
+
+For our purposes, we are going to create a set of background (aka pseudo-absence) points at random, with as many points as we have observations. We are going to use the bioclim data files for determining spatial resolution of the points, and restrict the sampling area to the general region of the observations of saguaros.
+
+```{r pseudo-absence-sampling}
+# Use the bioclim data files for sampling resolution
+bil.files <- list.files(path = "data/wc2-5", 
+                          pattern = "*.bil$", 
+                          full.names = TRUE)
+
+# We only need one file, so use the first one in the list of .bil files
+mask <- raster(bil.files[1])
+
+# Randomly sample points (same number as our observed points)
+background <- randomPoints(mask = mask,     # Provides resolution of sampling points
+                   n = nrow(obs.data),      # Number of random points
+                   ext = geographic.extent, # Spatially restricts sampling
+                   extf = 1.25)             # Expands sampling a little bit
+```
+
+Take a quick look at the `background` object we just created:
+```{r pseudo-absence-check}
+head(background)
+```
+
+We can also visualize them on a map, like we did for the observed points:
+```{r pseudo-absence-plot}
+# Plot the base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95",
+     main = "Presence and pseudo-absence points")
+
+# Add the background points
+points(background, col = "grey30", pch = 1, cex = 0.75)
+
+# Add the observations
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "olivedrab", 
+       pch = 20, 
+       cex = 0.75)
+
+box()
+```
+
+Now that we have our pseudo-absence points, we need to take one more step. Getting a more traditional-range-map-looking figure requires _post hoc_ evaluation of the model. To do this evaluation, we are going to build the model using only _part_ of our data (the **training** data), reserving a portion of the data for evaluation of the model after it is build (the **testing** data). We are going to reserve 20% of the data for testing, so we use the `kfold` function in the `dismo` package to evenly assign each observation to a random group.
+
+```{r separate-training-testing-01}
+# Arbitrarily assign group 1 as the testing data group
+testing.group <- 1
+
+# Create vector of group memberships
+group.presence <- kfold(x = obs.data, k = 5) # kfold is in dismo package
+```
+
+Now pause for a minute and take a look at that `group.presence` vector we just created:
+```{r check-training-testing}
+head(group.presence)
+
+# Should see even representation in each group
+table(group.presence)
+```
+
+The output of `table` shows how many points have been assigned to each of the five groups. In this case, we can see that the points have been evenly distributed, with 20% of the points in group 1, our testing group.
+  
+We use the `group.presence` vector with the observed data to separate our observations into a training data set and a testing data set:
+```{r separate-training-testing-02}
+# Separate observations into training and testing groups
+presence.train <- obs.data[group.presence != testing.group, ]
+presence.test <- obs.data[group.presence == testing.group, ]
+
+# Repeat the process for pseudo-absence points
+group.background <- kfold(x = background, k = 5)
+background.train <- background[group.background != testing.group, ]
+background.test <- background[group.background == testing.group, ]
+```
+
+## Training and testing the model
+Now that we have (1) our pseudo-absence points and (2) separate training and testing data, we can re-build the model, evaluate its performance, and draw a more aesthetically pleasing map. We build the model with the `bioclim` function as before, but instead of using all the observations in `obs.data` we only use the training data stored in `presence.train`:
+
+```{r bioclim-training}
+# Build a model using training data
+bc.model <- bioclim(x = bioclim.data, p = presence.train)
+
+# Predict presence from model (same as previously, but with the update model)
+predict.presence <- dismo::predict(object = bc.model, 
+                                   x = bioclim.data, 
+                                   ext = geographic.extent)
+```
+
+We now take that model, and evaluate it using the observation data and the pseudo-absence points we reserved for model _testing_. We then use this test to establish a cutoff of occurrence probability to determine the boundaries of the saguaro range.
+```{r testing-model}
+# Use testing data for model evaluation
+bc.eval <- evaluate(p = presence.test,   # The presence testing data
+                    a = background.test, # The absence testing data
+                    model = bc.model,    # The model we are evaluating
+                    x = bioclim.data)    # Climatic variables for use by model
+
+# Determine minimum threshold for "presence"
+bc.threshold <- threshold(x = bc.eval, stat = "spec_sens")
+```
+
+The `threshold` function offers a number of means of determining the threshold cutoff through the `stat` parameter. Here we chose `"spec_sens"`, which sets "the threshold at which the sum of the sensitivity (true positive rate) and specificity (true negative rate) is highest." For more information, check out the documentation for `threshold` (`?threshold`, remember?).
+  
+And _finally_, we can use that threshold to paint a map with the predicted range of the saguaro!
+```{r plot-sdm-threshold-bad-color}
+# Plot base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95")
+
+# Only plot areas where probability of occurrence is greater than the threshold
+plot(predict.presence > bc.threshold, 
+     add = TRUE, 
+     legend = FALSE, 
+     col = "olivedrab")
+
+# And add those observations
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "black",
+       pch = "+", 
+       cex = 0.75)
+
+# Redraw those country borders
+plot(wrld_simpl, add = TRUE, border = "grey5")
+box()
+```
+
+Hmmm...that doesn't look right. It plotted a large portion of the map green. Let's look at what we actually asked R to plot, that is, we plot the value of `predict.presence > bc.threshold`. So what is that?
+
+```{r investigate-raster-comparison}
+predict.presence > bc.threshold
+```
+
+The comparison of these two rasters produces another raster with values of only 0 or 1: 0 where the comparison evaluates as `FALSE` (i.e., when the value in a grid cell of `predict.presence` is less than or equal to the value in the corresponding grid cell of `bc.threshold`) and 1 where the comparison evaluates at `TRUE`. Since there are two values in this comparison (the 0 and 1 in the `values` field), we need to update what we pass to the `col` parameter in our plot call. Instead of just passing a single value, we provide a color for 0 (`NA`) and a color for 1 (`"olivedrab"`):
+
+```{r plot-sdm-threshold-good-color}
+# Plot base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95")
+
+# Only plot areas where probability of occurrence is greater than the threshold
+plot(predict.presence > bc.threshold, 
+     add = TRUE, 
+     legend = FALSE, 
+     col = c(NA, "olivedrab"))
+
+# And add those observations
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "black",
+       pch = "+", 
+       cex = 0.75)
+
+# Redraw those country borders
+plot(wrld_simpl, add = TRUE, border = "grey5")
+box()
+```
+
+A final note on our approach: the map we have drawn presents a categorical classification of whether a particular point on the landscape will be suitable or not for the species of interest. This classification relies quite heavily on the value of the threshold (see `bc.threshold` and the documentation for `threshold`) _and_ the pseudo-absence points. Given that we used random sampling to generate those pseudo-absence points, there is potential for variation in the predicted range if you run this code more than once (try it! if you re-run the code from the point of creating the pseudo-absence points, you are almost guaranteed a different map.). There are a number of approaches to dealing with this variation, and the paper by [Barbet-Massin et al. (2012)](https://dx.doi.org/10.1111/j.2041-210X.2011.00172.x) is a great resource. I'll leave it as homework for you to determine which approach is most appropriate here!
+
+Our final script, generating the model, determining the threshold, and visualizing the results:
+
+```{r final-script, eval = FALSE}
+# Species distribution modeling for saguaro
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2018-02-27
+
+rm(list = ls())
+
+# Load additional packages
+library("sp")
+library("raster")
+library("maptools")
+library("rgdal")
+library("dismo")
+
+# Download bioclim data and store in bioclim.data variable
+bioclim.data <- getData(name = "worldclim",
+                        var = "bio",
+                        res = 2.5,
+                        path = "data/")
+
+# Read in saguaro observations
+obs.data <- read.csv(file = "data/Carnegiea-gigantea-GBIF.csv")
+
+# Drop any rows with NAs
+obs.data <- obs.data[!is.na(obs.data$latitude), ]
+
+# Only pull out those columns of interest and in the order we want them
+obs.data <- obs.data[, c("longitude", "latitude")]
+
+# Determine geographic extent of our data
+max.lat = ceiling(max(obs.data$latitude))
+min.lat = floor(min(obs.data$latitude))
+max.lon = ceiling(max(obs.data$longitude))
+min.lon = floor(min(obs.data$longitude))
+geographic.extent <- extent(x = c(min.lon, max.lon, min.lat, max.lat))
+
+# Crop the bioclim data to geographic extent of saguaro
+bioclim.data <- crop(x = bioclim.data, y = geographic.extent)
+
+# Create pseudo-absence, or background, points
+# Use the bioclim data files for sampling resolution
+bil.files <- list.files(path = "data/wc2-5", 
+                          pattern = "*.bil$", 
+                          full.names = TRUE)
+
+# We only need one file, so use the first one in the list of .bil files
+mask <- raster(bil.files[1])
+
+# Randomly sample points (same number as our observed points)
+background <- randomPoints(mask = mask,     # Provides resolution of sampling points
+                   n = nrow(obs.data),      # Number of random points
+                   ext = geographic.extent, # Spatially restricts sampling
+                   extf = 1.25)             # Expands sampling a little bit
+
+# Arbitrarily assign group 1 as the testing data group
+testing.group <- 1
+
+# Create vector of group memberships
+group.presence <- kfold(x = obs.data, k = 5) # kfold is in dismo package
+
+# Separate observations into training and testing groups
+presence.train <- obs.data[group.presence != testing.group, ]
+presence.test <- obs.data[group.presence == testing.group, ]
+
+# Repeat the process for pseudo-absence points
+group.background <- kfold(x = background, k = 5)
+background.train <- background[group.background != testing.group, ]
+background.test <- background[group.background == testing.group, ]
+
+# Build a model using training data
+bc.model <- bioclim(x = bioclim.data, p = presence.train)
+
+# Predict presence from model
+predict.presence <- dismo::predict(object = bc.model, 
+                                   x = bioclim.data, 
+                                   ext = geographic.extent)
+
+# Use testing data for model evaluation
+bc.eval <- evaluate(p = presence.test,   # The presence testing data
+                    a = background.test, # The absence testing data
+                    model = bc.model,    # The model we are evaluating
+                    x = bioclim.data)    # Climatic variables for use by model
+
+# Determine minimum threshold for "presence"
+bc.threshold <- threshold(x = bc.eval, stat = "spec_sens")
+
+# Load map data for plotting
+data(wrld_simpl)
+
+# Plot base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95")
+
+# Only plot areas where probability of occurrence is greater than the threshold
+plot(predict.presence > bc.threshold, 
+     add = TRUE, 
+     legend = FALSE, 
+     col = c(NA, "olivedrab"))
+
+# And add those observations
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "black",
+       pch = "+", 
+       cex = 0.6)
+
+# Redraw those country borders
+plot(wrld_simpl, add = TRUE, border = "grey5")
+box()
+```
+
+***
+
+## Additional resources
+
++ [Vignette for `dismo` package](https://cran.r-project.org/web/packages/dismo/vignettes/sdm.pdf)
++ [Species distribution models in R](http://www.molecularecologist.com/2013/04/species-distribution-models-in-r/)
++ [Fast and flexible Bayesian species distribution modelling using Gaussian processes](http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12523/pdf)
++ [Run a range of species distribution models](https://rdrr.io/cran/biomod2/man/BIOMOD_Modeling.html)
++ [SDM polygons on a Google map](https://rdrr.io/rforge/dismo/man/gmap.html)
++ [R package 'maxnet' for functionality of Java maxent package](https://cran.r-project.org/web/packages/maxnet/maxnet.pdf)
++ A [study on the effect of pseudo-absences in SDMs (Barbet-Massin et al. 2012)](https://dx.doi.org/10.1111/j.2041-210X.2011.00172.x)
++ A [PDF version](https://jcoliver.github.io/learn-r/011-species-distribution-models.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
