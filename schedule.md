@@ -2,8 +2,7 @@
 
 | Day | Month | Workshop                          |
 |:---:|:-----:|:---------------------------------:|
-| 27  | Feb   | 011 Species distribution modeling |
-| 06  | Mar   | Open lab                          |
-| 13  | Mar   | 008 Dendrograms & heatmaps        |
-| 20  | Mar   | Open lab                          |
-| 27  | Mar   | 001 Introduction to graphics      |
+| 03  | Apr   | Open lab                          |
+| 10  | Apr   | 004 Introduction to ggplot        |
+| 17  | Apr   | Open lab                          |
+| 24  | Apr   | 005 Writing reproducible reports  |
