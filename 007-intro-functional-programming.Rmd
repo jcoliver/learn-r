@@ -9,6 +9,13 @@ output:
 
 An introduction to writing functions to improve your coding efficiency and optimize performance.
 
+<!--
+Consider revising this lesson do to a simpler analysis.
+Like take the gapminder data (or one column), scale it so it has a mean of 0 and unit variance
+Plot the data
+Make a print function?
+-->
+
 #### Learning objectives
 1. Write and use functions in R
 2. Document functions for easy re-use
