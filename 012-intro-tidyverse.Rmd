@@ -1,0 +1,70 @@
+---
+title: "Introduction to tidyverse packages"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+---
+
+# OUTLINE DELETE ME
++ Start with dplyr
+    + maybe start with `arrange`, moving the Species column to the beginning?
+    + `group_by` and `summarize` to get means each species/variable
+        + Will have to do each data column separately...(or just do Sepal.Length)
+        + The hard way first (calculate each mean, then add them back into a data frame)
+        + `iris %>% group_by(Species) %>% summarize(Sepal.Length = mean(Sepal.Length))`
+    + use `n` function to add standard error (see SC dplyr lesson for syntax)
+    + ideally end up sending this to ggplot with means & error bars
++ Next is tidyr, mostly for gather
+    + `gather` the iris data, one row for each variable
+    + send to ggplot for faceted plot
++ Back to dplyr & readr
+    + Need data set with text and date fields so we can read it in with `read_csv`...
+    + maybe a twitter data set? See [rtweet](http://rtweet.info/index.html)
+        + Looks like we can only share 50,000 tweets (https://developer.twitter.com/en/developer-terms/agreement-and-policy#f-be-a-good-partner-to-twitter)
+    + If the returned object (ideally a data frame) has a lot of extraneous columns,
+        + `select` so there are only the ones we want
+        + `arrange` to get them in order (pipe `select` output to this)
+        + `mutate` to create a new column?
+    + Throw in a call to `filter` for only those in a certain time range
+    + Call `sample_n` to pull out 1000 random rows
+        + Start with the hard way (`subsample <- df[sample(x = 1:nrow(df), size = 1000), ]`)
+    + Do a time series plot?
+    
+
+[INTRODUCTORY SENTENCE]
+
+#### Learning objectives
+1. one
+2. two
+3. three
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+***
+
+## Getting started
+
+***
+
+## [TOPIC ONE]
+
+***
+
+## [TOPIC TWO]
+
+***
+
+## Additional resources
+
++ [Cheatsheet for data wrangling with the dpylr package](https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf)
++ An [opinionated discussion about "tidy" data](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
++ A [PDF version](https://jcoliver.github.io/learn-r/012-intro-tidyverse.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
