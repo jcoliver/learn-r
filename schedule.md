@@ -2,7 +2,9 @@
 
 | Day | Month | Workshop                          |
 |:---:|:-----:|:---------------------------------:|
-| 03  | Apr   | Open lab                          |
-| 10  | Apr   | 004 Introduction to ggplot        |
-| 17  | Apr   | Open lab                          |
 | 24  | Apr   | 005 Writing reproducible reports  |
+| 01  | May   | Open lab                          |
+| 08  | May   | NO LAB THIS DAY                   |
+| 15  | May   | Open lab                          |
+| 22  | May   | 012 Easier code with tidyverse    |
+| 29  | May   | Open lab                          |
