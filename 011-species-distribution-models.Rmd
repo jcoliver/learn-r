@@ -116,10 +116,10 @@ When we look at the `obs.data` data frame now there are no `NA` values, so we ar
 To make species distribution modeling more streamlined, it is useful to have an idea of how widely our species is geographically distributed. We are going to find general latitudinal and longitudinal boundaries and store this information for later use:
 ```{r geographic-extent}
 # Determine geographic extent of our data
-max.lat = ceiling(max(obs.data$latitude))
-min.lat = floor(min(obs.data$latitude))
-max.lon = ceiling(max(obs.data$longitude))
-min.lon = floor(min(obs.data$longitude))
+max.lat <- ceiling(max(obs.data$latitude))
+min.lat <- floor(min(obs.data$latitude))
+max.lon <- ceiling(max(obs.data$longitude))
+min.lon <- floor(min(obs.data$longitude))
 geographic.extent <- extent(x = c(min.lon, max.lon, min.lat, max.lat))
 ```
 
@@ -172,7 +172,7 @@ p	two column matrix or SpatialPoints* object
 So whatever we pass to `p` should only have **two** columns. Let's modify the `obs.data` so it only has two columns. The first column is the GBIF identifier, which we will not need, so we drop it using the negation operator (i.e. the minus sign). Then we can run the species distribution model.
 ```{r drop-gbif-id, error = TRUE}
 # Drop unused column
-obs.data <- obs.data[, -1]
+obs.data <- obs.data[, c("latitude", "longitude")]
 
 # Build species distribution model
 bc.model <- bioclim(x = bioclim.data, p = obs.data)
@@ -192,7 +192,7 @@ The thing to note is that the first argument we pass is data for the **x-axis** 
 
 ```{r reorder-columns}
 # Reverse order of columns
-obs.data <- obs.data[, c(2, 1)]
+obs.data <- obs.data[, c("longitude", "latitude")]
 
 # Build species distribution model
 bc.model <- bioclim(x = bioclim.data, p = obs.data)

@@ -120,7 +120,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Dynamic reports with knitr</h1>
 <h4 class="author"><em>Jeff Oliver</em></h4>
-<h4 class="date"><em>08 December, 2017</em></h4>
+<h4 class="date"><em>24 April, 2018</em></h4>
 
 </div>
 
@@ -324,23 +324,25 @@ plot(x = iris$Petal.Length,
 <hr />
 <p>We can also do analyses, and reference the output with in-line code. For this example, let’s find the correlation coefficient (r<sup>2</sup>) for the relationship between petal width and petal length. We can then reference this in the text of our report.</p>
 <p>The R code for a linear model is:</p>
-<pre>
-```{r echo = FALSE}
+<pre><code>```{r echo = FALSE}
 iris.model &lt;- lm(Petal.Width ~ Petal.Length, data = iris)
 iris.model.summary &lt;- summary(iris.model)
-corr.coef &lt;- iris.model.summary$r.squared
-```
-</pre>
+r.squared &lt;- iris.model.summary$r.squared
+```</code></pre>
 <p>Note for this purpose, we added the qualifier <code>echo = FALSE</code> which tells knitr <em>not</em> to include the actual code in the output. Even though the code runs, and because this code produces no output, we won’t really see any changes to our document. Save and Knit the document to see this for yourself.</p>
-<p>You can also control code chunks in a number of other ways:<br />
-+ <code>eval = FALSE</code> to show code but not to execute it + <code>results = &quot;hide&quot;</code> to suppress any results from being included in output + <code>warning = FALSE</code> and <code>message = FALSE</code> to suppress warnings and messages, respectively, from being shown</p>
-<p>Even though we set <code>echo = FALSE</code>, the code is still executed and we can reference products of that code through in-line code chunks. In this case, we want to reference the value stored in our <code>corr.coef</code> variable in our document text. We use in-line code to do so. In-line code is wrapped in single backticks (`) and we skip the braces, as opposed to triple backticks and braces we used for separate code blocks. So we add this to our Results section:</p>
-<pre><code>Petal width and petal length were highly correlated (r^2^ = `r corr.coef`).</code></pre>
+<p>You can also control code chunks in a number of other ways:</p>
+<ul>
+<li><code>eval = FALSE</code> to show code but not to execute it</li>
+<li><code>results = &quot;hide&quot;</code> to suppress any results from being included in output</li>
+<li><code>warning = FALSE</code> and <code>message = FALSE</code> to suppress warnings and messages, respectively, from being shown</li>
+</ul>
+<p>Even though we set <code>echo = FALSE</code>, the code is still executed and we can reference products of that code through in-line code chunks. In this case, we want to reference the value stored in our <code>r.squared</code> variable in our document text. We use in-line code to do so. In-line code is wrapped in single backticks (`) and we skip the braces, as opposed to triple backticks and braces we used for separate code blocks. So we add this to our Results section:</p>
+<pre><code>Petal width and petal length were highly correlated (r^2^ = `r r.squared`).</code></pre>
 <blockquote>
 <p>Petal width and petal length were highly correlated (r<sup>2</sup> = 0.9271098).</p>
 </blockquote>
 <p>Hmmm…maybe we don’t need r<sup>2</sup> to seven digits, so update the code to only include two digits (using R’s <code>round</code> function):</p>
-<pre><code>Petal width and petal length were highly correlated (r^2^ = `r round(corr.coef, 2)`).</code></pre>
+<pre><code>Petal width and petal length were highly correlated (r^2^ = `r round(r.squared, 2)`).</code></pre>
 <blockquote>
 <p>Petal width and petal length were highly correlated (r<sup>2</sup> = 0.93).</p>
 </blockquote>
@@ -352,7 +354,11 @@ test for relationships.</code></pre>
 <pre><code>Analyses are based on data for three _Iris_ species from the work of 
 [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher). We used linear regression to 
 test for relationships.</code></pre>
-<p>And the markdown for the Materials &amp; methods sections will be rendered as: &gt; ## Materials &amp; methods &gt; Analyses are based on data for three <em>Iris</em> species from the work of <a href="https://en.wikipedia.org/wiki/Ronald_Fisher">R.A. Fisher</a>. We used linear regression to test for relationships.</p>
+<p>And the markdown for the Materials &amp; methods sections will be rendered as:</p>
+<blockquote>
+<h2 id="materials-methods-1">Materials &amp; methods</h2>
+<p>Analyses are based on data for three <em>Iris</em> species from the work of <a href="https://en.wikipedia.org/wiki/Ronald_Fisher">R.A. Fisher</a>. We used linear regression to test for relationships.</p>
+</blockquote>
 <p>Our R Markdown file should look like this:</p>
 <pre><code>    ---
     title: &quot;Iris shape analyses&quot;
@@ -382,10 +388,10 @@ test for relationships.</code></pre>
     ```{r echo = FALSE}
     iris.model &lt;- lm(Petal.Width ~ Petal.Length, data = iris)
     iris.model.summary &lt;- summary(iris.model)
-    corr.coef &lt;- iris.model.summary$r.squared
+    r.squared &lt;- iris.model.summary$r.squared
     ```
     
-    Petal width and petal length were highly correlated (r^2^ = `r round(corr.coef, 2)`).
+    Petal width and petal length were highly correlated (r^2^ = `r round(r.squared, 2)`).
 </code></pre>
 <hr />
 <p>Which produces the following, albeit short, report:</p>
@@ -395,7 +401,7 @@ test for relationships.</code></pre>
 <h4 id="april-27-2017-1"><em>April 27, 2017</em></h4>
 <h2 id="introduction-1">Introduction</h2>
 <p>In this report we test for a relationship between different parts of morphology in <em>Iris</em> flowers.</p>
-<h2 id="materials-methods-1">Materials &amp; methods</h2>
+<h2 id="materials-methods-2">Materials &amp; methods</h2>
 <p>Analyses are based on data for three <em>Iris</em> species from the work of <a href="https://en.wikipedia.org/wiki/Ronald_Fisher">R.A. Fisher</a>. We used linear regression to test for relationships.</p>
 <h2 id="results-1">Results</h2>
 <pre class="r"><code>plot(x = iris$Petal.Length, 
