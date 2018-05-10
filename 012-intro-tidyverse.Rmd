@@ -9,17 +9,65 @@ output:
 ---
 
 # OUTLINE DELETE ME
-+ Start with dplyr
++ Start with dplyr and the `iris` data
     + maybe start with `arrange`, moving the Species column to the beginning?
     + `group_by` and `summarize` to get means each species/variable
-        + Will have to do each data column separately...(or just do Sepal.Length)
+        + just do Sepal.Length
+        | species    | mean.Sepal.Length |
+        |------------|-------------------|
+        | setosa     | 5.006             |
+        | versicolor | 5.936             |
+        | virginica  | 6.588             |
         + The hard way first (calculate each mean, then add them back into a data frame)
         + `iris %>% group_by(Species) %>% summarize(Sepal.Length = mean(Sepal.Length))`
     + use `n` function to add standard error (see SC dplyr lesson for syntax)
-    + ideally end up sending this to ggplot with means & error bars
+        + `iris %>% group_by(Species) %>% summarize(mean.Sepal.Length = mean(Sepal.Length), se.Sepal.Length = sd(Sepal.Length)/sqrt(n()))`
+    + ideally end up sending this to ggplot with means & error bars:
+```{r}
+# Two separate commands:
+iris.graph <- iris %>% 
+  group_by(Species) %>%
+  summarize(mean.Sepal.Length = mean(Sepal.Length),
+            se.Sepal.Length = sd(Sepal.Length/sqrt(n())))
+
+iris.plot <- ggplot(data = iris.graph, mapping = aes(x = Species, y = mean.Sepal.Length)) +
+  geom_point() +
+  geom_errorbar(mapping = aes(ymin = mean.Sepal.Length - se.Sepal.Length, ymax = mean.Sepal.Length + se.Sepal.Length),
+                width = 0.2)
+iris.plot
+
+# All in one:
+iris.plot <- iris %>% 
+  group_by(Species) %>%
+  summarize(mean.Sepal.Length = mean(Sepal.Length),
+            se.Sepal.Length = sd(Sepal.Length/sqrt(n()))) %>%
+  ggplot(mapping = aes(x = Species, y = mean.Sepal.Length)) +
+  geom_point() +
+  geom_errorbar(mapping = aes(ymin = mean.Sepal.Length - se.Sepal.Length, ymax = mean.Sepal.Length + se.Sepal.Length),
+                width = 0.2)
+iris.plot
+
+```
+
 + Next is tidyr, mostly for gather
     + `gather` the iris data, one row for each variable
+```{r}
+iris.long <- gather(data = iris, key = trait, value = measurement, -Species) # MUST add value parameter, doesn't work without
+```
     + send to ggplot for faceted plot
+```{r}
+iris.plot <- iris %>% 
+  gather(key = trait, value = measurement, -Species) %>%
+  group_by(Species, trait) %>%
+  summarize(mean.value = mean(measurement),
+            se.value = sd(measurement/sqrt(n()))) %>%
+  ggplot(mapping = aes(x = Species, y = mean.value)) +
+  geom_point() +
+  geom_errorbar(mapping = aes(ymin = mean.value - se.value, ymax = mean.value + se.value),
+                width = 0.2) +
+  facet_wrap(~ trait, scales = "free_y") # free_y scales for independent y axes
+iris.plot
+```    
 + Back to dplyr & readr
     + Need data set with text and date fields so we can read it in with `read_csv`...
     + maybe a twitter data set? See [rtweet](http://rtweet.info/index.html)
