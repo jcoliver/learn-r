@@ -450,7 +450,6 @@ obs.data <- obs.data[!is.na(obs.data$latitude), ]
 
 # Only pull out those columns of interest and in the order we want them
 obs.data <- obs.data[, c("longitude", "latitude")]
->>>>>>> 83991964d33c318a4aca1614c82b934424e3f017
 
 # Determine geographic extent of our data
 max.lat = ceiling(max(obs.data$latitude))
