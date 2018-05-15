@@ -28,7 +28,6 @@ We will also need a few R packages that are not included in the standard distrib
 install.packages("ggplot2")
 install.packages("ggdendro")
 install.packages("reshape2")
-install.packages("ggplot2")
 ```
 
 Finally, download data file from [https://jcoliver.github.io/learn-r/data/otter-mandible-data.csv](https://jcoliver.github.io/learn-r/data/otter-mandible-data.csv) or [http://tinyurl.com/otter-data-csv](http://tinyurl.com/otter-data-csv) (the latter just re-directs to the former). These data are a subset of those used in a study on skull morphology and diet specialization in otters [doi: 10.1371/journal.pone.0143236](http://dx.doi.org/10.1371/journal.pone.0143236). **Save this file in the `data` folder we just created**.
@@ -48,6 +47,12 @@ For any work that we do, we want to record all the steps we take, so instead of 
 rm(list = ls()) # clean up the environment
 
 ################################################################################
+
+# Load dependencies
+library("ggplot2")
+library("ggdendro")
+library("reshape2")
+library("grid")
 
 # Read in data
 otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
@@ -83,13 +88,11 @@ To make our figure, we will build the two plots (the cluster diagram and the hea
 
 ```{r}
 # Run clustering
-library("ggdendro")
 otter.matrix <- as.matrix(otter.scaled[, -c(1:3)])
 rownames(otter.matrix) <- otter.scaled$accession
 otter.dendro <- as.dendrogram(hclust(d = dist(x = otter.matrix)))
 
 # Create dendro
-library("ggplot2")
 dendro.plot <- ggdendrogram(data = otter.dendro, rotate = TRUE)
 
 # Preview the plot
@@ -116,8 +119,7 @@ We need to start by transforming data to a "long" format, where each row only co
 ```{r echo = FALSE}
 otter.scaled[c(1:2), c(1:5)]
 
-# For the demonstration purposes,
-library("reshape2")
+# For demonstration purposes only, print the first few rows and columns
 otter.long.demo <- melt(otter.scaled[c(1:2), c(1:5)], id = c("species", "museum", "accession"))
 ```
 
@@ -134,7 +136,6 @@ We use the `reshape2` package's `melt` function to handle the data transformatio
 ```{r}
 # Heatmap
 # Data wrangling
-library("reshape2")
 otter.long <- melt(otter.scaled, id = c("species", "museum", "accession"))
 ```
 
@@ -157,7 +158,6 @@ print(heatmap.plot)
 OK. We made a dendrogram. We made a heatmap. Now how to get them into the same figure? The `grid` package offers a way to combine separate plots.
 
 ```{r}
-library("grid")
 grid.newpage()
 print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
 print(dendro.plot, vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
@@ -279,6 +279,12 @@ rm(list = ls()) # clean up the environment
 
 ################################################################################
 
+# Load dependencies
+library("ggplot2")
+library("ggdendro")
+library("reshape2")
+library("grid")
+
 # Read in data
 otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
 
@@ -294,20 +300,17 @@ otter.scaled <- otter
 otter.scaled[, c(4:9)] <- scale(otter.scaled[, 4:9])
 
 # Run clustering
-library("ggdendro")
 otter.matrix <- as.matrix(otter.scaled[, -c(1:3)])
 rownames(otter.matrix) <- otter.scaled$accession
 otter.dendro <- as.dendrogram(hclust(d = dist(x = otter.matrix)))
 
 # Create dendrogram plot
-library("ggplot2")
 dendro.plot <- ggdendrogram(data = otter.dendro, rotate = TRUE) + 
   theme(axis.text.y = element_text(size = 6))
 
 # Heatmap
 
 # Data wrangling
-library("reshape2")
 otter.long <- melt(otter.scaled, id = c("species", "museum", "accession"))
 # Extract the order of the tips in the dendrogram
 otter.order <- order.dendrogram(otter.dendro)
@@ -326,7 +329,6 @@ heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
         legend.position = "top")
 
 # All together
-library("grid")
 grid.newpage()
 print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
 print(dendro.plot, vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92))

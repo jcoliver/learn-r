@@ -2,11 +2,9 @@
 
 | Day | Month | Workshop                          |
 |:---:|:-----:|:---------------------------------:|
-| 06  | Feb   | 007 Writing your own functions    |
-| 13  | Feb   | Open lab                          |
-| 20  | Feb   | _no workshop_                     |
-| 27  | Feb   | 011 Species distribution modeling |
-| 06  | Mar   | Open lab                          |
-| 13  | Mar   | 008 Dendrograms & heatmaps        |
-| 20  | Mar   | Open                              |
-| 27  | Mar   | _TBD_                             |
+| 24  | Apr   | 005 Writing reproducible reports  |
+| 01  | May   | Open lab                          |
+| 08  | May   | NO LAB THIS DAY                   |
+| 15  | May   | Open lab                          |
+| 22  | May   | 012 Easier code with tidyverse    |
+| 29  | May   | Open lab                          |
