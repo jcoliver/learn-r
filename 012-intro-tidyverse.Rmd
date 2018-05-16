@@ -10,7 +10,7 @@ output:
 
 # OUTLINE DELETE ME
 + Start with dplyr and the `iris` data
-    + maybe start with `arrange`, moving the Species column to the beginning?
+    + ~~maybe start with `arrange`, moving the Species column to the beginning?~~
     + `group_by` and `summarize` to get means each species/variable
         + just do Sepal.Length
         | species    | mean.Sepal.Length |
@@ -95,9 +95,104 @@ iris.plot
 
 ## Getting started
 
+Dependancies: just tidyverse
+
+[Introduce the iris data]
+We want to make a chart that looks like this:
+
+```{r echo = FALSE}
+library("tidyverse")
+
+iris.plot <- iris %>% 
+  gather(key = trait, value = measurement, -Species) %>%
+  group_by(Species, trait) %>%
+  summarize(mean.value = mean(measurement),
+            se.value = sd(measurement/sqrt(n()))) %>%
+  ggplot(mapping = aes(x = Species, y = mean.value)) +
+  geom_point() +
+  geom_errorbar(mapping = aes(ymin = mean.value - se.value, ymax = mean.value + se.value),
+                width = 0.2) +
+  ylab(label = "Mean trait value") +
+  facet_wrap(~ trait, scales = "free_y") # free_y scales for independent y axes
+iris.plot
+```    
+
 ***
 
 ## [TOPIC ONE]
+
+So what will we need? Break this down into the component parts.
+
++ Means
++ Standard errors
++ For each species
++ For each trait
+
+Let's start with getting the means for a single variable, Sepal.Length. If we do this in base R, we need to pull out the values for _each_ species, then calculate the means for each. This looks something like this:
+
+```{r species-means-base-R, eval = FALSE}
+setosa.mean <- mean(iris$Sepal.Length[iris$Species == "setosa"])
+versicolor.mean <- mean(iris$Sepal.Length[iris$Species == "versicolor"])
+virginica.mean <- mean(iris$Sepal.Length[iris$Species == "virginica"])
+```
+
+Which is a little cumbersome, especially if we also need to do the additional step of putting all these means into a single data frame. However, a pair of commands can make this much easier: `group_by` and `summarize`. The first, `group_by` imposes structure on our data; for our immediate purposes, we will use it to group the data by the `Species` column:
+
+```{r group-by-species}
+iris.grouped <- group_by(iris, Species)
+```
+
+If we look at the first few rows of this data, it looks similar to the `iris` data we started with, but now, instead of a data.frame, this is actually a `tibble`. We don't need to worry much about that now, only to notice that Species is listed as a group and that below the column names is an indication of the data types (there are only numbers `<dbl>` and factors `<fct>`).
+
+The second function we want to use is `summarize`, which does exactly that: it provides some summary of the data we pass to it. Let's get the mean value of sepal length for each species:
+
+```{r sepal-length-means}
+iris.means <- summarise(iris.grouped, SL.mean = mean(Sepal.Length))
+```
+
+Note that we did _not_ have to tell `summarize` to calculate the mean for each species separately. As part of the `tidyverse` package, `summarize` knows how to deal with grouped data.
+
+These two functions made it easier, after all we went from this:
+```{r species-means-base-R-redux, eval = FALSE}
+# Calcuate the mean for each species
+setosa.mean <- mean(iris$Sepal.Length[iris$Species == "setosa"])
+versicolor.mean <- mean(iris$Sepal.Length[iris$Species == "versicolor"])
+virginica.mean <- mean(iris$Sepal.Length[iris$Species == "virginica"])
+
+# Add these back into a data.frame
+iris.means <- data.frame(Species = c("setosa", "versicolor", "virginica"),
+                         SL.mean = c(setosa.mean, versicolor.mean, virginica.mean))
+```
+
+To this:
+```{r grouped-means, eval = FALSE}
+iris.grouped <- group_by(iris, Species)
+iris.means <- summarise(iris.grouped, SL.mean = mean(Sepal.Length))
+```
+
+But there is another operator that can make our life even easier. If you are familiar with the bash shell, you might be familiar with the pipe, `|` which is use to re-direct output. A similar operator in R is `%>%` and is used to send whatever is on the left-side of the operator to the first argument of the function on the right-side of the operator. So, these two statements are effectively the same:
+
+```{r pipe-intro, eval = FALSE}
+# This:
+iris %>% group_by(Species)
+# is the same as:
+group_by(iris, Species)
+```
+
+But here comes the really cool part! We can chain these pipes together in a string of commands, sending the output of one command directly to the next. So instead of the two-step process we used to first group the data by species, then calculate the means, we can do it all at once with pipes:
+
+```{r pipe-group-summarize}
+iris.means <- iris %>%
+  group_by(Species) %>%
+  summarize(SL.mean = mean(Sepal.Length))
+```
+
+Let's break apart what we just did, line by line:
+
++ `iris.means <- iris %>%` We did two things here. First, we instructed R to assign the final output to the variable `iris.means` _and_ we sent the `iris` data to whatever command is coming on the next line.
++ `group_by(Species)` This line is effectively the same as `group_by(.data = iris, Species)`, because we sent `iris` data to `group_by` through the pipe, `%>%`. We then sent _this_ grouped data to the next line.
++ `summarize(SL.mean = mean(Sepal.Length))` This used the grouped data from the preceding `group_by` command to calculate the mean values of Sepal.Length for each species.
++ The final output of `summarize` was then assigned to the variable `iris.means`.
 
 ***
 
