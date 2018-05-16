@@ -119,7 +119,7 @@ iris.plot
 
 ***
 
-## [TOPIC ONE]
+## [TOPIC ONE] Summarizing and grouping
 
 So what will we need? Break this down into the component parts.
 
@@ -128,7 +128,7 @@ So what will we need? Break this down into the component parts.
 + For each species
 + For each trait
 
-Let's start with getting the means for a single variable, Sepal.Length. If we do this in base R, we need to pull out the values for _each_ species, then calculate the means for each. This looks something like this:
+Let's start with getting the means for a single column, `Sepal.Length`. If we do this in base R, we need to pull out the values for _each_ species, then calculate the means for each. This looks something like this:
 
 ```{r species-means-base-R, eval = FALSE}
 setosa.mean <- mean(iris$Sepal.Length[iris$Species == "setosa"])
@@ -191,12 +191,89 @@ Let's break apart what we just did, line by line:
 
 + `iris.means <- iris %>%` We did two things here. First, we instructed R to assign the final output to the variable `iris.means` _and_ we sent the `iris` data to whatever command is coming on the next line.
 + `group_by(Species)` This line is effectively the same as `group_by(.data = iris, Species)`, because we sent `iris` data to `group_by` through the pipe, `%>%`. We then sent _this_ grouped data to the next line.
-+ `summarize(SL.mean = mean(Sepal.Length))` This used the grouped data from the preceding `group_by` command to calculate the mean values of Sepal.Length for each species.
++ `summarize(SL.mean = mean(Sepal.Length))` This used the grouped data from the preceding `group_by` command to calculate the mean values of sepal length for each species.
 + The final output of `summarize` was then assigned to the variable `iris.means`.
+
+Remember our plot:
+```{r echo = FALSE}
+library("tidyverse")
+
+iris.plot <- iris %>% 
+  gather(key = trait, value = measurement, -Species) %>%
+  group_by(Species, trait) %>%
+  summarize(mean.value = mean(measurement),
+            se.value = sd(measurement/sqrt(n()))) %>%
+  ggplot(mapping = aes(x = Species, y = mean.value)) +
+  geom_point() +
+  geom_errorbar(mapping = aes(ymin = mean.value - se.value, ymax = mean.value + se.value),
+                width = 0.2) +
+  ylab(label = "Mean trait value") +
+  facet_wrap(~ trait, scales = "free_y") # free_y scales for independent y axes
+iris.plot
+```
+
+Where are we with our necessary components?
+
++ Means
++ Standard errors
++ For each species
++ For each trait
+
+Well, we have the means for each species, but we don't have the standard errors and we only have data for one trait (sepal length). Let's start by calculating the standard error. Remember the formula for the standard error is the standard deviation divided by the square root of the sample size:
+
+$$
+SE = \frac{\sigma}{\sqrt{n}}
+$$
+Base R has the function `sd` which calculates the standard deviation, but we need another function from tidyverse, `n`, which counts the number of observations in the current group. So to caluclate the standard error, we can use `sd(Sepal.Length)/sqrt(n())`. But where? It turns out that `summarize` is not restricted to a single calculation. That is, we can summarize data in multiple ways with a single call to summarize. We can update our previous code to include a column for standard errors in our output:
+
+```{r summarize-mult, eval = FALSE}
+iris.means <- iris %>%
+  group_by(Species) %>%
+  summarize(SL.mean = mean(Sepal.Length),
+            SL.se = sd(Sepal.Length)/sqrt(n()))
+iris.means
+```
 
 ***
 
-## [TOPIC TWO]
+## [TOPIC TWO] Sending to ggplot
+
+At this point, we should go ahead and start trying to plot our data. Another part of the tidyverse package is `ggplot2`, a great package for making high-quality visualizations. `ggplot2` uses special syntax for making graphs. We start by telling R _what_ we want to plot in the graph:
+
+```{r plot-sepal-length-empty}
+ggplot(data = iris.means, mapping = aes(x = Species, y = SL.mean))
+```
+
+But our graph is empty! This is because we did not tell R _how_ to plot the data. That is, do we want a bar chart? A scatterplot? Maybe a heatmap? We are going to plot the means as points, so we use `geom_point()`. Note also the specialized syntax where we add components to our plot with the plus sign, "+":
+
+```{r plot-sepal-length-points}
+ggplot(data = iris.means, mapping = aes(x = Species, y = SL.mean)) +
+  geom_point()
+```
+
+Great! So now we also need to add those error bars. We'll use another component, `geom_errorbar` to do this.
+
+```{r plot-sepal-length-errorbar}
+ggplot(data = iris.means, mapping = aes(x = Species, y = SL.mean)) +
+  geom_point() +
+  geom_errorbar(mapping = aes(ymin = SL.mean - SL.se,
+                              ymax = SL.mean + SL.se))
+```
+Note that for the error bars, the calculation for the positions of the bars (1 standard error above and below the mean) are actually performed _inside_ the `ggplot` command.
+
+Those error bars are a little outrageous, so let's make them narrower:
+```{r plot-sepal-length-errorbar}
+ggplot(data = iris.means, mapping = aes(x = Species, y = SL.mean)) +
+  geom_point() +
+  geom_errorbar(mapping = aes(ymin = SL.mean - SL.se,
+                              ymax = SL.mean + SL.se),
+                width = 0.3)
+```
+
+
+***
+
+## [TOPIC THREE] Tidy data
 
 ***
 
