@@ -8,96 +8,44 @@ output:
     latex_engine: xelatex
 ---
 
-# OUTLINE DELETE ME
-+ Start with dplyr and the `iris` data
-    + ~~maybe start with `arrange`, moving the Species column to the beginning?~~
-    + `group_by` and `summarize` to get means each species/variable
-        + just do Sepal.Length
-        | species    | mean.Sepal.Length |
-        |------------|-------------------|
-        | setosa     | 5.006             |
-        | versicolor | 5.936             |
-        | virginica  | 6.588             |
-        + The hard way first (calculate each mean, then add them back into a data frame)
-        + `iris %>% group_by(Species) %>% summarize(Sepal.Length = mean(Sepal.Length))`
-    + use `n` function to add standard error (see SC dplyr lesson for syntax)
-        + `iris %>% group_by(Species) %>% summarize(mean.Sepal.Length = mean(Sepal.Length), se.Sepal.Length = sd(Sepal.Length)/sqrt(n()))`
-    + ideally end up sending this to ggplot with means & error bars:
-```{r}
-# Two separate commands:
-iris.graph <- iris %>% 
-  group_by(Species) %>%
-  summarize(mean.Sepal.Length = mean(Sepal.Length),
-            se.Sepal.Length = sd(Sepal.Length/sqrt(n())))
-
-iris.plot <- ggplot(data = iris.graph, mapping = aes(x = Species, y = mean.Sepal.Length)) +
-  geom_point() +
-  geom_errorbar(mapping = aes(ymin = mean.Sepal.Length - se.Sepal.Length, ymax = mean.Sepal.Length + se.Sepal.Length),
-                width = 0.2)
-iris.plot
-
-# All in one:
-iris.plot <- iris %>% 
-  group_by(Species) %>%
-  summarize(mean.Sepal.Length = mean(Sepal.Length),
-            se.Sepal.Length = sd(Sepal.Length/sqrt(n()))) %>%
-  ggplot(mapping = aes(x = Species, y = mean.Sepal.Length)) +
-  geom_point() +
-  geom_errorbar(mapping = aes(ymin = mean.Sepal.Length - se.Sepal.Length, ymax = mean.Sepal.Length + se.Sepal.Length),
-                width = 0.2)
-iris.plot
-
-```
-
-+ Next is tidyr, mostly for gather
-    + `gather` the iris data, one row for each variable
-```{r}
-iris.long <- gather(data = iris, key = trait, value = measurement, -Species) # MUST add value parameter, doesn't work without
-```
-    + send to ggplot for faceted plot
-```{r}
-iris.plot <- iris %>% 
-  gather(key = trait, value = measurement, -Species) %>%
-  group_by(Species, trait) %>%
-  summarize(mean.value = mean(measurement),
-            se.value = sd(measurement/sqrt(n()))) %>%
-  ggplot(mapping = aes(x = Species, y = mean.value)) +
-  geom_point() +
-  geom_errorbar(mapping = aes(ymin = mean.value - se.value, ymax = mean.value + se.value),
-                width = 0.2) +
-  facet_wrap(~ trait, scales = "free_y") # free_y scales for independent y axes
-iris.plot
-```    
+<!--
+Additional material to develop, if warranted
 + Back to dplyr & readr
     + Need data set with text and date fields so we can read it in with `read_csv`...
     + maybe a twitter data set? See [rtweet](http://rtweet.info/index.html)
         + Looks like we can only share 50,000 tweets (https://developer.twitter.com/en/developer-terms/agreement-and-policy#f-be-a-good-partner-to-twitter)
     + If the returned object (ideally a data frame) has a lot of extraneous columns,
         + `select` so there are only the ones we want
-        + `arrange` to get them in order (pipe `select` output to this)
         + `mutate` to create a new column?
     + Throw in a call to `filter` for only those in a certain time range
     + Call `sample_n` to pull out 1000 random rows
         + Start with the hard way (`subsample <- df[sample(x = 1:nrow(df), size = 1000), ]`)
     + Do a time series plot?
-    
+-->    
 
-[INTRODUCTORY SENTENCE]
+Make your life easier and your code faster with the suite of "tidyverse" packages, including ggplot, tidyr, and dplyr.
 
 #### Learning objectives
 1. one
 2. two
 3. three
 
-## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+## Data science: more fun, less pain
+
+R is a powerful language for managing, analyzing, and visualizing complex data. However, some of the commands in R are esoteric or just plain confusing. The [tidyverse](https://www.tidyverse.org/) package for R includes several helpful functions that make it easier to manipulate, summarize, and visualize your data. In this lesson we'll use these functions to create plots from summary statistics.
 
 ***
 
 ## Getting started
 
-Dependancies: just tidyverse
+We are using the tidyverse package, which itself is really just a collection of six different packages. However, we can install them all with one command:
 
-[Introduce the iris data]
+```{r install-tidyverse, eval = FALSE}
+install.packages("tidyverse")
+```
+
+Our ultimate goal is to use the pre-loaded `iris` data to create a plot of the data stored in that data frame. The `iris` data are from early statistical work of [R.A. Fisher](https://en.wikipedia.org/wiki/Ronald_Fisher), who used three species of _Iris_ flowers to develop linear discriminant analysis.
+
 We want to make a chart that looks like this:
 
 ```{r goal-graphic, echo = FALSE}
@@ -105,9 +53,9 @@ library("tidyverse")
 iris %>% 
   gather(key = trait, value = measurement, -Species) %>%
   group_by(Species, trait) %>%
-  summarize(mean.value = mean(measurement),
-            se.value = sd(measurement/sqrt(n()))) %>%
-  ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
+  summarize(means = mean(measurement),
+            se = sd(measurement/sqrt(n()))) %>%
+  ggplot(mapping = aes(x = Species, y = means)) +
   geom_point() +
   geom_errorbar(mapping = aes(ymin = means - se,
                               ymax = means + se),
@@ -116,10 +64,18 @@ iris %>%
   facet_wrap(~ trait, scales = "free_y")
 ```
 
+We want to keep all of our work stored in an R script, so we open a new script and start with an explanation of what we are going to do:
+
+```{r script-header, eval = FALSE}
+# Plot iris trait measurements
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2018-05-17
+```
 
 ***
 
-## [TOPIC ONE] Summarizing and grouping
+## Summarizing the data
 
 So what will we need? Break this down into the component parts.
 
@@ -127,6 +83,8 @@ So what will we need? Break this down into the component parts.
 + Standard errors
 + For each species
 + For each trait
+
+### The hard way
 
 Let's start with getting the means for a single column, `Sepal.Length`. If we do this in base R, we need to pull out the values for _each_ species, then calculate the means for each. This looks something like this:
 
@@ -136,18 +94,29 @@ versicolor.mean <- mean(iris$Sepal.Length[iris$Species == "versicolor"])
 virginica.mean <- mean(iris$Sepal.Length[iris$Species == "virginica"])
 ```
 
-Which is a little cumbersome, especially if we also need to do the additional step of putting all these means into a single data frame. However, a pair of commands can make this much easier: `group_by` and `summarize`. The first, `group_by` imposes structure on our data; for our immediate purposes, we will use it to group the data by the `Species` column:
+Which is a little cumbersome, especially if we also need to do the additional step of putting all these means into a single data frame. 
+
+### There's a better way
+
+A pair of commands can make this much easier: `group_by` and `summarize`. The first, `group_by` imposes structure on our data; for our immediate purposes, we will use it to group the data by the `Species` column:
 
 ```{r group-by-species}
 iris.grouped <- group_by(iris, Species)
 ```
 
-If we look at the first few rows of this data, it looks similar to the `iris` data we started with, but now, instead of a data.frame, this is actually a `tibble`. We don't need to worry much about that now, only to notice that Species is listed as a group and that below the column names is an indication of the data types (there are only numbers `<dbl>` and factors `<fct>`).
+If we look at the first few rows of these data, 
+
+```{r head-grouped, echo = FALSE}
+head(iris.grouped)
+```
+
+it looks similar to the `iris` data we started with, but now, instead of a data.frame, this is actually a `tibble`. We don't need to worry much about that now, only to notice that Species is listed as a group and that below the column names is an indication of the data types (there are only numbers `<dbl>` and factors `<fct>`).
 
 The second function we want to use is `summarize`, which does exactly that: it provides some summary of the data we pass to it. Let's get the mean value of sepal length for each species:
 
 ```{r sepal-length-means}
 iris.means <- summarise(iris.grouped, SL.mean = mean(Sepal.Length))
+iris.means
 ```
 
 Note that we did _not_ have to tell `summarize` to calculate the mean for each species separately. As part of the `tidyverse` package, `summarize` knows how to deal with grouped data.
@@ -170,7 +139,7 @@ iris.grouped <- group_by(iris, Species)
 iris.means <- summarise(iris.grouped, SL.mean = mean(Sepal.Length))
 ```
 
-But there is another operator that can make our life even easier. If you are familiar with the bash shell, you might be familiar with the pipe, `|` which is use to re-direct output. A similar operator in R is `%>%` and is used to send whatever is on the left-side of the operator to the first argument of the function on the right-side of the operator. So, these two statements are effectively the same:
+But there is another operator that can make our life even easier. If you are familiar with the bash shell, you might be familiar with the pipe character, `|`, which is used to re-direct output. A similar operator in R is `%>%` and is used to send whatever is on the left-side of the operator to the first argument of the function on the right-side of the operator. So, these two statements are effectively the same:
 
 ```{r pipe-intro, eval = FALSE}
 # This:
@@ -195,21 +164,20 @@ Let's break apart what we just did, line by line:
 + The final output of `summarize` was then assigned to the variable `iris.means`.
 
 Remember our plot:
-```{r echo = FALSE}
-library("tidyverse")
 
-iris.plot <- iris %>% 
+```{r echo = FALSE}
+iris %>% 
   gather(key = trait, value = measurement, -Species) %>%
   group_by(Species, trait) %>%
-  summarize(mean.value = mean(measurement),
-            se.value = sd(measurement/sqrt(n()))) %>%
-  ggplot(mapping = aes(x = Species, y = mean.value)) +
+  summarize(means = mean(measurement),
+            se = sd(measurement/sqrt(n()))) %>%
+  ggplot(mapping = aes(x = Species, y = means)) +
   geom_point() +
-  geom_errorbar(mapping = aes(ymin = mean.value - se.value, ymax = mean.value + se.value),
-                width = 0.2) +
-  ylab(label = "Mean trait value") +
-  facet_wrap(~ trait, scales = "free_y") # free_y scales for independent y axes
-iris.plot
+  geom_errorbar(mapping = aes(ymin = means - se,
+                              ymax = means + se),
+                width = 0.3) +
+  ylab(label = "Trait mean values") +
+  facet_wrap(~ trait, scales = "free_y")
 ```
 
 Where are we with our necessary components?
@@ -224,9 +192,9 @@ Well, we have the means for each species, but we don't have the standard errors 
 $$
 SE = \frac{\sigma}{\sqrt{n}}
 $$
-Base R has the function `sd` which calculates the standard deviation, but we need another function from tidyverse, `n`, which counts the number of observations in the current group. So to caluclate the standard error, we can use `sd(Sepal.Length)/sqrt(n())`. But where? It turns out that `summarize` is not restricted to a single calculation. That is, we can summarize data in multiple ways with a single call to summarize. We can update our previous code to include a column for standard errors in our output:
+Base R has the function `sd` which calculates the standard deviation, but we need another function from tidyverse, `n`, which counts the number of observations in the current group. So to caluclate the standard error, we can use `sd(Sepal.Length)/sqrt(n())`. But where? It turns out that `summarize` is not restricted to a single calculation. That is, we can summarize data in multiple ways with a single call to `summarize`. We can update our previous code to include a column for standard errors in our output:
 
-```{r summarize-mult, eval = FALSE}
+```{r summarize-mult}
 iris.means <- iris %>%
   group_by(Species) %>%
   summarize(SL.mean = mean(Sepal.Length),
@@ -236,7 +204,7 @@ iris.means
 
 ***
 
-## [TOPIC TWO] Sending to ggplot
+## Visualize!
 
 At this point, we should go ahead and start trying to plot our data. Another part of the tidyverse package is `ggplot2`, a great package for making high-quality visualizations. `ggplot2` uses special syntax for making graphs. We start by telling R _what_ we want to plot in the graph:
 
@@ -259,9 +227,11 @@ ggplot(data = iris.means, mapping = aes(x = Species, y = SL.mean)) +
   geom_errorbar(mapping = aes(ymin = SL.mean - SL.se,
                               ymax = SL.mean + SL.se))
 ```
-Note that for the error bars, the calculation for the positions of the bars (1 standard error above and below the mean) are actually performed _inside_ the `ggplot` command.
+
+Note that for the error bars, the calculations for the positions of the bars (1 standard error above and below the mean) are actually performed _inside_ the `ggplot` command.
 
 Those error bars are a little outrageous, so let's make them narrower:
+
 ```{r plot-sepal-length-errorbar-nicer}
 ggplot(data = iris.means, mapping = aes(x = Species, y = SL.mean)) +
   geom_point() +
@@ -274,7 +244,7 @@ Our plot looks good for now. Let's move on to getting all our traits in a single
 
 ***
 
-## [TOPIC THREE] Gather
+## The _long_ way
 
 The iris data are organized like this:
 
@@ -298,7 +268,7 @@ iris.long <- gather(data = iris,
 ```
 The arguments we pass to `gather` are:
 
-+ `data = iris` this is the data frame we want to transform
++ `data = iris` this indicates `iris` is the data frame we want to transform
 + `key = trait` "trait" is the column name for the variable names (e.g. "Sepal.Length", "Sepal.Width", etc.)
 + `value = measurement` "measurement" is the column name for the actual values 
 + `-Species` tells `gather` _not_ to treat the value in the Species column as a separate variable
@@ -323,7 +293,7 @@ iris.means <- iris %>%
 ```
 Note the insertion of `gather` and the changes to `group_by` and `summarize`. Our data frame now has a row for each species and each trait:
 
-```{iris show-long-stats, echo = FALSE}
+```{r show-long-stats, echo = FALSE}
 iris.means
 ```
 
@@ -340,7 +310,9 @@ ggplot(data = iris.means, mapping = aes(x = Species, y = SL.mean)) +
 We need to update:
 
 + The specification of what to plot on the y-axis in the `ggplot` function
+    + In `ggplot` command: change `SL.mean` to `means`
 + The values for error bar boundaries
+    + In `geom_errorbar` command: replace `SL.mean` with `means` and `SL.se` with `se`
 
 ```{r plot-all-traits-in-one}
 ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
@@ -361,12 +333,54 @@ ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
   facet_wrap(~ trait)
 ```
 
-OK, there are two more things we want to change:
+OK, there are a few more things we want to change:
 
-1. We should make that Y-axis title a little nicer. We'll use `ylab` for that.
-2. All four charts are using the same y-axis scale. Since we won't be doing comparisons on actual _between_ the charts, we can give each chart its own, independent y-axis scale. We'll add this information to the `facet_wrap` command.
+1. The names of each subplot reflect the trait names, which were column names in the original data. Let's update the values so the two words for each trait are separated by a period, not a space (e.g. "Petal.Width" becomes "Petal Width").
+2. We should make that Y-axis title a little nicer. We'll use `ylab` for that.
+3. All four charts are using the same y-axis scale; note all the petal width values are below 3, but the maximum value of the y-axis is 6. Since we won't be doing comparisons on actual values _between_ the charts, we can give each chart its own, independent y-axis scale. We'll add this information to the `facet_wrap` command.
 
 ```{r plot-all-traits}
+# Update trait names, replacing period with space
+iris.means$trait <- gsub(pattern = ".",
+                         replacement = " ",
+                         x = iris.means$trait,
+                         fixed = TRUE)
+
+ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
+  geom_point() +
+  geom_errorbar(mapping = aes(ymin = means - se,
+                              ymax = means + se),
+                width = 0.3) +
+  ylab(label = "Trait mean values") + # update the y-axis title
+  facet_wrap(~ trait, scales = "free_y") # allow y-axis scale to vary
+```
+
+With the use of tidyverse functions, we created a publication-quality graphic with just a few lines of code.
+
+Our final script looks like:
+
+```{r final-script, eval = FALSE}
+# Plot iris trait measurements
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2018-05-17
+
+rm(list = ls())
+
+# Create data of summary statistics
+iris.means <- iris %>%
+  gather(key = trait, value = measurement, -Species) %>%
+  group_by(Species, trait) %>%
+  summarize(means = mean(measurement),
+            se = sd(measurement)/sqrt(n()))
+
+# Update trait names, replacing period with space
+iris.means$trait <- gsub(pattern = ".",
+                         replacement = " ",
+                         x = iris.means$trait,
+                         fixed = TRUE)
+
+# Plot each trait separately
 ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
   geom_point() +
   geom_errorbar(mapping = aes(ymin = means - se,
@@ -380,9 +394,11 @@ ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
 
 ## Additional resources
 
++ Official page for the [tidyverse](https://www.tidyverse.org/) package
 + [Cheatsheet for data wrangling with the dpylr package](https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf)
 + An [opinionated discussion about "tidy" data](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
 + A [PDF version](https://jcoliver.github.io/learn-r/012-intro-tidyverse.pdf) of this lesson
++ Software Carpentry lessons on [dplyr](http://swcarpentry.github.io/r-novice-gapminder/13-dplyr/), [tidyr](http://swcarpentry.github.io/r-novice-gapminder/14-tidyr/), and [ggplot2](http://swcarpentry.github.io/r-novice-gapminder/08-plot-ggplot2/) packages
 
 ***
 
