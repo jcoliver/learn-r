@@ -100,22 +100,22 @@ Dependancies: just tidyverse
 [Introduce the iris data]
 We want to make a chart that looks like this:
 
-```{r echo = FALSE}
+```{r goal-graphic, echo = FALSE}
 library("tidyverse")
-
-iris.plot <- iris %>% 
+iris %>% 
   gather(key = trait, value = measurement, -Species) %>%
   group_by(Species, trait) %>%
   summarize(mean.value = mean(measurement),
             se.value = sd(measurement/sqrt(n()))) %>%
-  ggplot(mapping = aes(x = Species, y = mean.value)) +
+  ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
   geom_point() +
-  geom_errorbar(mapping = aes(ymin = mean.value - se.value, ymax = mean.value + se.value),
-                width = 0.2) +
-  ylab(label = "Mean trait value") +
-  facet_wrap(~ trait, scales = "free_y") # free_y scales for independent y axes
-iris.plot
-```    
+  geom_errorbar(mapping = aes(ymin = means - se,
+                              ymax = means + se),
+                width = 0.3) +
+  ylab(label = "Trait mean values") +
+  facet_wrap(~ trait, scales = "free_y")
+```
+
 
 ***
 
@@ -262,7 +262,7 @@ ggplot(data = iris.means, mapping = aes(x = Species, y = SL.mean)) +
 Note that for the error bars, the calculation for the positions of the bars (1 standard error above and below the mean) are actually performed _inside_ the `ggplot` command.
 
 Those error bars are a little outrageous, so let's make them narrower:
-```{r plot-sepal-length-errorbar}
+```{r plot-sepal-length-errorbar-nicer}
 ggplot(data = iris.means, mapping = aes(x = Species, y = SL.mean)) +
   geom_point() +
   geom_errorbar(mapping = aes(ymin = SL.mean - SL.se,
@@ -270,10 +270,111 @@ ggplot(data = iris.means, mapping = aes(x = Species, y = SL.mean)) +
                 width = 0.3)
 ```
 
+Our plot looks good for now. Let's move on to getting all our traits in a single graph.
 
 ***
 
-## [TOPIC THREE] Tidy data
+## [TOPIC THREE] Gather
+
+The iris data are organized like this:
+
+```{r show-wide, echo = FALSE}
+head(iris)
+```
+
+But in order to capitalize on `ggplot` functionality, we need to reorganize the data so each row only has data for a _single trait_, like this:
+
+```{r show-long, echo = FALSE}
+head(gather(data = iris, key = trait, value = measurement, -Species))
+```
+
+This is known as "long" format, where each row only has a single trait observation. To make this data conversion, we use the the `gather` function:
+
+```{r gather-intro}
+iris.long <- gather(data = iris,
+                    key = trait,
+                    value = measurement, 
+                    -Species)
+```
+The arguments we pass to `gather` are:
+
++ `data = iris` this is the data frame we want to transform
++ `key = trait` "trait" is the column name for the variable names (e.g. "Sepal.Length", "Sepal.Width", etc.)
++ `value = measurement` "measurement" is the column name for the actual values 
++ `-Species` tells `gather` _not_ to treat the value in the Species column as a separate variable
+
+Let's take this `gather` functionality and combine it with the `group_by` and `summarize` commands we used previously. Recall our earlier code to generate species' means and standard errors:
+
+```{r group-summarize-reminder, eval = FALSE}
+iris.means <- iris %>%
+  group_by(Species) %>%
+  summarize(SL.mean = mean(Sepal.Length),
+            SL.se = sd(Sepal.Length)/sqrt(n()))
+```
+
+We'll want to update this, inserting the `gather` function and updating the values used for calculating the mean and standard deviation:
+
+```{r by-species-stats}
+iris.means <- iris %>%
+  gather(key = trait, value = measurement, -Species) %>%
+  group_by(Species, trait) %>%
+  summarize(means = mean(measurement),
+            se = sd(measurement)/sqrt(n()))
+```
+Note the insertion of `gather` and the changes to `group_by` and `summarize`. Our data frame now has a row for each species and each trait:
+
+```{iris show-long-stats, echo = FALSE}
+iris.means
+```
+
+Great! So now we need to use these summary statistics to create our plot. Recall the code we used to plot the sepal lengths:
+
+```{r plot-reminder, eval = FALSE}
+ggplot(data = iris.means, mapping = aes(x = Species, y = SL.mean)) +
+  geom_point() +
+  geom_errorbar(mapping = aes(ymin = SL.mean - SL.se,
+                              ymax = SL.mean + SL.se),
+                width = 0.3)
+```
+
+We need to update:
+
++ The specification of what to plot on the y-axis in the `ggplot` function
++ The values for error bar boundaries
+
+```{r plot-all-traits-in-one}
+ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
+  geom_point() +
+  geom_errorbar(mapping = aes(ymin = means - se,
+                              ymax = means + se),
+                width = 0.3)
+```
+
+Something isn't quite right. We actually want four separate charts, one for each of the traits. To do so, we need to tell R how to break apart the data into separate charts. We do this with the `facet_wrap` component of `ggplot`:
+
+```{r plot-all-traits-one-y}
+ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
+  geom_point() +
+  geom_errorbar(mapping = aes(ymin = means - se,
+                              ymax = means + se),
+                width = 0.3) +
+  facet_wrap(~ trait)
+```
+
+OK, there are two more things we want to change:
+
+1. We should make that Y-axis title a little nicer. We'll use `ylab` for that.
+2. All four charts are using the same y-axis scale. Since we won't be doing comparisons on actual _between_ the charts, we can give each chart its own, independent y-axis scale. We'll add this information to the `facet_wrap` command.
+
+```{r plot-all-traits}
+ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
+  geom_point() +
+  geom_errorbar(mapping = aes(ymin = means - se,
+                              ymax = means + se),
+                width = 0.3) +
+  ylab(label = "Trait mean values") +
+  facet_wrap(~ trait, scales = "free_y")
+```
 
 ***
 
