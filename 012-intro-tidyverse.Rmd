@@ -26,9 +26,9 @@ Additional material to develop, if warranted
 Make your life easier and your code faster with the suite of "tidyverse" packages, including ggplot, tidyr, and dplyr.
 
 #### Learning objectives
-1. one
-2. two
-3. three
+1. Manipulate data with `group_by` and `summarize` to extract information from datasets
+2. Combine multiple commands with piping functionality
+3. Create publication-quality data visualizations with `ggplot`
 
 ## Data science: more fun, less pain
 
@@ -48,17 +48,20 @@ Our ultimate goal is to use the pre-loaded `iris` data to create a plot of the d
 
 We want to make a chart that looks like this:
 
+```{r load-tidyverse, echo = FALSE}
+suppressMessages(library("tidyverse"))
+```
+
 ```{r goal-graphic, echo = FALSE}
-library("tidyverse")
 iris %>% 
   gather(key = trait, value = measurement, -Species) %>%
   group_by(Species, trait) %>%
-  summarize(means = mean(measurement),
-            se = sd(measurement/sqrt(n()))) %>%
-  ggplot(mapping = aes(x = Species, y = means)) +
+  summarize(trait.mean = mean(measurement),
+            trait.se = sd(measurement/sqrt(n()))) %>%
+  ggplot(mapping = aes(x = Species, y = trait.mean)) +
   geom_point() +
-  geom_errorbar(mapping = aes(ymin = means - se,
-                              ymax = means + se),
+  geom_errorbar(mapping = aes(ymin = trait.mean - trait.se,
+                              ymax = trait.mean + trait.se),
                 width = 0.3) +
   ylab(label = "Trait mean values") +
   facet_wrap(~ trait, scales = "free_y")
@@ -100,7 +103,15 @@ Which is a little cumbersome, especially if we also need to do the additional st
 
 A pair of commands can make this much easier: `group_by` and `summarize`. The first, `group_by` imposes structure on our data; for our immediate purposes, we will use it to group the data by the `Species` column:
 
-```{r group-by-species}
+```{r group-by-species-quiet, echo = FALSE}
+iris.grouped <- group_by(iris, Species)
+```
+
+```{r group-by-species, echo = TRUE, eval = FALSE}
+# Load the tidyverse packages
+library("tidyverse")
+
+# Group the iris data by values in the Species column
 iris.grouped <- group_by(iris, Species)
 ```
 
@@ -169,12 +180,12 @@ Remember our plot:
 iris %>% 
   gather(key = trait, value = measurement, -Species) %>%
   group_by(Species, trait) %>%
-  summarize(means = mean(measurement),
-            se = sd(measurement/sqrt(n()))) %>%
-  ggplot(mapping = aes(x = Species, y = means)) +
+  summarize(trait.mean = mean(measurement),
+            trait.se = sd(measurement/sqrt(n()))) %>%
+  ggplot(mapping = aes(x = Species, y = trait.mean)) +
   geom_point() +
-  geom_errorbar(mapping = aes(ymin = means - se,
-                              ymax = means + se),
+  geom_errorbar(mapping = aes(ymin = trait.mean - trait.se,
+                              ymax = trait.mean + trait.se),
                 width = 0.3) +
   ylab(label = "Trait mean values") +
   facet_wrap(~ trait, scales = "free_y")
@@ -288,10 +299,15 @@ We'll want to update this, inserting the `gather` function and updating the valu
 iris.means <- iris %>%
   gather(key = trait, value = measurement, -Species) %>%
   group_by(Species, trait) %>%
-  summarize(means = mean(measurement),
-            se = sd(measurement)/sqrt(n()))
+  summarize(trait.mean = mean(measurement),
+            trait.se = sd(measurement)/sqrt(n()))
 ```
-Note the insertion of `gather` and the changes to `group_by` and `summarize`. Our data frame now has a row for each species and each trait:
+Note the insertion of `gather` and the changes to `group_by` and `summarize`:
+
++ `group_by`: We add an additional term, `trait`, to indicate to create another grouping, based on each trait
++ `summarize`: We replace `SL.mean` with `trait.mean` and `SL.se` with `trait.se`
+
+Our data frame now has a row for each species and each trait:
 
 ```{r show-long-stats, echo = FALSE}
 iris.means
@@ -310,25 +326,25 @@ ggplot(data = iris.means, mapping = aes(x = Species, y = SL.mean)) +
 We need to update:
 
 + The specification of what to plot on the y-axis in the `ggplot` function
-    + In `ggplot` command: change `SL.mean` to `means`
+    + In `ggplot` command: change `SL.mean` to `trait.mean`
 + The values for error bar boundaries
-    + In `geom_errorbar` command: replace `SL.mean` with `means` and `SL.se` with `se`
+    + In `geom_errorbar` command: replace `SL.mean` with `trait.mean` and `SL.se` with `trait.se`
 
 ```{r plot-all-traits-in-one}
-ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
+ggplot(data = iris.means, mapping = aes(x = Species, y = trait.mean)) +
   geom_point() +
-  geom_errorbar(mapping = aes(ymin = means - se,
-                              ymax = means + se),
+  geom_errorbar(mapping = aes(ymin = trait.mean - trait.se,
+                              ymax = trait.mean + trait.se),
                 width = 0.3)
 ```
 
 Something isn't quite right. We actually want four separate charts, one for each of the traits. To do so, we need to tell R how to break apart the data into separate charts. We do this with the `facet_wrap` component of `ggplot`:
 
 ```{r plot-all-traits-one-y}
-ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
+ggplot(data = iris.means, mapping = aes(x = Species, y = trait.mean)) +
   geom_point() +
-  geom_errorbar(mapping = aes(ymin = means - se,
-                              ymax = means + se),
+  geom_errorbar(mapping = aes(ymin = trait.mean - trait.se,
+                              ymax = trait.mean + trait.se),
                 width = 0.3) +
   facet_wrap(~ trait)
 ```
@@ -346,10 +362,10 @@ iris.means$trait <- gsub(pattern = ".",
                          x = iris.means$trait,
                          fixed = TRUE)
 
-ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
+ggplot(data = iris.means, mapping = aes(x = Species, y = trait.mean)) +
   geom_point() +
-  geom_errorbar(mapping = aes(ymin = means - se,
-                              ymax = means + se),
+  geom_errorbar(mapping = aes(ymin = trait.mean - trait.se,
+                              ymax = trait.mean + trait.se),
                 width = 0.3) +
   ylab(label = "Trait mean values") + # update the y-axis title
   facet_wrap(~ trait, scales = "free_y") # allow y-axis scale to vary
@@ -367,12 +383,15 @@ Our final script looks like:
 
 rm(list = ls())
 
+# Load the tidyverse packages
+library("tidyverse")
+
 # Create data of summary statistics
 iris.means <- iris %>%
   gather(key = trait, value = measurement, -Species) %>%
   group_by(Species, trait) %>%
-  summarize(means = mean(measurement),
-            se = sd(measurement)/sqrt(n()))
+  summarize(trait.mean = mean(measurement),
+            trait.se = sd(measurement)/sqrt(n()))
 
 # Update trait names, replacing period with space
 iris.means$trait <- gsub(pattern = ".",
@@ -381,10 +400,10 @@ iris.means$trait <- gsub(pattern = ".",
                          fixed = TRUE)
 
 # Plot each trait separately
-ggplot(data = iris.means, mapping = aes(x = Species, y = means)) +
+ggplot(data = iris.means, mapping = aes(x = Species, y = trait.mean)) +
   geom_point() +
-  geom_errorbar(mapping = aes(ymin = means - se,
-                              ymax = means + se),
+  geom_errorbar(mapping = aes(ymin = trait.mean - trait.se,
+                              ymax = trait.mean + trait.se),
                 width = 0.3) +
   ylab(label = "Trait mean values") +
   facet_wrap(~ trait, scales = "free_y")
