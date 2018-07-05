@@ -14,7 +14,10 @@ An introduction to using the R statistics package and the RStudio interface.
 2. Extract relevant portions of datasets
 3. Run standard statistical tests in R, including Student's _t_, linear regression
 and analysis of variance
-  
+
+## Statistics in R
+R was _designed_ for statistical analyses. This lesson provides an overview of reading data and writing output, as well as running standard statistical tests in R, including t-tests, linear regression, and analysis of variance.
+
 ##Setup
 First we need to setup our development environment. We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses.
 ```{r, eval = FALSE}
