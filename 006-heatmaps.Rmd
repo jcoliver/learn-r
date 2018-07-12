@@ -2,7 +2,9 @@
 title: "Heatmaps in R"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 A worked example of making heatmaps in R with the `ggplot` package, as well as some data wrangling to easily format the data needed for the plot.
@@ -19,24 +21,24 @@ Heatmaps are a great way of displaying three-dimensional data in only two dimens
 
 ## Getting started
 Start by creating a new project in RStudio and creating two folders we'll use to organize our efforts. The two folders should be `data` and `output` and will store...data and output.
-```{r eval = FALSE}
+```{r setup-folders, eval = FALSE}
 dir.create("data")
 dir.create("output")
 ```
 
 For this lesson we will use data from a diversity survey of microbial life in a [chrysotile asbestos](https://en.wikipedia.org/wiki/Chrysotile) mine. Driscoll and colleagues [doi: 10.1016/j.gdata.2016.11.004](https://doi.org/10.1016/j.gdata.2016.11.004) used next generation sequencing to identify and categorize bacterial diversity in a flooded pit of the abandoned mine. The data are normalized read counts for microbes found at the sites. A subset of the data can be downloaded from [https://tinyurl.com/mine-data-csv](https://tinyurl.com/mine-data-csv) (which itself redirects to [https://jcoliver.github.io/learn-r/data/mine-microbe-class-data.csv](https://jcoliver.github.io/learn-r/data/mine-microbe-class-data.csv)). You can download this file to your computer with the `download.file` function:
-```{r eval = FALSE}
+```{r download-data, eval = FALSE}
 download.file(url = "https://tinyurl.com/mine-data-csv", 
-              destfile = "data/mine-microbe-class-data.csv")
+              destfile = "data/mine-data.csv")
 ```
-This downloads the data and saves it in the `data` directory as `mine-microbe-class-data.csv`.  
+This downloads the data and saves it in the `data` directory as `mine-data.csv`.  
 
 ***
 
 ## Data Wrangling
 We'll need to start by reading the data into memory then formatting it for use by the ggplot package. We want all our work to be reproducible, so create a script where we can store all the commands we use to create the heatmap. We begin this script with brief information about the purpose of the script:
 
-```{r}
+```{r script-header, eval = FALSE}
 # Heatmap of mine pit microbe diversity
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -45,12 +47,12 @@ We'll need to start by reading the data into memory then formatting it for use b
 
 Now we read those abundance data into memory:
 
-```{r}
-mine.data <- read.csv(file = "data/mine-microbe-class-data.csv")
+```{r read-data}
+mine.data <- read.csv(file = "data/mine-data.csv")
 ```
 
 Take a quick look at the structure of the data, using the `str` command:
-```{r}
+```{r data-structure}
 str(mine.data)
 ```
 
@@ -82,48 +84,48 @@ And transform it to one with a column for bacterial class and a column for abund
 
 Thankfully, there is an R package that does this for us! The `tidyr` package is designed for creating this type of "tidy"" data. 
 
-```{r eval = FALSE}
+```{r install-tidyr, eval = FALSE}
 install.packages("tidyr")
 ```
 
-```{r}
+```{r load-tidyr}
 library("tidyr")
 ```
 
 In fact, we can do this transformation in one line with the `gather` function:
 
-```{r, warning = FALSE}
+```{r gather-01, warning = FALSE}
 mine.long <- gather(data = mine.data, key = Class, value = Abundance)
 ```
 
 Take a look at this new data frame:
 
-```{r}
+```{r head-long-01}
 head(mine.long)
 ```
 
 Uh oh. Something's not right. The `Class` column should only have bacterical classes in it, but one of our columns (`Site`) ended up in that `Class` column. In fact, the `Class` column actually has _all_ the columns of the original data set, not just the bacterial classes. Consider our original data structure:
 
-```{r}
+```{r structure-long}
 str(mine.data)
 ```
 
 Notice there are columns that don't need to be transformed for our heatmap. Namely, Site, Depth, and Sample.name can all remain as-is. To do this, we instruct `gather` to ignore the first three columns of the data frame by negating those columns (`-c(1:3`):
 
-```{r}
+```{r gather-02}
 mine.long <- gather(data = mine.data, key = Class, value = Abundance, -c(1:3))
 head(mine.long)
 ```
 
 Another approach, to accomplish the same thing, especially if the columns to ignore are not adjacent, is to explicitly name the columns to ignore:
 
-```{r, eval = FALSE}
+```{r gather-03, eval = FALSE}
 mine.long <- gather(data = mine.data, key = Class, value = Abundance, -Site, -Depth, -Sample.name)
 ```
 
 To recap, at this point we read in the data and transformed it for easy use with heatmap tools:
 
-```{r, eval = FALSE}
+```{r status-01, eval = FALSE}
 # Heatmap of mine pit microbe diversity
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -133,7 +135,7 @@ To recap, at this point we read in the data and transformed it for easy use with
 library("tidyr")
 
 # Read data and format for heatmap
-mine.data <- read.csv(file = "data/mine-microbe-class-data.csv")
+mine.data <- read.csv(file = "data/mine-data.csv")
 mine.long <- gather(data = mine.data, key = Class, value = Abundance, -c(1:3))
 ```
 
@@ -145,16 +147,17 @@ Now the data are ready - on to the plot!
 ### The ggplot package
 To plot a heatmap, we are going to use the `ggplot2` package.
 
-```{r eval = FALSE}
+```{r install-ggplot2, eval = FALSE}
 install.packages("ggplot2")
 ```
-```{r}
+
+```{r load-ggplot2}
 library("ggplot2")
 ```
 
 For this plot, we are going to first create the heatmap object with the `ggplot` function, then print the plot. We create the object by assigning the output of the `ggplot` call to the variable `mine.heatmap`, then entering the name of this object to print it to the screen.
 
-```{r}
+```{r heatmap-basic}
 mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Abundance)) +
@@ -174,7 +177,7 @@ Let's dissect these commands:
 + `xlab` provides a label to use for the x-axis
 
 This command follows the commonly used syntax for creating ggplot objects, where an initial call to `ggplot` sets up preliminary plotting information, and details are appended with plus signs:
-```{r eval = FALSE}
+```{r ggplot-syntax, eval = FALSE}
 # Create plot object
 plot.object.name <- ggplot(data, mapping) +
   layer.one() +
@@ -188,7 +191,7 @@ plot.object.name
 ### Faceting a plot
 The ggplot package includes a great way to visualize different categories of data. This approach, called "faceting" requires one additional layer to the plotting command called `facet_grid`. With `facet_grid` we indicate which column contains the categories we want to use for the plot:
 
-```{r}
+```{r facet}
 mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Abundance)) +
@@ -201,7 +204,7 @@ mine.heatmap
 
 But this leaves a bit to be desired. We only want columns displayed for which there are data, so we have to add some additional information in our `facet_grid` call:
 
-```{r}
+```{r facet-free}
 mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Abundance)) +
@@ -218,7 +221,7 @@ That's better. There is still some room for improvement, but we'll get to that l
 #### Scale
 First let's deal with a scaling issue. Most values are dark blue, but this is partly caused by the distribution of values - there are a few really high values in the Abundance column. We can transform the data for display by taking the square root of abundance and plotting that. To do this, we need to add another column to our data frame and update our call to ggplot to reference this new column, `Sqrt.abundance`:
 
-```{r}
+```{r sqrt-transform}
 mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
 mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                                                        y = Class,
@@ -233,7 +236,7 @@ mine.heatmap
 #### Color
 What if we want to use a different set of colors besides the default? For example, how can we change the shading so low values are light and high values are dark? We change colours with `scale_fill_gradient`. In this case we pass three objects to `scale_fill_gradient`: `name` is a label to use in the legend and `low` and `high` are hex codes for color. In this case, we use white (#FFFFFF) for the low values and a dark blue (#012345) for high values.
 
-```{r}
+```{r change-color}
 mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
 mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                                                        y = Class,
@@ -249,38 +252,19 @@ mine.heatmap
 ```
 
 #### Theme elements
-A number of elements of the plot are controlled through the `theme` function of ggplot. There are a number of default themes in ggplot; the `theme_bw` is a minimalist theme that works well in many graphs:
+A number of elements of the plot are controlled through the `theme` function of ggplot. We can use this function to alter axis titles and the placement of the facet titles. Remember the facets? We grouped the graphs based on the depth of the samples. The graph currently shows the depth labels (the boxes with 0.5, 3.5, or 25) between the graph and the sample name. We'd like to swap these positions, so the categories are shown at the very bottom. While we're at it, we should update the x-axis label, too. Setting `strip.placement` to "outside" should accomplish this.
 
-```{r}
+```{r theme-elements}
 mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
 mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
-  xlab(label = "Sample") +
+  xlab(label = "Depth (m)") +
   facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") +
   scale_fill_gradient(name = "Sqrt(Abundance)",
                       low = "#FFFFFF",
                       high = "#012345") +
-  theme_bw()
-
-mine.heatmap
-```
-
-We can use the generic `theme` function to alter axis titles and the placement of the facet titles. Remember the facets? We grouped the graphs based on the depth of the samples. The graph currently shows the depth labels (the boxes with 0.5, 3.5, or 25) between the graph and the sample name. We'd like to swap these positions, so the categories are shown at the vary bottom. While we're at it, we should update the x-axis label, too. Setting `strip.placement` to "outside" should accomplish this.
-
-```{r}
-mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
-                                                       y = Class,
-                                                       fill = Sqrt.abundance)) +
-  geom_tile() +
-  xlab(label = "Depth(m)") +
-  facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") +
-  scale_fill_gradient(name = "Sqrt(Abundance)",
-                      low = "#FFFFFF",
-                      high = "#012345") +
-  theme_bw() +
   theme(strip.placement = "outside")
 
 mine.heatmap
@@ -289,18 +273,17 @@ mine.heatmap
 #### Plot title
 Plot titles can be added with `ggtitle`:
 
-```{r}
+```{r plot-title}
 mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
 mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
-  xlab(label = "Depth(m)") +
+  xlab(label = "Depth (m)") +
   facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") +
   scale_fill_gradient(name = "Sqrt(Abundance)",
                       low = "#FFFFFF",
                       high = "#012345") +
-  theme_bw() +
   theme(strip.placement = "outside") +
   ggtitle(label = "Microbe Class Diversity")
 
@@ -309,18 +292,17 @@ mine.heatmap
 
 But by default the title is left-aligned. To center-justify the title, we add another argument, `plot.title` to the `theme` call:
 
-```{r}
+```{r plot-title-align}
 mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
 mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
-  xlab(label = "Depth(m)") +
+  xlab(label = "Depth (m)") +
   facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") +
   scale_fill_gradient(name = "Sqrt(Abundance)",
                       low = "#FFFFFF",
                       high = "#012345") +
-  theme_bw() +
   theme(strip.placement = "outside",
         plot.title = element_text(hjust = 0.5)) +
   ggtitle(label = "Microbe Class Diversity")
@@ -331,36 +313,35 @@ mine.heatmap
 #### Miscellaneous Debris
 There are a couple more things we will change in the plot:
 
-1. Remove the y-axis title
-2. Change the colors of the boxes for the depth categories
-3. Reverse the order of the y-axis, so 'Actinobacteria' is at the top
+1. Reverse the order of the y-axis, so 'Actinobacteria' is at the top
+2. Remove the y-axis title
+3. Change the colors of the boxes for the depth categories
 
-The first two are done via the `theme` command, with the `axis.title.y` and `strip.background` arguments. The third requires consideration of how ggplot determines the order of the y-axis. When the axis values are categories, ggplot treats them as factors and places them, from bottom to top, in the order of the levels for the factor. Since we are using values in the `Class` column, take a look at the default order if the column is treated as a factor:
+The second two are done via the `theme` command, with the `axis.title.y` and `strip.background` arguments. The first, though, requires consideration of how ggplot determines the order of the y-axis. When the axis values are categories, ggplot treats them as factors and places them, from bottom to top, in the order of the levels for the factor. Since we are using values in the `Class` column, take a look at the default order if the column is treated as a factor:
 
-```{r}
+```{r y-axis-levels}
 levels(as.factor(mine.long$Class))
 ```
 
 Since `r head(levels(as.factor(mine.long$Class)), n = 1)` is the first level, it appears at the bottom of the y-axis; the last level is `r tail(levels(as.factor(mine.long$Class)), n = 1)` and appears at the top of the plot. To reverse this order, we use `scale_y_discrete` and pass the factor levels in reverse. What? Take another look at the output of the `levels` command. If we wanted to reverse this output, we can use the `rev` function:
 
-```{r}
+```{r y-axis-levels-rev}
 rev(levels(as.factor(mine.long$Class)))
 ```
 
 Now we use the same command in `scale_y_discrete` for the `limits` argument:
 
-```{r}
+```{r y-axis-order-rev}
 mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
 mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
-  xlab(label = "Depth(m)") +
+  xlab(label = "Depth (m)") +
   facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") +
   scale_fill_gradient(name = "Sqrt(Abundance)",
                       low = "#FFFFFF",
                       high = "#012345") +
-  theme_bw() +
   theme(strip.placement = "outside",
         plot.title = element_text(hjust = 0.5)) +
   ggtitle(label = "Microbe Class Diversity") +
@@ -369,15 +350,66 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
 mine.heatmap
 ```
 
-Finally, to adjust the y-axis and change the depth boxes, we add two more arguments to the `theme` command:
+And to adjust the y-axis and change the depth boxes, we add two more arguments to the `theme` command:
 
-```{r}
+```{r theme-changes}
 mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
 mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
-  xlab(label = "Depth(m)") +
+  xlab(label = "Depth (m)") +
+  facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") +
+  scale_fill_gradient(name = "Sqrt(Abundance)",
+                      low = "#FFFFFF",
+                      high = "#012345") +
+  theme(strip.placement = "outside",
+        plot.title = element_text(hjust = 0.5),
+        axis.title.y = element_blank(), # Remove y-axis title
+        strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) + # Faint "Depth" boxes
+  ggtitle(label = "Microbe Class Diversity") +
+  scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
+
+mine.heatmap
+```
+
+Finally, there are many default themes in ggplot that affect background colors, grid lines, and fonts. You can see examples of them in use at [https://ggplot2.tidyverse.org/reference/ggtheme.html](https://ggplot2.tidyverse.org/reference/ggtheme.html). One relatively simple theme is `theme_bw`, and we can apply it by adding the function to our ggplot object:
+
+```{r theme-bw-01}
+mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
+mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+                                                       y = Class,
+                                                       fill = Sqrt.abundance)) +
+  geom_tile() +
+  xlab(label = "Depth (m)") +
+  facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") +
+  scale_fill_gradient(name = "Sqrt(Abundance)",
+                      low = "#FFFFFF",
+                      high = "#012345") +
+  theme(strip.placement = "outside",
+        plot.title = element_text(hjust = 0.5),
+        axis.title.y = element_blank(),
+        strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) +
+  ggtitle(label = "Microbe Class Diversity") +
+  scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class)))) +
+  theme_bw() # Use the black and white theme
+
+mine.heatmap
+```
+
+Most notably, the different depth plots all have a black border around them. But if we take a closer look, a number of our changes have been undone! The shading of the boxes indicating Depth is darker, the labels for the samples are back at the bottom, and the y-axis title ("Class") has returned. 
+
+Why did this happen? Didn't we fix all of that with the call to `theme`?
+
+This demonstrates the importance of _order_ in building ggplot objects. When we use the function `theme_bw`, we are using the settings in theme_bw for **all** theme elements. Thus by adding `theme_bw` _after_ our call to `theme`, we effectively throw out all those changes we made. In order for our changes to stay in place, we will need to call `theme_bw` _before_ our call to `theme`:
+
+```{r theme-bw-02}
+mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
+mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+                                                       y = Class,
+                                                       fill = Sqrt.abundance)) +
+  geom_tile() +
+  xlab(label = "Depth (m)") +
   facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") +
   scale_fill_gradient(name = "Sqrt(Abundance)",
                       low = "#FFFFFF",
@@ -385,8 +417,8 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
   theme_bw() +
   theme(strip.placement = "outside",
         plot.title = element_text(hjust = 0.5),
-        axis.title.y = element_blank(), # Remove y-axis title
-        strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) + # Make depth boxes faint
+        axis.title.y = element_blank(),
+        strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) +
   ggtitle(label = "Microbe Class Diversity") +
   scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
 
@@ -395,7 +427,7 @@ mine.heatmap
   
 Our final script for this heatmap is then:
 
-```{r, eval = FALSE}
+```{r final-script, eval = FALSE}
 # Heatmap of mine pit microbe diversity
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -408,7 +440,7 @@ library("tidyr")
 library("ggplot2")
 
 # Read data and format for heatmap
-mine.data <- read.csv(file = "data/mine-microbe-class-data.csv")
+mine.data <- read.csv(file = "data/mine-data.csv")
 mine.long <- gather(data = mine.data, key = Class, value = Abundance, -c(1:3))
 
 # Transform abundance data for better visualization
@@ -419,16 +451,19 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
-  xlab(label = "Depth(m)") +
-  facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") + # Facet on depth and drop empty columns
-  scale_fill_gradient(name = "Sqrt(Abundance)", # Set colors different from default
+  xlab(label = "Depth (m)") +
+  # Facet on depth and drop empty columns
+  facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x") + 
+  # Set colors different from default
+  scale_fill_gradient(name = "Sqrt(Abundance)", 
                       low = "#FFFFFF",
                       high = "#012345") +
   theme_bw() +
+  
   theme(strip.placement = "outside", # Move depth boxes to bottom of plot
         plot.title = element_text(hjust = 0.5), # Center-justify plot title
         axis.title.y = element_blank(), # Remove y-axis title
-        strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) + # Make depth boxes faint
+        strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) + # Faint "Depth" boxes
   ggtitle(label = "Microbe Class Diversity") +
   scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class)))) # Reverse order of y-axis
 
@@ -444,6 +479,8 @@ mine.heatmap
 + [Official documentation](http://ggplot2.tidyverse.org/reference/) for ggplot
 + A [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) for ggplot
 + [Documentation](http://ggplot2.tidyverse.org/reference/geom_bin2d.html) for `geom_bin2d`, to create heatmaps for continuous x- and y-axes
++ A [PDF version](https://jcoliver.github.io/learn-r/006-heatmaps.pdf) of this lesson
+
 
 ***
 
