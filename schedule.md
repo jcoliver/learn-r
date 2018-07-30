@@ -2,8 +2,7 @@
 
 | Day | Month | Workshop                          |
 |:---:|:-----:|:---------------------------------:|
-| 03  | Jul   | Using Git and GitHub with R       |
-| 10  | Jul   | Open lab                          |
-| 17  | Jul   | Introduction to statistics in R   |
-| 24  | Jul   | Open lab                          |
-| 31  | Jul   | Dendrograms & heatmaps in R       |
+| 07  | Jul   | **NO LAB THIS DAY**               |
+| 14  | Jul   | Open lab                          |
+| 21  | Jul   | Writing functions in R            |
+| 28  | Jul   | Open lab                          |
