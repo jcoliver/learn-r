@@ -69,12 +69,7 @@ two.species <- c("A. cinerea", "L. canadensis")
 otter <- otter[otter$species %in% two.species, ]
 ```
 
-Because R _does not_ automatically re-number the rows when we drop those with `NA` values, we can force re-numbering via:
-```{r}
-rownames(otter) <- NULL
-```
-
-The last thing we need to do is scale the data variables (columns 4-9) so measurements have a mean value of 0 and unit variance.
+The last thing we need to do is scale the data variables (columns 4-9) so measurements have a mean value of 0 and a variance of 1.
 ```{r}
 otter.scaled <- otter
 otter.scaled[, c(4:9)] <- scale(otter.scaled[, 4:9])
@@ -241,7 +236,7 @@ Finally, we will need to adjust the height and alignment of dendrogram to ensure
 1. `y`: This argument sets the vertical justification. A value of 0.5 centers the graphic in the middle of the viewport to which it is assigned. Values closer to zero move the graphic towards the bottom of the viewport and values closer to one move the graphic towards the top of the viewport. In our case, we will probably want to move the dendrogram down a little bit, so we use a value below 0.5.
 2. `height`: This is the proportion of the viewport's vertical space the graphic should use. We initially set it to use all the vertical space (`height = 1.0`), but since the legend now occupies the real estate at the top of the graphic, we will need to make the dendrogram height smaller.
 
-**Note:** The actual values you use will depend on the graphics device you ultimately use; that is, the values presented here are designed for an html to be viewed on the web, but if you are displaying on the screen or writing to a pdf file, you may need to use different values for `y` and `height`.
+**Note:** The actual values you use will depend on the graphics device you ultimately use; that is, the values presented here are designed for an html to be viewed on the web, but if you are displaying on the screen or writing to a pdf file, you may need to use different values for `y` and `height` (e.g. when calling `print` on `dendro.plot`, it may work better on your screen to set `y = 0.4` and `height = 0.85`).
 
 ```{r}
 grid.newpage()
