@@ -22,7 +22,7 @@ First we need to setup our development environment. Open RStudio and create a ne
 
 + File > New Project...
 + Select 'New Directory'
-+ For the Project Type select 'Empty Project'
++ For the Project Type select 'New Project'
 + For Directory name, call it something like "r-workshop" (without the quotes)
 + For the subdirectory, select somewhere you will remember (like "My Documents" or "Desktop")
 
