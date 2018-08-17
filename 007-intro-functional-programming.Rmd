@@ -29,6 +29,140 @@ The [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) aims 
 ## Writing functions
 Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy/pasting that code and changing the variable names. Then more copy/paste. Then we forget to change one of the variables and spend a day figuring out why our results don't make sense.
 
+For example, consider the `iris` data set:
+
+```{r iris-head}
+head(iris)
+```
+
+And if we look at the values for each of the four measurements, some are quite different in their ranges.
+```{r iris-summary}
+summary(iris)
+```
+
+Want to standardize so each has mean zero and variance of one
+
+New script file, iris-stand.R
+```{r petal-length-standardization}
+# Standarize iris values
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2018-08-16
+
+# Standardize petal length
+mean.petal.length <- mean(iris$Petal.Length)
+sd.petal.length <- sd(iris$Petal.Length)
+standard.petal.length <- (iris$Petal.Length - mean.petal.length)/sd.petal.length
+```
+
+Check process
+```{r check-standardization}
+summary(standard.petal.length)
+```
+
+Repeat for petal width, copy/paste from above
+```{r petal-width-standardization}
+# Standardize petal length
+mean.petal.width <- mean(iris$Petal.Width)
+sd.petal.width <- sd(iris$Petal.Width)
+standard.petal.width <- (iris$Petal.Width - mean.petal.width)/sd.petal.width
+summary(standard.petal.width)
+```
+
+Did copy/paste really save time? And how many opportunities for mistakes?
+
+Write a function!
+```{r standardization-function}
+standardize <- function(data) {
+  mean.value <- mean(data)
+  sd.value <- sd(data)
+  z.value <- (data - mean.value)/sd.value
+  return(z.value)
+}
+```
+
+Replace previous work
+```{r use-function}
+standard.petal.length <- standardize(data = iris$Petal.Length)
+standard.petal.width <- standardize(data = iris$Petal.Width)
+```
+
+Document the function
+```{r function-documentation}
+# Standardize a vector of numerical data
+# data: vector of numerical data
+# returns: vector of original data standardized to have mean = 0, sd = 1
+standardize <- function(data) {
+  mean.value <- mean(data)
+  sd.value <- sd(data)
+  z.value <- (data - mean.value)/sd.value
+  return(z.value)
+}
+```
+
+Use apply to do it to multiple columns
+```{r apply-function-01, eval = FALSE}
+iris.stand <- apply(X = iris, MARGIN = 2, FUN = standardize)
+```
+
+```{r apply-function-02, eval = FALSE}
+iris.stand <- apply(X = iris[, 1:4], MARGIN = 2, FUN = standardize)
+iris.stand <- as.data.frame(iris.stand)
+```
+
+Add the species column
+```{r add-species-column}
+iris.stand$Species <- iris$Species
+```
+
+Write a function to do it all
+(but do this in a separate file - move our other function there, too)
+```{r standardize-df}
+# data: data frame to standardize
+# ignore: (optional) vector of columns to skip in standardization process
+# returns: data frame with all non-ignored columns standardized to have mean = 0, sd = 1
+standardize.df <- function(data, ignore = c()) {
+  ignored.cols <- data[, ignore]
+  standardized.df <- apply(X = data[, -ignore], MARGIN = 2, FUN = standardize)
+  standardized.df <- cbind(standardized.df, ignored.cols)
+  return(standardized.df)
+}
+
+iris.stand <- standardize.df(data = iris, ignore = 5)
+```
+
+
+```{r standardize-df-names}
+# data: data frame to standardize
+# ignore: (optional) vector of columns to skip in standardization process
+# returns: data frame with all non-ignored columns standardized to have mean = 0, sd = 1
+standardize.df <- function(data, ignore = c()) {
+  ignored.cols <- as.data.frame(data[, ignore])
+  colnames(ignored.cols) <- colnames(data)[ignore]
+  standardized.df <- apply(X = data[, -ignore], MARGIN = 2, FUN = standardize)
+  standardized.df <- cbind(standardized.df, ignored.cols)
+  return(standardized.df)
+}
+
+iris.stand <- standardize.df(data = iris, ignore = 5)
+```
+
+***
+# Old Lesson
+
+#### Learning objectives
+1. Write and use functions in R
+2. Document functions for easy re-use
+3. Replace loops with functions optimized for vector calculations
+
+## Don't Repeat Yourself
+The [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) aims to reduce repetition in software engineering. By writing and using functions to accomplish a set of instructions multiple times, you reduce the opportunities for mistakes and often improve performance of the code you write. Functional programming makes it easy to apply the same analyses to different sets of data, without excessive copy-paste-update cycles that can introduce hard-to-detect errors.
+
+***
+
+## Writing functions
+Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy/pasting that code and changing the variable names. Then more copy/paste. Then we forget to change one of the variables and spend a day figuring out why our results don't make sense.
+
 For example, consider the `airquality` data set:
 
 ```{r, echo = FALSE}
