@@ -36,19 +36,27 @@ head(iris)
 ```
 
 And if we look at the values for each of the four measurements, some are quite different in their ranges.
+
 ```{r iris-summary}
 summary(iris)
 ```
 
-Want to standardize so each has mean zero and variance of one
+Given this variation in ranges and magnitudes, we will have to standardize the variables if we want to run analyses like principle components analysis (PCA) (PCA is beyond the scope of this lesson, but it is covered in a [separate lesson](https://jcoliver.github.io/learn-r/003-intro-multivariate.html)). Standardizing a variable means we transform the data so the mean value is zero and the variance is one.
 
-New script file, iris-stand.R
-```{r petal-length-standardization}
+We'll start by creating an R script to hold our work. R scripts are simple text files with a series of R commands and are a great way to make our work reproducible. For all scripts, it is a good idea to start off with a little information about what the script does (and who is responsible for it). So create a script (from the File menu, select New File > R Script or use the keyboard shortcut of Ctrl+Shift+N or Cmd+Shift+N).
+
+```{r script-header}
 # Standarize iris values
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2018-08-16
+```
 
+R will ignore anything that appears to the right of the pound sign, `#`.
+
+TODO: TO HERE
+
+```{r standardize-petal-length}
 # Standardize petal length
 mean.petal.length <- mean(iris$Petal.Length)
 sd.petal.length <- sd(iris$Petal.Length)
