@@ -360,7 +360,7 @@ OK, there are a few more things we want to change:
 iris.means$trait <- gsub(pattern = ".",
                          replacement = " ",
                          x = iris.means$trait,
-                         fixed = TRUE)
+                         fixed = TRUE) # if fixed = FALSE, evaluates as regex
 
 ggplot(data = iris.means, mapping = aes(x = Species, y = trait.mean)) +
   geom_point() +
