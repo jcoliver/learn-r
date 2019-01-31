@@ -1,0 +1,60 @@
+---
+title: "learn-r Annoucement message"
+author: "Jeff Oliver"
+date: "January 31, 2019"
+output: html_document
+---
+
+```{r setup-schedule, echo = FALSE}
+# Only this block should be edited
+# See lesson-info.csv for lesson identifiers ('number' column)
+schedule <- data.frame(dates = c("2019-02-05",
+                                 "2019-02-12",
+                                 "2019-02-19",
+                                 "2019-02-26"),
+                       lessons = c(-1, 4, -1, -1))
+```
+
+```{r prepare-data, echo = FALSE}
+lesson.info <- read.csv(file = "lesson-info.csv", stringsAsFactors = FALSE)
+schedule <- merge(x = schedule, y = lesson.info, 
+                  by.x = "lessons", by.y = "number",
+                  all.y = FALSE)
+schedule$dates <- as.Date(schedule$dates)
+schedule <- schedule[order(schedule$dates), ]
+schedule$day <- format(schedule$dates, "%B %d")
+```
+
+### Announcement for learn-r workshops
+Paste the following message into e-mail:
+
+***
+
+Would you mind forwarding this announcement to researchers in your department? Please let me know if you have any questions. Thanks in advance!
+
+\-----
+
+_All sessions will be 9-11 am on Tuesday in the [iSpace in the Science-Engineering Library](http://new.library.arizona.edu/ispace)_. To get the most out of these workshops, participants should bring a laptop with [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
+
+```{r print-schedule, echo = FALSE, results = "asis"}
+# Keep track of whether an open lab has been encountered; only print blurb for 
+# first instance
+open.hit <- FALSE
+for (i in 1:nrow(schedule)) {
+  if (open.hit & schedule$lessons[i] == -1) {
+    cat("+ ", schedule$day[i], ": **", schedule$title[i], "**.\n", sep = "")
+  } else {
+    cat("+ ", schedule$day[i], ": **", schedule$title[i], "**: ", schedule$blurb[i], "\n", sep = "")
+    if (schedule$lessons[i] == -1) {
+      open.hit <- TRUE
+    }
+  }
+}
+```
+
+Additional resources:
+
++ A tentative schedule of upcoming workshops is also available at: [https://jcoliver.github.io/learn-r/schedule](https://jcoliver.github.io/learn-r/schedule)
++ Want more help? Sign up for the UA Data Science Slack workspace at: [https://jcoliver.github.io/uadatascience-slack/](https://jcoliver.github.io/uadatascience-slack/)
++ Stay up to date with R workshops by signing up for the University of Arizona R Users mailing list at: [https://list.arizona.edu/sympa/subscribe/ruaz](https://list.arizona.edu/sympa/subscribe/ruaz)
++ Find even more data science resources by signing up for the Data Science Events list at: [https://list.arizona.edu/sympa/info/data7-events](https://list.arizona.edu/sympa/info/data7-events)
