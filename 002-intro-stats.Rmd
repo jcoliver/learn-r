@@ -12,8 +12,7 @@ An introduction to using the R statistics package and the RStudio interface.
 ####Learning objectives
 1. Read data from files and output results to files
 2. Extract relevant portions of datasets
-3. Run standard statistical tests in R, including Student's _t_, linear regression
-and analysis of variance
+3. Run standard statistical tests in R, including Student's _t_, analysis of variance (ANOVA), and simple linear regression.
 
 ## Statistics in R
 R was _designed_ for statistical analyses. This lesson provides an overview of reading data and writing output, as well as running standard statistical tests in R, including t-tests, linear regression, and analysis of variance.
@@ -25,21 +24,26 @@ dir.create(path = "data")
 dir.create(path = "output")
 ```
 
-##Analysis of Variance (ANOVA)
+## Data interrogation
 For our first set of analyses, we'll use a dataset that comes pre-loaded in R. The `iris` data is from early statistical work of R.A. Fisher, who used three species of _Iris_ flowers to develop linear discriminant analysis. Start by looking at the data with the `head` command:
+
 ```{r}
 head(x = iris)
 ```
-`iris` is a `data.frame`, which is probably the most commonly used data type in R. It is basically a table where each column is a variable and each row has one set of values for each of those variables. In the `iris` data, there are five columns: Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, and Species. Each row corresponds to the measurements for an individual flower. Note that all the values in a column of a `data.frame` must be of the same type - if you try to mix numbers and words in the same column, R will "coerce" the data to a single type, which may cause problems for downstream analyses.  
+
+`iris` is a `data.frame`, which is probably the most commonly used data structure in R. It is basically a table where each column is a variable and each row has one set of values for each of those variables (much like a single sheet in a program like LibreOffice Calc or Microsoft Excel). In the `iris` data, there are five columns: Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, and Species. Each row corresponds to the measurements for an individual flower. Note that all the values in a column of a `data.frame` must be of the same type - if you try to mix numbers and words in the same column, R will "coerce" the data to a single type, which may cause problems for downstream analyses.  
 
 An investigation of our call to the `head` command illustrates two fundamental concepts in R: variables and functions.
+
 ```{r, eval = FALSE}
 head(x = iris)
 ```
-* `iris` is a variable. That is, it is a name we use to refer to some information in our computer's memory. In this case, the information is a table of flower measurements.
-* `head` is the name of the function that prints out the first six rows of a `data.frame`. Most functions require some form of input; in this example, we provided one piece of input to `head`: the name of the variable for which we want the first six lines.  
+
++ `iris` is a variable. That is, it is a name we use to refer to some information in our computer's memory. In this case, the information is a table of flower measurements.
++ `head` is the name of the function that prints out the first six rows of a `data.frame`. Most functions require some form of input; in this example, we provided one piece of input to `head`: the name of the variable for which we want the first six lines.  
 
 Another great idea when investigating data is to plot it out to see if there are any odd values. Here we use `boxplot` to show the data for each species.
+
 ```{r}
 boxplot(formula = Petal.Length ~ Species, data = iris)
 ```
@@ -51,76 +55,10 @@ Also note that R is *case sensitive*, so if we refer to objects without using th
 boxplot(formula = Petal.Length ~ species, data = iris)
 ```
   
-To keep track of what we do, we will switch from running commands directly in the console to writing R scripts that we can execute. These scripts are just text files with R commands. Create a new script file called 'iris-anova.R'. Now add some key information to the top of the script, using the comment character, #, so R will know to ignore these lines.
-```{r}
-# ANOVA on iris data set
-# Jeff Oliver
-# jcoliver@email.arizona.edu
-# 2016-09-09
-```
-Commenting your code is critical in understanding why and how you did analyses when you return to the code two years from now.  
-  
-The question we will first address is: _are there differences in petal length among the three species?_  
-We start by building an analysis of variance model with the `aov` function:
-```{r}
-aov(formula = Petal.Length ~ Species, data = iris)
-```
-In this case, we pass _two_ arguments to the `aov` function:
+To keep track of what we do, we will switch from running commands directly in the console to writing R scripts that we can execute. These scripts are simple text files with R commands. 
 
-1. For the `formula` parameter, we pass `Petal.Length ~ Species`. This format is used throughout R for describing relationships we are testing. The format is `y ~ x`, where the response variables (e.g. `y`) are to the left of the tilde (~) and the predictor variables (e.g. `x`) are to the right of the tilde. In this example, we are asking if petal length is significantly different among the three species.
-2. We also need to tell R where to find the `Petal.Length` and `Species` data, so we pass the variable name of the `iris data.frame` to the `data` parameter.  
-
-But we want to store the model, not just print it to the screen, so we use the assignment operator `<-` to store the product of the `aov` function in a variable of our choice
-```{r}
-petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
-```
-Notice how when we execute this command, nothing printed in the console. This is because we instead sent the output of the `aov` call to a variable. If you just type the variable name,
-```{r, eval = FALSE}
-petal.length.aov
-```
-you will see the familiar output from the `aov` function:  
-```{r, echo = FALSE}
-petal.length.aov
-```
-To see the results of the ANOVA, we call the `summary` function:
-```{r}
-summary(object = petal.length.aov)
-```
-The species _do_ have significantly different petal lengths (P < 0.001).  
-  
-The last thing we want to do with this code is save our results to a file. To do so, we put the call to `summary` between a pair of calls to `sink`:
-```{r, eval = FALSE}
-sink(file = "output/petal-length-anova.txt")
-summary(object = petal.length.aov)
-sink()
-```
-Notice now that because we have directed output to the file "petal-length-anova.txt", the output of `summary` will _not_ be output to the console. Open the file to make sure the output was saved correctly.  
-  
-Our script should look like this:
-```{r, eval = FALSE}
-# ANOVA on iris data set
-# Jeff Oliver
-# jcoliver@email.arizona.edu
-# 2016-09-09
-
-# Run ANOVA on petal length
-petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
-
-# Save results to file
-sink(file = "output/petal-length-anova.txt")
-summary(object = petal.length.aov)
-sink()
-```
-
-> ###Challenge 1  
-Use ANOVA to test for differences in sepal width among the three species. What is the value of the _F_-statistic?
-
-([Solution](#solution-to-challenge-1))
-
-***
-
-##Student's _t_
-So the species are different, but how? To investigate this, we need to perform pairwise comparisons between the species. We use a _t_-test to ask whether or not the values for two species were likely drawn from two separate populations. Just looking at the data for two species of irises, it looks like the petal lengths are different, but are the _significantly_ different?
+## Student's _t_
+We are going to start by doing a single comparison, looking at the petal lengths of two species. We use a _t_-test to ask whether or not the values for two species were likely drawn from two separate populations. Just looking at the data for two species of irises, it looks like the petal lengths are different, but are they _significantly_ different?
 <style type="text/css">
 .table {
     width: 30%;
@@ -136,7 +74,8 @@ So the species are different, but how? To investigate this, we need to perform p
 |     1.4     |      4.6        |
 |     ...     |      ...        |
 
-Start by making a new R script file called 'iris-t-test.R' and add the header information.
+Start by making a new R script file called 'iris-t-test.R' and add some key information to the top of the script, using the comment character, #, so R will know to ignore these lines. Commenting your code is critical in understanding why and how you did analyses when you return to the code two years from now.
+
 ```{r}
 # T-test on iris petal lengths
 # Jeff Oliver
@@ -147,52 +86,65 @@ Start by making a new R script file called 'iris-t-test.R' and add the header in
 ```
 
 We'll start by comparing the data of _Iris setosa_ and _Iris versicolor_, so we need to create two new data objects, one corresponding to the _I. setosa_ data and one for the _I. versicolor_ data.
+
 ```{r}
 setosa <- iris[iris$Species == "setosa", ]
 versicolor <- iris[iris$Species == "versicolor", ]
 ```
+
 OK, a lot happened with those two lines. Let's take a look:
 
-* `iris` is the `data.frame` we worked with before.
-* `iris$Species` refers to one column in `iris`, that is, the column with the name of the species (setosa, versicolor, or virginica).
-* The square brackets `[<position 1>, <position 2>]` are used to indicate a subset of the `iris` data. A `data.frame` is effectively a two-dimensional structure - it has some number of rows (the first dimension) and some number of columns (the second dimension). We can see how many rows and columns are in a `data.frame` with the `dim` command. `dim(iris)` prints out the number of rows (`r nrow(iris)`) and the number of columns (`r ncol(iris)`): 
++ `iris` is the `data.frame` we worked with before.
++ `iris$Species` refers to one column in `iris`, that is, the column with the name of the species (setosa, versicolor, or virginica).
++ The square brackets `[<position 1>, <position 2>]` are used to indicate a subset of the `iris` data. A `data.frame` is effectively a two-dimensional structure - it has some number of rows (the first dimension) and some number of columns (the second dimension). We can see how many rows and columns are in a `data.frame` with the `dim` command. `dim(iris)` prints out the number of rows (`r nrow(iris)`) and the number of columns (`r ncol(iris)`): 
+
 ```{r}
 dim(iris)
 ```
+
 We use the square brackets to essentially give an address for the data we are interested in. We tell R which rows we want in the first position and which columns we want in the second position. If a dimension is left blank, then all rows/columns are returned. For example, this returns all columns for the third row of data in `iris`:
+
 ```{r}
 iris[3, ]
 ```
+
 So the code 
+
 ```{r, eval = FALSE}
 setosa <- iris[iris$Species == "setosa", ]
 ```
+
 will extract all columns (because there is nothing after the comma) in the `iris` data for those rows where the value in the `Species` column is "setosa" _and_ assign that information to a variable called `setosa`.  
   
 Comparing the `iris` data and the `setosa` data, we see that there are indeed fewer rows in the `setosa` data:
+
 ```{r}
 nrow(iris)
 nrow(setosa)
 ```
   
 Now to compare the two species, we call the `t.test` function in R, passing each set of data to `x` and `y`.
+
 ```{r}
 # Compare Petal.Length of these two species
 setosa.v.versicolor <- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
 ```
   
 The output of a _t_-test is a little different than an ANOVA; we only have to enter the name of the variable to see the results (in contrast, we had to use `summary` to see the significance of our ANOVA).
+
 ```{r}
 setosa.v.versicolor
 ```
+
 The results include:
 
-* Test statistic, degrees of freedom, and p-value
-* The confidence interval for the difference in means between the two data sets
-* The means of each data set
++ Test statistic, degrees of freedom, and p-value
++ The confidence interval for the difference in means between the two data sets
++ The means of each data set
 
 So we reject the hypothesis that these species have the same petal lengths.    
 As before, though, if we want to save these results to a file, we use `sink`:
+
 ```{r, eval = FALSE}
 sink(file = "output/petal-length-setosa-versicolor-t-test.txt")
 setosa.v.versicolor
@@ -200,6 +152,7 @@ sink()
 ```
 
 The final script should be:
+
 ```{r, eval = FALSE}
 # T-test on iris petal lengths
 # Jeff Oliver
@@ -221,8 +174,90 @@ setosa.v.versicolor
 sink()
 ```
 
-> ###Challenge 2  
+> ###Challenge 1  
 Test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
+
+([Solution](#solution-to-challenge-1))
+
+***
+
+## Analysis of Variance (ANOVA)
+ANOVA allows us to simultaneously compare multiple groups, to test whether group membership has a significant effect on a variable of interest. Create a new script file called 'iris-anova.R' and the header information.
+
+```{r}
+# ANOVA on iris data set
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-09-09
+```
+  
+The question we will address is: _are there differences in petal length among the three species?_  
+We start by building an analysis of variance model with the `aov` function:
+
+```{r}
+aov(formula = Petal.Length ~ Species, data = iris)
+```
+
+In this case, we pass _two_ arguments to the `aov` function:
+
+1. For the `formula` parameter, we pass `Petal.Length ~ Species`. This format is used throughout R for describing relationships we are testing. The format is `y ~ x`, where the response variables (e.g. `y`) are to the left of the tilde (~) and the predictor variables (e.g. `x`) are to the right of the tilde. In this example, we are asking if petal length is significantly different among the three species.
+2. We also need to tell R where to find the `Petal.Length` and `Species` data, so we pass the variable name of the `iris data.frame` to the `data` parameter.  
+
+But we want to store the model, not just print it to the screen, so we use the assignment operator `<-` to store the product of the `aov` function in a variable of our choice
+
+```{r}
+petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
+```
+
+Notice how when we execute this command, nothing printed in the console. This is because we instead sent the output of the `aov` call to a variable. If you just type the variable name,
+
+```{r, eval = FALSE}
+petal.length.aov
+```
+
+you will see the familiar output from the `aov` function:  
+
+```{r, echo = FALSE}
+petal.length.aov
+```
+
+To see the results of the ANOVA, we call the `summary` function:
+
+```{r}
+summary(object = petal.length.aov)
+```
+
+The species _do_ have significantly different petal lengths (P < 0.001). If one wanted to run a _post hoc_ test to assess _how_ the species are different, a Tukey test comparing means would likely be the most appropriate option. A link to an example of how to do this is in the [Additional resources](#additional-resources) section at the end of this lesson.
+  
+The last thing we want to do with this code is save our results to a file. To do so, we put the call to `summary` between a pair of calls to `sink`:
+
+```{r, eval = FALSE}
+sink(file = "output/petal-length-anova.txt")
+summary(object = petal.length.aov)
+sink()
+```
+
+Notice now that because we have directed output to the file "petal-length-anova.txt", the output of `summary` will _not_ be output to the console. Open the file to make sure the output was saved correctly.  
+  
+Our script should look like this:
+
+```{r, eval = FALSE}
+# ANOVA on iris data set
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2016-09-09
+
+# Run ANOVA on petal length
+petal.length.aov <- aov(formula = Petal.Length ~ Species, data = iris)
+
+# Save results to file
+sink(file = "output/petal-length-anova.txt")
+summary(object = petal.length.aov)
+sink()
+```
+
+> ###Challenge 2  
+Use ANOVA to test for differences in sepal width among the three species. What is the value of the _F_-statistic?
 
 ([Solution](#solution-to-challenge-2))
 
@@ -230,6 +265,7 @@ Test for significant differences in petal lengths between _I. setosa_ and _I. vi
 
 ##Linear regression
 For this final section, we will test for a relationship between life expectancy and per capita [gross domestic product](https://en.wikipedia.org/wiki/Gross_domestic_product) (GDP). Start by downloading the data from [https://tinyurl.com/gapminder-five-year-csv](https://tinyurl.com/gapminder-five-year-csv) (right-click or Ctrl-click on link and Save As...). Save this to the 'data' directory you created in the Setup section. The file has comma-separated values for 142 countries at twelve different years; the data can be loaded in R with the `read.csv` function:
+
 ```{r}
 # Test relationship between life expectancy and GDP
 # Jeff Oliver
@@ -238,31 +274,39 @@ For this final section, we will test for a relationship between life expectancy 
 
 orig.gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
 ```
+
 This reads the file into memory and stores the data in a data frame called `orig.gapminder`.
   
 Recall you can see the first few rows with the `head` function.
+
 ```{r}
 head(orig.gapminder)
 ```
+
 Another useful quality assurance tool is `summary`, which provides a basic description for each column in the data frame.
+
 ```{r}
 summary(orig.gapminder)
 ```
+
 For the four numeric columns (`year`, `pop`, `lifeExp`, and `gdpPercap`), some descriptive statistics are shown. For the `country` and `continent` columns the first few values and frequencies of each value are shown (i.e. there are 12 records for Afghanistan and 624 records for Africa).
   
 For this analysis, we only want the data from 2007, so we start by subsetting those data. This creates a new variable and stores only those rows in the original data frame where the value in the `year` column is 2007.
+
 ```{r}
 # Subset 2007 data
 gapminder <- orig.gapminder[orig.gapminder$year == 2007, ]
 ```
   
 As we did for the ANOVA analyses, it is usually a good idea to visually inspect the data when possible. Here we can use the `plot` function to create a scatterplot of the two columns of interest, `lifeExp` and `gdpPercap`.
+
 ```{r}
 # Plot to look at data
 plot(x = gapminder$gdpPercap, y = gapminder$lifeExp)
 ```
   
 We can see immediately that this is unlikely a linear relationship. For our purposes, we will need to log-transform the GDP data. Create a new column in the `gapminder` data frame with the log~10~-transformed GDP and plot this transformed data.
+
 ```{r}
 # Create log-transformed GDP
 gapminder$logGDP <- log10(gapminder$gdpPercap)
@@ -274,6 +318,7 @@ plot(x = gapminder$logGDP, y = gapminder$lifeExp, xlab = "log10(GDP)", ylab = "L
 Notice also that we passed two additional arguments to the `plot` command: `xlab` and `ylab`. These are used to label the x- and y-axis, respectively (try the `plot` function without passing `xlab` and `ylab` arguments to see what happens without them).
   
 Now that the data are properly transformed, we can create the linear model for the predictability of life expectancy based on gross domestic product.
+
 ```{r}
 # Run a linear model
 lifeExp.v.gdp <- lm(formula = lifeExp ~ logGDP, data = gapminder)
@@ -293,6 +338,7 @@ lifeExp.sum <- summary(lifeExp.v.gdp)
 First of all, there *is* a significant relationship between these two variables (p < 2 x 10^-16^, or, as R reports in the `Pr>(|t|)` column, p < 2e-16). The `Estimate` column of the results lists a value of `r round(x = lifeExp.sum$coefficients['logGDP', 'Estimate'], digits = 3)`, which means that for every 10-fold increase in per capita GDP (remember we log~10~-transformed GDP), life expectancy increases by almost 17 years.
   
 As before, if we want to instead save the results to a file instead of printing them to the screen, we use the `sink` function.
+
 ```{r, eval = FALSE}
 sink(file = "output/lifeExp-gdp-regression.txt")
 summary(lifeExp.v.gdp)
@@ -300,6 +346,7 @@ sink()
 ```
   
 The final script should be:
+
 ```{r, eval = FALSE}
 # Test relationship between life expectancy and GDP
 # Jeff Oliver
@@ -339,26 +386,11 @@ Test for a relationship between life expectancy and log base 2 of GDP for the 19
 
 ##Solutions to Challenges
 ###Solution to Challenge 1  
-> Use ANOVA to test for differences in sepal width among the three species. What is the value of the _F_-statistic?
 
-```{r}
-sepal.width.aov <- aov(formula = Sepal.Width ~ Species, data = iris)
-summary(object = sepal.width.aov)
-```
-
-```{r echo = FALSE}
-aov.summary <- summary(object = sepal.width.aov)
-f.stat <- aov.summary[[1]][['F value']][1]
-```
-  
-The _F_-statistic = `r round(x = f.stat, digits = 2)`, and the p-value is quite small, so there are significant sepal width differences among species.
-
-***
-
-###Solution to Challenge 2
 > Test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
 
 ####First comparison: _I. setosa_ vs. _I. virginica_
+
 ```{r}
 # Subset setosa data
 setosa <- iris[iris$Species == "setosa", ]
@@ -375,6 +407,7 @@ _I. setosa_ and _I. virginica_ have significantly different petal lengths.
 ***
   
 ####Second comparison: _I. versicolor_ and _I. virginica_
+
 ```{r}
 # Subset versicolor data
 versicolor <- iris[iris$Species == "versicolor", ]
@@ -387,6 +420,23 @@ versicolor.v.virginica
 ```
   
 _I. versicolor_ and _I. virginica_ also have different significantly different petal lengths.
+
+***
+
+###Solution to Challenge 2
+> Use ANOVA to test for differences in sepal width among the three species. What is the value of the _F_-statistic?
+
+```{r}
+sepal.width.aov <- aov(formula = Sepal.Width ~ Species, data = iris)
+summary(object = sepal.width.aov)
+```
+
+```{r echo = FALSE}
+aov.summary <- summary(object = sepal.width.aov)
+f.stat <- aov.summary[[1]][['F value']][1]
+```
+  
+The _F_-statistic = `r round(x = f.stat, digits = 2)`, and the p-value is quite small, so there are significant sepal width differences among species.
 
 ***
 
@@ -425,7 +475,8 @@ the GDP data, so this coefficient indicates the change in life expectancy for ev
 
 + Early work by R.A. Fisher: [doi: 10.1111%2Fj.1469-1809.1936.tb02137.x](https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x)
 + A [PDF version](https://jcoliver.github.io/learn-r/002-intro-stats.pdf) of this lesson
++ An [Example of Tukey's test](https://www.r-bloggers.com/anova-and-tukeys-test-on-r/) for _post hoc_ pairwise comparisons from ANOVA results.
 
 <a href="index.html">Back to learn-r main page</a>
   
-Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
+Questions?  e-mail me at [jcoliver@email.arizona.edu](mailto:jcoliver@email.arizona.edu).

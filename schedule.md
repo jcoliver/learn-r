@@ -2,11 +2,9 @@
 
 | Day | Month | Workshop                          |
 |:---:|:-----:|:---------------------------------:|
-| 07  | Aug   | **NO LAB THIS DAY**               |
-| 14  | Aug   | Open lab                          |
-| 21  | Aug   | Writing functions in R            |
-| 28  | Aug   | Open lab                          |
-| 04  | Sep   | Differential Gene Expression in R |
-| 11  | Sep   | Open lab                          |
-| 18  | Sep   | Intro to Machine Learning in R    |
-| 25  | Sep   | Open lab                          |
+| 08  | Jan   | Open lab                          |
+| 15  | Jan   | Introduction to statistics in R   |
+| 22  | Jan   | Open lab                          |
+| 29  | Jan   | Open lab                          |
+
+Note this schedule is generally updated at the end of each month. If you have questions about the schedule, or are interested in learning about a particular topic in R, contact Jeff Oliver at [jcoliver@email.arizona.edu](mailto:jcoliver@email.arizona.edu?subject=R%20workshop%20inquiry).
