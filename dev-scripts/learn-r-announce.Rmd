@@ -1,18 +1,18 @@
 ---
 title: "learn-r Annoucement message"
 author: "Jeff Oliver"
-date: "January 31, 2019"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
 ```{r setup-schedule, echo = FALSE}
 # Only this block should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2019-02-05",
-                                 "2019-02-12",
-                                 "2019-02-19",
-                                 "2019-02-26"),
-                       lessons = c(-1, 4, -1, -1))
+schedule <- data.frame(dates = c("2019-03-05",
+                                 "2019-03-12",
+                                 "2019-03-19",
+                                 "2019-03-26"),
+                       lessons = c(-1, 6, -1, -1))
 ```
 
 ```{r prepare-data, echo = FALSE}
