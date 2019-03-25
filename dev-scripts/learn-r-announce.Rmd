@@ -8,11 +8,12 @@ output: html_document
 ```{r setup-schedule, echo = FALSE}
 # Only this block should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2019-03-05",
-                                 "2019-03-12",
-                                 "2019-03-19",
-                                 "2019-03-26"),
-                       lessons = c(-1, 6, -1, -1))
+schedule <- data.frame(dates = c("2019-04-02",
+                                 "2019-04-09",
+                                 "2019-04-16",
+                                 "2019-04-23",
+                                 "2019-04-30"),
+                       lessons = c(7, -1, -2, -1, -1))
 ```
 
 ```{r prepare-data, echo = FALSE}
@@ -58,3 +59,23 @@ Additional resources:
 + Want more help? Sign up for the UA Data Science Slack workspace at: [https://jcoliver.github.io/uadatascience-slack/](https://jcoliver.github.io/uadatascience-slack/)
 + Stay up to date with R workshops by signing up for the University of Arizona R Users mailing list at: [https://list.arizona.edu/sympa/subscribe/ruaz](https://list.arizona.edu/sympa/subscribe/ruaz)
 + Find even more data science resources by signing up for the Data Science Events list at: [https://list.arizona.edu/sympa/info/data7-events](https://list.arizona.edu/sympa/info/data7-events)
+
+***
+
+#### Attendance files set up:
+```{r setup-files, echo = FALSE}
+# Creating files with only header rows for tracking attendance
+header.row <- "Last,First,E-mail,College,Department,Position"
+for (i in 1:nrow(schedule)) {
+  filename <- paste0(schedule$dates[i], "-main-", schedule$short.name[i], "-attendance.csv")
+  filename <- paste0("../../learn-r-non-repo/admin/", filename)
+  if (!file.exists(filename)) {
+    file.create(filename)
+    file.connection <- file(filename)
+    writeLines(text = header.row, con = file.connection)
+    close(file.connection)
+    cat(filename, "\n")
+  }
+}
+```
+
