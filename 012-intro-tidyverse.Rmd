@@ -8,21 +8,6 @@ output:
     latex_engine: xelatex
 ---
 
-<!--
-Additional material to develop, if warranted
-+ Back to dplyr & readr
-    + Need data set with text and date fields so we can read it in with `read_csv`...
-    + maybe a twitter data set? See [rtweet](http://rtweet.info/index.html)
-        + Looks like we can only share 50,000 tweets (https://developer.twitter.com/en/developer-terms/agreement-and-policy#f-be-a-good-partner-to-twitter)
-    + If the returned object (ideally a data frame) has a lot of extraneous columns,
-        + `select` so there are only the ones we want
-        + `mutate` to create a new column?
-    + Throw in a call to `filter` for only those in a certain time range
-    + Call `sample_n` to pull out 1000 random rows
-        + Start with the hard way (`subsample <- df[sample(x = 1:nrow(df), size = 1000), ]`)
-    + Do a time series plot?
--->    
-
 Make your life easier and your code faster with the suite of "tidyverse" packages, including ggplot, tidyr, and dplyr.
 
 #### Learning objectives
