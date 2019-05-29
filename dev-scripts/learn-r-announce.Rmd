@@ -6,13 +6,15 @@ output: html_document
 ---
 
 ```{r setup-schedule, echo = FALSE}
+# TODO: Consider adding update to schedule.md as well
+
 # Only this block should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2019-05-07",
-                                 "2019-05-14",
-                                 "2019-05-21",
-                                 "2019-05-28"),
-                       lessons = c(-1, 1, 0, -1))
+schedule <- data.frame(dates = c("2019-06-04",
+                                 "2019-06-11",
+                                 "2019-06-18",
+                                 "2019-06-25"),
+                       lessons = c(-1, 4, 0, -1))
 ```
 
 ```{r prepare-data, echo = FALSE}
