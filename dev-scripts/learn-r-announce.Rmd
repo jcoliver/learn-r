@@ -5,19 +5,25 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 ---
 
-```{r setup-schedule, echo = FALSE}
+```{r setup-options, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+suppressPackageStartupMessages(expr = library(lubridate))
+```
+
+```{r setup-schedule}
 # TODO: Consider adding update to schedule.md as well
 
 # Only this block should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2019-06-04",
-                                 "2019-06-11",
-                                 "2019-06-18",
-                                 "2019-06-25"),
-                       lessons = c(-1, 4, 0, -1))
+schedule <- data.frame(dates = c("2019-07-02",
+                                 "2019-07-09",
+                                 "2019-07-16",
+                                 "2019-07-23",
+                                 "2019-07-30"),
+                       lessons = c(-1, -1, 10, -1, -1))
 ```
 
-```{r prepare-data, echo = FALSE}
+```{r prepare-data}
 lesson.info <- read.csv(file = "lesson-info.csv", stringsAsFactors = FALSE)
 schedule <- merge(x = schedule, y = lesson.info, 
                   by.x = "lessons", by.y = "number",
@@ -34,11 +40,11 @@ Paste the following message into e-mail:
 
 Would you mind forwarding this announcement to researchers in your department? Please let me know if you have any questions. Thanks in advance!
 
-\-----
+\-\-\-\-\-
 
 _All sessions will be 9-11 am on Tuesday in Room 200S of the [Weaver Science-Engineering Library](https://new.library.arizona.edu/visit/science)_. To get the most out of these workshops, participants should bring a laptop with [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
 
-```{r print-schedule, echo = FALSE, results = "asis"}
+```{r print-schedule, results = "asis"}
 # Keep track of whether an open lab has been encountered; only print blurb for 
 # first instance
 open.hit <- FALSE
@@ -66,7 +72,7 @@ Additional resources:
 ***
 
 #### Attendance files set up:
-```{r setup-files, echo = FALSE}
+```{r setup-files}
 # Creating files with only header rows for tracking attendance
 header.row <- "Last,First,E-mail,College,Department,Position"
 for (i in 1:nrow(schedule)) {
@@ -84,3 +90,49 @@ for (i in 1:nrow(schedule)) {
 }
 ```
 
+***
+
+<!-- still to do -->
+```{r create-schedule-md, eval = FALSE}
+
+# Write a small data file with schedule information to a temporary file
+# Run script that creates the file schedule.md
+source(file = "create-schedule.R")
+# Delete the temporary schedule file
+
+# See code OUTSIDE of r-block below this chunk.
+
+# TODO: Won't work due to RMarkdown redirection of output
+# sink(file = "schedule-test.md")
+
+# TODO: Doesn't work either
+# https://groups.google.com/forum/#!topic/knitr/TCz9vNLlslY
+{
+  sink("schedule-test.md")
+  cat("cat command", "\n")
+  print("print command\n")
+  sprintf("sprintf command\n")
+  sink()
+}
+
+schedule.file <- file("schedule-test.md")
+out <- capture.output(
+  print("# Tentative schedule of upcoming workshops\n\n"), 
+  print("| Day | Month | Workshop |\n"), 
+  print("|:---:|:-----:|:---------------------------------:|\n"))
+  
+#   for (i in 1:nrow(schedule)) {
+#     cat("| ", day(schedule$dates[i]), 
+#         " | ", as.character(month(schedule$dates[i], label = TRUE, abbr = TRUE)), sep = "")
+#     if (schedule$lessons[i] != 0) {
+#       cat(" | ", schedule$title[i], " |\n", sep = "")
+#     } else {
+#       cat(" | _", schedule$title[i], "_ |\n", sep = "")
+#     }
+#   },
+#   cat("\n\nNote this schedule is generally updated at the end of each month. If you have questions about the schedule, or are interested in learning about a particular topic in R, contact Jeff Oliver at [jcoliver@email.arizona.edu](mailto:jcoliver@email.arizona.edu?subject=R%20workshop%20inquiry).")
+# )
+cat(out, file = schedule.file)
+close(con = schedule.file)
+# sink()  
+```
