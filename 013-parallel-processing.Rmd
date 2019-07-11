@@ -1,0 +1,81 @@
+---
+title: "Parallel processing in R"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+---
+
+[INTRODUCTORY SENTENCE]
+
+#### Learning objectives
+1. Use `for` loop syntax to repeat operations
+2. Apply built-in functions for more efficient repetition
+3. Implement processes in parallel to reduce computation time
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+***
+
+## Getting started
+
+***
+
+## Repeating things
+
+```{r}
+# Sampling
+# https://www.census.gov/quickfacts/fact/table/US/LFE046217
+prop.women <- 0.582
+
+random.draw <- sample(x = c("female", "male"),
+                      size = 500,
+                      replace = TRUE,
+                      prob = c(prop.women, 1 - prop.women))
+
+table(random.draw)
+
+prop.latinx <- 0.183
+
+random.draw <- sample(x = c("latinx", "not"),
+                      size = 500,
+                      replace = TRUE,
+                      prob = c(prop.latinx, 1 - prop.latinx))
+
+table(random.draw)
+
+# Observed Fortune 500 U.S. CEOs
+f500.women <- 33
+f500.latinx <- 11
+
+# For loop, 1000 replicates to build distribution
+```
+
+***
+
+## Repeating things faster
+```{r}
+# use sapply or lapply instead of for loop
+```
+
+***
+
+## Don't wait in line
+```{r}
+# replace s/lapply with parS/Lapply
+```
+
+***
+## Additional resources
+
++ [resource one](url-one)
++ [resource two](url-two)
++ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
