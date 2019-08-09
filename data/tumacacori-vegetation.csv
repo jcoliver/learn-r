@@ -1,0 +1,292 @@
+Plot_Event,Field_Name,Common_Name,Family,Species_Code,Percent_Cover
+TUMC_IP01_01,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,30
+TUMC_IP01_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,30
+TUMC_IP01_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,3
+TUMC_IP01_01,Aristida ternipes  ,spidergrass,Poaceae,ARITER,0.5
+TUMC_IP01_01,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,18
+TUMC_IP01_01,Boerhavia spicata  ,creeping spiderling,Nyctaginaceae,BOESPI,8
+TUMC_IP01_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,18
+TUMC_IP01_01,Ferocactus wislizeni  ,candy barrelcactus,Cactaceae,FERWIS,0.5
+TUMC_IP01_01,Mentzelia albicaulis  ,whitestem blazingstar,Loasaceae,MENALB,0.5
+TUMC_IP01_01,Mimosa aculeaticarpa var. biuncifera,catclaw mimosa,Fabaceae,MIMACUBIN,3
+TUMC_IP01_01,Muhlenbergia porteri  ,bush muhly,Poaceae,MUHPOR,29.5
+TUMC_IP01_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,8.5
+TUMC_IP02_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,0.5
+TUMC_IP02_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,63
+TUMC_IP02_01,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,3
+TUMC_IP02_01,Bouteloua aristidoides  ,needle grama,Poaceae,BOUARI,0.5
+TUMC_IP02_01,Chenopodium,goosefoot,Chenopodiaceae,CHENO,3
+TUMC_IP02_01,Chloris virgata  ,feather fingergrass,Poaceae,CHLVIR,3
+TUMC_IP02_01,Eragrostis lehmanniana  ,Lehmann lovegrass,Poaceae,ERALEH,0.5
+TUMC_IP02_01,Helianthus annuus  ,common sunflower,Asteraceae,HELANN,0.5
+TUMC_IP02_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,14
+TUMC_IP02_01,Setaria,bristlegrass,Poaceae,SETAR,3
+TUMC_IP02_01,Sisymbrium irio  ,London rocket,Brassicaceae,SISIRI,0.5
+TUMC_IP02_01,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,3
+TUMC_IP03_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,11
+TUMC_IP03_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,42
+TUMC_IP03_01,Anisacanthus thurberi  ,Thurber's desert honeysuckle,Acanthaceae,ANITHU,3
+TUMC_IP03_01,Chenopodium,goosefoot,Chenopodiaceae,CHENO,0.5
+TUMC_IP03_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,0.5
+TUMC_IP03_01,Ipomoea,morning-glory,Convolvulaceae,IPOMO,0.5
+TUMC_IP03_01,Oenothera,evening-primrose,Onagraceae,OENOT,0.5
+TUMC_IP03_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,45.5
+TUMC_IP03_01,Setaria,bristlegrass,Poaceae,SETAR,3
+TUMC_IP03_01,Sporobolus cryptandrus  ,sand dropseed,Poaceae,SPOCRY,0.5
+TUMC_IP03_01,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,0.5
+TUMC_IP03_01,Tithonia thurberi  ,Arizona sunflowerweed,Asteraceae,TITTHU,0.5
+TUMC_IP04_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,42
+TUMC_IP04_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,8
+TUMC_IP04_01,Aristida purpurea  ,purple threeawn,Poaceae,ARIPUR,0.5
+TUMC_IP04_01,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,3
+TUMC_IP04_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,8
+TUMC_IP04_01,Chenopodium,goosefoot,Chenopodiaceae,CHENO,3
+TUMC_IP04_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,29.5
+TUMC_IP04_01,Eschscholzia californica ssp. mexicana,California poppy,Papaveraceae,ESCCALMEX,3
+TUMC_IP04_01,Ferocactus wislizeni  ,candy barrelcactus,Cactaceae,FERWIS,0.5
+TUMC_IP04_01,Ipomoea,morning-glory,Convolvulaceae,IPOMO,0.5
+TUMC_IP04_01,Leptochloa dubia  ,green sprangletop,Poaceae,LEPDUB,8
+TUMC_IP04_01,Phacelia,phacelia,Hydrophyllaceae,PHACE,3
+TUMC_IP04_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,37.5
+TUMC_IP04_01,Setaria,bristlegrass,Poaceae,SETAR,3
+TUMC_IP04_01,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,3
+TUMC_IP05_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,29.5
+TUMC_IP05_01,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,8
+TUMC_IP05_01,Bouteloua aristidoides  ,needle grama,Poaceae,BOUARI,3
+TUMC_IP05_01,Chloris virgata  ,feather fingergrass,Poaceae,CHLVIR,18
+TUMC_IP05_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,3
+TUMC_IP05_01,Eragrostis cilianensis  ,stinkgrass,Poaceae,ERACIL,0.5
+TUMC_IP05_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,4
+TUMC_IP05_01,Setaria,bristlegrass,Poaceae,SETAR,0.5
+TUMC_IP05_01,Sisymbrium irio  ,London rocket,Brassicaceae,SISIRI,0.5
+TUMC_IP05_01,Sporobolus cryptandrus  ,sand dropseed,Poaceae,SPOCRY,0.5
+TUMC_IP05_01,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,0.5
+TUMC_IP06_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,42
+TUMC_IP06_01,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,0.5
+TUMC_IP06_01,Chenopodium,goosefoot,Chenopodiaceae,CHENO,18
+TUMC_IP06_01,Cheilanthes villosa  ,villous lipfern,Pteridaceae,CHEVIL,3
+TUMC_IP06_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,3
+TUMC_IP06_01,Helianthus annuus  ,common sunflower,Asteraceae,HELANN,0.5
+TUMC_IP06_01,Ipomoea,morning-glory,Convolvulaceae,IPOMO,0.5
+TUMC_IP06_01,Salsola kali  ,Russian thistle,Chenopodiaceae,SALKAL,63
+TUMC_IP06_01,Sambucus nigra,European black elderberry,Caprifoliaceae,SAMNIG,21
+TUMC_IP06_01,Sorghum halepense  ,Johnsongrass,Poaceae,SORHAL,0.5
+TUMC_IP06_01,Xanthium strumarium  ,rough cockleburr,Asteraceae,XANSTR,0.5
+TUMC_IP07_01,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,18
+TUMC_IP07_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,8
+TUMC_IP07_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,0.5
+TUMC_IP07_01,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,0.5
+TUMC_IP07_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,18
+TUMC_IP07_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,3
+TUMC_IP07_01,Ipomoea,morning-glory,Convolvulaceae,IPOMO,0.5
+TUMC_IP07_01,Mentzelia albicaulis  ,whitestem blazingstar,Loasaceae,MENALB,0.5
+TUMC_IP07_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,16
+TUMC_IP07_01,Setaria leucopila  ,streambed bristlegrass,Poaceae,SETLEU,0.5
+TUMC_IP07_01,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,0.5
+TUMC_IP09_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,0.5
+TUMC_IP09_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,29.5
+TUMC_IP09_01,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,0.5
+TUMC_IP09_01,Celtis laevigata  ,sugarberry,Ulmaceae,CELLAE,44
+TUMC_IP09_01,Cynodon dactylon  ,Bermudagrass,Poaceae,CYNDAC,8
+TUMC_IP09_01,Helianthus annuus  ,common sunflower,Asteraceae,HELANN,3
+TUMC_IP09_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,21
+TUMC_IP09_01,Salsola kali  ,Russian thistle,Chenopodiaceae,SALKAL,18
+TUMC_IP09_01,Sambucus nigra,European black elderberry,Caprifoliaceae,SAMNIG,60
+TUMC_IP09_01,Sphaeralcea,globemallow,Malvaceae,SPHAE,0.5
+TUMC_IP09_01,Sphaeralcea wrightii  ,Wright's globemallow,Malvaceae,SPHWRI,3
+TUMC_IP10_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,26
+TUMC_IP10_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,29.5
+TUMC_IP10_01,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,3
+TUMC_IP10_01,Anisacanthus thurberi  ,Thurber's desert honeysuckle,Acanthaceae,ANITHU,29.5
+TUMC_IP10_01,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,3
+TUMC_IP10_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,29.5
+TUMC_IP10_01,Celtis laevigata  ,sugarberry,Ulmaceae,CELLAE,3.5
+TUMC_IP10_01,Chenopodium,goosefoot,Chenopodiaceae,CHENO,3
+TUMC_IP10_01,Condalia warnockii  ,Warnock's snakewood,Rhamnaceae,CONWAR,8.5
+TUMC_IP10_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,3
+TUMC_IP10_01,Juniperus coahuilensis  ,redberry juniper,Cupressaceae,JUNCOA,0.5
+TUMC_IP10_01,Muhlenbergia polycaulis  ,cliff muhly,Poaceae,MUHPOL,8
+TUMC_IP10_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,11
+TUMC_IP10_01,Setaria,bristlegrass,Poaceae,SETAR,0.5
+TUMC_IP10_01,Sphaeralcea wrightii  ,Wright's globemallow,Malvaceae,SPHWRI,3
+TUMC_IP10_01,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,3
+TUMC_IP10_01,Tithonia thurberi  ,Arizona sunflowerweed,Asteraceae,TITTHU,0.5
+TUMC_IP10_01,Ziziphus obtusifolia  ,lotebush,Rhamnaceae,ZIZOBT,0.5
+TUMC_IP11_01,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,29.5
+TUMC_IP11_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,18
+TUMC_IP11_01,Allionia incarnata  ,trailing windmills,Nyctaginaceae,ALLINC,3
+TUMC_IP11_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,3
+TUMC_IP11_01,Boerhavia coccinea  ,scarlet spiderling,Nyctaginaceae,BOECOC,18
+TUMC_IP11_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,3
+TUMC_IP11_01,Ceanothus greggii  ,desert ceanothus,Rhamnaceae,CEAGRE,3
+TUMC_IP11_01,Chenopodium,goosefoot,Chenopodiaceae,CHENO,8
+TUMC_IP11_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,0.5
+TUMC_IP11_01,Eriogonum inflatum,desert trumpet,Polygonaceae,ERIINF,0.5
+TUMC_IP11_01,Juniperus coahuilensis  ,redberry juniper,Cupressaceae,JUNCOA,8
+TUMC_IP11_01,Muhlenbergia polycaulis  ,cliff muhly,Poaceae,MUHPOL,18
+TUMC_IP11_01,Phacelia,phacelia,Hydrophyllaceae,PHACE,3
+TUMC_IP11_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,11
+TUMC_IP11_01,Setaria,bristlegrass,Poaceae,SETAR,0.5
+TUMC_IP11_01,Sphaeralcea wrightii  ,Wright's globemallow,Malvaceae,SPHWRI,0.5
+TUMC_IP12_01,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,0.5
+TUMC_IP12_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,8
+TUMC_IP12_01,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,3
+TUMC_IP12_01,Aristida ternipes  ,spidergrass,Poaceae,ARITER,0.5
+TUMC_IP12_01,Astragalus,milkvetch,Fabaceae,ASTRA,0.5
+TUMC_IP12_01,Bouteloua aristidoides  ,needle grama,Poaceae,BOUARI,8
+TUMC_IP12_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,0.5
+TUMC_IP12_01,Chloris virgata  ,feather fingergrass,Poaceae,CHLVIR,0.5
+TUMC_IP12_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,8
+TUMC_IP12_01,Eragrostis lehmanniana  ,Lehmann lovegrass,Poaceae,ERALEH,3
+TUMC_IP12_01,Ferocactus wislizeni  ,candy barrelcactus,Cactaceae,FERWIS,0.5
+TUMC_IP12_01,Ipomoea,morning-glory,Convolvulaceae,IPOMO,3
+TUMC_IP12_01,Mimosa aculeaticarpa var. biuncifera,catclaw mimosa,Fabaceae,MIMACUBIN,0.5
+TUMC_IP12_01,Muhlenbergia porteri  ,bush muhly,Poaceae,MUHPOR,3
+TUMC_IP12_01,Panicum miliaceum  ,broomcorn millet,Poaceae,PANMIL,3
+TUMC_IP12_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,45
+TUMC_IP13_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,18
+TUMC_IP13_01,Acourtia nana  ,dwarf desertpeony,Asteraceae,ACONAN,0.5
+TUMC_IP13_01,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,8
+TUMC_IP13_01,Celtis laevigata  ,sugarberry,Ulmaceae,CELLAE,3
+TUMC_IP13_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,18
+TUMC_IP13_01,Gutierrezia microcephala  ,threadleaf snakeweed,Asteraceae,GUTMIC,3
+TUMC_IP13_01,Ipomoea,morning-glory,Convolvulaceae,IPOMO,3
+TUMC_IP13_01,Juniperus coahuilensis  ,redberry juniper,Cupressaceae,JUNCOA,0.5
+TUMC_IP13_01,Oenothera,evening-primrose,Onagraceae,OENOT,0.5
+TUMC_IP13_01,Penstemon parryi  ,Parry's beardtongue,Scrophulariaceae,PENPAR,0.5
+TUMC_IP13_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,47.5
+TUMC_IP13_01,Salsola kali  ,Russian thistle,Chenopodiaceae,SALKAL,0.5
+TUMC_IP13_01,Sambucus nigra ssp. cerulea,blue elderberry,Caprifoliaceae,SAMNIGCER,0.5
+TUMC_IP13_01,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,63
+TUMC_IP13_01,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,0.5
+TUMC_IP13_01,Tithonia thurberi  ,Arizona sunflowerweed,Asteraceae,TITTHU,3
+TUMC_IP13_01,Ziziphus obtusifolia  ,lotebush,Rhamnaceae,ZIZOBT,0.5
+TUMC_IP14_01,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,63
+TUMC_IP14_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,63
+TUMC_IP14_01,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,3
+TUMC_IP14_01,Aristida ternipes  ,spidergrass,Poaceae,ARITER,3
+TUMC_IP14_01,Bidens lemmonii  ,Lemmon's beggarticks,Asteraceae,BIDLEM,3
+TUMC_IP14_01,Boerhavia coccinea  ,scarlet spiderling,Nyctaginaceae,BOECOC,3
+TUMC_IP14_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,8
+TUMC_IP14_01,Calliandra eriophylla  ,fairyduster,Fabaceae,CALERI,0.5
+TUMC_IP14_01,Ceanothus greggii  ,desert ceanothus,Rhamnaceae,CEAGRE,3
+TUMC_IP14_01,Chenopodium,goosefoot,Chenopodiaceae,CHENO,3
+TUMC_IP14_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,8
+TUMC_IP14_01,Muhlenbergia fragilis  ,delicate muhly,Poaceae,MUHFRA,0.5
+TUMC_IP14_01,Muhlenbergia porteri  ,bush muhly,Poaceae,MUHPOR,3
+TUMC_IP14_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,11
+TUMC_IP14_01,Setaria,bristlegrass,Poaceae,SETAR,0.5
+TUMC_IP14_01,Sphaeralcea wrightii  ,Wright's globemallow,Malvaceae,SPHWRI,3
+TUMC_IP14_01,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,0.5
+TUMC_IP15_01,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,18
+TUMC_IP15_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,18
+TUMC_IP15_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,18
+TUMC_IP15_01,Boerhavia spicata  ,creeping spiderling,Nyctaginaceae,BOESPI,8
+TUMC_IP15_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,18
+TUMC_IP15_01,Bouteloua rothrockii  ,Rothrock's grama,Poaceae,BOUROT,3
+TUMC_IP15_01,Eragrostis lehmanniana  ,Lehmann lovegrass,Poaceae,ERALEH,0.5
+TUMC_IP15_01,Lycium andersonii  ,water jacket,Solanaceae,LYCAND,0.5
+TUMC_IP15_01,Muhlenbergia porteri  ,bush muhly,Poaceae,MUHPOR,18
+TUMC_IP15_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,21.5
+TUMC_IP15_01,Setaria,bristlegrass,Poaceae,SETAR,3
+TUMC_IP15_01,Sporobolus cryptandrus  ,sand dropseed,Poaceae,SPOCRY,0.5
+TUMC_IP15_01,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,3
+TUMC_IP15_01,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,0.5
+TUMC_IP15_01,Yucca elata  ,soaptree yucca,Agavaceae,YUCELA,0.5
+TUMC_IP16_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,50
+TUMC_IP16_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,18
+TUMC_IP16_01,Aristida ternipes  ,spidergrass,Poaceae,ARITER,0.5
+TUMC_IP16_01,Boerhavia coccinea  ,scarlet spiderling,Nyctaginaceae,BOECOC,8
+TUMC_IP16_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,3
+TUMC_IP16_01,Chenopodium,goosefoot,Chenopodiaceae,CHENO,3
+TUMC_IP16_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,0.5
+TUMC_IP16_01,Lycium andersonii  ,water jacket,Solanaceae,LYCAND,0.5
+TUMC_IP16_01,Oenothera,evening-primrose,Onagraceae,OENOT,0.5
+TUMC_IP16_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,39
+TUMC_IP16_01,Setaria,bristlegrass,Poaceae,SETAR,0.5
+TUMC_IP16_01,Sisymbrium irio  ,London rocket,Brassicaceae,SISIRI,0.5
+TUMC_IP16_01,Sphaeralcea,globemallow,Malvaceae,SPHAE,0.5
+TUMC_IP16_01,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,8
+TUMC_IP16_01,Ziziphus obtusifolia  ,lotebush,Rhamnaceae,ZIZOBT,0.5
+TUMC_IP17_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,29
+TUMC_IP17_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,8
+TUMC_IP17_01,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,3
+TUMC_IP17_01,Anisacanthus thurberi  ,Thurber's desert honeysuckle,Acanthaceae,ANITHU,8
+TUMC_IP17_01,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,18
+TUMC_IP17_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,8
+TUMC_IP17_01,Celtis laevigata  ,sugarberry,Ulmaceae,CELLAE,0.5
+TUMC_IP17_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,29.5
+TUMC_IP17_01,Helianthus annuus  ,common sunflower,Asteraceae,HELANN,3
+TUMC_IP17_01,Mentzelia albicaulis  ,whitestem blazingstar,Loasaceae,MENALB,3
+TUMC_IP17_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,86
+TUMC_IP17_01,Setaria,bristlegrass,Poaceae,SETAR,3
+TUMC_IP17_01,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,18
+TUMC_IP17_01,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,0.5
+TUMC_IP17_01,Ziziphus obtusifolia  ,lotebush,Rhamnaceae,ZIZOBT,6
+TUMC_IP19_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,18
+TUMC_IP19_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,18
+TUMC_IP19_01,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,3
+TUMC_IP19_01,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,0.5
+TUMC_IP19_01,Boerhavia coccinea  ,scarlet spiderling,Nyctaginaceae,BOECOC,0.5
+TUMC_IP19_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,3
+TUMC_IP19_01,Chenopodium,goosefoot,Chenopodiaceae,CHENO,18
+TUMC_IP19_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,18
+TUMC_IP19_01,Eschscholzia californica ssp. mexicana,California poppy,Papaveraceae,ESCCALMEX,0.5
+TUMC_IP19_01,Ipomoea,morning-glory,Convolvulaceae,IPOMO,0.5
+TUMC_IP19_01,Lycium andersonii  ,water jacket,Solanaceae,LYCAND,3
+TUMC_IP19_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,26
+TUMC_IP19_01,Setaria,bristlegrass,Poaceae,SETAR,0.5
+TUMC_IP19_01,Sisymbrium irio  ,London rocket,Brassicaceae,SISIRI,0.5
+TUMC_IP19_01,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,3
+TUMC_IP19_01,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,3
+TUMC_IP20_01,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,29.5
+TUMC_IP20_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,18
+TUMC_IP20_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,0.5
+TUMC_IP20_01,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,0.5
+TUMC_IP20_01,Aristida ternipes  ,spidergrass,Poaceae,ARITER,0.5
+TUMC_IP20_01,Bothriochloa barbinodis  ,cane bluestem,Poaceae,BOTBAR,0.5
+TUMC_IP20_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,3
+TUMC_IP20_01,Chenopodium,goosefoot,Chenopodiaceae,CHENO,8
+TUMC_IP20_01,Cryptantha,cryptantha,Boraginaceae,CRYPT,0.5
+TUMC_IP20_01,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,8
+TUMC_IP20_01,Eriogonum inflatum,desert trumpet,Polygonaceae,ERIINF,0.5
+TUMC_IP20_01,Erodium texanum  ,Texas stork's bill,Geraniaceae,EROTEX,0.5
+TUMC_IP20_01,Muhlenbergia porteri  ,bush muhly,Poaceae,MUHPOR,18
+TUMC_IP20_01,Oenothera primiveris  ,desert evening-primrose,Onagraceae,OENPRI,0.5
+TUMC_IP20_01,Phacelia,phacelia,Hydrophyllaceae,PHACE,3
+TUMC_IP20_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,11
+TUMC_IP20_01,Setaria,bristlegrass,Poaceae,SETAR,0.5
+TUMC_IP20_01,Sphaeralcea,globemallow,Malvaceae,SPHAE,0.5
+TUMC_IPS1_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,1
+TUMC_IPS1_01,N/A,Annual Forb,N/A,AF,8
+TUMC_IPS1_01,Celtis laevigata  ,sugarberry,Ulmaceae,CELLAE,67
+TUMC_IPS1_01,Cynodon dactylon  ,Bermudagrass,Poaceae,CYNDAC,8
+TUMC_IPS1_01,Juniperus coahuilensis  ,redberry juniper,Cupressaceae,JUNCOA,0.5
+TUMC_IPS1_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,48
+TUMC_IPS1_01,Sambucus nigra ssp. cerulea,blue elderberry,Caprifoliaceae,SAMNIGCER,11
+TUMC_IPS1_01,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,42
+TUMC_IPS1_01,Ziziphus obtusifolia  ,lotebush,Rhamnaceae,ZIZOBT,1
+TUMC_IPS2_01,N/A,Annual Forb,N/A,AF,63
+TUMC_IPS2_01,N/A,Annual Grass,N/A,AG,8
+TUMC_IPS2_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,0.5
+TUMC_IPS2_01,Sambucus nigra ssp. cerulea,blue elderberry,Caprifoliaceae,SAMNIGCER,8
+TUMC_IPS3_01,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,0.5
+TUMC_IPS3_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,3
+TUMC_IPS3_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,42
+TUMC_IPS3_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,0.5
+TUMC_IPS3_01,Cottea pappophoroides  ,cotta grass,Poaceae,COTPAP,0.5
+TUMC_IPS3_01,Lycium andersonii  ,water jacket,Solanaceae,LYCAND,0.5
+TUMC_IPS3_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,14
+TUMC_IPS3_01,Sporobolus cryptandrus  ,sand dropseed,Poaceae,SPOCRY,0.5
+TUMC_IPS3_01,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,0.5
+TUMC_IPS4_01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,3
+TUMC_IPS4_01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,0.5
+TUMC_IPS4_01,Astragalus,milkvetch,Fabaceae,ASTRA,0.5
+TUMC_IPS4_01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,0.5
+TUMC_IPS4_01,Bouteloua,grama,Poaceae,BOUTE,18
+TUMC_IPS4_01,Eragrostis lehmanniana  ,Lehmann lovegrass,Poaceae,ERALEH,0.5
+TUMC_IPS4_01,Erioneuron avenaceum  ,shortleaf woollygrass,Poaceae,ERIAVE,0.5
+TUMC_IPS4_01,Opuntia engelmannii  ,cactus apple,Cactaceae,OPUENG,0.5
+TUMC_IPS4_01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,50.5
+TUMC_IPS4_01,Salsola kali  ,Russian thistle,Chenopodiaceae,SALKAL,0.5
+TUMC_IPS4_01,N/A,Unknown Perennial Forb,N/A,UNKFOR,8

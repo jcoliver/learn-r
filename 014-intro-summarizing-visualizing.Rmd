@@ -1,0 +1,105 @@
+---
+title: "Introduction to data summarizing and visualization"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+---
+
+The R programming language provides many tools for data analysis and visualization, but all the options can be daunting. This lesson provides an introduction to wrangling data in R and using graphics to tell a story with data.
+
+#### Learning objectives
+1. Understand the difference between files and R objects
+2. Modify data for proper data hygiene
+3. Summarize information from raw data
+4. Visualize data to convey information
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+***
+
+## Getting started
+
+### The tools: R and RStudio
+For this lesson, we will use the R programming language in the RStudio environment. RStudio provides a convenient interface for working with files and packages in R. If you have not done so already, install R and RStudio; details can be found on the [installation page](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
+
+### Preparing our workplace
+Key to successful programming is organization. In RStudio, we use Projects to organize our work (a "Project" is really just a fancy name for a folder that contains all our files). For this lesson, we'll create a new project through the File menu (<style "font-family='Trebuchet MS', 'Helvetical', 'sans-serif'">File > New Project</style>). In the first dialog, select "New Directory", and select "New Project" in the second dialog. Next you'll be prompted to provide a directory name. This will be the name of our project, so we should give it an informative name. For this lesson, we will be using data from vegetation surveys of [Tumacacori National Historical Park](https://www.nps.gov/tuma/index.htm), for the directory name, enter "vegetation". We need also to tell RStudio where to put the lesson on our computer; for this lesson, we will place the folder on our Desktop, so it is easy to find. In your own work, you may find it better to place project folders in your Documents folder.
+
+The last thing we need to do to set up our workspace is to use file organization that reinforces best practices. In general, there should be a one-way flow of information: we take information from _data_ and write code to produce _output_. We want to avoid any output from messing up our data, so we create separate folders for each. We want to create two folders, one for our data and one for any output, which may include results of statistical analyses or data visualization. In the R console,
+
+```{r create-folders, eval = FALSE}
+dir.create("data")
+dir.create("output")
+```
+
+### [Get data]
+
+Probably want to subset data beforehand
+Data are csv at https://irma.nps.gov/DataStore/DownloadFile/569336
+Webpage with files and other information at https://irma.nps.gov/DataStore/Reference/Profile/2233448
+Need to look at plot descriptions and pull out data from there for actual story-telling part of lesson; could use Physio_class for comparisons between plots (there are five types, including one type (woodland) that has only one plot)
+
+
+***
+
+## Data in R
+
+### Data _outside_ R
+[Open file in Excel]
+
+### [Load in data]
+
+### [QA/QC]
+`head`
+
+***
+
+## Cleaning up
+
+### Missing data
+take out some NAs
+
+### Fixing data
+replace some values?
+
+***
+
+## Summarizing data
+
+### Using `summary`
+
+### Summary statistics for groups
+use `mean` and `sd` for subset(s) of data
+
+***
+
+## Visualizing data
+
+### The ggplot2 package
+`install.packages()`
+
+### First rule of plots
+Draw it first
+
+### Code it second
+Simple scatterplot, no colors
+
+### Telling the story
+Add group colors for story
+
+***
+
+## Additional resources
+
++ Official [ggplot documentation](http://docs.ggplot2.org/current/)
++ A handy [cheatsheet for ggplot](https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf)
++ A [PDF version](https://jcoliver.github.io/learn-r/014-intro-summarizing-visualizing.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
