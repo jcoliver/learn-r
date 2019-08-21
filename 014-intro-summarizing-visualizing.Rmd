@@ -37,11 +37,8 @@ dir.create("output")
 
 ### [Get data]
 
-Probably want to subset data beforehand
 Data are csv at https://irma.nps.gov/DataStore/DownloadFile/569336
 Webpage with files and other information at https://irma.nps.gov/DataStore/Reference/Profile/2233448
-Need to look at plot descriptions and pull out data from there for actual story-telling part of lesson; could use Physio_class for comparisons between plots (there are five types, including one type (woodland) that has only one plot)
-
 
 ***
 
@@ -51,19 +48,28 @@ Need to look at plot descriptions and pull out data from there for actual story-
 [Open file in Excel]
 
 ### [Load in data]
+```{r load-data}
+plot_data <- read.csv(file = "data/tumacacori-vegetation.csv")
+```
 
 ### [QA/QC]
 `head`
+`tail`
+Point out `<NA>` in tail output
 
 ***
 
 ## Cleaning up
 
 ### Missing data
-take out some NAs
+```{r drop-missing}
+plot_data <- na.omit(plot_data)
+```
 
-### Fixing data
-replace some values?
+### Subsetting data
+```{r subset-data}
+subset_data <- plot_data[plot_data$Family %in% c("Amaranthaceae", "Cactaceae", "Poaceae", "Fabaceae"), ]
+```
 
 ***
 
@@ -74,21 +80,47 @@ replace some values?
 ### Summary statistics for groups
 use `mean` and `sd` for subset(s) of data
 
+### Get % cover for each family/plot
+`install.packages("dplyr")`
+```{r}
+library("dplyr")
+```
+
+```{r family-summaries}
+family_data <- subset_data %>%
+  group_by(Plot_Code, Family, Physio_Class) %>%
+  summarize(Family_Percent_Cover = sum(Percent_Cover))
+```
+
 ***
 
 ## Visualizing data
 
 ### The ggplot2 package
-`install.packages()`
+`install.packages(ggplot2)`
+```{r}
+library("ggplot2")
+```
 
 ### First rule of plots
-Draw it first
+Draw it by hand first
 
 ### Code it second
-Simple scatterplot, no colors
+Simple boxplot, no colors
+x is Physio_Class
+y is Percent_Cover
+group is family
 
 ### Telling the story
 Add group colors for story
+color is family
+```{r color-families}
+cover_plot <- ggplot(data = family_data, 
+                     mapping = aes(x = Physio_Class, y = Family_Percent_Cover,
+                     color = Family)) +
+  geom_boxplot()
+print(cover_plot)
+```
 
 ***
 
