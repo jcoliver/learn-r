@@ -6,6 +6,7 @@ output:
   html_document: default
   pdf_document:
     latex_engine: xelatex
+urlcolor: blue
 ---
 
 The R programming language provides many tools for data analysis and visualization, but all the options can be daunting. This lesson provides an introduction to wrangling data in R and using graphics to tell a story with data.
@@ -26,7 +27,7 @@ The R programming language provides many tools for data analysis and visualizati
 For this lesson, we will use the R programming language in the RStudio environment. RStudio provides a convenient interface for working with files and packages in R. If you have not done so already, install R and RStudio; details can be found on the [installation page](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
 
 ### Preparing our workplace
-Key to successful programming is organization. In RStudio, we use Projects to organize our work (a "Project" is really just a fancy name for a folder that contains all our files). For this lesson, we'll create a new project through the File menu (<style "font-family='Trebuchet MS', 'Helvetical', 'sans-serif'">File > New Project</style>). In the first dialog, select "New Directory", and select "New Project" in the second dialog. Next you'll be prompted to provide a directory name. This will be the name of our project, so we should give it an informative name. For this lesson, we will be using data from vegetation surveys of [Tumacacori National Historical Park](https://www.nps.gov/tuma/index.htm), for the directory name, enter "vegetation". We need also to tell RStudio where to put the lesson on our computer; for this lesson, we will place the folder on our Desktop, so it is easy to find. In your own work, you may find it better to place project folders in your Documents folder.
+Key to successful programming is organization. In RStudio, we use Projects to organize our work (a "Project" is really just a fancy name for a folder that contains all our files). For this lesson, we'll create a new project through the File menu (File > New Project). In the first dialog, select "New Directory", and select "New Project" in the second dialog. Next you'll be prompted to provide a directory name. This will be the name of our project, so we should give it an informative name. For this lesson, we will be using data from vegetation surveys of [Tumacacori National Historical Park](https://www.nps.gov/tuma/index.htm); so give our directory a descriptive name, like "vegetation". We need also to tell RStudio where to put the lesson on our computer; for this lesson, we will place the folder on our Desktop, so it is easy to find. In your own work, you may find it better to place project folders in your Documents folder.
 
 The last thing we need to do to set up our workspace is to use file organization that reinforces best practices. In general, there should be a one-way flow of information: we take information from _data_ and write code to produce _output_. We want to avoid any output from messing up our data, so we create separate folders for each. We want to create two folders, one for our data and one for any output, which may include results of statistical analyses or data visualization. In the R console,
 
@@ -46,6 +47,7 @@ Webpage with files and other information at https://irma.nps.gov/DataStore/Refer
 
 ### Data _outside_ R
 [Open file in Excel]
+[Close file]
 
 ### [Load in data]
 ```{r load-data}
@@ -68,8 +70,13 @@ plot_data <- na.omit(plot_data)
 
 ### Subsetting data
 ```{r subset-data}
-subset_data <- plot_data[plot_data$Family %in% c("Amaranthaceae", "Cactaceae", "Poaceae", "Fabaceae"), ]
+families_keep <- c("Amaranthaceae", "Brassicaceae", "Poaceae", "Fabaceae")
+subset_data <- plot_data[plot_data$Family %in% families_keep, ]
+subset_data$Family <- factor(subset_data$Family)
 ```
+
+## What about that spreadsheet file?
+[Open the file in Excel and show NA and other families]
 
 ***
 
@@ -81,14 +88,20 @@ subset_data <- plot_data[plot_data$Family %in% c("Amaranthaceae", "Cactaceae", "
 use `mean` and `sd` for subset(s) of data
 
 ### Get % cover for each family/plot
-`install.packages("dplyr")`
-```{r}
+
+In order to summarize information for each plant family, we are going to use a third-party package. What does that mean, "third-party"? When we think of software, there are generally two parties: the one that wrote the software and the one that uses the software. In this case, the R Core Team wrote the R software and we are the second party, the users of R. Third-party packages are those written by someone other than the authors of the original software. R is especially amenable to third-party development and some of the most widely used packages in R were developed by 
+
+```{r install-dplyr, eval = FALSE}
+install.packages("dplyr")
+```
+
+```{r load-dplyr}
 library("dplyr")
 ```
 
 ```{r family-summaries}
 family_data <- subset_data %>%
-  group_by(Plot_Code, Family, Physio_Class) %>%
+  group_by(Plot_Code, Family, Community) %>%
   summarize(Family_Percent_Cover = sum(Percent_Cover))
 ```
 
@@ -97,8 +110,16 @@ family_data <- subset_data %>%
 ## Visualizing data
 
 ### The ggplot2 package
-`install.packages(ggplot2)`
-```{r}
+In order to visualize the data, we are going to use the ggplot2 package. Like we did for the dplyr package, we will first need to install the package:
+
+```{r install-ggplot2, eval = FALSE}
+install.packages("ggplot2")
+```
+
+
+Now that the package in installed, we can load the functions into memory with the `library` function:
+
+```{r load-ggplot}
 library("ggplot2")
 ```
 
@@ -107,7 +128,7 @@ Draw it by hand first
 
 ### Code it second
 Simple boxplot, no colors
-x is Physio_Class
+x is Community
 y is Percent_Cover
 group is family
 
@@ -116,11 +137,42 @@ Add group colors for story
 color is family
 ```{r color-families}
 cover_plot <- ggplot(data = family_data, 
-                     mapping = aes(x = Physio_Class, y = Family_Percent_Cover,
-                     color = Family)) +
+                     mapping = aes(x = Community, y = Family_Percent_Cover,
+                     fill = Family)) +
   geom_boxplot()
 print(cover_plot)
 ```
+
+Look at the Wooded Herbaceous and Woodland - they're just lines. Why?
+
+```{r investigate-bars}
+table(family_data$Family, family_data$Community)
+```
+
+Since we only have those single plots for Wooded Herbaceous and Woodland, we should probably exclude them from our plot.
+
+```{r remove-communities}
+family_data <- family_data[!(family_data$Community %in% c("Wooded Herbaceous", "Woodland")), ]
+
+cover_plot <- ggplot(data = family_data, 
+                     mapping = aes(x = Community, y = Family_Percent_Cover,
+                     fill = Family)) +
+  geom_boxplot()
+print(cover_plot)
+```
+
+Re-level physio class so X-axis is shown in increasing tree cover
+```{r releveled-communities}
+family_data$Community <- factor(family_data$Community,
+                                   levels = c("Shrubland", "Wooded Shrubland", "Forest"))
+
+cover_plot <- ggplot(data = family_data, 
+                     mapping = aes(x = Community, y = Family_Percent_Cover,
+                     fill = Family)) +
+  geom_boxplot()
+print(cover_plot)
+```
+
 
 ***
 

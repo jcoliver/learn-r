@@ -1,4 +1,4 @@
-Plot_Code,Field_Name,Common_Name,Family,Species_Code,Percent_Cover,Leaf_Type,Leaf_Phenology,Physio_Class
+Plot_Code,Field_Name,Common_Name,Family,Species_Code,Percent_Cover,Leaf_Type,Leaf_Phenology,Community
 TUMC_IP01,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,30,Microphyllous,Drought-deciduous,Shrubland
 TUMC_IP01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,30,Microphyllous,Drought-deciduous,Shrubland
 TUMC_IP01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,3,Microphyllous,Drought-deciduous,Shrubland
