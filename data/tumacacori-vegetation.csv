@@ -1,0 +1,292 @@
+Plot_Code,Field_Name,Common_Name,Family,Species_Code,Percent_Cover,Leaf_Type,Leaf_Phenology,Community
+TUMC_IP01,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,30,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP01,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,30,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP01,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP01,Aristida ternipes  ,spidergrass,Poaceae,ARITER,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP01,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP01,Boerhavia spicata  ,creeping spiderling,Nyctaginaceae,BOESPI,8,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP01,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP01,Ferocactus wislizeni  ,candy barrelcactus,Cactaceae,FERWIS,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP01,Mentzelia albicaulis  ,whitestem blazingstar,Loasaceae,MENALB,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP01,Mimosa aculeaticarpa var. biuncifera,catclaw mimosa,Fabaceae,MIMACUBIN,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP01,Muhlenbergia porteri  ,bush muhly,Poaceae,MUHPOR,29.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP01,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,8.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP02,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP02,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,63,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP02,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP02,Bouteloua aristidoides  ,needle grama,Poaceae,BOUARI,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP02,Chenopodium,goosefoot,Chenopodiaceae,CHENO,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP02,Chloris virgata  ,feather fingergrass,Poaceae,CHLVIR,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP02,Eragrostis lehmanniana  ,Lehmann lovegrass,Poaceae,ERALEH,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP02,Helianthus annuus  ,common sunflower,Asteraceae,HELANN,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP02,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,14,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP02,Setaria,bristlegrass,Poaceae,SETAR,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP02,Sisymbrium irio  ,London rocket,Brassicaceae,SISIRI,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP02,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP03,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,11,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP03,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,42,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP03,Anisacanthus thurberi  ,Thurber's desert honeysuckle,Acanthaceae,ANITHU,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP03,Chenopodium,goosefoot,Chenopodiaceae,CHENO,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP03,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP03,Ipomoea,morning-glory,Convolvulaceae,IPOMO,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP03,Oenothera,evening-primrose,Onagraceae,OENOT,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP03,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,45.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP03,Setaria,bristlegrass,Poaceae,SETAR,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP03,Sporobolus cryptandrus  ,sand dropseed,Poaceae,SPOCRY,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP03,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP03,Tithonia thurberi  ,Arizona sunflowerweed,Asteraceae,TITTHU,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,42,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,8,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Aristida purpurea  ,purple threeawn,Poaceae,ARIPUR,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,8,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Chenopodium,goosefoot,Chenopodiaceae,CHENO,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,29.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Eschscholzia californica ssp. mexicana,California poppy,Papaveraceae,ESCCALMEX,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Ferocactus wislizeni  ,candy barrelcactus,Cactaceae,FERWIS,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Ipomoea,morning-glory,Convolvulaceae,IPOMO,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Leptochloa dubia  ,green sprangletop,Poaceae,LEPDUB,8,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Phacelia,phacelia,Hydrophyllaceae,PHACE,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,37.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Setaria,bristlegrass,Poaceae,SETAR,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP04,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP05,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,29.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP05,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,8,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP05,Bouteloua aristidoides  ,needle grama,Poaceae,BOUARI,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP05,Chloris virgata  ,feather fingergrass,Poaceae,CHLVIR,18,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP05,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP05,Eragrostis cilianensis  ,stinkgrass,Poaceae,ERACIL,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP05,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,4,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP05,Setaria,bristlegrass,Poaceae,SETAR,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP05,Sisymbrium irio  ,London rocket,Brassicaceae,SISIRI,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP05,Sporobolus cryptandrus  ,sand dropseed,Poaceae,SPOCRY,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP05,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP06,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,42,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IP06,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,0.5,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IP06,Chenopodium,goosefoot,Chenopodiaceae,CHENO,18,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IP06,Cheilanthes villosa  ,villous lipfern,Pteridaceae,CHEVIL,3,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IP06,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,3,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IP06,Helianthus annuus  ,common sunflower,Asteraceae,HELANN,0.5,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IP06,Ipomoea,morning-glory,Convolvulaceae,IPOMO,0.5,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IP06,Salsola kali  ,Russian thistle,Chenopodiaceae,SALKAL,63,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IP06,Sambucus nigra,European black elderberry,Caprifoliaceae,SAMNIG,21,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IP06,Sorghum halepense  ,Johnsongrass,Poaceae,SORHAL,0.5,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IP06,Xanthium strumarium  ,rough cockleburr,Asteraceae,XANSTR,0.5,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IP07,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP07,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,8,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP07,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP07,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP07,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP07,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP07,Ipomoea,morning-glory,Convolvulaceae,IPOMO,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP07,Mentzelia albicaulis  ,whitestem blazingstar,Loasaceae,MENALB,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP07,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,16,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP07,Setaria leucopila  ,streambed bristlegrass,Poaceae,SETLEU,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP07,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP09,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,0.5,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP09,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,29.5,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP09,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,0.5,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP09,Celtis laevigata  ,sugarberry,Ulmaceae,CELLAE,44,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP09,Cynodon dactylon  ,Bermudagrass,Poaceae,CYNDAC,8,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP09,Helianthus annuus  ,common sunflower,Asteraceae,HELANN,3,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP09,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,21,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP09,Salsola kali  ,Russian thistle,Chenopodiaceae,SALKAL,18,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP09,Sambucus nigra,European black elderberry,Caprifoliaceae,SAMNIG,60,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP09,Sphaeralcea,globemallow,Malvaceae,SPHAE,0.5,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP09,Sphaeralcea wrightii  ,Wright's globemallow,Malvaceae,SPHWRI,3,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP10,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,26,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,29.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Anisacanthus thurberi  ,Thurber's desert honeysuckle,Acanthaceae,ANITHU,29.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,29.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Celtis laevigata  ,sugarberry,Ulmaceae,CELLAE,3.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Chenopodium,goosefoot,Chenopodiaceae,CHENO,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Condalia warnockii  ,Warnock's snakewood,Rhamnaceae,CONWAR,8.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Juniperus coahuilensis  ,redberry juniper,Cupressaceae,JUNCOA,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Muhlenbergia polycaulis  ,cliff muhly,Poaceae,MUHPOL,8,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,11,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Setaria,bristlegrass,Poaceae,SETAR,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Sphaeralcea wrightii  ,Wright's globemallow,Malvaceae,SPHWRI,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Tithonia thurberi  ,Arizona sunflowerweed,Asteraceae,TITTHU,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP10,Ziziphus obtusifolia  ,lotebush,Rhamnaceae,ZIZOBT,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP11,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,29.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Allionia incarnata  ,trailing windmills,Nyctaginaceae,ALLINC,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Boerhavia coccinea  ,scarlet spiderling,Nyctaginaceae,BOECOC,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Ceanothus greggii  ,desert ceanothus,Rhamnaceae,CEAGRE,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Chenopodium,goosefoot,Chenopodiaceae,CHENO,8,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Eriogonum inflatum,desert trumpet,Polygonaceae,ERIINF,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Juniperus coahuilensis  ,redberry juniper,Cupressaceae,JUNCOA,8,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Muhlenbergia polycaulis  ,cliff muhly,Poaceae,MUHPOL,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Phacelia,phacelia,Hydrophyllaceae,PHACE,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,11,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Setaria,bristlegrass,Poaceae,SETAR,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP11,Sphaeralcea wrightii  ,Wright's globemallow,Malvaceae,SPHWRI,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP12,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,8,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Aristida ternipes  ,spidergrass,Poaceae,ARITER,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Astragalus,milkvetch,Fabaceae,ASTRA,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Bouteloua aristidoides  ,needle grama,Poaceae,BOUARI,8,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Chloris virgata  ,feather fingergrass,Poaceae,CHLVIR,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,8,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Eragrostis lehmanniana  ,Lehmann lovegrass,Poaceae,ERALEH,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Ferocactus wislizeni  ,candy barrelcactus,Cactaceae,FERWIS,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Ipomoea,morning-glory,Convolvulaceae,IPOMO,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Mimosa aculeaticarpa var. biuncifera,catclaw mimosa,Fabaceae,MIMACUBIN,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Muhlenbergia porteri  ,bush muhly,Poaceae,MUHPOR,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Panicum miliaceum  ,broomcorn millet,Poaceae,PANMIL,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP12,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,45,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP13,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,18,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Acourtia nana  ,dwarf desertpeony,Asteraceae,ACONAN,0.5,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,8,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Celtis laevigata  ,sugarberry,Ulmaceae,CELLAE,3,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,18,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Gutierrezia microcephala  ,threadleaf snakeweed,Asteraceae,GUTMIC,3,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Ipomoea,morning-glory,Convolvulaceae,IPOMO,3,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Juniperus coahuilensis  ,redberry juniper,Cupressaceae,JUNCOA,0.5,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Oenothera,evening-primrose,Onagraceae,OENOT,0.5,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Penstemon parryi  ,Parry's beardtongue,Scrophulariaceae,PENPAR,0.5,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,47.5,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Salsola kali  ,Russian thistle,Chenopodiaceae,SALKAL,0.5,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Sambucus nigra ssp. cerulea,blue elderberry,Caprifoliaceae,SAMNIGCER,0.5,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,63,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,0.5,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Tithonia thurberi  ,Arizona sunflowerweed,Asteraceae,TITTHU,3,Microphyllous,Drought-deciduous,Forest
+TUMC_IP13,Ziziphus obtusifolia  ,lotebush,Rhamnaceae,ZIZOBT,0.5,Microphyllous,Drought-deciduous,Forest
+TUMC_IP14,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,63,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,63,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Aristida ternipes  ,spidergrass,Poaceae,ARITER,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Bidens lemmonii  ,Lemmon's beggarticks,Asteraceae,BIDLEM,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Boerhavia coccinea  ,scarlet spiderling,Nyctaginaceae,BOECOC,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,8,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Calliandra eriophylla  ,fairyduster,Fabaceae,CALERI,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Ceanothus greggii  ,desert ceanothus,Rhamnaceae,CEAGRE,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Chenopodium,goosefoot,Chenopodiaceae,CHENO,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,8,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Muhlenbergia fragilis  ,delicate muhly,Poaceae,MUHFRA,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Muhlenbergia porteri  ,bush muhly,Poaceae,MUHPOR,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,11,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Setaria,bristlegrass,Poaceae,SETAR,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Sphaeralcea wrightii  ,Wright's globemallow,Malvaceae,SPHWRI,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP14,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Boerhavia spicata  ,creeping spiderling,Nyctaginaceae,BOESPI,8,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Bouteloua rothrockii  ,Rothrock's grama,Poaceae,BOUROT,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Eragrostis lehmanniana  ,Lehmann lovegrass,Poaceae,ERALEH,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Lycium andersonii  ,water jacket,Solanaceae,LYCAND,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Muhlenbergia porteri  ,bush muhly,Poaceae,MUHPOR,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,21.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Setaria,bristlegrass,Poaceae,SETAR,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Sporobolus cryptandrus  ,sand dropseed,Poaceae,SPOCRY,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP15,Yucca elata  ,soaptree yucca,Agavaceae,YUCELA,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP16,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,50,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,18,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Aristida ternipes  ,spidergrass,Poaceae,ARITER,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Boerhavia coccinea  ,scarlet spiderling,Nyctaginaceae,BOECOC,8,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Chenopodium,goosefoot,Chenopodiaceae,CHENO,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Lycium andersonii  ,water jacket,Solanaceae,LYCAND,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Oenothera,evening-primrose,Onagraceae,OENOT,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,39,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Setaria,bristlegrass,Poaceae,SETAR,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Sisymbrium irio  ,London rocket,Brassicaceae,SISIRI,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Sphaeralcea,globemallow,Malvaceae,SPHAE,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,8,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP16,Ziziphus obtusifolia  ,lotebush,Rhamnaceae,ZIZOBT,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP17,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,29,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,8,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,3,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Anisacanthus thurberi  ,Thurber's desert honeysuckle,Acanthaceae,ANITHU,8,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,18,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,8,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Celtis laevigata  ,sugarberry,Ulmaceae,CELLAE,0.5,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,29.5,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Helianthus annuus  ,common sunflower,Asteraceae,HELANN,3,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Mentzelia albicaulis  ,whitestem blazingstar,Loasaceae,MENALB,3,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,86,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Setaria,bristlegrass,Poaceae,SETAR,3,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,18,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,0.5,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP17,Ziziphus obtusifolia  ,lotebush,Rhamnaceae,ZIZOBT,6,Broad-leaved,Cold-deciduous,Forest
+TUMC_IP19,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,18,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,18,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Bidens leptocephala  ,fewflower beggarticks,Asteraceae,BIDLEP,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Boerhavia coccinea  ,scarlet spiderling,Nyctaginaceae,BOECOC,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Chenopodium,goosefoot,Chenopodiaceae,CHENO,18,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,18,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Eschscholzia californica ssp. mexicana,California poppy,Papaveraceae,ESCCALMEX,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Ipomoea,morning-glory,Convolvulaceae,IPOMO,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Lycium andersonii  ,water jacket,Solanaceae,LYCAND,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,26,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Setaria,bristlegrass,Poaceae,SETAR,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Sisymbrium irio  ,London rocket,Brassicaceae,SISIRI,0.5,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP19,Tetramerium nervosum  ,hairy fournwort,Acanthaceae,TETNER,3,Microphyllous,Drought-deciduous,Wooded Shrubland
+TUMC_IP20,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,29.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Ambrosia confertiflora  ,weakleaf burr ragweed,Asteraceae,AMBCON,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Aristida ternipes  ,spidergrass,Poaceae,ARITER,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Bothriochloa barbinodis  ,cane bluestem,Poaceae,BOTBAR,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Chenopodium,goosefoot,Chenopodiaceae,CHENO,8,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Cryptantha,cryptantha,Boraginaceae,CRYPT,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Descurainia pinnata  ,western tansymustard,Brassicaceae,DESPIN,8,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Eriogonum inflatum,desert trumpet,Polygonaceae,ERIINF,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Erodium texanum  ,Texas stork's bill,Geraniaceae,EROTEX,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Muhlenbergia porteri  ,bush muhly,Poaceae,MUHPOR,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Oenothera primiveris  ,desert evening-primrose,Onagraceae,OENPRI,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Phacelia,phacelia,Hydrophyllaceae,PHACE,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,11,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Setaria,bristlegrass,Poaceae,SETAR,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IP20,Sphaeralcea,globemallow,Malvaceae,SPHAE,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS1,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,1,Microphyllous,Drought-deciduous,Woodland
+TUMC_IPS1,NA,Annual Forb,NA,AF,8,Microphyllous,Drought-deciduous,Woodland
+TUMC_IPS1,Celtis laevigata  ,sugarberry,Ulmaceae,CELLAE,67,Microphyllous,Drought-deciduous,Woodland
+TUMC_IPS1,Cynodon dactylon  ,Bermudagrass,Poaceae,CYNDAC,8,Microphyllous,Drought-deciduous,Woodland
+TUMC_IPS1,Juniperus coahuilensis  ,redberry juniper,Cupressaceae,JUNCOA,0.5,Microphyllous,Drought-deciduous,Woodland
+TUMC_IPS1,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,48,Microphyllous,Drought-deciduous,Woodland
+TUMC_IPS1,Sambucus nigra ssp. cerulea,blue elderberry,Caprifoliaceae,SAMNIGCER,11,Microphyllous,Drought-deciduous,Woodland
+TUMC_IPS1,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,42,Microphyllous,Drought-deciduous,Woodland
+TUMC_IPS1,Ziziphus obtusifolia  ,lotebush,Rhamnaceae,ZIZOBT,1,Microphyllous,Drought-deciduous,Woodland
+TUMC_IPS2,NA,Annual Forb,NA,AF,63,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IPS2,NA,Annual Grass,NA,AG,8,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IPS2,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,0.5,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IPS2,Sambucus nigra ssp. cerulea,blue elderberry,Caprifoliaceae,SAMNIGCER,8,Broad-leaved herbaceous,Herb - annual,Wooded Herbaceous
+TUMC_IPS3,Acacia constricta,whitethorn acacia,Fabaceae,ACACON,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS3,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS3,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,42,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS3,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS3,Cottea pappophoroides  ,cotta grass,Poaceae,COTPAP,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS3,Lycium andersonii  ,water jacket,Solanaceae,LYCAND,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS3,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,14,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS3,Sporobolus cryptandrus  ,sand dropseed,Poaceae,SPOCRY,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS3,Sporobolus wrightii  ,big sacaton,Poaceae,SPOWRI,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS4,Acacia greggii  ,catclaw acacia,Fabaceae,ACAGRE,3,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS4,Amaranthus palmeri  ,carelessweed,Amaranthaceae,AMAPAL,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS4,Astragalus,milkvetch,Fabaceae,ASTRA,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS4,Bouteloua curtipendula  ,sideoats grama,Poaceae,BOUCUR,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS4,Bouteloua,grama,Poaceae,BOUTE,18,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS4,Eragrostis lehmanniana  ,Lehmann lovegrass,Poaceae,ERALEH,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS4,Erioneuron avenaceum  ,shortleaf woollygrass,Poaceae,ERIAVE,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS4,Opuntia engelmannii  ,cactus apple,Cactaceae,OPUENG,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS4,Prosopis velutina  ,velvet mesquite,Fabaceae,PROVEL,50.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS4,Salsola kali  ,Russian thistle,Chenopodiaceae,SALKAL,0.5,Microphyllous,Drought-deciduous,Shrubland
+TUMC_IPS4,NA,Unknown Perennial Forb,NA,UNKFOR,8,Microphyllous,Drought-deciduous,Shrubland
