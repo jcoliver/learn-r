@@ -38,72 +38,171 @@ dir.create("output")
 
 ### [Get data]
 
+url:
+
 Data are csv at https://irma.nps.gov/DataStore/DownloadFile/569336
 Webpage with files and other information at https://irma.nps.gov/DataStore/Reference/Profile/2233448
+
+save it in vegetation/data
 
 ***
 
 ## Data in R
 
 ### Data _outside_ R
-[Open file in Excel]
-[Close file]
+We are going to start by looking at those data we downloaded in a spreadsheet program like Excel or [LibreOffice](https://www.libreoffice.org/). Open your spreadsheet program and open the file we just downloaded. We can see the data are organized in columns and rows. This is a good example of what is known as "tidy data" where there is one observation per row and one type of data per column. In these data, each row corresponds to a single plant species in a single plot, and the columns have different data about that species, including the family name and the percent cover in that plot.  
+Take a moment to look at those data but don't change any of the values in the cells. Close the file, and make sure _not_ to save any changes to the file.
 
-### [Load in data]
-```{r load-data}
-plot_data <- read.csv(file = "data/tumacacori-vegetation.csv")
+### Data in R
+We are going to work with those same data in R. To do so we will need to read the data in to R's memory, but first we are going to start a script so all the steps we take for data analyses are going to be saved in one place. Make a new script through the File menu, via File > New File... > R Script. We'll start by adding a little bit of information at the beginning of the script:
+
+```{r script-header}
+# Plotting Tumacacori vegetation
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2019-09-06
 ```
 
-### [QA/QC]
-`head`
-`tail`
-Point out `<NA>` in tail output
+Note that RStudio is also telling us that we have unsaved changes: the text in the tab is red and there is a little asterisk up by the file name (which is probably "Untitled1", which should also be a clue). We should save this file via Ctrl-S (Window or Linux) or Cmd-S (MacOS), giving it a short but descriptive name. We'll use tumacacori-plots.R.  
+
+Now we are finally going to read data into R. When you opened the file in Excel you might have noticed that it has the file extension "csv", which stands for Comma-Separated Values. The CSV file format is common for data tables and has the benefit that it can be easily ready by many programs, which is not always the case for .xls and .xlsx files. To read the data into R, we use the `read.csv` function:
+
+```{r load-data}
+plant_data <- read.csv(file = "data/tumacacori-vegetation.csv")
+```
+
+The statement shows typical syntax for an R command. From an abstract perspective, most R statements look like:
+
+$Variable \enspace Name = Function \enspace Name (Function \enspace Arguments)$
+
+The function (`read.csv`) is given on piece of information, or "argument", in this case the name of the file we wish to read into memory. The data in the file are read into R, then stored in a variable called `plant_data`. 
+
+### Quality Assurance
+Whenever we start writing a new script, we _always_ want to make sure the data are being read in correctly. When we are doing this initial quality check, we don't necessarily need to record all the commands we type, so we can use the R console to type commands. We'll start with `head` which shows the first six rows of data:
+
+```{r data-head}
+head(plant_data)
+```
+
+Similarily, the `tail` function shows the last six rows of data:
+
+```{r data-tail}
+tail(plant_data)
+```
+
+Note in the output of `tail` there are rows with `<NA>` values. In R, `NA` has a special meaning: it indicates missing values in the data. We'll deal with that in a bit, but remember that missing data may require some special handling in R.  
+
+One more useful function is `str`, which stands for "structure":
+
+```{r data-str}
+str(plant_data)
+```
+
+The output of `str` shows the size of the data, in terms of number of rows and columns, and the type of data in each column.
 
 ***
 
 ## Cleaning up
 
+Rarely are data "ready to go" when they are read into R. The data we are using is going to require two adjustments: removal of rows with missing data and a selection of only a portion of the data.  
+
 ### Missing data
+
+To remove rows that have missing data, we use the `na.omit` function. Before we do, though, look at the "Environment" tab of your workspacek. There should be a row for `plant_data` that indicates the size of our data set. In this case, it should show "`r dim(plant_data)[1]` obs. of `r dim(plant_data)[2]` variables", indicating we have 291 rows of data, with 9 columns. Now let's drop those rows with missing data, putting this command in the script file, not the R console:
+
 ```{r drop-missing}
-plot_data <- na.omit(plot_data)
+plant_data <- na.omit(plant_data)
 ```
 
+Look again at the Environment tab. There should only be `r dim(plant_data)[1]` obs. because we removed those rows with missing data. The number of columns should not change at all.
+
 ### Subsetting data
+
+The dataset include observations of `r length(unique(plant_data$Family))` different plant families at the plots. For our purposes, we are going to focus on a few of the families that make up most of these communities, namely the legumes (Fabaceae), grasses (Poaceae), mustards (Brassicaceae), and amaranths (Amaranthaceae).
+
 ```{r subset-data}
-families_keep <- c("Amaranthaceae", "Brassicaceae", "Poaceae", "Fabaceae")
-subset_data <- plot_data[plot_data$Family %in% families_keep, ]
+# Families to focus on
+families_keep <- c("Fabaceae", "Poaceae", "Brassicaceae", "Amaranthaceae")
+
+# Create new data with only four families
+subset_data <- plant_data[plant_data$Family %in% families_keep, ]
+
+# Re-level data in the Family column
 subset_data$Family <- factor(subset_data$Family)
 ```
 
+In those three lines, we:
+
++ Created a list of the names of the families we are interested in,
++ Made a new variable called `subset_data` and stored the data for only those four families, and
++ "Re-leveled" the data in the Family column (no need to worry too much about what this means now, it will just make plotting easier later on).
+
+Look again at your Environment tab, you should see another item listed, this one called `subset_data`. It _should_ have `r dim(subset_data)[1]` rows (observations). If it doesn't, check your work to make sure you spelled all the family names correctly. 
+
 ## What about that spreadsheet file?
-[Open the file in Excel and show NA and other families]
+
+So we've done some manipulations to the data, dropping rows with missing data and creating a subset for four families. Did that do anything to the original spreadsheet file? Open the file in your spreadsheet program (like Excel or LibreOffice) and take a look. If you look towards the bottom, you can see that those rows with NA are still there. Compare this with the output of `tail(plant_data)`. Note the `plant_data` in R does not have the rows with NA values because we removed them with `na.omit` above. This demonstrates that modfiying data in R _does not change the data in the original data files_. Files are only changed when we explicity tell R to write changes to the hard drive. Since we do not want those changes written to our original data file, we are _not_ going to have R write any data to the files.
 
 ***
 
 ## Summarizing data
 
 ### Using `summary`
+```{r data-summary}
+summary(subset_data)
+```
 
 ### Summary statistics for groups
-use `mean` and `sd` for subset(s) of data
+```{r summary-stats}
+mesquite_mean <- mean(subset_data$Percent_Cover[subset_data$Common_Name == "velvet mesquite"])
+mesquite_sd <- sd(subset_data$Percent_Cover[subset_data$Common_Name == "velvet mesquite"])
+```
+
+We can see the values of each of these by typing in the variable name alone into the R console:
+
+```{r print-mean}
+mesquite_mean
+```
+
+```{r print-sd}
+mesquite_sd
+```
 
 ### Get % cover for each family/plot
 
-In order to summarize information for each plant family, we are going to use a third-party package. What does that mean, "third-party"? When we think of software, there are generally two parties: the one that wrote the software and the one that uses the software. In this case, the R Core Team wrote the R software and we are the second party, the users of R. Third-party packages are those written by someone other than the authors of the original software. R is especially amenable to third-party development and some of the most widely used packages in R were developed by 
+Ultimately, we would like to look at how much cover there is for each plant family in the Tumacacori plots. Right now the data are shown for each _species_, but we would like to know how much of the plant cover corresponds to each _family_ .
+
+In order to summarize information for each plant family, we are going to use a third-party package. What does that mean, "third-party"? When we think of software, there are generally two parties: the one that wrote the software and the one that uses the software. In this case, the R Core Team wrote the R software and we are the second party, the users of R. Third-party packages are those written by someone other than the authors of the original software. R is especially amenable to third-party development and some of the most widely used packages in R were developed by teams other than the R Core Team. Importantly, if we are using third-party R packages, we need to take two steps: first we need to install the package, second we need to load the package's functions into memory. The first (installation) only has to happen once on your machine; the second (loading into memory) has to happen every time you use R.
+
+To install the dplyr package:
 
 ```{r install-dplyr, eval = FALSE}
 install.packages("dplyr")
 ```
 
+Now that the package is installed, we can load it into memory with the `library` command. When using third-party packages, we generally add `library` commands to the start of the script, so anyone reading our script can tell which, if any, additional packages the script requires to run.
+
 ```{r load-dplyr}
 library("dplyr")
 ```
+
+
 
 ```{r family-summaries}
 family_data <- subset_data %>%
   group_by(Plot_Code, Family, Community) %>%
   summarize(Family_Percent_Cover = sum(Percent_Cover))
 ```
+
+If we consider the above code using English, it is easier to understand if we replace all the pipes (`%>%`) with the word "then":
+
+```
+Make a new variable called family_data, take the subset_data, then
+  group the data by Plot_Code, Family, and Community, then
+  add up all the values in the Percent_Cover column and store it 
+      in a column called "Family_Percent_Cover"
+```
+
 
 ***
 
@@ -184,6 +283,6 @@ print(cover_plot)
 
 ***
 
-<a href="index.html">Back to learn-r main page</a>
-  
+Back to [learn-r main page](https://jcoliver.github.io/learn-r/index.html)
+
 Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.

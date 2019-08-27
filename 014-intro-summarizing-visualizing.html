@@ -403,14 +403,16 @@ $(document).ready(function () {
 </div>
 <div id="preparing-our-workplace" class="section level3">
 <h3>Preparing our workplace</h3>
-<p>Key to successful programming is organization. In RStudio, we use Projects to organize our work (a “Project” is really just a fancy name for a folder that contains all our files). For this lesson, we’ll create a new project through the File menu (File &gt; New Project). In the first dialog, select “New Directory”, and select “New Project” in the second dialog. Next you’ll be prompted to provide a directory name. This will be the name of our project, so we should give it an informative name. For this lesson, we will be using data from vegetation surveys of <a href="https://www.nps.gov/tuma/index.htm">Tumacacori National Historical Park</a>, for the directory name, enter “vegetation”. We need also to tell RStudio where to put the lesson on our computer; for this lesson, we will place the folder on our Desktop, so it is easy to find. In your own work, you may find it better to place project folders in your Documents folder.</p>
+<p>Key to successful programming is organization. In RStudio, we use Projects to organize our work (a “Project” is really just a fancy name for a folder that contains all our files). For this lesson, we’ll create a new project through the File menu (File &gt; New Project). In the first dialog, select “New Directory”, and select “New Project” in the second dialog. Next you’ll be prompted to provide a directory name. This will be the name of our project, so we should give it an informative name. For this lesson, we will be using data from vegetation surveys of <a href="https://www.nps.gov/tuma/index.htm">Tumacacori National Historical Park</a>; so give our directory a descriptive name, like “vegetation”. We need also to tell RStudio where to put the lesson on our computer; for this lesson, we will place the folder on our Desktop, so it is easy to find. In your own work, you may find it better to place project folders in your Documents folder.</p>
 <p>The last thing we need to do to set up our workspace is to use file organization that reinforces best practices. In general, there should be a one-way flow of information: we take information from <em>data</em> and write code to produce <em>output</em>. We want to avoid any output from messing up our data, so we create separate folders for each. We want to create two folders, one for our data and one for any output, which may include results of statistical analyses or data visualization. In the R console,</p>
 <pre class="r"><code>dir.create(&quot;data&quot;)
 dir.create(&quot;output&quot;)</code></pre>
 </div>
 <div id="get-data" class="section level3">
 <h3>[Get data]</h3>
+<p>url:</p>
 <p>Data are csv at <a href="https://irma.nps.gov/DataStore/DownloadFile/569336" class="uri">https://irma.nps.gov/DataStore/DownloadFile/569336</a> Webpage with files and other information at <a href="https://irma.nps.gov/DataStore/Reference/Profile/2233448" class="uri">https://irma.nps.gov/DataStore/Reference/Profile/2233448</a></p>
+<p>save it in vegetation/data</p>
 <hr />
 </div>
 </div>
@@ -418,48 +420,179 @@ dir.create(&quot;output&quot;)</code></pre>
 <h2>Data in R</h2>
 <div id="data-outside-r" class="section level3">
 <h3>Data <em>outside</em> R</h3>
-<p>[Open file in Excel]</p>
+<p>We are going to start by looking at those data we downloaded in a spreadsheet program like Excel or <a href="https://www.libreoffice.org/">LibreOffice</a>. Open your spreadsheet program and open the file we just downloaded. We can see the data are organized in columns and rows. This is a good example of what is known as “tidy data” where there is one observation per row and one type of data per column. In these data, each row corresponds to a single plant species in a single plot, and the columns have different data about that species, including the family name and the percent cover in that plot.<br />
+Take a moment to look at those data but don’t change any of the values in the cells. Close the file, and make sure <em>not</em> to save any changes to the file.</p>
 </div>
-<div id="load-in-data" class="section level3">
-<h3>[Load in data]</h3>
-<pre class="r"><code>plot_data &lt;- read.csv(file = &quot;data/tumacacori-vegetation.csv&quot;)</code></pre>
+<div id="data-in-r-1" class="section level3">
+<h3>Data in R</h3>
+<p>We are going to work with those same data in R. To do so we will need to read the data in to R’s memory, but first we are going to start a script so all the steps we take for data analyses are going to be saved in one place. Make a new script through the File menu, via File &gt; New File… &gt; R Script. We’ll start by adding a little bit of information at the beginning of the script:</p>
+<pre class="r"><code># Plotting Tumacacori vegetation
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2019-09-06</code></pre>
+<p>Note that RStudio is also telling us that we have unsaved changes: the text in the tab is red and there is a little asterisk up by the file name (which is probably “Untitled1”, which should also be a clue). We should save this file via Ctrl-S (Window or Linux) or Cmd-S (MacOS), giving it a short but descriptive name. We’ll use tumacacori-plots.R.</p>
+<p>Now we are finally going to read data into R. When you opened the file in Excel you might have noticed that it has the file extension “csv”, which stands for Comma-Separated Values. The CSV file format is common for data tables and has the benefit that it can be easily ready by many programs, which is not always the case for .xls and .xlsx files. To read the data into R, we use the <code>read.csv</code> function:</p>
+<pre class="r"><code>plant_data &lt;- read.csv(file = &quot;data/tumacacori-vegetation.csv&quot;)</code></pre>
+<p>The statement shows typical syntax for an R command. From an abstract perspective, most R statements look like:</p>
+<p><span class="math inline">\(Variable \enspace Name = Function \enspace Name (Function \enspace Arguments)\)</span></p>
+<p>The function (<code>read.csv</code>) is given on piece of information, or “argument”, in this case the name of the file we wish to read into memory. The data in the file are read into R, then stored in a variable called <code>plant_data</code>.</p>
 </div>
-<div id="qaqc" class="section level3">
-<h3>[QA/QC]</h3>
-<p><code>head</code> <code>tail</code> Point out <code>&lt;NA&gt;</code> in tail output</p>
+<div id="quality-assurance" class="section level3">
+<h3>Quality Assurance</h3>
+<p>Whenever we start writing a new script, we <em>always</em> want to make sure the data are being read in correctly. When we are doing this initial quality check, we don’t necessarily need to record all the commands we type, so we can use the R console to type commands. We’ll start with <code>head</code> which shows the first six rows of data:</p>
+<pre class="r"><code>head(plant_data)</code></pre>
+<pre><code>##   Plot_Code            Field_Name           Common_Name        Family
+## 1 TUMC_IP01     Acacia constricta     whitethorn acacia      Fabaceae
+## 2 TUMC_IP01      Acacia greggii          catclaw acacia      Fabaceae
+## 3 TUMC_IP01  Amaranthus palmeri            carelessweed Amaranthaceae
+## 4 TUMC_IP01   Aristida ternipes             spidergrass       Poaceae
+## 5 TUMC_IP01 Bidens leptocephala   fewflower beggarticks    Asteraceae
+## 6 TUMC_IP01   Boerhavia spicata     creeping spiderling Nyctaginaceae
+##   Species_Code Percent_Cover     Leaf_Type    Leaf_Phenology Community
+## 1       ACACON          30.0 Microphyllous Drought-deciduous Shrubland
+## 2       ACAGRE          30.0 Microphyllous Drought-deciduous Shrubland
+## 3       AMAPAL           3.0 Microphyllous Drought-deciduous Shrubland
+## 4       ARITER           0.5 Microphyllous Drought-deciduous Shrubland
+## 5       BIDLEP          18.0 Microphyllous Drought-deciduous Shrubland
+## 6       BOESPI           8.0 Microphyllous Drought-deciduous Shrubland</code></pre>
+<p>Similarily, the <code>tail</code> function shows the last six rows of data:</p>
+<pre class="r"><code>tail(plant_data)</code></pre>
+<pre><code>##     Plot_Code               Field_Name            Common_Name
+## 286 TUMC_IPS4 Eragrostis lehmanniana        Lehmann lovegrass
+## 287 TUMC_IPS4   Erioneuron avenaceum    shortleaf woollygrass
+## 288 TUMC_IPS4    Opuntia engelmannii             cactus apple
+## 289 TUMC_IPS4      Prosopis velutina          velvet mesquite
+## 290 TUMC_IPS4           Salsola kali          Russian thistle
+## 291 TUMC_IPS4                     &lt;NA&gt; Unknown Perennial Forb
+##             Family Species_Code Percent_Cover     Leaf_Type
+## 286        Poaceae       ERALEH           0.5 Microphyllous
+## 287        Poaceae       ERIAVE           0.5 Microphyllous
+## 288      Cactaceae       OPUENG           0.5 Microphyllous
+## 289       Fabaceae       PROVEL          50.5 Microphyllous
+## 290 Chenopodiaceae       SALKAL           0.5 Microphyllous
+## 291           &lt;NA&gt;       UNKFOR           8.0 Microphyllous
+##        Leaf_Phenology Community
+## 286 Drought-deciduous Shrubland
+## 287 Drought-deciduous Shrubland
+## 288 Drought-deciduous Shrubland
+## 289 Drought-deciduous Shrubland
+## 290 Drought-deciduous Shrubland
+## 291 Drought-deciduous Shrubland</code></pre>
+<p>Note in the output of <code>tail</code> there are rows with <code>&lt;NA&gt;</code> values. In R, <code>NA</code> has a special meaning: it indicates missing values in the data. We’ll deal with that in a bit, but remember that missing data may require some special handling in R.</p>
+<p>One more useful function is <code>str</code>, which stands for “structure”:</p>
+<pre class="r"><code>str(plant_data)</code></pre>
+<pre><code>## 'data.frame':    291 obs. of  9 variables:
+##  $ Plot_Code     : Factor w/ 22 levels &quot;TUMC_IP01&quot;,&quot;TUMC_IP02&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Field_Name    : Factor w/ 71 levels &quot;Acacia constricta&quot;,..: 1 2 5 9 12 14 18 37 44 45 ...
+##  $ Common_Name   : Factor w/ 74 levels &quot;Annual Forb&quot;,..: 73 15 14 57 31 20 55 12 72 16 ...
+##  $ Family        : Factor w/ 26 levels &quot;Acanthaceae&quot;,..: 12 12 3 20 4 17 20 7 15 12 ...
+##  $ Species_Code  : Factor w/ 74 levels &quot;ACACON&quot;,&quot;ACAGRE&quot;,..: 1 2 7 11 14 16 19 39 46 47 ...
+##  $ Percent_Cover : num  30 30 3 0.5 18 8 18 0.5 0.5 3 ...
+##  $ Leaf_Type     : Factor w/ 3 levels &quot;Broad-leaved&quot;,..: 3 3 3 3 3 3 3 3 3 3 ...
+##  $ Leaf_Phenology: Factor w/ 3 levels &quot;Cold-deciduous&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ Community     : Factor w/ 5 levels &quot;Forest&quot;,&quot;Shrubland&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...</code></pre>
+<p>The output of <code>str</code> shows the size of the data, in terms of number of rows and columns, and the type of data in each column.</p>
 <hr />
 </div>
 </div>
 <div id="cleaning-up" class="section level2">
 <h2>Cleaning up</h2>
+<p>Rarely are data “ready to go” when they are read into R. The data we are using is going to require two adjustments: removal of rows with missing data and a selection of only a portion of the data.</p>
 <div id="missing-data" class="section level3">
 <h3>Missing data</h3>
-<pre class="r"><code>plot_data &lt;- na.omit(plot_data)</code></pre>
+<p>To remove rows that have missing data, we use the <code>na.omit</code> function. Before we do, though, look at the “Environment” tab of your workspacek. There should be a row for <code>plant_data</code> that indicates the size of our data set. In this case, it should show “291 obs. of 9 variables”, indicating we have 291 rows of data, with 9 columns. Now let’s drop those rows with missing data, putting this command in the script file, not the R console:</p>
+<pre class="r"><code>plant_data &lt;- na.omit(plant_data)</code></pre>
+<p>Look again at the Environment tab. There should only be 287 obs. because we removed those rows with missing data. The number of columns should not change at all.</p>
 </div>
 <div id="subsetting-data" class="section level3">
 <h3>Subsetting data</h3>
-<pre class="r"><code>families_keep &lt;- c(&quot;Amaranthaceae&quot;, &quot;Brassicaceae&quot;, &quot;Poaceae&quot;, &quot;Fabaceae&quot;)
-subset_data &lt;- plot_data[plot_data$Family %in% families_keep, ]
+<p>The dataset include observations of 26 different plant families at the plots. For our purposes, we are going to focus on a few of the families that make up most of these communities, namely the legumes (Fabaceae), grasses (Poaceae), mustards (Brassicaceae), and amaranths (Amaranthaceae).</p>
+<pre class="r"><code># Families to focus on
+families_keep &lt;- c(&quot;Fabaceae&quot;, &quot;Poaceae&quot;, &quot;Brassicaceae&quot;, &quot;Amaranthaceae&quot;)
+
+# Create new data with only four families
+subset_data &lt;- plant_data[plant_data$Family %in% families_keep, ]
+
+# Re-level data in the Family column
 subset_data$Family &lt;- factor(subset_data$Family)</code></pre>
-<hr />
+<p>In those three lines, we:</p>
+<ul>
+<li>Created a list of the names of the families we are interested in,</li>
+<li>Made a new variable called <code>subset_data</code> and stored the data for only those four families, and</li>
+<li>“Re-leveled” the data in the Family column (no need to worry too much about what this means now, it will just make plotting easier later on).</li>
+</ul>
+<p>Look again at your Environment tab, you should see another item listed, this one called <code>subset_data</code>. It <em>should</em> have 164 rows (observations). If it doesn’t, check your work to make sure you spelled all the family names correctly.</p>
 </div>
+</div>
+<div id="what-about-that-spreadsheet-file" class="section level2">
+<h2>What about that spreadsheet file?</h2>
+<p>So we’ve done some manipulations to the data, dropping rows with missing data and creating a subset for four families. Did that do anything to the original spreadsheet file? Open the file in your spreadsheet program (like Excel or LibreOffice) and take a look. If you look towards the bottom, you can see that those rows with NA are still there. Compare this with the output of <code>tail(plant_data)</code>. Note the <code>plant_data</code> in R does not have the rows with NA values because we removed them with <code>na.omit</code> above. This demonstrates that modfiying data in R <em>does not change the data in the original data files</em>. Files are only changed when we explicity tell R to write changes to the hard drive. Since we do not want those changes written to our original data file, we are <em>not</em> going to have R write any data to the files.</p>
+<hr />
 </div>
 <div id="summarizing-data" class="section level2">
 <h2>Summarizing data</h2>
 <div id="using-summary" class="section level3">
 <h3>Using <code>summary</code></h3>
+<pre class="r"><code>summary(subset_data)</code></pre>
+<pre><code>##      Plot_Code                      Field_Name               Common_Name
+##  TUMC_IP12: 13   Prosopis velutina       :21   velvet mesquite     :21  
+##  TUMC_IP15: 11   Acacia greggii          :19   catclaw acacia      :19  
+##  TUMC_IP05: 10   Amaranthus palmeri      :17   carelessweed        :17  
+##  TUMC_IP14: 10   Bouteloua curtipendula  :14   sideoats grama      :14  
+##  TUMC_IP20: 10   Descurainia pinnata     :14   western tansymustard:14  
+##  TUMC_IP02:  9   Setaria                 :12   bristlegrass        :12  
+##  (Other)  :101   (Other)                 :67   (Other)             :67  
+##            Family    Species_Code Percent_Cover  
+##  Amaranthaceae:17   PROVEL :21    Min.   : 0.50  
+##  Brassicaceae :18   ACAGRE :19    1st Qu.: 0.50  
+##  Fabaceae     :53   AMAPAL :17    Median : 3.00  
+##  Poaceae      :76   BOUCUR :14    Mean   :12.73  
+##                     DESPIN :14    3rd Qu.:18.00  
+##                     SETAR  :12    Max.   :86.00  
+##                     (Other):67                   
+##                    Leaf_Type             Leaf_Phenology
+##  Broad-leaved           : 11   Cold-deciduous   : 11   
+##  Broad-leaved herbaceous:  4   Drought-deciduous:149   
+##  Microphyllous          :149   Herb - annual    :  4   
+##                                                        
+##                                                        
+##                                                        
+##                                                        
+##              Community 
+##  Forest           :15  
+##  Shrubland        :70  
+##  Wooded Herbaceous: 4  
+##  Wooded Shrubland :71  
+##  Woodland         : 4  
+##                        
+## </code></pre>
 </div>
 <div id="summary-statistics-for-groups" class="section level3">
 <h3>Summary statistics for groups</h3>
-<p>use <code>mean</code> and <code>sd</code> for subset(s) of data</p>
+<pre class="r"><code>mesquite_mean &lt;- mean(subset_data$Percent_Cover[subset_data$Common_Name == &quot;velvet mesquite&quot;])
+mesquite_sd &lt;- sd(subset_data$Percent_Cover[subset_data$Common_Name == &quot;velvet mesquite&quot;])</code></pre>
+<p>We can see the values of each of these by typing in the variable name alone into the R console:</p>
+<pre class="r"><code>mesquite_mean</code></pre>
+<pre><code>## [1] 27.07143</code></pre>
+<pre class="r"><code>mesquite_sd</code></pre>
+<pre><code>## [1] 21.14077</code></pre>
 </div>
 <div id="get-cover-for-each-familyplot" class="section level3">
 <h3>Get % cover for each family/plot</h3>
-<p><code>install.packages(&quot;dplyr&quot;)</code></p>
+<p>Ultimately, we would like to look at how much cover there is for each plant family in the Tumacacori plots. Right now the data are shown for each <em>species</em>, but we would like to know how much of the plant cover corresponds to each <em>family</em> .</p>
+<p>In order to summarize information for each plant family, we are going to use a third-party package. What does that mean, “third-party”? When we think of software, there are generally two parties: the one that wrote the software and the one that uses the software. In this case, the R Core Team wrote the R software and we are the second party, the users of R. Third-party packages are those written by someone other than the authors of the original software. R is especially amenable to third-party development and some of the most widely used packages in R were developed by teams other than the R Core Team. Importantly, if we are using third-party R packages, we need to take two steps: first we need to install the package, second we need to load the package’s functions into memory. The first (installation) only has to happen once on your machine; the second (loading into memory) has to happen every time you use R.</p>
+<p>To install the dplyr package:</p>
+<pre class="r"><code>install.packages(&quot;dplyr&quot;)</code></pre>
+<p>Now that the package is installed, we can load it into memory with the <code>library</code> command. When using third-party packages, we generally add <code>library</code> commands to the start of the script, so anyone reading our script can tell which, if any, additional packages the script requires to run.</p>
 <pre class="r"><code>library(&quot;dplyr&quot;)</code></pre>
 <pre class="r"><code>family_data &lt;- subset_data %&gt;%
   group_by(Plot_Code, Family, Community) %&gt;%
   summarize(Family_Percent_Cover = sum(Percent_Cover))</code></pre>
+<p>If we consider the above code using English, it is easier to understand if we replace all the pipes (<code>%&gt;%</code>) with the word “then”:</p>
+<pre><code>Make a new variable called family_data, take the subset_data, then
+  group the data by Plot_Code, Family, and Community, then
+  add up all the values in the Percent_Cover column and store it 
+      in a column called &quot;Family_Percent_Cover&quot;</code></pre>
 <hr />
 </div>
 </div>
@@ -533,7 +666,7 @@ print(cover_plot)</code></pre>
 <li>A <a href="https://jcoliver.github.io/learn-r/014-intro-summarizing-visualizing.pdf">PDF version</a> of this lesson</li>
 </ul>
 <hr />
-<p><a href="index.html">Back to learn-r main page</a></p>
+<p>Back to <a href="https://jcoliver.github.io/learn-r/index.html">learn-r main page</a></p>
 <p>Questions? e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.</p>
 </div>
 
