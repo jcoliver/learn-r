@@ -38,12 +38,18 @@ dir.create("output")
 
 ### [Get data]
 
-url:
+We are going to use vegetation survey data from the Tumacacori National Historical Park. These data are based on several surveys and are available through the National Park Service's [Integrated Resource Management Applications Data Store](https://irma.nps.gov/DataStore/Reference/Profile/2233448).
 
-Data are csv at https://irma.nps.gov/DataStore/DownloadFile/569336
-Webpage with files and other information at https://irma.nps.gov/DataStore/Reference/Profile/2233448
+We can use R to directly download the data from the web. In the R console, enter
 
-save it in vegetation/data
+```{r download-data, eval = FALSE}
+download.file(url = "https://tinyurl.com/tnhp-data",
+              destfile = "data/tumacacori-vegetation.csv")
+```
+
+(You can also download the file manually by entering [https://tinyurl.com/tnhp-data](https://tinyurl.com/tnhp-data) into a web browser's address bar.)
+
+Note if you click on the data folder in your project (there should be a file browser in the lower-right corner of your RStudio window), you should see a single file, "tumacacori-vegetation.csv", that shows up as 31.5 KB. If you do not see that file, or if the file size is listed as 0 KB, try downloading the file again, making sure you spelled the URL and destination file name correctly.
 
 ***
 
@@ -73,9 +79,11 @@ plant_data <- read.csv(file = "data/tumacacori-vegetation.csv")
 
 The statement shows typical syntax for an R command. From an abstract perspective, most R statements look like:
 
-$Variable \enspace Name = Function \enspace Name (Function \enspace Arguments)$
+$$
+Variable \enspace Name = Function \enspace Name (Function \enspace Arguments)
+$$
 
-The function (`read.csv`) is given on piece of information, or "argument", in this case the name of the file we wish to read into memory. The data in the file are read into R, then stored in a variable called `plant_data`. 
+The _function_ (`read.csv`) is given one piece of information, or _argument_, in this case the name of the file we wish to read into memory. The data in the file are read into R, then stored in a _variable_ called `plant_data`. 
 
 ### Quality Assurance
 Whenever we start writing a new script, we _always_ want to make sure the data are being read in correctly. When we are doing this initial quality check, we don't necessarily need to record all the commands we type, so we can use the R console to type commands. We'll start with `head` which shows the first six rows of data:
