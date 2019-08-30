@@ -376,11 +376,13 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Introduction to data summarizing and visualization</h1>
 <h4 class="author">Jeff Oliver</h4>
-<h4 class="date">26 August, 2019</h4>
+<h4 class="date">29 August, 2019</h4>
 
 </div>
 
 
+<div id="todo-add-comments" class="section level1">
+<h1>TODO: ADD COMMENTS!</h1>
 <p>The R programming language provides many tools for data analysis and visualization, but all the options can be daunting. This lesson provides an introduction to wrangling data in R and using graphics to tell a story with data.</p>
 <div id="learning-objectives" class="section level4">
 <h4>Learning objectives</h4>
@@ -410,9 +412,12 @@ dir.create(&quot;output&quot;)</code></pre>
 </div>
 <div id="get-data" class="section level3">
 <h3>[Get data]</h3>
-<p>url:</p>
-<p>Data are csv at <a href="https://irma.nps.gov/DataStore/DownloadFile/569336" class="uri">https://irma.nps.gov/DataStore/DownloadFile/569336</a> Webpage with files and other information at <a href="https://irma.nps.gov/DataStore/Reference/Profile/2233448" class="uri">https://irma.nps.gov/DataStore/Reference/Profile/2233448</a></p>
-<p>save it in vegetation/data</p>
+<p>We are going to use vegetation survey data from the Tumacacori National Historical Park. These data are based on several surveys and are available through the National Park Service’s <a href="https://irma.nps.gov/DataStore/Reference/Profile/2233448">Integrated Resource Management Applications Data Store</a>.</p>
+<p>We can use R to directly download the data from the web. In the R console, enter</p>
+<pre class="r"><code>download.file(url = &quot;https://tinyurl.com/tnhp-data&quot;,
+              destfile = &quot;data/tumacacori-vegetation.csv&quot;)</code></pre>
+<p>(You can also download the file manually by entering <a href="https://tinyurl.com/tnhp-data">https://tinyurl.com/tnhp-data</a> into a web browser’s address bar.)</p>
+<p>Note if you click on the data folder in your project (there should be a file browser in the lower-right corner of your RStudio window), you should see a single file, “tumacacori-vegetation.csv”, that shows up as 31.5 KB. If you do not see that file, or if the file size is listed as 0 KB, try downloading the file again, making sure you spelled the URL and destination file name correctly.</p>
 <hr />
 </div>
 </div>
@@ -434,8 +439,10 @@ Take a moment to look at those data but don’t change any of the values in the 
 <p>Now we are finally going to read data into R. When you opened the file in Excel you might have noticed that it has the file extension “csv”, which stands for Comma-Separated Values. The CSV file format is common for data tables and has the benefit that it can be easily ready by many programs, which is not always the case for .xls and .xlsx files. To read the data into R, we use the <code>read.csv</code> function:</p>
 <pre class="r"><code>plant_data &lt;- read.csv(file = &quot;data/tumacacori-vegetation.csv&quot;)</code></pre>
 <p>The statement shows typical syntax for an R command. From an abstract perspective, most R statements look like:</p>
-<p><span class="math inline">\(Variable \enspace Name = Function \enspace Name (Function \enspace Arguments)\)</span></p>
-<p>The function (<code>read.csv</code>) is given on piece of information, or “argument”, in this case the name of the file we wish to read into memory. The data in the file are read into R, then stored in a variable called <code>plant_data</code>.</p>
+<p><span class="math display">\[
+Variable \enspace Name = Function \enspace Name (Function \enspace Arguments)
+\]</span></p>
+<p>The <em>function</em> (<code>read.csv</code>) is given one piece of information, or <em>argument</em>, in this case the name of the file we wish to read into memory. The data in the file are read into R, then stored in a <em>variable</em> called <code>plant_data</code>.</p>
 </div>
 <div id="quality-assurance" class="section level3">
 <h3>Quality Assurance</h3>
@@ -531,8 +538,10 @@ subset_data$Family &lt;- factor(subset_data$Family)</code></pre>
 </div>
 <div id="summarizing-data" class="section level2">
 <h2>Summarizing data</h2>
+<p>We would like to get some summary data from our data, and R provides functions for making this easy.</p>
 <div id="using-summary" class="section level3">
 <h3>Using <code>summary</code></h3>
+<p>The <code>summary</code> function works on data frames (which is how R stores spreadsheets). It provides a little bit of information about each of the columns of data. For columns that have categorical data, like <code>Common_Name</code>, it tells us how many rows have each category. For columns with numerical data, it provides some statistics, such as the mean, median, minimum, and maximum.</p>
 <pre class="r"><code>summary(subset_data)</code></pre>
 <pre><code>##      Plot_Code                      Field_Name               Common_Name
 ##  TUMC_IP12: 13   Prosopis velutina       :21   velvet mesquite     :21  
@@ -566,25 +575,73 @@ subset_data$Family &lt;- factor(subset_data$Family)</code></pre>
 ##  Woodland         : 4  
 ##                        
 ## </code></pre>
+<p>Looking at this output, we see, for instance, there are 21 rows with data for velvet mesquite. We also see the mean percent cover is 12.73 across all plots and species.</p>
 </div>
 <div id="summary-statistics-for-groups" class="section level3">
 <h3>Summary statistics for groups</h3>
+<p>But what if we wanted information about certain groups of data? For example we might want the mean and standard deviation of percent cover for a particular species. We can calculate those statistics for all species with the <code>mean</code> and <code>sd</code> functions:</p>
+<pre class="r"><code>cover_mean &lt;- mean(subset_data$Percent_Cover)
+cover_sd &lt;- sd(subset_data$Percent_Cover)</code></pre>
+<p>We can see the values of each of these by typing in the variable name alone into the R console:</p>
+<pre class="r"><code>cover_mean</code></pre>
+<pre><code>## [1] 12.72561</code></pre>
+<pre class="r"><code>cover_sd</code></pre>
+<pre><code>## [1] 16.48287</code></pre>
+<p>But how do we get these statistics for a single species, say velvet mesquite? We can perform a data subset <em>within</em> the calls to <code>mean</code> and <code>sd</code>:</p>
 <pre class="r"><code>mesquite_mean &lt;- mean(subset_data$Percent_Cover[subset_data$Common_Name == &quot;velvet mesquite&quot;])
 mesquite_sd &lt;- sd(subset_data$Percent_Cover[subset_data$Common_Name == &quot;velvet mesquite&quot;])</code></pre>
-<p>We can see the values of each of these by typing in the variable name alone into the R console:</p>
+<p>In the commands above, we still used <code>mean</code> and <code>sd</code> on the <code>Percent_Cover</code> column but here we <em>only</em> used those rows where the value in the <code>Common_Name</code> column was “velvet mesquite”. Typing the variable names into the R console will show us the statistics for velvet mesquite.</p>
 <pre class="r"><code>mesquite_mean</code></pre>
 <pre><code>## [1] 27.07143</code></pre>
 <pre class="r"><code>mesquite_sd</code></pre>
 <pre><code>## [1] 21.14077</code></pre>
+<p>Note that R is case-sensitive, meaning that lower-case letters and upper-case letters are different in R. If we changed the calculation for the mean from</p>
+<pre class="r"><code>mesquite_mean &lt;- mean(subset_data$Percent_Cover[subset_data$Common_Name == &quot;velvet mesquite&quot;])</code></pre>
+<p>to (capitalizing the “V” and the “M”):</p>
+<pre class="r"><code>mesquite_mean &lt;- mean(subset_data$Percent_Cover[subset_data$Common_Name == &quot;Velvet Mesquite&quot;])</code></pre>
+<p>the result will be <code>NaN</code> which stands for “Not a Number”. This is because there are zero rows with the common name of “Velvet Mesquite”, and the mean of nothing is not definable.</p>
+<p>What if you wanted means and standard deviations for each species? You could copy and paste the code, changing the variable name and species name for every species, but since there are whitethorn acacia, catclaw acacia, carelessweed, spidergrass, sideoats grama, catclaw mimosa, bush muhly, velvet mesquite, needle grama, feather fingergrass, Lehmann lovegrass, bristlegrass, London rocket, big sacaton, western tansymustard, sand dropseed, purple threeawn, green sprangletop, stinkgrass, Johnsongrass, streambed bristlegrass, Bermudagrass, cliff muhly, milkvetch, broomcorn millet, fairyduster, delicate muhly, Rothrock’s grama, cane bluestem, cotta grass, grama, shortleaf woollygrass different common names in these data, that would be tedious and a great way to make a mistake. Thankfully, there are additional packages in R that make this much easier.</p>
 </div>
-<div id="get-cover-for-each-familyplot" class="section level3">
-<h3>Get % cover for each family/plot</h3>
-<p>Ultimately, we would like to look at how much cover there is for each plant family in the Tumacacori plots. Right now the data are shown for each <em>species</em>, but we would like to know how much of the plant cover corresponds to each <em>family</em> .</p>
-<p>In order to summarize information for each plant family, we are going to use a third-party package. What does that mean, “third-party”? When we think of software, there are generally two parties: the one that wrote the software and the one that uses the software. In this case, the R Core Team wrote the R software and we are the second party, the users of R. Third-party packages are those written by someone other than the authors of the original software. R is especially amenable to third-party development and some of the most widely used packages in R were developed by teams other than the R Core Team. Importantly, if we are using third-party R packages, we need to take two steps: first we need to install the package, second we need to load the package’s functions into memory. The first (installation) only has to happen once on your machine; the second (loading into memory) has to happen every time you use R.</p>
-<p>To install the dplyr package:</p>
+<div id="summary-statistics-made-easier" class="section level3">
+<h3>Summary statistics made easier</h3>
+<p>To get these summary statistics for all species, we are going to use a third-party package. What does that mean, “third-party”? When we think of software, there are generally two parties: the one that wrote the software and the one that uses the software. In this case, the R Core Team wrote the R software and we are the second party, the users of R. Third-party packages are those written by someone other than the authors of the original software. R is especially amenable to third-party development and some of the most widely used packages in R were developed by teams other than the R Core Team. Importantly, if we are using third-party R packages, we need to take two steps: first we need to <strong>install</strong> the package, second we need to <strong>load</strong> the package’s functions into memory. The first (installation) only has to happen once on your machine; the second (loading into memory) has to happen every time you use R.</p>
+<p>We are going to use the <a href="https://dplyr.tidyverse.org/">dplyr</a> package for summarizing our data. To install the dplyr:</p>
 <pre class="r"><code>install.packages(&quot;dplyr&quot;)</code></pre>
 <p>Now that the package is installed, we can load it into memory with the <code>library</code> command. When using third-party packages, we generally add <code>library</code> commands to the start of the script, so anyone reading our script can tell which, if any, additional packages the script requires to run.</p>
 <pre class="r"><code>library(&quot;dplyr&quot;)</code></pre>
+<pre><code>## 
+## Attaching package: 'dplyr'</code></pre>
+<pre><code>## The following objects are masked from 'package:stats':
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<p>Here we use the <code>group_by</code> function to essentially create a separate pile of data for each species, then for each “pile” calculate the mean and standard deviation:</p>
+<pre class="r"><code>summary_stats &lt;- subset_data %&gt;%
+  group_by(Common_Name) %&gt;%
+  summarize(mean_cover = mean(Percent_Cover),
+            sd_cover = sd(Percent_Cover))</code></pre>
+<p>We can see these summary stats by typing the variable name, <code>summary_stats</code> into the R console:</p>
+<pre class="r"><code>summary_stats</code></pre>
+<pre><code>## # A tibble: 32 x 3
+##    Common_Name      mean_cover sd_cover
+##    &lt;fct&gt;                 &lt;dbl&gt;    &lt;dbl&gt;
+##  1 Bermudagrass           8        0   
+##  2 big sacaton           13.6     21.7 
+##  3 bristlegrass           1.54     1.29
+##  4 broomcorn millet       3       NA   
+##  5 bush muhly            14.3     11.3 
+##  6 cane bluestem          0.5     NA   
+##  7 carelessweed          20.9     18.7 
+##  8 catclaw acacia        19.2     17.5 
+##  9 catclaw mimosa         1.75     1.77
+## 10 cliff muhly           13        7.07
+## # … with 22 more rows</code></pre>
+</div>
+<div id="get-cover-for-each-familyplot" class="section level3">
+<h3>Get % cover for each family/plot</h3>
+<p>Ultimately, we would like to look at how much cover there is for each plant family in the Tumacacori plots. Right now the data are shown for each <em>species</em>, but we would like to know how much of the plant cover corresponds to each <em>family</em> . We’ll use the dplyr package again for summarizing data, but this time we are going to group by several levels: first by the plot, then by family, then by the community. [<strong>TODO: More explanation needed here?</strong>]</p>
 <pre class="r"><code>family_data &lt;- subset_data %&gt;%
   group_by(Plot_Code, Family, Community) %&gt;%
   summarize(Family_Percent_Cover = sum(Percent_Cover))</code></pre>
@@ -604,6 +661,11 @@ mesquite_sd &lt;- sd(subset_data$Percent_Cover[subset_data$Common_Name == &quot;
 <pre class="r"><code>install.packages(&quot;ggplot2&quot;)</code></pre>
 <p>Now that the package in installed, we can load the functions into memory with the <code>library</code> function:</p>
 <pre class="r"><code>library(&quot;ggplot2&quot;)</code></pre>
+<pre><code>## Registered S3 methods overwritten by 'ggplot2':
+##   method         from 
+##   [.quosures     rlang
+##   c.quosures     rlang
+##   print.quosures rlang</code></pre>
 </div>
 <div id="first-rule-of-plots" class="section level3">
 <h3>First rule of plots</h3>
@@ -668,6 +730,7 @@ print(cover_plot)</code></pre>
 <hr />
 <p>Back to <a href="https://jcoliver.github.io/learn-r/index.html">learn-r main page</a></p>
 <p>Questions? e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.</p>
+</div>
 </div>
 
 

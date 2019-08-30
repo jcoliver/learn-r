@@ -9,6 +9,8 @@ output:
 urlcolor: blue
 ---
 
+# TODO: ADD COMMENTS!
+
 The R programming language provides many tools for data analysis and visualization, but all the options can be daunting. This lesson provides an introduction to wrangling data in R and using graphics to tell a story with data.
 
 #### Learning objectives
@@ -155,34 +157,75 @@ So we've done some manipulations to the data, dropping rows with missing data an
 
 ## Summarizing data
 
+We would like to get some summary data from our data, and R provides functions for making this easy.
+
 ### Using `summary`
+
+The `summary` function works on data frames (which is how R stores spreadsheets). It provides a little bit of information about each of the columns of data. For columns that have categorical data, like `Common_Name`, it tells us how many rows have each category. For columns with numerical data, it provides some statistics, such as the mean, median, minimum, and maximum.
+
 ```{r data-summary}
 summary(subset_data)
 ```
 
+Looking at this output, we see, for instance, there are `r nrow(subset_data[subset_data$Common_Name == "velvet mesquite", ])` rows with data for velvet mesquite. We also see the mean percent cover is `r round(mean(subset_data$Percent_Cover), digits = 2)` across all plots and species.
+
 ### Summary statistics for groups
+
+But what if we wanted information about certain groups of data? For example we might want the mean and standard deviation of percent cover for a particular species. We can calculate those statistics for all species with the `mean` and `sd` functions:
+
 ```{r summary-stats}
-mesquite_mean <- mean(subset_data$Percent_Cover[subset_data$Common_Name == "velvet mesquite"])
-mesquite_sd <- sd(subset_data$Percent_Cover[subset_data$Common_Name == "velvet mesquite"])
+cover_mean <- mean(subset_data$Percent_Cover)
+cover_sd <- sd(subset_data$Percent_Cover)
 ```
 
 We can see the values of each of these by typing in the variable name alone into the R console:
 
 ```{r print-mean}
-mesquite_mean
+cover_mean
 ```
 
 ```{r print-sd}
+cover_sd
+```
+
+But how do we get these statistics for a single species, say velvet mesquite? We can perform a data subset _within_ the calls to `mean` and `sd`:
+
+```{r mesquite-summary-stats}
+mesquite_mean <- mean(subset_data$Percent_Cover[subset_data$Common_Name == "velvet mesquite"])
+mesquite_sd <- sd(subset_data$Percent_Cover[subset_data$Common_Name == "velvet mesquite"])
+```
+
+In the commands above, we still used `mean` and `sd` on the `Percent_Cover` column but here we _only_ used those rows where the value in the `Common_Name` column was "velvet mesquite". Typing the variable names into the R console will show us the statistics for velvet mesquite.
+
+```{r print-mesquite-mean}
+mesquite_mean
+```
+
+```{r print-mesquite-sd}
 mesquite_sd
 ```
 
-### Get % cover for each family/plot
+Note that R is case-sensitive, meaning that lower-case letters and upper-case letters are different in R. If we changed the calculation for the mean from 
 
-Ultimately, we would like to look at how much cover there is for each plant family in the Tumacacori plots. Right now the data are shown for each _species_, but we would like to know how much of the plant cover corresponds to each _family_ .
+```{r mesquite-mean-lc}
+mesquite_mean <- mean(subset_data$Percent_Cover[subset_data$Common_Name == "velvet mesquite"])
+```
 
-In order to summarize information for each plant family, we are going to use a third-party package. What does that mean, "third-party"? When we think of software, there are generally two parties: the one that wrote the software and the one that uses the software. In this case, the R Core Team wrote the R software and we are the second party, the users of R. Third-party packages are those written by someone other than the authors of the original software. R is especially amenable to third-party development and some of the most widely used packages in R were developed by teams other than the R Core Team. Importantly, if we are using third-party R packages, we need to take two steps: first we need to install the package, second we need to load the package's functions into memory. The first (installation) only has to happen once on your machine; the second (loading into memory) has to happen every time you use R.
+to (capitalizing the "V" and the "M"):
 
-To install the dplyr package:
+```{r mesquite-mean-uc}
+mesquite_mean <- mean(subset_data$Percent_Cover[subset_data$Common_Name == "Velvet Mesquite"])
+```
+
+the result will be `NaN` which stands for "Not a Number". This is because there are zero rows with the common name of "Velvet Mesquite", and the mean of nothing is not definable.
+
+What if you wanted means and standard deviations for each species? You could copy and paste the code, changing the variable name and species name for every species, but since there are `r unique(subset_data$Common_Name)` different common names in these data, that would be tedious and a great way to make a mistake. Thankfully, there are additional packages in R that make this much easier.
+
+### Summary statistics made easier
+
+To get these summary statistics for all species, we are going to use a third-party package. What does that mean, "third-party"? When we think of software, there are generally two parties: the one that wrote the software and the one that uses the software. In this case, the R Core Team wrote the R software and we are the second party, the users of R. Third-party packages are those written by someone other than the authors of the original software. R is especially amenable to third-party development and some of the most widely used packages in R were developed by teams other than the R Core Team. Importantly, if we are using third-party R packages, we need to take two steps: first we need to **install** the package, second we need to **load** the package's functions into memory. The first (installation) only has to happen once on your machine; the second (loading into memory) has to happen every time you use R.
+
+We are going to use the [dplyr](https://dplyr.tidyverse.org/) package for summarizing our data. To install the dplyr:
 
 ```{r install-dplyr, eval = FALSE}
 install.packages("dplyr")
@@ -194,7 +237,25 @@ Now that the package is installed, we can load it into memory with the `library`
 library("dplyr")
 ```
 
+Here we use the `group_by` function to essentially create a separate pile of data for each species, then for each "pile" calculate the mean and standard deviation:
 
+```{r all-species-stats}
+summary_stats <- subset_data %>%
+  group_by(Common_Name) %>%
+  summarize(mean_cover = mean(Percent_Cover),
+            sd_cover = sd(Percent_Cover))
+```
+
+We can see these summary stats by typing the variable name, `summary_stats` into the R console:
+
+```{r print-all-species-stats}
+summary_stats
+```
+
+
+### Get % cover for each family/plot
+
+Ultimately, we would like to look at how much cover there is for each plant family in the Tumacacori plots. Right now the data are shown for each _species_, but we would like to know how much of the plant cover corresponds to each _family_ . We'll use the dplyr package again for summarizing data, but this time we are going to group by several levels: first by the plot, then by family, then by the community. [**TODO: More explanation needed here?**]
 
 ```{r family-summaries}
 family_data <- subset_data %>%
