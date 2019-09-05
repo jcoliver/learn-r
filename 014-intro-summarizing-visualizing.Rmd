@@ -9,8 +9,6 @@ output:
 urlcolor: blue
 ---
 
-# TODO: ADD COMMENTS!
-
 The R programming language provides many tools for data analysis and visualization, but all the options can be daunting. This lesson provides an introduction to wrangling data in R and using graphics to tell a story with data.
 
 #### Learning objectives
@@ -18,8 +16,6 @@ The R programming language provides many tools for data analysis and visualizati
 2. Modify data for proper data hygiene
 3. Summarize information from raw data
 4. Visualize data to convey information
-
-## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
 
 ***
 
@@ -126,14 +122,19 @@ To remove rows that have missing data, we use the `na.omit` function. Before we 
 plant_data <- na.omit(plant_data)
 ```
 
-Look again at the Environment tab. There should only be `r dim(plant_data)[1]` obs. because we removed those rows with missing data. The number of columns should not change at all.
+Look again at the Environment tab. There should only be `r dim(plant_data)[1]` obs. because we removed those rows with missing data. The number of columns should not change at all. One thing we are going to do now is to start commenting our code. We use the pound or hash sign (`#`) to tell R that we are writing a comment that should not be interpreted as code. For that line we just wrote, we are going to add a little note about _why_ we did what we did.
+
+```{r drop-missing-comment, eval = FALSE}
+# Do not want rows with missing data
+plant_data <- na.omit(plant_data)
+```
 
 ### Subsetting data
 
 The dataset include observations of `r length(unique(plant_data$Family))` different plant families at the plots. For our purposes, we are going to focus on a few of the families that make up most of these communities, namely the legumes (Fabaceae), grasses (Poaceae), mustards (Brassicaceae), and amaranths (Amaranthaceae).
 
 ```{r subset-data}
-# Families to focus on
+# Only focus on four families
 families_keep <- c("Fabaceae", "Poaceae", "Brassicaceae", "Amaranthaceae")
 
 # Create new data with only four families
@@ -176,6 +177,7 @@ Looking at this output, we see, for instance, there are `r nrow(subset_data[subs
 But what if we wanted information about certain groups of data? For example we might want the mean and standard deviation of percent cover for a particular species. We can calculate those statistics for all species with the `mean` and `sd` functions:
 
 ```{r summary-stats}
+# Extract summary statistics for all species in subsetted data
 cover_mean <- mean(subset_data$Percent_Cover)
 cover_sd <- sd(subset_data$Percent_Cover)
 ```
@@ -193,6 +195,7 @@ cover_sd
 But how do we get these statistics for a single species, say velvet mesquite? We can perform a data subset _within_ the calls to `mean` and `sd`:
 
 ```{r mesquite-summary-stats}
+# Calculate mean and standard deviation for mesquite alone
 mesquite_mean <- mean(subset_data$Percent_Cover[subset_data$Common_Name == "velvet mesquite"])
 mesquite_sd <- sd(subset_data$Percent_Cover[subset_data$Common_Name == "velvet mesquite"])
 ```
@@ -242,6 +245,7 @@ library("dplyr")
 Now we can use dplyr functions to generate summary statistics for _each_ species. Here we use the `group_by` function to essentially create a separate pile of data for each species, then, for each "pile", calculate the mean and standard deviation:
 
 ```{r all-species-stats}
+# Calculate mean and standard deviation for each species separately
 summary_stats <- subset_data %>%
   group_by(Common_Name) %>%
   summarize(mean_cover = mean(Percent_Cover),
@@ -260,6 +264,7 @@ Make a new variable called "summary_stats", take the subset_data, then
 We can also add this explanation to our code through the use of comments:
 
 ```{r dplyr-explanation, eval = FALSE}
+# Calculate mean and standard deviation for each species separately
 summary_stats <- subset_data %>%
   # make a separate group of data for each Common_Name
   group_by(Common_Name) %>%
@@ -276,12 +281,12 @@ We can see these summary stats by typing the variable name, `summary_stats` into
 summary_stats
 ```
 
-
 ### Get % cover for each family/plot
 
-Ultimately, we would like to look at how much cover there is for each plant family in the Tumacacori plots. Right now the data are shown for each _species_, but we would like to know how much of the plant cover corresponds to each _family_ . We'll use the dplyr package again for summarizing data, but this time we are going to group by several levels: first by the plot, then by family, then by the community. [**TODO: More explanation needed here - use "pile" metaphore again; consider a figure**]
+Ultimately, we would like to look at how much cover there is for each plant family in the Tumacacori plots. Right now the data are shown for each _species_, but we would like to know how much of the plant cover corresponds to each _family_ . We'll use the dplyr package again for summarizing data, but this time we are going to group by several levels: first by the plot, then by family, then by the community.
 
 ```{r family-summaries}
+# Calculate familiy-level total percent cover for each plot separately
 family_data <- subset_data %>%
   group_by(Plot_Code, Family, Community) %>%
   summarize(Family_Percent_Cover = sum(Percent_Cover))
@@ -333,6 +338,7 @@ library("ggplot2")
 Now that we have the ggplot2 package installed, we are going to make a boxplot of the data. Boxplots are especially good for comparing values of different categories. Here we are going to create a boxplot for percent cover, with different communities shown on the x-axis. So here we go.
 
 ```{r simple-boxplot-code, eval = FALSE}
+# Boxplot of family-level data
 cover_plot <- ggplot(data = family_data, 
                      mapping = aes(x = Community, y = Family_Percent_Cover)) +
   geom_boxplot()
@@ -356,12 +362,12 @@ cover_plot <- ggplot(data = family_data,
 print(cover_plot)
 ```
 
-
 ### Telling the story
 
 That's a fine start, but if we are interested in looking at differences among the families, we need an easy way of telling the families apart. We can do this in the `mapping` argument of the `ggplot` command by indicating that the shapes should be filled with different colors, according to value in the `Family` column:
 
 ```{r color-families}
+# Boxplot of family-level data
 cover_plot <- ggplot(data = family_data, 
                      mapping = aes(x = Community, y = Family_Percent_Cover,
                      fill = Family)) +
@@ -378,8 +384,10 @@ table(family_data$Family, family_data$Community)
 Since we only have those single plots for Wooded Herbaceous and Woodland, we should probably exclude them from our plot.
 
 ```{r remove-communities}
+# Too few observations in two communities, so remove them
 family_data <- family_data[!(family_data$Community %in% c("Wooded Herbaceous", "Woodland")), ]
 
+# Boxplot of family-level data
 cover_plot <- ggplot(data = family_data, 
                      mapping = aes(x = Community, y = Family_Percent_Cover,
                      fill = Family)) +
@@ -390,14 +398,87 @@ print(cover_plot)
 Now we only have those three communities. We would also like to rearrange our x-axis so the different categories of communities have an increasing number of trees, reading left to right. That is, we want the left-most community to be Shrubland, the middle community to be Wooded Shrubland, and the right-most community to be Forest. We do this by making a slight tweak to the data, where we "re-level" the categories in the `Community` column of our data:
 
 ```{r releveled-communities}
+# Re-order levels of Community so they plot in desired order
 family_data$Community <- factor(family_data$Community,
                                    levels = c("Shrubland", "Wooded Shrubland", "Forest"))
 
+# Boxplot of family-level data
 cover_plot <- ggplot(data = family_data, 
                      mapping = aes(x = Community, y = Family_Percent_Cover,
                      fill = Family)) +
   geom_boxplot()
 print(cover_plot)
+```
+
+Finally, we can save the plot to a file using the `ggsave` function.
+
+```{r save-plot, eval = FALSE}
+ggsave(plot = cover_plot, filename = "output/family-cover-plot.pdf")
+```
+
+Our final script would look like this:
+
+```{r final-script, eval = FALSE}
+# Plotting Tumacacori vegetation
+# Jeffrey C. Oliver
+# jcoliver@email.arizona.edu
+# 2019-09-06
+
+# Libraries required for data wrangling and plotting
+library(dplyr)
+library(ggplot2)
+
+plant_data <- read.csv(file = "data/tumacacori-vegetation.csv")
+
+# Do not want rows with missing data
+plant_data <- na.omit(plant_data)
+
+# Only focus on four families
+families_keep <- c("Fabaceae", "Poaceae", "Brassicaceae", "Amaranthaceae")
+
+# Create new data with only four families
+subset_data <- plant_data[plant_data$Family %in% families_keep, ]
+
+# Re-level data in the Family column
+subset_data$Family <- factor(subset_data$Family)
+
+# Calculate summary statistics for all species in subsetted data
+cover_mean <- mean(subset_data$Percent_Cover)
+cover_sd <- sd(subset_data$Percent_Cover)
+
+# Calculate mean and standard deviation for mesquite alone
+mesquite_mean <- mean(subset_data$Percent_Cover[subset_data$Common_Name == "velvet mesquite"])
+mesquite_sd <- sd(subset_data$Percent_Cover[subset_data$Common_Name == "velvet mesquite"])
+
+# Calculate mean and standard deviation for each species separately
+summary_stats <- subset_data %>%
+  # make a separate group of data for each Common_Name
+  group_by(Common_Name) %>%
+  # calculate the mean and standard deviation of Percent_Cover and store them 
+  #    in columns called "mean_cover" and "sd_cover" respectively
+  summarize(mean_cover = mean(Percent_Cover),
+            sd_cover = sd(Percent_Cover))
+
+# Calculate familiy-level total percent cover for each plot separately
+family_data <- subset_data %>%
+  group_by(Plot_Code, Family, Community) %>%
+  summarize(Family_Percent_Cover = sum(Percent_Cover))
+
+# Too few observations in two communities, so remove them
+family_data <- family_data[!(family_data$Community %in% c("Wooded Herbaceous", "Woodland")), ]
+
+# Re-order levels of Community so they plot in desired order
+family_data$Community <- factor(family_data$Community,
+                                   levels = c("Shrubland", "Wooded Shrubland", "Forest"))
+
+# Boxplot of family-level data
+cover_plot <- ggplot(data = family_data, 
+                     mapping = aes(x = Community, y = Family_Percent_Cover,
+                     fill = Family)) +
+  geom_boxplot()
+print(cover_plot)
+
+ggsave(plot = cover_plot, filename = "output/family-cover-plot.pdf")
 ```
 
 ***
