@@ -79,7 +79,7 @@ plant_data <- read.csv(file = "data/tumacacori-vegetation.csv")
 The statement shows typical syntax for an R command. From an abstract perspective, most R statements look like:
 
 $$
-Variable \enspace Name = Function \enspace Name (Function \enspace Arguments)
+Variable \enspace Name \leftarrow Function \enspace Name (Function \enspace Arguments)
 $$
 
 The _function_ (`read.csv`) is given one piece of information, or _argument_, in this case the name of the file we wish to read into memory. The data in the file are read into R, then stored in a _variable_ called `plant_data`. 
@@ -400,7 +400,9 @@ Now we only have those three communities. We would also like to rearrange our x-
 ```{r releveled-communities}
 # Re-order levels of Community so they plot in desired order
 family_data$Community <- factor(family_data$Community,
-                                   levels = c("Shrubland", "Wooded Shrubland", "Forest"))
+                                   levels = c("Shrubland", 
+                                              "Wooded Shrubland", 
+                                              "Forest"))
 
 # Boxplot of family-level data
 cover_plot <- ggplot(data = family_data, 
@@ -410,11 +412,13 @@ cover_plot <- ggplot(data = family_data,
 print(cover_plot)
 ```
 
-Finally, we can save the plot to a file using the `ggsave` function.
+Finally, we can save the plot to a file using the `ggsave` function:
 
 ```{r save-plot, eval = FALSE}
 ggsave(plot = cover_plot, filename = "output/family-cover-plot.pdf")
 ```
+
+This saves the file in the "output" folder with the name "family-cover-plot.pdf".
 
 Our final script would look like this:
 
