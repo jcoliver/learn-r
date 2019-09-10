@@ -140,7 +140,7 @@ standard.sepal.length <- (iris$Sepal.Length - mean.sepal.length)/sd.sepal.length
 summary(standard.sepal.length)
 ```
 
-Did copy/paste really save time? While copy/paste can be useful, it can also be a great opportunities to introduce mistakes into our code. If we want to avoid those mistakes, we can take advantage of writing our own functions in R.
+Did copy/paste really save time? While copy/paste can be useful, it can also be a great opportunity to introduce mistakes into our code. If we want to avoid those mistakes, we can take advantage of writing our own functions in R.
 
 ### Behold, a function
 
@@ -177,6 +177,9 @@ We can update our comments with this information:
 Now we can can start to write the function. We begin like we are defining any other variable in R, naming the function something useful but not too long. We'll call our function `standardize`:
 
 ```{r function-definintion, eval = FALSE}
+# goal: calculate mean, sd, and transform to mean = 0, var = 1
+# input: one column of numeric data
+# output: standarized variables
 standardize <- function() {
   
 }
@@ -208,7 +211,7 @@ standardize <- function(data) {
 
 And finally, we need to provide output. This is the very last part of our function definition and we use the `return` function to indicate what the output of our function is. Note that any code in your function that appears _after_ the call to `return` will not be executed.
 
-```{r function-definintion-output, eval = FALSE}
+```{r function-definintion-output}
 # goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
 # output: standarized variables
@@ -222,17 +225,54 @@ standardize <- function(data) {
 
 Once we have our function written, we need to make it available for use by executing the code (via Ctrl-Enter or Cmd-Enter). If you're using RStudio, you can see your new function in the Environment tab. Now we can perform the calculations using the function we just defined.
 
-Replace previous work
+Now we are ready to use the function to perform the calculations. We can replace the three lines of code for the petal length calculation with just one, passing in that one column of data for the `data` argument.
+
 ```{r use-function}
 standard.petal.length <- standardize(data = iris$Petal.Length)
-standard.petal.width <- standardize(data = iris$Petal.Width)
+summary(standard.petal.length)
 ```
 
-Document the function
-```{r function-documentation}
+And we can add the transformation for sepal length, too:
+
+```{r use-function-sepal}
+standard.sepal.length <- standardize(data = iris$Sepal.Length)
+summary(standard.sepal.length)
+```
+
+### Documentation is key
+
+The last thing we need to do is to document our function. That is, we need to write comments so that anyone who wants to use the function can do so without reading all the code to figure out what the input should be, what the output is going to be, and what actually happens in the function. Because we already wrote out some comments, we can use those as a starting point. 
+
+```{r function-documentation-overview, eval = FALSE}
+# goal: calculate mean, sd, and transform to mean = 0, var = 1
+# input: one column of numeric data
+# output: standarized variables
+```
+
+First, we replace "input" with the name of each argument in the function and what it should be. We only have one argument, `data`, and it is a column of numeric data, so our comments just need to replace the word "input" with "data"
+
+```{r function-documentation-input, eval = FALSE}
+# goal: calculate mean, sd, and transform to mean = 0, var = 1
+# data: one column of numeric data
+# output: standarized variables
+```
+
+Next, we focus on the output. In the R language, we generally refer to this as the data that the function _returns_ (remember that we used the `return` command at the end of our function). In this case, we want to replace "output" with "returns" and add a little more detail about the data that are produced by this function.
+
+```{r function-documentation-output, eval = FALSE}
+# goal: calculate mean, sd, and transform to mean = 0, var = 1
+# data: one column of numeric data
+# returns: vector of numeric values, transformed to have mean of zero and 
+#          variance of 1
+```
+
+And lastly we replace the "goal" with a brief, declarative statement of the function.
+
+```{r function-documentation-goal, eval = FALSE}
 # Standardize a vector of numerical data
-# data: vector of numerical data
-# returns: vector of original data standardized to have mean = 0, sd = 1
+# data: one column of numeric data
+# returns: vector of numeric values, transformed to have mean of zero and 
+#          variance of 1
 standardize <- function(data) {
   mean.value <- mean(data)
   sd.value <- sd(data)
@@ -241,14 +281,30 @@ standardize <- function(data) {
 }
 ```
 
+***
+
+TO HERE
+
+***
+
 Use apply to do it to multiple columns
 ```{r apply-function-01, eval = FALSE}
 iris.stand <- apply(X = iris, MARGIN = 2, FUN = standardize)
 ```
 
-```{r apply-function-02, eval = FALSE}
+```{r apply-function-02}
 iris.stand <- apply(X = iris[, 1:4], MARGIN = 2, FUN = standardize)
 iris.stand <- as.data.frame(iris.stand)
+```
+
+Could also instead use `is.numeric` to _only_ tranform numeric columns.
+
+```{r is-numeric-apply}
+iris.stand <- iris
+numeric.cols <- which(sapply(iris, is.numeric))
+iris.stand[, numeric.cols] <- apply(X = iris[, numeric.cols],
+                                    MARGIN = 2,
+                                    FUN = standardize)
 ```
 
 Add the species column
