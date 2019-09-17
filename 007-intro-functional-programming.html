@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Introduction to Functional Programming</h1>
 <h4 class="author">Jeff Oliver</h4>
-<h4 class="date">09 September, 2019</h4>
+<h4 class="date">16 September, 2019</h4>
 
 </div>
 
@@ -403,7 +403,7 @@ Make a print function?
 </div>
 <div id="writing-functions" class="section level2">
 <h2>Writing functions</h2>
-<p>Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy/pasting that code and changing the variable names. Then more copy/paste. Then we forget to change one of the variables and spend a day figuring out why our results don’t make sense.</p>
+<p>Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy-pasting that code and changing the variable names. Then more copy-paste. Then we forget to change one of the variables and spend a day figuring out why our results don’t make sense.</p>
 <p>For example, consider the <code>iris</code> data set:</p>
 <pre class="r"><code>head(iris)</code></pre>
 <pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
@@ -431,7 +431,7 @@ Make a print function?
 ## </code></pre>
 <p>Given this variation in ranges and magnitudes, we will have to standardize the variables if we want to run analyses like principle components analysis (PCA) (PCA is beyond the scope of this lesson, but it is covered in a <a href="https://jcoliver.github.io/learn-r/003-intro-multivariate.html">separate lesson</a>). Standardizing a variable means we transform the data so the mean value is zero and the variance is one.</p>
 <p>We’ll start by creating an R script to hold our work. R scripts are simple text files with a series of R commands and are a great way to make our work reproducible. For all scripts, it is a good idea to start off with a little information about what the script does (and who is responsible for it). So create a script (from the File menu, select New File &gt; R Script or use the keyboard shortcut of Ctrl+Shift+N or Cmd+Shift+N) and add a few lines at the beginning of the script:</p>
-<pre class="r"><code># Standarize iris values
+<pre class="r"><code># standardize iris values
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2018-08-16</code></pre>
@@ -465,7 +465,7 @@ mean.petal.length &lt;- mean(iris$Petal.Length)
 sd.petal.length &lt;- sd(iris$Petal.Length)
 standard.petal.length &lt;- (iris$Petal.Length - mean.petal.length)/sd.petal.length
 
-# Standarize petal length
+# standardize petal length
 mean.petal.length &lt;- mean(iris$Petal.Length)
 sd.petal.length &lt;- sd(iris$Petal.Length)
 standard.petal.length &lt;- (iris$Petal.Length - mean.petal.length)/sd.petal.length</code></pre>
@@ -475,7 +475,7 @@ mean.petal.length &lt;- mean(iris$Petal.Length)
 sd.petal.length &lt;- sd(iris$Petal.Length)
 standard.petal.length &lt;- (iris$Petal.Length - mean.petal.length)/sd.petal.length
 
-# Standarize sepal length
+# standardize sepal length
 mean.sepal.length &lt;- mean(iris$Sepal.Length)
 sd.sepal.length &lt;- sd(iris$Sepal.Length)
 standard.sepal.length &lt;- (iris$Petal.Length - mean.sepal.length)/sd.sepal.length</code></pre>
@@ -484,29 +484,29 @@ standard.sepal.length &lt;- (iris$Petal.Length - mean.sepal.length)/sd.sepal.len
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ## -5.8490 -5.1244 -1.8034 -2.5183 -0.8977  1.2761</code></pre>
 <p>Uh oh. The mean is <em>not</em> equal to zero…let’s look at that code we updated again:</p>
-<pre class="r"><code># Standarize sepal length
+<pre class="r"><code># standardize sepal length
 mean.sepal.length &lt;- mean(iris$Sepal.Length)
 sd.sepal.length &lt;- sd(iris$Sepal.Length)
 standard.sepal.length &lt;- (iris$Petal.Length - mean.sepal.length)/sd.sepal.length</code></pre>
 <p>The problem lies in the last line - we forgot to replace <code>Petal.Length</code> with <code>Sepal.Length</code>. When we update the code and run <code>summary</code>, we can see that it fixes the problem and that, as expected, our standardized variable now has a mean of zero.</p>
-<pre class="r"><code># Standarize sepal length
+<pre class="r"><code># standardize sepal length
 mean.sepal.length &lt;- mean(iris$Sepal.Length)
 sd.sepal.length &lt;- sd(iris$Sepal.Length)
 standard.sepal.length &lt;- (iris$Sepal.Length - mean.sepal.length)/sd.sepal.length
 summary(standard.sepal.length)</code></pre>
 <pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 ## -1.86378 -0.89767 -0.05233  0.00000  0.67225  2.48370</code></pre>
-<p>Did copy/paste really save time? While copy/paste can be useful, it can also be a great opportunity to introduce mistakes into our code. If we want to avoid those mistakes, we can take advantage of writing our own functions in R.</p>
+<p>Did copy-paste really save time? While copy-paste can be useful, it can also be a great opportunity to introduce mistakes into our code. If we want to avoid those mistakes, we can take advantage of writing our own functions in R.</p>
 <div id="behold-a-function" class="section level3">
 <h3>Behold, a function</h3>
 <p>We start writing a function in a way very similar to assigning values to variables. We are going to write a function that will perform the standardization transformation, but first we add some comments about (1) what the function will do, (2) what input the function will take, and (3) what the function will output. Looking back at what we did previously, it’s probably easiest to start with the last one (output).</p>
 <pre class="r"><code># goal: 
 # input: 
-# output: standarized variables</code></pre>
+# output: standardized variables</code></pre>
 <p>What information will we need to provide the function? The “input” we used above was a single column of numeric data.</p>
 <pre class="r"><code># goal: 
 # input: one column of numeric data
-# output: standarized variables</code></pre>
+# output: standardized variables</code></pre>
 <p>Finally, what is the function going to do? Looking back at our code above, we see three steps:</p>
 <ol style="list-style-type: decimal">
 <li>Calculate the mean value for the data in the column</li>
@@ -516,25 +516,25 @@ summary(standard.sepal.length)</code></pre>
 <p>We can update our comments with this information:</p>
 <pre class="r"><code># goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
-# output: standarized variables</code></pre>
+# output: standardized variables</code></pre>
 <p>Now we can can start to write the function. We begin like we are defining any other variable in R, naming the function something useful but not too long. We’ll call our function <code>standardize</code>:</p>
 <pre class="r"><code># goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
-# output: standarized variables
+# output: standardized variables
 standardize &lt;- function() {
   
 }</code></pre>
 <p>The command <code>function</code> will create a function and anything we place between the parentheses will be the input to the function. Looking back to the comments we wrote, our function will take one column of data, so we can add one argument to the call to <code>function</code>:</p>
 <pre class="r"><code># goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
-# output: standarized variables
+# output: standardized variables
 standardize &lt;- function(data) {
   
 }</code></pre>
 <p>Our function does not do anything yet. Looking at the <code>goal</code> comment, we see we need to perform three calculations:</p>
 <pre class="r"><code># goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
-# output: standarized variables
+# output: standardized variables
 standardize &lt;- function(data) {
   mean.value &lt;- mean(data)
   sd.value &lt;- sd(data)
@@ -543,7 +543,7 @@ standardize &lt;- function(data) {
 <p>And finally, we need to provide output. This is the very last part of our function definition and we use the <code>return</code> function to indicate what the output of our function is. Note that any code in your function that appears <em>after</em> the call to <code>return</code> will not be executed.</p>
 <pre class="r"><code># goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
-# output: standarized variables
+# output: standardized variables
 standardize &lt;- function(data) {
   mean.value &lt;- mean(data)
   sd.value &lt;- sd(data)
@@ -567,11 +567,11 @@ summary(standard.sepal.length)</code></pre>
 <p>The last thing we need to do is to document our function. That is, we need to write comments so that anyone who wants to use the function can do so without reading all the code to figure out what the input should be, what the output is going to be, and what actually happens in the function. Because we already wrote out some comments, we can use those as a starting point.</p>
 <pre class="r"><code># goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
-# output: standarized variables</code></pre>
+# output: standardized variables</code></pre>
 <p>First, we replace “input” with the name of each argument in the function and what it should be. We only have one argument, <code>data</code>, and it is a column of numeric data, so our comments just need to replace the word “input” with “data”</p>
 <pre class="r"><code># goal: calculate mean, sd, and transform to mean = 0, var = 1
 # data: one column of numeric data
-# output: standarized variables</code></pre>
+# output: standardized variables</code></pre>
 <p>Next, we focus on the output. In the R language, we generally refer to this as the data that the function <em>returns</em> (remember that we used the <code>return</code> command at the end of our function). In this case, we want to replace “output” with “returns” and add a little more detail about the data that are produced by this function.</p>
 <pre class="r"><code># goal: calculate mean, sd, and transform to mean = 0, var = 1
 # data: one column of numeric data
@@ -588,11 +588,42 @@ standardize &lt;- function(data) {
   z.value &lt;- (data - mean.value)/sd.value
   return(z.value)
 }</code></pre>
+<p>The <code>standardize</code> function allows us to tranform a single column of numeric data to have a mean of 0 and variance of 1. But what if we wanted to do that for <em>all</em> the columns of a data frame? How could we do that?</p>
+</div>
+</div>
+<div id="functions-in-functions" class="section level2">
+<h2>Functions in functions</h2>
+<p>If we wanted to write code to standardize all the relevant columns of data, we could do it piece by piece, one line for each column:</p>
+<pre class="r"><code>standard.petal.length &lt;- standardize(data = iris$Petal.Length)
+standard.petal.width &lt;- standardize(data = iris$Petal.Width)
+standard.sepal.length &lt;- standardize(data = iris$Sepal.Length)
+standard.sepal.width &lt;- standardize(data = iris$Sepal.Width)</code></pre>
+<p>Which may not be too big a deal with only four columns. If there are more that a few columns, though, that gets tedious and once again introduces the problems that can arise with multiple copy-paste cycles.</p>
+<div id="apply-a-function" class="section level3">
+<h3><code>apply</code> a function</h3>
+<p>If we want to perform the same operation over multiple columns, we can use the <code>apply</code> function. Here we are going to make an entirely new data frame, based on the iris data. But we will use the <code>standardize</code> function to transform the data in each column. To use <code>apply</code>, we provide three pieces of information:</p>
+<ul>
+<li><code>X</code>: The data frame to use</li>
+<li><code>MARGIN</code>: Whether we want to apply the function over rows (<code>MARGIN = 1</code>) or over columns (<code>MARGIN = 2</code>)</li>
+<li><code>FUN</code>: The name of the function to use</li>
+</ul>
+<p>For our situation, this looks like:</p>
+<pre class="r"><code>iris.stand &lt;- apply(X = iris, MARGIN = 2, FUN = standardize)</code></pre>
+<pre><code>## Warning in mean.default(data): argument is not numeric or logical:
+## returning NA</code></pre>
+<pre><code>## Error in data - mean.value: non-numeric argument to binary operator</code></pre>
+<p>Hmmm…That’s not good. The error message tells us that when calculating the <code>mean.value</code>, R encountered a non-numeric piece of data. Because a mean (and standard deviation, too) is only meaningful for numeric data, R stopped processing our request. Look again at the <code>iris</code> data frame with <code>head</code>:</p>
+<pre class="r"><code>head(iris)</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa</code></pre>
 <hr />
 <p>TO HERE</p>
 <hr />
-<p>Use apply to do it to multiple columns</p>
-<pre class="r"><code>iris.stand &lt;- apply(X = iris, MARGIN = 2, FUN = standardize)</code></pre>
 <pre class="r"><code>iris.stand &lt;- apply(X = iris[, 1:4], MARGIN = 2, FUN = standardize)
 iris.stand &lt;- as.data.frame(iris.stand)</code></pre>
 <p>Could also instead use <code>is.numeric</code> to <em>only</em> tranform numeric columns.</p>
@@ -647,7 +678,7 @@ iris.stand &lt;- standardize.df(data = iris, ignore = 5)</code></pre>
 </div>
 <div id="writing-functions-1" class="section level2">
 <h2>Writing functions</h2>
-<p>Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy/pasting that code and changing the variable names. Then more copy/paste. Then we forget to change one of the variables and spend a day figuring out why our results don’t make sense.</p>
+<p>Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy-pasting that code and changing the variable names. Then more copy-paste. Then we forget to change one of the variables and spend a day figuring out why our results don’t make sense.</p>
 <p>For example, consider the <code>airquality</code> data set:</p>
 <pre><code>##   Ozone Solar.R Wind Temp Month Day
 ## 1    41     190  7.4   67     5   1
@@ -673,7 +704,7 @@ simple.p &lt;- simple.summary$coefficients[2, 4]</code></pre>
 <pre class="r"><code>cat(&quot;Solar r^2 =&quot;, simple.r2)
 cat(&quot;Solar p =&quot;, simple.p)  </code></pre>
 <pre><code>## Solar r^2 = 0.1213419Solar p = 0.0001793109</code></pre>
-<p>If we want to do the same thing for the relationship between ozone and wind, we can copy/paste this code and just change the predictor column specification in the <code>lm</code> command from <code>&quot;Solar.R&quot;</code> to <code>&quot;Wind&quot;</code> and update the message in the <code>cat</code> commands:</p>
+<p>If we want to do the same thing for the relationship between ozone and wind, we can copy-paste this code and just change the predictor column specification in the <code>lm</code> command from <code>&quot;Solar.R&quot;</code> to <code>&quot;Wind&quot;</code> and update the message in the <code>cat</code> commands:</p>
 <pre class="r"><code>simple &lt;- lm(airquality[, &quot;Ozone&quot;] ~ airquality[, &quot;Wind&quot;])
 simple.summary &lt;- summary(simple)
 simple.r2 &lt;- simple.summary$r.squared

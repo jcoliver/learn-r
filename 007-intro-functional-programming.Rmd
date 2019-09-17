@@ -27,7 +27,7 @@ The [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) aims 
 ***
 
 ## Writing functions
-Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy/pasting that code and changing the variable names. Then more copy/paste. Then we forget to change one of the variables and spend a day figuring out why our results don't make sense.
+Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy-pasting that code and changing the variable names. Then more copy-paste. Then we forget to change one of the variables and spend a day figuring out why our results don't make sense.
 
 For example, consider the `iris` data set:
 
@@ -46,7 +46,7 @@ Given this variation in ranges and magnitudes, we will have to standardize the v
 We'll start by creating an R script to hold our work. R scripts are simple text files with a series of R commands and are a great way to make our work reproducible. For all scripts, it is a good idea to start off with a little information about what the script does (and who is responsible for it). So create a script (from the File menu, select New File > R Script or use the keyboard shortcut of Ctrl+Shift+N or Cmd+Shift+N) and add a few lines at the beginning of the script:
 
 ```{r script-header}
-# Standarize iris values
+# Standardize iris values
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2018-08-16
@@ -95,7 +95,7 @@ mean.petal.length <- mean(iris$Petal.Length)
 sd.petal.length <- sd(iris$Petal.Length)
 standard.petal.length <- (iris$Petal.Length - mean.petal.length)/sd.petal.length
 
-# Standarize petal length
+# standardize petal length
 mean.petal.length <- mean(iris$Petal.Length)
 sd.petal.length <- sd(iris$Petal.Length)
 standard.petal.length <- (iris$Petal.Length - mean.petal.length)/sd.petal.length
@@ -109,7 +109,7 @@ mean.petal.length <- mean(iris$Petal.Length)
 sd.petal.length <- sd(iris$Petal.Length)
 standard.petal.length <- (iris$Petal.Length - mean.petal.length)/sd.petal.length
 
-# Standarize sepal length
+# standardize sepal length
 mean.sepal.length <- mean(iris$Sepal.Length)
 sd.sepal.length <- sd(iris$Sepal.Length)
 standard.sepal.length <- (iris$Petal.Length - mean.sepal.length)/sd.sepal.length
@@ -124,7 +124,7 @@ summary(standard.sepal.length)
 Uh oh. The mean is _not_ equal to zero...let's look at that code we updated again:
 
 ```{r sepal-code-check, eval = FALSE}
-# Standarize sepal length
+# standardize sepal length
 mean.sepal.length <- mean(iris$Sepal.Length)
 sd.sepal.length <- sd(iris$Sepal.Length)
 standard.sepal.length <- (iris$Petal.Length - mean.sepal.length)/sd.sepal.length
@@ -133,14 +133,14 @@ standard.sepal.length <- (iris$Petal.Length - mean.sepal.length)/sd.sepal.length
 The problem lies in the last line - we forgot to replace `Petal.Length` with `Sepal.Length`. When we update the code and run `summary`, we can see that it fixes the problem and that, as expected, our standardized variable now has a mean of zero.
 
 ```{r sepal-code-update}
-# Standarize sepal length
+# standardize sepal length
 mean.sepal.length <- mean(iris$Sepal.Length)
 sd.sepal.length <- sd(iris$Sepal.Length)
 standard.sepal.length <- (iris$Sepal.Length - mean.sepal.length)/sd.sepal.length
 summary(standard.sepal.length)
 ```
 
-Did copy/paste really save time? While copy/paste can be useful, it can also be a great opportunity to introduce mistakes into our code. If we want to avoid those mistakes, we can take advantage of writing our own functions in R.
+Did copy-paste really save time? While copy-paste can be useful, it can also be a great opportunity to introduce mistakes into our code. If we want to avoid those mistakes, we can take advantage of writing our own functions in R.
 
 ### Behold, a function
 
@@ -149,7 +149,7 @@ We start writing a function in a way very similar to assigning values to variabl
 ```{r function-comments-output, eval = FALSE}
 # goal: 
 # input: 
-# output: standarized variables
+# output: standardized variables
 ```
 
 What information will we need to provide the function? The "input" we used above was a single column of numeric data.
@@ -157,7 +157,7 @@ What information will we need to provide the function? The "input" we used above
 ```{r function-comments-input, eval = FALSE}
 # goal: 
 # input: one column of numeric data
-# output: standarized variables
+# output: standardized variables
 ```
 
 Finally, what is the function going to do? Looking back at our code above, we see three steps:
@@ -171,7 +171,7 @@ We can update our comments with this information:
 ```{r function-comments-goal, eval = FALSE}
 # goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
-# output: standarized variables
+# output: standardized variables
 ```
 
 Now we can can start to write the function. We begin like we are defining any other variable in R, naming the function something useful but not too long. We'll call our function `standardize`:
@@ -179,7 +179,7 @@ Now we can can start to write the function. We begin like we are defining any ot
 ```{r function-definintion, eval = FALSE}
 # goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
-# output: standarized variables
+# output: standardized variables
 standardize <- function() {
   
 }
@@ -190,7 +190,7 @@ The command `function` will create a function and anything we place between the 
 ```{r function-definintion-input, eval = FALSE}
 # goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
-# output: standarized variables
+# output: standardized variables
 standardize <- function(data) {
   
 }
@@ -201,7 +201,7 @@ Our function does not do anything yet. Looking at the `goal` comment, we see we 
 ```{r function-definintion-goal, eval = FALSE}
 # goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
-# output: standarized variables
+# output: standardized variables
 standardize <- function(data) {
   mean.value <- mean(data)
   sd.value <- sd(data)
@@ -214,7 +214,7 @@ And finally, we need to provide output. This is the very last part of our functi
 ```{r function-definintion-output}
 # goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
-# output: standarized variables
+# output: standardized variables
 standardize <- function(data) {
   mean.value <- mean(data)
   sd.value <- sd(data)
@@ -246,7 +246,7 @@ The last thing we need to do is to document our function. That is, we need to wr
 ```{r function-documentation-overview, eval = FALSE}
 # goal: calculate mean, sd, and transform to mean = 0, var = 1
 # input: one column of numeric data
-# output: standarized variables
+# output: standardized variables
 ```
 
 First, we replace "input" with the name of each argument in the function and what it should be. We only have one argument, `data`, and it is a column of numeric data, so our comments just need to replace the word "input" with "data"
@@ -254,7 +254,7 @@ First, we replace "input" with the name of each argument in the function and wha
 ```{r function-documentation-input, eval = FALSE}
 # goal: calculate mean, sd, and transform to mean = 0, var = 1
 # data: one column of numeric data
-# output: standarized variables
+# output: standardized variables
 ```
 
 Next, we focus on the output. In the R language, we generally refer to this as the data that the function _returns_ (remember that we used the `return` command at the end of our function). In this case, we want to replace "output" with "returns" and add a little more detail about the data that are produced by this function.
@@ -281,20 +281,110 @@ standardize <- function(data) {
 }
 ```
 
+### Reusing functions
+
+If you want to use functions in _other_ R code you write, the best thing to do is to remove the function code from your script and to put it in a separate file. Here we are going to create a new folder, just called "R", and move the code for the `standardize` function to a new file. We generally put a single function in a file, so we'll make a new file called "standardize.R" and save it in that R folder. 
+
+The contents of standarize.R:
+
+```{r function-separate-file, eval = FALSE}
+# Standardize a vector of numerical data
+# data: one column of numeric data
+# returns: vector of numeric values, transformed to have mean of zero and 
+#          variance of 1
+standardize <- function(data) {
+  mean.value <- mean(data)
+  sd.value <- sd(data)
+  z.value <- (data - mean.value)/sd.value
+  return(z.value)
+}
+```
+
+However, now we need to explicitly load this function into memory in our script, since the code for the function is no longer there. We use the command `source` to load the function into memory in our script.
+
+```{r example-use-source, eval = FALSE}
+# Standardize iris values
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2018-08-16
+
+source(file = "R/standardize.R")
+
+standard.petal.length <- standardize(data = iris$Petal.Length)
+summary(standard.petal.length)
+
+standard.sepal.length <- standardize(data = iris$Sepal.Length)
+summary(standard.sepal.length)
+```
+
+
+## Functions in functions
+
+The `standardize` function allows us to tranform a single column of numeric data to have a mean of 0 and variance of 1. But what if we wanted to do that for _all_ the columns of a data frame? How could we do that?
+
+
+If we wanted to write code to standardize all the relevant columns of data, we could do it piece by piece, one line for each column:
+
+```{r all-columns, eval = FALSE}
+standard.petal.length <- standardize(data = iris$Petal.Length)
+standard.petal.width <- standardize(data = iris$Petal.Width)
+standard.sepal.length <- standardize(data = iris$Sepal.Length)
+standard.sepal.width <- standardize(data = iris$Sepal.Width)
+```
+
+Which may not be too big a deal with only four columns. If there are more that a few columns, though, that gets tedious and once again introduces the problems that can arise with multiple copy-paste cycles.
+
+### `apply` a function
+
+If we want to perform the same operation over multiple columns, we can use the `apply` function. Here we are going to make an entirely new data frame, based on the iris data. But we will use the `standardize` function to transform the data in each column. To use `apply`, we provide three pieces of information:
+
++ `X`: The data frame to use
++ `MARGIN`: Whether we want to apply the function over rows (`MARGIN = 1`) or over columns (`MARGIN = 2`)
++ `FUN`: The name of the function to use
+
+For our situation, this looks like:
+
+```{r apply-function-01, error = TRUE}
+iris.stand <- apply(X = iris, MARGIN = 2, FUN = standardize)
+```
+
+Hmmm...That's not good. The error message tells us that when calculating the `mean.value`, R encountered a non-numeric piece of data. Because a mean (and standard deviation, too) is only meaningful for numeric data, R stopped processing our request. Look again at the `iris` data frame with `head`:
+
+```{r investigate-error}
+head(iris)
+```
+
+The last column, `Species`, does indeed have non-numeric data, so we only want to use the function on the first four columns, and check our work with `summary`:
+
+```{r apply-function-02}
+iris.stand <- apply(X = iris[, 1:4], MARGIN = 2, FUN = standardize)
+summary(iris.stand)
+```
+
+Looks good, right?
+
+Almost.
+
+Note that the `Species` column is gone. When we passed the first four columns of data in our call to `apply`, the `Species` column got left out. We can add it back with:
+
+```{r add-species-column}
+# Convert matrix to data frame
+iris.stand <- as.data.frame(iris.stand)
+iris.stand$Species <- iris$Species
+```
+
+
+
 ***
 
 TO HERE
 
 ***
 
-Use apply to do it to multiple columns
-```{r apply-function-01, eval = FALSE}
-iris.stand <- apply(X = iris, MARGIN = 2, FUN = standardize)
-```
 
-```{r apply-function-02}
-iris.stand <- apply(X = iris[, 1:4], MARGIN = 2, FUN = standardize)
-iris.stand <- as.data.frame(iris.stand)
+Add the species column
+```{r add-species-column}
+iris.stand$Species <- iris$Species
 ```
 
 Could also instead use `is.numeric` to _only_ tranform numeric columns.
@@ -305,11 +395,6 @@ numeric.cols <- which(sapply(iris, is.numeric))
 iris.stand[, numeric.cols] <- apply(X = iris[, numeric.cols],
                                     MARGIN = 2,
                                     FUN = standardize)
-```
-
-Add the species column
-```{r add-species-column}
-iris.stand$Species <- iris$Species
 ```
 
 Write a function to do it all
@@ -358,7 +443,7 @@ The [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) aims 
 ***
 
 ## Writing functions
-Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy/pasting that code and changing the variable names. Then more copy/paste. Then we forget to change one of the variables and spend a day figuring out why our results don't make sense.
+Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy-pasting that code and changing the variable names. Then more copy-paste. Then we forget to change one of the variables and spend a day figuring out why our results don't make sense.
 
 For example, consider the `airquality` data set:
 
@@ -395,7 +480,7 @@ cat("Solar r^2 =", simple.r2)
 cat("Solar p =", simple.p)  
 ```
 
-If we want to do the same thing for the relationship between ozone and wind, we can copy/paste this code and just change the predictor column specification in the `lm` command from `"Solar.R"` to `"Wind"` and update the message in the `cat` commands:
+If we want to do the same thing for the relationship between ozone and wind, we can copy-paste this code and just change the predictor column specification in the `lm` command from `"Solar.R"` to `"Wind"` and update the message in the `cat` commands:
 
 ```{r, eval = FALSE}
 simple <- lm(airquality[, "Ozone"] ~ airquality[, "Wind"])
