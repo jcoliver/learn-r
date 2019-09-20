@@ -126,16 +126,15 @@ Which are rendered as:
 
 We can also add hyperlinks to our document, using this syntax: `[text we want to link](url address)`. So to create a link to the University of Arizona homepage, we write `[University of Arizona](http://www.arizona.edu)`. When we run Knit, this is displayed in our document as [University of Arizona](http://www.arizona.edu).
 
-Images are also supported, whether they are local files or images on the web. The syntax is almost identical to that for hyperlinks, but in the case of images, we prefix the statement with an exclamation point (!): `![Caption for image](filename or URL)`
+Images are also supported, whether they are local files or images on the web. The syntax is almost identical to that for hyperlinks, but in the case of images, we prefix the statement with an exclamation point (!): `![Caption for image](filename)`
 
-Here I use an image from [Wikimedia](https://commons.wikimedia.org) and include a caption:
+Here I use an image that I downloaded from [Wikimedia](https://commons.wikimedia.org) into the folder "images" and include a caption:
 ```
 ![The white rhinoceros (_Ceratotherium simum_) (photo by Rob
-Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4
-/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
+Hooft)](images/640px-Rhinoceros_male_2003.jpg)
 ```
 
-> ![The white rhinoceros (_Ceratotherium simum_) (photo by Rob Hooft)](https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Rhinoceros_male_2003.jpg/640px-Rhinoceros_male_2003.jpg)
+> ![The white rhinoceros (_Ceratotherium simum_) (photo by Rob Hooft)](images/640px-Rhinoceros_male_2003.jpg)
 
 Subscripts and superscripts are also supported by wrapping the font in tildes (~) and carets (^), respectively:
 ```
@@ -415,6 +414,7 @@ output: pdf_document
 
 + [knitr documentation](https://yihui.name/knitr/)
 + [R Markdown documentation](http://rmarkdown.rstudio.com/)
++ An awesome [cookbook of R Markdown solutions](https://holtzy.github.io/Pimp-my-rmd/)
 + Creating [Word templates](http://rmarkdown.rstudio.com/articles_docx.html) to apply to knitr documents
 + A handy [cheatsheet for R Markdown syntax](http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
 + Guide to writing [bibliography sections](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html) in R Markdown documents
