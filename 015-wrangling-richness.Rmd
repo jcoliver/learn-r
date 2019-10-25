@@ -1,0 +1,107 @@
+---
+title: "Data Wrangling & Species Richness"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+urlcolor: blue
+---
+
+[INTRODUCTORY SENTENCE]
+
+#### Learning objectives
+1. Demonstrate how to organize data in 'tidy' format
+2. Develop quality control processes for data
+3. Visualize measures of species richness and species diversity
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+***
+
+## Getting started
+
+> Happy families are all alike; every unhappy family is unhappy in its own way - Leo Tolstoy
+
+### Tidy data
+
+After Wickham 2014
+
+1. Each variable forms a column.
+2. Each observation forms a row.
+3. Each type of observational unit forms a table.
+
+***
+
+## Data wrangling
+
+Things to fix:
++ Date into ISO format & all cells
++ Site into all cells
+
+***
+
+## Computers are stupid
+### Or, why quality control matters
+
+Do analysis of grouping by date & tallying number of species
+```{r unclean-richness}
+richness <- bird_data %>%
+  group_by(Date) %>%
+  summarize(total = n())
+```
+
+Fix:
++ Indicate species or not
++ Standardize spelling
+
+***
+
+## Species richness
+
+```{r clean-richness}
+richness <- bird_data %>%
+  group_by(Date) %>%
+  summarize(total = n())
+```
+
+Could alternatively do a species accummulation curve, using `duplicated`
+
+```{r spp-acc-curve}
+first <- bird_data[!duplicated(bird_data$Species), ]
+first <- first[order(first$Date), ]
+first_date <- first %>%
+  group_by(Date) %>%
+  summarize(new_species = n())
+first_date$cumulative <- cumsum(x = first_date$new_species)
+first_date$Date <- as.Date(x = first_date$Date)
+plot(x = first_date$Date,
+     y = first_date$cumulative,
+     type = "l")
+```
+
+Diversity
+
+Shannon's index
+
+$$
+H = -\sum_{i=1}^{s}{p_i \ln p_i}
+$$
+is the sum over $s$ species, where $p_i$ is the proportion individuals of the $i^th$ species ($n_i$) out of the total number of inviduals ($N$).
+
+use `vegan::diversity(x = bird_data$Count, index = "Shannon")`
+
+***
+
+## Additional resources
+
++ Wickham, H. 2014. Tidy data. _The Journal of Statistical Software_ **59** [http://www.jstatsoft.org/v59/i10/](http://www.jstatsoft.org/v59/i10/)
++ A nice introduction to [calculating measures of species diversity](https://entnemdept.ifas.ufl.edu/hodges/ProtectUs/lp_webfolder/9_12_grade/Student_Handout_1A.pdf)
++ A [PDF version](https://jcoliver.github.io/learn-r/015-wrangling-richness.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
