@@ -131,9 +131,10 @@ library(dplyr)
 
 You might see some read messages when you load dplyr. As long as you don't see the word "Error" everything should be fine.
 
-Now we can use some dplyr functions to calculate the total number of species seen on each day.
+Now we can use some dplyr functions to calculate the total number of species seen on each day. We use the `group_by` function to first create a different pile of data for each day, then count the number of rows using the `n` function.
 
 ```{r unclean-richness}
+# Calculate species richness per day
 richness <- bird_data %>%
   group_by(Date) %>%
   summarize(Total = n())
@@ -167,6 +168,7 @@ Again, if you see red messages when loading ggplot2, that's OK, so long as the w
 To plot richness for each day, 
 
 ```{r plot-unclean-richness}
+# Plot daily species richness
 richness_plot <- ggplot(data = richness,
                         mapping = aes(x = Date,
                                       y = Total)) +
@@ -195,8 +197,7 @@ In addition to "Finch sp" we all so see two more examples of observations not id
 ## Computers are stupid
 ### Or, why quality control matters
 
-We do not actually want to delete these records from our data, but rather we need a means of indicating whether or not they are identified to the species level. This should probably be done in the sweetwater-data-clean.csv file we've been working with. So open that file in Excel and add another column, immediately to the right of Species. Call this one "ID_to_species" and fill in values of 1 for those identified to species (e.g. Gila woodpecker would be scored as a 1) and values of 0 for those not identified to species (e.g. Finch sp and duck sp.). Save the file with the same name as before (sweetwater-data-clean.csv).
-
+We do not actually want to delete these records from our data, but rather we need a means of indicating whether or not they are identified to the species level. This should probably be done in the sweetwater-data-clean.csv file we've been working with. So open that file in Excel and add another column, immediately to the right of Species. Call this one "ID_to_species" and fill in values of 1 for those identified to species (e.g. Gila woodpecker would be scored as a 1) and values of 0 for those not identified to species (e.g. Finch sp and duck sp. would be scored as a 0). Save the file with the same name as before (sweetwater-data-clean.csv).
 
 ```{r read-data-03, eval = FALSE}
 # Analyze sweetwater bird species richness
@@ -221,6 +222,7 @@ unclean_richness <- richness
 ```
 
 ```{r richness-clean-01}
+# Calculate species richness per day
 richness <- bird_data %>%
   filter(ID_to_species == 1) %>%
   group_by(Date) %>%
@@ -249,10 +251,113 @@ richness_plot <- ggplot(data = richness,
 print(richness_plot)
 ```
 
+Let's take a quick look at the species that were observed on October 4, just to double check. We can do that in the console using the pipe (`%>%`) and the `filter` command:
 
-Fix:
-+ Indicate species or not
-+ Standardize spelling
+```{r view-one-day-species-01}
+bird_data %>% filter(Date == "2019-10-04")
+```
+
+We see that there are 34 rows. This lines up with our initial plot, that showed 34 species. But look a little closer, notably at rows 1 and 9. Both rows are observations of Mallard Ducks. So this species actually got counted (at least) twice. Because multiple sites were surveyed, We can't just count the number of rows in this data to get the number of species. We should actually do a little more data wrangling to get an accurate count of species for the October 4 sampling. What we are going to do is to create a new data object we'll call `bird_data_sums` that sums up the values for each species on each day.
+
+```{r sum-sites-01}
+# Sum species counts for each day
+bird_data_sums <- bird_data %>%
+  filter(ID_to_species == 1) %>%
+  group_by(Date, Species) %>%
+  summarise(Count = sum(Count))
+```
+
+Now we can again look at the observations for October 4:
+
+```{r view-one-day-species-02}
+bird_data_sums %>% filter(Date == "2019-10-04")
+```
+
+Now this doesn't show us all the data, but looking at the end of the output, we see that R is showing us 10 rows of data, with 13 more rows. So we have gone from 34 species, down to 23 species.
+
+We can update our code to calculate richness and re-create our plot. Remember to replace `bird_data` with `bird_data_sums` in the first line of the code. We can also remove the `filter` function, because we already filtered out observations that were not identified to species when we created `bird_data_sums`.
+
+```{r richness-clean-02}
+# Calculate species richness per day
+richness <- bird_data_sums %>%
+  group_by(Date) %>%
+  summarize(Total = n())
+
+# Plot daily species richness
+richness_plot <- ggplot(data = richness,
+                        mapping = aes(x = Date,
+                                      y = Total)) +
+  geom_point()
+print(richness_plot)
+```
+
+The only thing to really change in our plot is for October 4. OK, some of you might have noticed this already, but let's look again at those October 4 data:
+
+```{r view-one-day-species-03}
+bird_data_sums %>% filter(Date == "2019-10-04")
+```
+
+So, there's another issue to address. Look at rows 9 and 10. We have a species that is represented twice. Why? Here is a great example of computers only being able to do what you tell them to. We told R to count the total number of individuals for each species. Unfortunately, R sees "mallard" and "Mallard Duck" as two different species. 
+
+What do we do?
+
+At this point, the best thing is probably to go into the Excel file and change the species names to be consistent. Now so far, we haven't actually _changed_ any of the data - we added a column and we filled in values where appropriate, but we did not change anything. When changing data, you always want to be careful. At this point, we should be keeping track of changes we made to the data. We are going to do this in a separate file, with notes about what we did. So start by creating a new text file (File > New File > Text File) and adding:
+
+```
+README for sweetwater species data
+2019-11-01
++ Created CSV from original data file
++ Changed to ISO date format
++ Standardized spelling of species' names
+```
+
+And save this file as "README.md".
+
+Now we actually have to do the standardization of the species names, so open up the sweetwater-data-clean.csv file in Excel. What's the best way of going about changing names? We could search for non-standard spellings like "Gambils quail" but that assumes we know all the alternative spellings. What might help our cause is to sort by the Species column so things like "mallard" and "Mallard Duck show up next to one another. **Note**: this sorting is going to rearrange the order of the rows, so we should _only_ do this if the order of the rows does not matter. Remember the original data? Where the date was only shown in the first row? If we had sorted those data it would have been _bad_. Why? Because in that case, order _did_ matter. But by using tidy data formats, we can re-order rows without losing any information for a single observation.
+
+So go ahead and change names so they are consistent. This includes 
+
++ consistent spelling (Gambel's vs. Gambils),
++ consistent capitalization (Gila Woodpecker vs. Gila woodpecker), and 
++ constent use of punctuation (Red-winged Blackbird vs. Redwing black bird and Cooper's Hawk vs. Coopers' Hawk). 
+
+Save the file to sweetwater-data-clean.csv and go back into R.
+
+Re-run the line at the top of our script with the `read.csv` command:
+
+```{r read-data-04, eval = FALSE}
+bird_data <- read.csv(file = "data/sweetwater-data-clean.csv")
+```
+
+```{r read-data-04-eval, echo = FALSE}
+bird_data <- read.csv(file = "data/sweetwater-data-clean04.csv")
+```
+
+Re-run the line counting the number of each species per day:
+
+```{r sum-sites-02}
+# Sum species counts for each day
+bird_data_sums <- bird_data %>%
+  filter(ID_to_species == 1) %>%
+  group_by(Date, Species) %>%
+  summarise(Count = sum(Count))
+```
+
+And calculate richness for each day and draw the plot
+
+```{r richness-clean-03}
+# Calculate species richness per day
+richness <- bird_data_sums %>%
+  group_by(Date) %>%
+  summarize(Total = n())
+
+# Plot daily species richness
+richness_plot <- ggplot(data = richness,
+                        mapping = aes(x = Date,
+                                      y = Total)) +
+  geom_point()
+print(richness_plot)
+```
 
 ***
 
@@ -269,6 +374,8 @@ richness <- bird_data %>%
 ## Species diversity
 
 There's considerable data wrangling necessary here. vegan::diversity needs a wide-formatted data set, but since there were multiple observations of a single species on October 4, this creates challenges for converting long data to wide-formatted data (because date is effectively a key, but there are multiple observations of some species for 2019-10-04).
+
+UPDATE: By summing counts for October 4, this should now be possible.
 
 ```{r clean-wide, eval = FALSE}
 bird_data_wide <- pivot_wider(data = bird_data[, -2],
