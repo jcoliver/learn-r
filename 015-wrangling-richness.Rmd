@@ -36,6 +36,8 @@ After Wickham 2014
 2. Each observation forms a row.
 3. Each type of observational unit forms a table.
 
+The survey data we are working with is available as an Excel file for download at [https://tinyurl.com/sweetwater-data](https://tinyurl.com/sweetwater-data).
+
 Open the file in Excel. What can be done to make these data "tidy"?
 
 First, the data are effectively broken in two, with the most recent observations separate from observations from preceding days. So in some cases, a row has more than one observation. To fix this, we move the cells from the preceding observations to rows after the most recent observations. 
