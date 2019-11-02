@@ -13,14 +13,12 @@ urlcolor: blue
 knitr::opts_chunk$set(echo = TRUE, fig.height = 3)
 ```
 
-[INTRODUCTORY SENTENCE]
+We collect data from a lot of sources, including field observations. Sometimes, though, the way will collect and understand data as humans doesn't work well with the way computers operate. Here we will work through a real data set to use best practices for data organization to analyze species richness and diversity.
 
 #### Learning objectives
 1. Demonstrate how to organize data in 'tidy' format
 2. Develop quality control processes for data
 3. Visualize measures of species richness and species diversity
-
-## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
 
 ***
 
@@ -28,15 +26,17 @@ knitr::opts_chunk$set(echo = TRUE, fig.height = 3)
 
 > Happy families are all alike; every unhappy family is unhappy in its own way - Leo Tolstoy
 
+Since we are working in RStudio, start by making a new project from the File menu (File > New Project...). When prompted, select New Directory, then New Project. Name the project sweetwater-analysis. When the project opens, create a folder to hold the data by typing `dir.create(data)` in the Console.
+
 ### Tidy data
 
-After Wickham 2014
+After Wickham 2014, "tidy" data is defined by:
 
 1. Each variable forms a column.
 2. Each observation forms a row.
 3. Each type of observational unit forms a table.
 
-The survey data we are working with is available as an Excel file for download at [https://tinyurl.com/sweetwater-data](https://tinyurl.com/sweetwater-data).
+The survey data we are working with is available as an Excel file for download at [https://tinyurl.com/sweetwater-data](https://tinyurl.com/sweetwater-data). (if you want to skip the data wrangling, and work with the "tidy" data, you can download them [here](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/sweetwater-data-clean04.csv)). Make sure to move the file to the 'data' folder you created.
 
 Open the file in Excel. What can be done to make these data "tidy"?
 
@@ -46,7 +46,7 @@ We also want to:
 
 + Delete any columns without data
 + Delete any rows without data
-+ Add a column title for date
++ Add a column title for Date
 + Make sure data for preceding observations lines up with column title (currently the Count column has species names and the Species column has count data)
 
 Let's save this file as a CSV file so we can read it into R. We don't want to overwrite the original data file, so we'll call our file sweetwater-data-clean.csv.
@@ -55,7 +55,7 @@ Let's save this file as a CSV file so we can read it into R. We don't want to ov
 
 ## Data wrangling
 
-Now that the data are in CSV format, we can read it into R and take a look. We want to keep a record of all our work, so we are going to type commands into a script file and save the script. As we did before, we add a few lines of comments at the top of our script with some relevant information.
+Now that the data are in CSV format, we can read it into R and take a look. We want to keep a record of all our work, so we are going to type commands into a script file and save the script. Create a new script via the File menu (File > New File > R Script). As we did before, we add a few lines of comments at the top of our script with some relevant information.
 
 ```{r read-data-01-eval, echo = FALSE}
 bird_data <- read.csv(file = "data/sweetwater-data-clean01.csv")
@@ -363,7 +363,11 @@ Now we are ready for species diversity! We are going to use Shannon's index ($H$
 $$
 H = -\sum_{i=1}^{s}{p_i \ln p_i}
 $$
-which is the sum over $s$ species, where $p_i$ is the proportion individuals of the $i^th$ species ($n_i$) out of the total number of inviduals ($N$).
+which is the sum over $s$ species, where $p_i$ is the proportion individuals of the $i^th$ species ($n_i$) out of the total number of inviduals ($N$), or:
+
+$$
+p_i = \frac{n_i}{N}
+$$
 
 To calculate this measure of diversity, we are going to use the vegan package, which does _not_ come with tidyverse, so we'll have to install it with:
 
@@ -388,17 +392,26 @@ bird_data <- read.csv(file = "data/sweetwater-data-clean.csv")
 library(vegan)
 ```
 
-Before we can use vegan, though we need to convert our data to "wide" format. Right now, each row only has data for a single species. Since we are interested in getting daily measures of Shannon's diversity index, we need each row to correspond to a date and the counts for each species on that day. In other words, we need data that looks like:
+We are going to use functions that come with the vegan package to help with these calculations. In order to use those functions, we need to convert the `bird_data_sums` from the "long" format it is now to "wide" format. That is, we need to change from:
 
-| Date       | Abert's Towhee | American Coot | American Wigeon | ... |
-|:-----------|:--------------:|:-------------:|:---------------:|:---:|
-| 2019-09-28 | 0              | 0             | 0               | ... |
-| 2019-09-29 | 0              | 0             | 0               | ... |
-| 2019-09-30 | 5              | 2             | 5               | ... |
-| 2019-10-01 | 0              | 0             | 0               | ... |
-| 2019-10-02 | 0              | 0             | 0               | ... |
-| 2019-10-03 | 0              | 0             | 0               | ... |
-| 2019-10-04 | 0              | 0             | 0               | ... |
+| Date       | Species            | Count |
+|:-----------|:-------------------|:-----:| 
+| 2019-10-04 | Abert's Towhee     | 1     |
+| 2019-10-04 | Gila Woodpecker    | 2     |
+| 2019-10-03 | Abert's Towhee     | 1     |
+| 2019-10-03 | Greater Roadrunner | 1     |
+
+To:
+
+| Date       | Abert's Towhee     | Gila Woodpecker | Greater Roadrunner |
+|:-----------|:------------------:|:---------------:|:------------------:|
+| 2019-10-04 | 1                  | 2               | 0                  |
+| 2019-10-03 | 1                  | 0               | 1                  |
+
+Where
+
++ each date corresponds to a single row
++ each species corresponds to a single column
 
 We can do this with the `spread` function that comes with tidyverse. Here we tell R to use the values in the Species column as new column names, and the numbers in the Count column to use as values.
 
@@ -413,32 +426,37 @@ Let's look at the first five columns of the "wide" formatted data:
 bird_data_wide[, 1:5]
 ```
 
+For the diversity calculations, it only works on count data, and our data include one column of dates. We create a new variable, `species_counts` which has all the data except the first column (the Date column), then we calculate species richness and look at the results by running the name of the variable (`bird_diversity`):
+
 ```{r clean-diversity-01}
-# species_counts <- as.matrix(as.data.frame(bird_data_wide[, 3:119]))
-diversity <- vegan::diversity(x = bird_data_wide[, 2:86])
+species_counts <- bird_data_wide[, -1]
+bird_diversity <- diversity(x = species_counts)
+bird_diversity
 ```
 
-Will spit out NAs for all, because there were NAs in bird_data_wide; need to replace those NAs with 0.
+All the values are `NA` because the input data (`bird_data_wide`) had `NA` values for every Date/Species combination with zero observations. In this case, we need to replace all those `NA` values with 0.
 
 ```{r replace-nas}
 bird_data_wide[is.na(bird_data_wide)] <- 0
 ```
 
-Re-run the diversity calculations:
+We re-run the diversity calculations after converting those `NA` values to zero. We then overwrite `bird_diversity` with a data frame that contains the Date and the results of the diversity calculations:
 
 ```{r clean-diversity-02}
-species_counts <- as.matrix(as.data.frame(bird_data_wide[, 2:86]))
-diversity <- vegan::diversity(x = species_counts)
+# Calculate species diversity on count data
+species_counts <- bird_data_wide[, -1]
+bird_diversity <- diversity(x = species_counts)
 
 # Add date
-diversity <- data.frame(Date = bird_data_wide$Date,
-                        Diversity = diversity)
+bird_diversity <- data.frame(Date = bird_data_wide$Date,
+                        Diversity = bird_diversity)
 ```
 
 And plot diversity:
 
 ```{r plot-diversity}
-diversity_plot <- ggplot(data = diversity, 
+# Plot species diversity of each date
+diversity_plot <- ggplot(data = bird_diversity, 
                          mapping = aes(x = Date, y = Diversity)) +
   geom_point()
 print(diversity_plot)
@@ -446,23 +464,169 @@ print(diversity_plot)
 
 ***
 
-## All at once
+## Starting clean
 
-To show richness and diversity in a single image, we combine the richness and diversity data
+### Setup
 
-```{r combine-measures}
-richness_long <- richness %>%
-  gather(key = "Measurement", value = "Value", -Date)
-diversity_long <- diversity %>%
-  gather(key = "Measurement", value = "Value", -Date)
-bird_stats <- rbind(richness_long, diversity_long)
+If you want to skip all the data wrangling and start with data that are already in tidy format, download the data [here](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/sweetwater-data-clean04.csv). 
 
-stats_plot <- ggplot(data = bird_stats,
-                     mapping = aes(x = Date, y = Value)) +
-  geom_point() +
-  facet_wrap(~ Measurement, scales = "free")
-print(stats_plot)
+Be sure you set up a new project as described in [Getting started](#getting-started), above.
+
+Move the file you downloaded to the 'data' folder.
+
+In order to save our work, we will use an R script, which is a text file where we place all our R commands. Create a new script through the file menu (File > New File > R Script). We start our script with a header of comments:
+
+```{r clean-01}
+# Analyze sweetwater bird species richness
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2019-11-01
 ```
+
+We're going to use some R code from packages that do not come with base R. Run these two lines in the console:
+
+```{r clean-02, eval = FALSE}
+install.packages("tidyverse")
+install.packages("vegan")
+```
+
+We also need to tell R in our script that we want to use those packages; we load them into memory with the `library` command. Generally, we try to add all the calls to `library` to the beginning of our code, so if someone opens the script, they can immediately see which additional packages are required.
+
+```{r clean-03}
+# Analyze sweetwater bird species richness
+# Jeff Oliver
+# jcoliver@email.arizona.edu
+# 2019-11-01
+
+# Load additional packages
+library(tidyverse)
+library(vegan)
+
+# Read in data
+bird_data <- read.csv(file = "data/sweetwater-data-clean04.csv")
+```
+
+The last line reads the data into R. You can look at these data by running `head(bird_data)` in the Console.
+
+### Wrangle the data
+
+Next we need to sum the counts for each species for each day:
+
+```{R clean-04}
+# Sum species counts for each day
+bird_data_sums <- bird_data %>%
+  filter(ID_to_species == 1) %>%
+  group_by(Date, Species) %>%
+  summarise(Count = sum(Count))
+```
+
+With the daily totals for each species, now we can calculate species richness (here we are measuring daily richness as the total number of species each day).
+
+### Richness
+
+```{r clean-05}
+# Calculate species richness per day
+richness <- bird_data_sums %>%
+  group_by(Date) %>%
+  summarize(Richness = n())
+```
+
+We can investigate the richness data by typing the name of the variable into the console:
+
+```{r, eval = FALSE}
+> richness
+```
+
+```{r, echo = FALSE}
+richness
+```
+
+Now that we have species richness calculated for each day, we can use the ggplot2 package, which comes with tidyverse, to plot the data:
+
+```{r clean-06}
+# Plot daily species richness
+richness_plot <- ggplot(data = richness,
+                        mapping = aes(x = Date,
+                                      y = Richness)) +
+  geom_point()
+print(richness_plot)
+```
+
+### Diversity
+
+For species diversity, we are going to use, $H$, Shannon's index of species diversity:
+
+$$
+H = -\sum_{i=1}^{s}{p_i \ln p_i}
+$$
+
+which is the sum over $s$ species, where $p_i$ is the proportion individuals of the $i^th$ species ($n_i$) out of the total number of inviduals ($N$), or:
+
+$$
+p_i = \frac{n_i}{N}
+$$
+
+We are going to use functions that come with the vegan package to help with these calculations. In order to use those functions, we need to convert the `bird_data_sums` from the "long" format it is now to "wide" format. That is, we need to change from:
+
+| Date       | Species            | Count |
+|:-----------|:-------------------|:-----:| 
+| 2019-10-04 | Abert's Towhee     | 1     |
+| 2019-10-04 | Gila Woodpecker    | 2     |
+| 2019-10-03 | Abert's Towhee     | 1     |
+| 2019-10-03 | Greater Roadrunner | 1     |
+
+To:
+
+| Date       | Abert's Towhee     | Gila Woodpecker | Greater Roadrunner |
+|:-----------|:------------------:|:---------------:|:------------------:|
+| 2019-10-04 | 1                  | 2               | 0                  |
+| 2019-10-03 | 1                  | 0               | 1                  |
+
+Where
+
++ each date corresponds to a single row
++ each species corresponds to a single column
+
+We use the `spread` function of tidyverse to accomplish this. We also need to replace NA values produced in this process to zeros:
+
+```{r, clean-07}
+# Convert to wide format for species diversity calculation
+bird_data_wide <- bird_data_sums %>%
+  spread(key = Species, value = Count)
+
+# Replace NA values with zeros
+bird_data_wide[is.na(bird_data_wide)] <- 0
+```
+
+The diversity calculation only works on count data, and our data include one column of dates. We create a new variable, `species_counts` which has all the data except the first column (the Date column), then we calculate species richness and look at the results by running the name of the variable (`bird_diversity`):
+
+```{r clean-08}
+# Calculate species diversity on count data
+species_counts <- bird_data_wide[, -1]
+bird_diversity <- diversity(x = species_counts)
+
+# Add date
+bird_diversity <- data.frame(Date = bird_data_wide$Date,
+                        Diversity = bird_diversity)
+```
+
+Now that we have species diversity, we can plot it using commands similar to those we used for species richness:
+
+```{r clean-09}
+# Plot species diversity of each date
+diversity_plot <- ggplot(data = bird_diversity, 
+                         mapping = aes(x = Date, y = Diversity)) +
+  geom_point()
+print(diversity_plot)
+```
+
+Recall the plot for richness:
+
+```{r clean-10, echo = FALSE}
+print(richness_plot)
+```
+
+**Question**: Why is species richness of October 4 higher than richness of October 2, but species diversity is _lower_ on October 4 than on October 2?
 
 ***
 
