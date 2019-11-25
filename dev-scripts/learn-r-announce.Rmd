@@ -15,11 +15,13 @@ suppressPackageStartupMessages(expr = library(lubridate))
 
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2019-11-05",
-                                 "2019-11-12",
-                                 "2019-11-19",
-                                 "2019-11-26"),
-                       lessons = c(-1, 2, -1, 0))
+schedule <- data.frame(dates = c("2019-11-26",
+                                 "2019-12-03",
+                                 "2019-12-10", 
+                                 "2019-12-17",
+                                 "2019-12-24",
+                                 "2019-12-31"),
+                       lessons = c(0, -1, -1, -1, 0, 0))
 ```
 
 ```{r prepare-data}
