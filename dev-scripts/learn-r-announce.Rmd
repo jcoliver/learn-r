@@ -15,11 +15,10 @@ suppressPackageStartupMessages(expr = library(lubridate))
 
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2019-11-05",
-                                 "2019-11-12",
-                                 "2019-11-19",
-                                 "2019-11-26"),
-                       lessons = c(-1, 2, -1, 0))
+schedule <- data.frame(dates = c("2020-01-14",
+                                 "2020-01-21",
+                                 "2020-01-28"),
+                       lessons = c(0, -1, -1))
 ```
 
 ```{r prepare-data}
@@ -41,7 +40,7 @@ Would you mind forwarding this announcement to researchers in your department? P
 
 \-\-\-\-\-
 
-_All sessions will be 9-11 am on Tuesday in Room 200S of the [Weaver Science-Engineering Library](https://new.library.arizona.edu/visit/science)_. To get the most out of these workshops, participants should bring a laptop with [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
+_All sessions will be 9-11 am on Tuesday in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio)_. To get the most out of these workshops, participants should bring a laptop with [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
 
 ```{r print-schedule, results = "asis"}
 # Keep track of whether an open lab has been encountered; only print blurb for 
