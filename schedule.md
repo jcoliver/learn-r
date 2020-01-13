@@ -1,6 +1,6 @@
 # Tentative schedule of upcoming workshops
 
-| Day | Month | Workshop                          | 
+| Day | Month | Workshop                          |
 |:---:|:-----:|:---------------------------------:|
 | 07  | Jan   | _No R session this day_           |
 | 14  | Jan   | _No R session this day_           |
