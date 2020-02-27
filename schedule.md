@@ -2,10 +2,11 @@
 
 | Day | Month | Workshop                          |
 |:---:|:-----:|:---------------------------------:|
-| 04  | Feb   | Open lab, bring your projects     |
-| 11  | Feb   | Heatmaps in R                     |
-| 18  | Feb   | Open lab, bring your projects     |
-| 25  | Feb   | Git and GitHub with RStudio       |
+| 03  | Mar   | Open lab, bring your projects     |
+| 10  | Mar   | Open lab + debugging session      |
+| 17  | Mar   | Dynamic reports with knitr        |
+| 24  | Mar   | Open lab, bring your projects     |
+| 31  | Mar   | Open lab, bring your projects     |
 
 All sessions will be 9-11 AM on Tuesday in the [Data Studio](https://new.library.arizona.edu/visit/spaces/data-studio) of the Main Library. To get the most out of these workshops, participants should bring a laptop with [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
 
