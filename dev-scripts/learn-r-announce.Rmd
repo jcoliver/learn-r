@@ -15,11 +15,15 @@ suppressPackageStartupMessages(expr = library(lubridate))
 
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2020-02-04",
-                                 "2020-02-11",
-                                 "2020-02-18",
-                                 "2020-02-25"),
-                       lessons = c(-1, 6, -1, 10))
+schedule <- data.frame(dates = c("2020-03-03",
+                                 "2020-03-10",
+                                 "2020-03-17",
+                                 "2020-03-24",
+                                 "2020-03-31"),
+                       lessons = c(-1, -1, 5, -1, -1))
+
+# Toggle indicating whether or not attendance files should be created
+create.files <- FALSE
 ```
 
 ```{r prepare-data}
@@ -72,18 +76,21 @@ Additional resources:
 
 #### Attendance files set up:
 ```{r setup-files}
-# Creating files with only header rows for tracking attendance
-header.row <- "Last,First,E-mail,College,Department,Position"
-for (i in 1:nrow(schedule)) {
-  if (schedule$lessons[i] != 0) { # Don't set up a file if there is no lesson
-    filename <- paste0(schedule$dates[i], "-main-", schedule$short.name[i], "-attendance.csv")
-    filename <- paste0("../../learn-r-non-repo/admin/", filename)
-    if (!file.exists(filename)) {
-      file.create(filename)
-      file.connection <- file(filename)
-      writeLines(text = header.row, con = file.connection)
-      close(file.connection)
-      cat(filename, "\n")
+if (create.files) {
+  
+  # Creating files with only header rows for tracking attendance
+  header.row <- "Last,First,E-mail,College,Department,Position"
+  for (i in 1:nrow(schedule)) {
+    if (schedule$lessons[i] != 0) { # Don't set up a file if there is no lesson
+      filename <- paste0(schedule$dates[i], "-main-", schedule$short.name[i], "-attendance.csv")
+      filename <- paste0("../../learn-r-non-repo/admin/", filename)
+      if (!file.exists(filename)) {
+        file.create(filename)
+        file.connection <- file(filename)
+        writeLines(text = header.row, con = file.connection)
+        close(file.connection)
+        cat(filename, "\n")
+      }
     }
   }
 }
