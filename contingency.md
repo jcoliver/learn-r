@@ -4,7 +4,7 @@ To reduce the potential for spreading the Coronavirus, the University of Arizona
 
 Participants can join in one or both ways:
 
-1. Zoom. All University of Arizona staff, students, and faculty have access to the Zoom software (see the [UITS page on Zoom](https://it.arizona.edu/service/zoom)). We will use the Zoom room at [https://arizona.zoom.us/j/5133485931](https://arizona.zoom.us/j/5133485931). For the purposes of R support, participants may be asked to [share your screen](https://support.zoom.us/hc/en-us/articles/201362153-Sharing-your-screen).
+1. Zoom. All University of Arizona staff, students, and faculty have access to the Zoom software (see the [UITS page on Zoom](https://it.arizona.edu/service/zoom)). We will use the Zoom room at [https://arizona.zoom.us/j/898519911](https://arizona.zoom.us/j/898519911). For the purposes of R support, participants may be asked to [share your screen](https://support.zoom.us/hc/en-us/articles/201362153-Sharing-your-screen).
 2. Slack. We will also be monitoring the UA Data Science Slack workspace [https://uadatascience.slack.com/](https://uadatascience.slack.com/). If you have not yet signed up for this workspace, you can find details on how to do so at [https://jcoliver.github.io/uadatascience-slack/](https://jcoliver.github.io/uadatascience-slack/).
 
 If you have any questions about the R sessions, please contact Jeff Oliver at [jcoliver@email.arizona.edu](mailto:jcoliver@email.arizona.edu?subject=R%20workshop%20inquiry).
