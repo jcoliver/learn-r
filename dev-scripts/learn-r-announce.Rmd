@@ -15,12 +15,11 @@ suppressPackageStartupMessages(expr = library(lubridate))
 
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2020-03-03",
-                                 "2020-03-10",
-                                 "2020-03-17",
-                                 "2020-03-24",
-                                 "2020-03-31"),
-                       lessons = c(-1, -1, 5, -1, -1))
+schedule <- data.frame(dates = c("2020-04-07",
+                                 "2020-04-14",
+                                 "2020-04-21",
+                                 "2020-04-28"),
+                       lessons = c(-1, -1, 4, -1))
 
 # Toggle indicating whether or not attendance files should be created
 create.files <- FALSE
@@ -45,7 +44,10 @@ Would you mind forwarding this announcement to researchers in your department? P
 
 \-\-\-\-\-
 
-_All sessions will be 9-11 am on Tuesday in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio)_. To get the most out of these workshops, participants should bring a laptop with [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
+<!--
+_All sessions will be 9-11 am on Tuesday in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio)_. 
+-->
+_All sessions will be 9-11 am (MST) on Tuesday through Zoom_ at  [https://arizona.zoom.us/j/437855363](https://arizona.zoom.us/j/437855363). To get the most out of these workshops, participants should bring a laptop with [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
 
 ```{r print-schedule, results = "asis"}
 # Keep track of whether an open lab has been encountered; only print blurb for 
