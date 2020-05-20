@@ -9,13 +9,6 @@ output:
 
 An introduction to writing functions to improve your coding efficiency and optimize performance.
 
-<!--
-Consider revising this lesson do to a simpler analysis.
-Like take the gapminder data (or one column), scale it so it has a mean of 0 and unit variance
-Plot the data
-Make a print function?
--->
-
 #### Learning objectives
 1. Write and use functions in R
 2. Document functions for easy re-use
@@ -52,75 +45,147 @@ We'll start by creating an R script to hold our work. R scripts are simple text 
 # 2018-08-16
 ```
 
-R will ignore anything that appears to the right of the pound sign, `#`.
+R will ignore anything that appears to the right of the pound sign, `#`. This information allows anyone who is reading the script to quickly know (1) what the script does and (2) who to contact with questions.
 
-TODO: TO HERE
+To standardize a variable, we subtract observed values by the mean, and divide that difference by the standard deviation ($(x_i - \mu)/\sigma$).
+
+We start by performing the calculation on the petal length data, first calculating the two summary statistics (mean and standard deviation), then using them in the formula for standardization.
 
 ```{r standardize-petal-length}
 # Standardize petal length
-mean.petal.length <- mean(iris$Petal.Length)
-sd.petal.length <- sd(iris$Petal.Length)
-standard.petal.length <- (iris$Petal.Length - mean.petal.length)/sd.petal.length
+mean_petal_length <- mean(iris$Petal.Length)
+sd_petal_length <- sd(iris$Petal.Length)
+standard_petal_length <- (iris$Petal.Length - mean_petal_length)/sd_petal_length
 ```
 
-Check process
-```{r check-standardization}
-summary(standard.petal.length)
+We can use the `summary` command to ensure the mean is zero,
+
+```{r check-standardization-mean}
+summary(standard_petal_length)
 ```
 
-Repeat for petal width, copy/paste from above
+and the `sd` function to make sure the standard deviation is one.
+
+```{r check-standardization-sd}
+sd(standard_petal_length)
+```
+
+Now that we have the calculation for petal length, we can copy the code and update it to perform calculation for petal width. 
+
 ```{r petal-width-standardization}
-# Standardize petal length
-mean.petal.width <- mean(iris$Petal.Width)
-sd.petal.width <- sd(iris$Petal.Width)
-standard.petal.width <- (iris$Petal.Width - mean.petal.width)/sd.petal.width
-summary(standard.petal.width)
+# Standardize petal width
+mean_petal_width <- mean(iris$Petal.Width)
+sd_petal_width <- sd(iris$Petal.Width)
+standard_petal_width <- (iris$Petal.Width - mean_petal_width)/sd_petal_width
+summary(standard_petal_width)
 ```
 
-Did copy/paste really save time? And how many opportunities for mistakes?
+But we had to change three instances of "Length" to "Width" and seven (seven!?) instances of "length" to "width". Did copy/paste really save time? And how many opportunities for mistakes?
 
-Write a function!
-```{r standardization-function}
+Here we have a perfect opportunity to write a function that will do those three steps for any data we want. _And_ we can avoid the inevitable errors that arise with the copy-paste-update process.
+
+### Write a function!
+
+When we write a function, it is very much like assigning a value to a variable. However, in this instance, we assign the value produced by a special function in R called `function` (shocking, I know). When writing functions, I generally start by naming the function and creating a function with nothing in it. We will call our function `standardize`:
+
+```{r function-skeleton, eval = FALSE}
 standardize <- function(data) {
-  mean.value <- mean(data)
-  sd.value <- sd(data)
-  z.value <- (data - mean.value)/sd.value
-  return(z.value)
+  
 }
 ```
 
-Replace previous work
-```{r use-function}
-standard.petal.length <- standardize(data = iris$Petal.Length)
-standard.petal.width <- standardize(data = iris$Petal.Width)
+Note that there is a variable `data` in the call to `function`. This is referring to the data that we will perform our standarization calculation on. The next step is to outline what actions the function will peform. I start with comments to help with this process.
+
+```{r function-steps, eval = FALSE}
+standardize <- function(data) {
+  # Calculate mean of data
+  # Calculate standard deviation of data
+  # Calculate standardized scores
+}
 ```
 
-Document the function
+These comments then provide a roadmap of the code that needs to be written inside the function. We start by adding the mean calculation to the function:
+
+```{r function-mean, eval = FALSE}
+standardize <- function(data) {
+  # Calculate mean of data
+  mean_data <- mean(data)
+  # Calculate standard deviation of data
+  # Calculate standardized scores
+}
+```
+
+Next we fill in the standard deviation and standardization code:
+
+```{r function-sd, eval = FALSE}
+standardize <- function(data) {
+  # Calculate mean of data
+  mean_data <- mean(data)
+  # Calculate standard deviation of data
+  sd_data <- sd(data)
+  # Calculate standardized scores
+  stand_data <- (data - mean_data)/sd_data
+}
+```
+
+At this point, remember that we want to use this function with the iris data. However, at no point in the function are we referring to the iris data frame. This is because we want our function to be _generalizable_ to other data as well. The last thing we need to do is to send the standardized values back to the user. This is known as "returning" a value, and we use the function `return` to do so:
+
+```{r function-finish, eval = FALSE}
+standardize <- function(data) {
+  # Calculate mean of data
+  mean_data <- mean(data)
+  # Calculate standard deviation of data
+  sd_data <- sd(data)
+  # Calculate standardized scores
+  stand_data <- (data - mean_data)/sd_data
+  return(stand_data)
+}
+```
+
+At this point, our function is almost ready for use. The last thing we need to do is to read it into memory. We do this like we are running any other line of code in R: place your cursor on one of the curly braces and run the code with Ctrl-Enter or Cmd-Enter.
+
+Now we can use the function. We can replace the three lines that performed the calculation for petal length with a single line that calls our `standarize` function:
+
+```{r use-function-length}
+standard_petal_length <- standardize(data = iris$Petal.Length)
+```
+
+Like all code, we want to provide enough information so it is easy for someone else to use. So we want to add documentation that consists at a minimum of three things:
+
+1. A brief explanation of what the function does
+2. A description of the information needs to be provided to the function
+3. An explanation of what the function returns
+
 ```{r function-documentation}
 # Standardize a vector of numerical data
 # data: vector of numerical data
 # returns: vector of original data standardized to have mean = 0, sd = 1
 standardize <- function(data) {
-  mean.value <- mean(data)
-  sd.value <- sd(data)
-  z.value <- (data - mean.value)/sd.value
-  return(z.value)
+  # Calculate mean of data
+  mean_data <- mean(data)
+  # Calculate standard deviation of data
+  sd_data <- sd(data)
+  # Calculate standardized scores
+  stand_data <- (data - mean_data)/sd_data
+  return(stand_data)
 }
 ```
 
+Now we have a function we can use on each of the columns in our data frame. Yay, right? Well, almost. We still have to run the `standarize` function four times on the iris data frame. What if we had 100 columns of data? Or 1000 columns? That is simply too much copy and paste. 
+
 Use apply to do it to multiple columns
 ```{r apply-function-01, eval = FALSE}
-iris.stand <- apply(X = iris, MARGIN = 2, FUN = standardize)
+iris_stand <- apply(X = iris, MARGIN = 2, FUN = standardize)
 ```
 
-```{r apply-function-02, eval = FALSE}
-iris.stand <- apply(X = iris[, 1:4], MARGIN = 2, FUN = standardize)
-iris.stand <- as.data.frame(iris.stand)
+```{r apply-function-02}
+iris_stand <- apply(X = iris[, 1:4], MARGIN = 2, FUN = standardize)
+iris_stand <- as.data.frame(iris_stand)
 ```
 
 Add the species column
 ```{r add-species-column}
-iris.stand$Species <- iris$Species
+iris_stand$Species <- iris$Species
 ```
 
 Write a function to do it all
@@ -129,14 +194,14 @@ Write a function to do it all
 # data: data frame to standardize
 # ignore: (optional) vector of columns to skip in standardization process
 # returns: data frame with all non-ignored columns standardized to have mean = 0, sd = 1
-standardize.df <- function(data, ignore = c()) {
-  ignored.cols <- data[, ignore]
-  standardized.df <- apply(X = data[, -ignore], MARGIN = 2, FUN = standardize)
-  standardized.df <- cbind(standardized.df, ignored.cols)
-  return(standardized.df)
+standardize_df <- function(data, ignore = c()) {
+  ignored_cols <- data[, ignore]
+  df_stand <- apply(X = data[, -ignore], MARGIN = 2, FUN = standardize)
+  df_stand <- cbind(df_stand, ignored.cols)
+  return(df_stand)
 }
 
-iris.stand <- standardize.df(data = iris, ignore = 5)
+iris_stand <- standardize_df(data = iris, ignore = 5)
 ```
 
 
@@ -144,15 +209,35 @@ iris.stand <- standardize.df(data = iris, ignore = 5)
 # data: data frame to standardize
 # ignore: (optional) vector of columns to skip in standardization process
 # returns: data frame with all non-ignored columns standardized to have mean = 0, sd = 1
-standardize.df <- function(data, ignore = c()) {
-  ignored.cols <- as.data.frame(data[, ignore])
-  colnames(ignored.cols) <- colnames(data)[ignore]
-  standardized.df <- apply(X = data[, -ignore], MARGIN = 2, FUN = standardize)
-  standardized.df <- cbind(standardized.df, ignored.cols)
-  return(standardized.df)
+standardize_df <- function(data, ignore = c()) {
+  # Do standardization calculation on all columns except those indicated by 
+  # ignore vector
+  df_stand <- apply(X = data[, -ignore], MARGIN = 2, FUN = standardize)
+
+  # To add the ignored columns back to the data frame of standarized values, 
+  # need to extract column names, so we know the order they should appear and 
+  # the column names of the ignored columns only
+  orig_colnames <- colnames(data)
+  ignored_colnames <- colnames(data)[ignored]
+  
+  # Extract the ignored columns and ensure they are a data frame (if only one 
+  # column is ignored, extracting it alone results in a vector, not a data 
+  # frame)
+  ignored_columns <- as.data.frame(data[, ignore])
+  
+  # Update column names for this data frame; really only necessary when a single
+  # column is ignored
+  colnames(ignored_columns) <- ignored_colnames
+  
+  df_stand <- cbind(df_stand, ignored_columns)
+  
+  # Ensure columns appear in original order
+  df_stand <- df_stand[, orig_colnames]
+  
+  return(df_stand)
 }
 
-iris.stand <- standardize.df(data = iris, ignore = 5)
+iris_stand <- standardize_df(data = iris, ignore = 5)
 ```
 
 ***
