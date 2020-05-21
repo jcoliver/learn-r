@@ -17,6 +17,11 @@ An introduction to writing functions to improve your coding efficiency and optim
 ## Don't Repeat Yourself
 The [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) aims to reduce repetition in software engineering. By writing and using functions to accomplish a set of instructions multiple times, you reduce the opportunities for mistakes and often improve performance of the code you write. Functional programming makes it easy to apply the same analyses to different sets of data, without excessive copy-paste-update cycles that can introduce hard-to-detect errors.
 
+```{r setup, echo = FALSE}
+file_name_1 <- "standardize-iris.R"
+function_file_name <- "standardization-functions.R"
+```
+
 ***
 
 ## Writing functions
@@ -34,18 +39,18 @@ And if we look at the values for each of the four measurements, some are quite d
 summary(iris)
 ```
 
-Given this variation in ranges and magnitudes, we will have to standardize the variables if we want to run analyses like principle components analysis (PCA) (PCA is beyond the scope of this lesson, but it is covered in a [separate lesson](https://jcoliver.github.io/learn-r/003-intro-multivariate.html)). Standardizing a variable means we transform the data so the mean value is zero and the variance is one.
+Given this variation in ranges and magnitudes, we will have to standardize the variables if we want to run analyses like principle components analysis (PCA) (PCA is beyond the scope of this lesson, but it is covered in a [separate lesson](https://jcoliver.github.io/learn-r/003-intro-multivariate.html)). Standardizing a variable means we transform the data so the mean value is zero and the standard deviation is one.
 
 We'll start by creating an R script to hold our work. R scripts are simple text files with a series of R commands and are a great way to make our work reproducible. For all scripts, it is a good idea to start off with a little information about what the script does (and who is responsible for it). So create a script (from the File menu, select New File > R Script or use the keyboard shortcut of Ctrl+Shift+N or Cmd+Shift+N).
 
 ```{r script-header}
-# Standarize iris values
+# Standardize iris values
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2018-08-16
 ```
 
-R will ignore anything that appears to the right of the pound sign, `#`. This information allows anyone who is reading the script to quickly know (1) what the script does and (2) who to contact with questions.
+R will ignore anything that appears to the right of the pound sign, `#`. This information allows anyone who is reading the script to quickly know (1) what the script does and (2) who to contact with questions. While we are at it, go ahead and save this file as "`r file_name_1`".
 
 To standardize a variable, we subtract observed values by the mean, and divide that difference by the standard deviation ($(x_i - \mu)/\sigma$).
 
@@ -130,7 +135,7 @@ standardize <- function(data) {
 
 At this point, remember that we want to use this function with the iris data. However, at no point in the function are we referring to the iris data frame. This is because we want our function to be _generalizable_ to other data as well. The last thing we need to do is to send the standardized values back to the user. This is known as "returning" a value, and we use the function `return` to do so:
 
-```{r function-finish, eval = FALSE}
+```{r function-finish}
 standardize <- function(data) {
   # Calculate mean of data
   mean_data <- mean(data)
@@ -144,7 +149,7 @@ standardize <- function(data) {
 
 At this point, our function is almost ready for use. The last thing we need to do is to read it into memory. We do this like we are running any other line of code in R: place your cursor on one of the curly braces and run the code with Ctrl-Enter or Cmd-Enter.
 
-Now we can use the function. We can replace the three lines that performed the calculation for petal length with a single line that calls our `standarize` function:
+Now we can use the function. We can replace the three lines that performed the calculation for petal length with a single line that calls our `standardize` function:
 
 ```{r use-function-length}
 standard_petal_length <- standardize(data = iris$Petal.Length)
@@ -171,619 +176,392 @@ standardize <- function(data) {
 }
 ```
 
-Now we have a function we can use on each of the columns in our data frame. Yay, right? Well, almost. We still have to run the `standarize` function four times on the iris data frame. What if we had 100 columns of data? Or 1000 columns? That is simply too much copy and paste. 
+Now we have a function we can use on each of the columns in our data frame. Yay, right? Well, almost. We still have to run the `standardize` function four times on the iris data frame. What if we had 100 columns of data? Or 1000 columns? That is simply too much copy and paste. We can use the `apply` function to run the `standardize` function on each column of data.
 
-Use apply to do it to multiple columns
-```{r apply-function-01, eval = FALSE}
+We need to tell `apply` three things:
+
+1. The data frame to use, in this case we are using the `iris` data
+2. Whether to do calculations for each row or each column; we use the `MARGIN` parameter for this: `MARGIN = 1` means do calculation for each _row_ while `MARGIN = 2` means do calculation for each _column_. We want to do calculations for each column
+3. The function to use; here we use the function we just wrote, `standardize`
+
+Note the `apply` function arguments `X`, `MARGIN`, and `FUN` are all capitalized. I have no idea why.
+
+```{r apply-function-01, error = TRUE}
 iris_stand <- apply(X = iris, MARGIN = 2, FUN = standardize)
 ```
 
-```{r apply-function-02}
-iris_stand <- apply(X = iris[, 1:4], MARGIN = 2, FUN = standardize)
-iris_stand <- as.data.frame(iris_stand)
+Well that didn't work. Why not? Let us look at the `iris` data again:
+
+```{r investigate-iris}
+head(iris)
 ```
 
-Add the species column
+The error occurs because the `standardize` function is run on _all_ columns, including the "Species" column, which contains non-numerical data. We need to skip that column when we send data to the `apply` function. One way to do this is to use the negation operator (the minus sign, "-") with the index of the column we want to skip. In our case, the "Species" column is the fifth column, so we drop that column in our call to `apply` via `iris[, -5]`.
+
+```{r apply-function-02}
+# Run standardize on all numeric columns
+iris_stand <- apply(X = iris[, -5], MARGIN = 2, FUN = standardize)
+```
+
+We also need to convert the output back to a data frame with `as.data.frame`. We can then look at the first few rows with `head`.
+
+```{r convert-apply-output}
+# Convert output to data frame
+iris_stand <- as.data.frame(iris_stand)
+head(iris_stand)
+```
+
+Great. But what's missing? The "Species" column is not included in the results because we did not send it to the `apply` function (remember, we had to skip it because it contained non-numerical data). We can add it back, though, copying from the "Species" column in the original data.
+
 ```{r add-species-column}
+# Add back species column
+iris_stand$Species <- iris$Species
+head(iris_stand)
+```
+
+So to summarize at this point, we wrote a function, `standardize`, and applied that to all the numeric data columns in the iris data.
+
+```{r summary-so-far}
+# Run standardize on all numeric columns
+iris_stand <- apply(X = iris[, -5], MARGIN = 2, FUN = standardize)
+# Convert output to data frame
+iris_stand <- as.data.frame(iris_stand)
+# Add back species column
 iris_stand$Species <- iris$Species
 ```
 
-Write a function to do it all
-(but do this in a separate file - move our other function there, too)
-```{r standardize-df}
-# data: data frame to standardize
-# ignore: (optional) vector of columns to skip in standardization process
-# returns: data frame with all non-ignored columns standardized to have mean = 0, sd = 1
-standardize_df <- function(data, ignore = c()) {
-  ignored_cols <- data[, ignore]
-  df_stand <- apply(X = data[, -ignore], MARGIN = 2, FUN = standardize)
-  df_stand <- cbind(df_stand, ignored.cols)
-  return(df_stand)
+At this point, though, we have to ask ourselves two questions:
+
+1. How can I use this function with other projects?
+2. Can we have a function do all that business with `apply`, converting back to a data frame, and add on those missing columns?
+
+The answer to both is, of course, yes.
+
+### Use the `source`
+
+Right now, the function we wrote, `standardize`, is locked up inside the `r file_name_1` file. This makes it hard to use outside of this file. In order to make the `standardize` function useable elsewhere, we need to move the function to a separate file and use the `source` command in any script that we would like to use our function. For the first step, create a new R script through the File menu or with the keyboard shortcut (Ctrl+Shift+N or Cmd+Shift+N). Let us call this file "`r function_file_name`".
+
+As we did with our script, we want to start the file with a header that has a little information about what is included in the script.
+
+```{r function-file-header, eval = FALSE}
+# Functions for standardizing data
+# Jeff Oliver
+# jcoliver@arizona.edu
+# 2020-05-20
+```
+
+Now cut (Ctrl-X or Cmd-X) the function from our original script (the file called "`r file_name_1`") and paste (Ctrl-V or Cmd-V) it into this new script (the file called "`r function_file_name`").
+
+So we have done the first part (moving our function to a separate file), but how do we actually use it? 
+
+The `source` command.
+
+But we should pause for a moment to clean up our workspace. We can remove all variables from memory by running:
+
+```{r clean-workspace, eval = FALSE}
+rm(list = ls())
+```
+
+We are doing this now just to ensure we are using the `standardize` function defined in the file we just created.
+
+When we use `source`, we tell R to run _all_ the code in a specific file. Go to your first script ("`r file_name_1`") and add the `source` command, setting `file` to the name of our script with the `standarize` function ("`r function_file_name`").
+
+```{r add-source, eval = FALSE}
+source(file = "standardization-functions.R")
+```
+
+An important thing to remember about the `source` function is that it will run _all_ the code in that file. We can see this behavior by adding a line before our `standardize` function and re-running the `source` function.
+
+First, add this line to the `r function_file_name` file:
+
+```{r add-message, eval = FALSE}
+message("Loading functions from standarization-functions.R")
+```
+
+Save the `r function_file_name` file, then re-run the line with `source` in "`r file_name_1`":
+
+```{r re-run-source, eval = FALSE}
+source(file = "standardization-functions.R")
+```
+
+```{r print-message, echo = FALSE}
+message("Loading functions from standarization-functions.R")
+```
+
+If there are additional commands in the file you call `source` on, such as variable declarations, it will run the code and those variables will be added to memory. Sometimes that is OK, but I will caution against using `source` for anything other than loading functions into memory. 
+
+### Functions within functions
+
+Now that we have a separate file for functions, let us return to the other point, about writing a function that standardizes _all_ numeric columns of a data frame. 
+
+So let us go back to our file with the `standardize` function ("`r function_file_name`") and at the end of the file, start defining a new function we will call `standardize_df`. We will pass it one argument, `df`.
+
+```{r df-function-skeleton, eval = FALSE}
+standardize_df <- function(df) {
+  
+}
+```
+
+Just as we did with `standardize` let us start by enumerating the steps to take to accomplish this. Since we already wrote the code to do each of these steps, we can paste the code in the function and comment it out. We can use this to guide the code we write. (If you don't have code that is easy to copy/paste, you can skip to writing comments about the steps that need to occur in the function.)
+
+```{r df-function-paste, eval = FALSE}
+standardize_df <- function(df) {
+  # Run standardize on all numeric columns
+  # iris_stand <- apply(X = iris[, -5], MARGIN = 2, FUN = standardize)
+  # Convert output to data frame
+  # iris_stand <- as.data.frame(iris_stand)
+  # Add back species column
+  # iris_stand$Species <- iris$Species
+}
+```
+
+Looking at what we did before, there presents a challenge: How do we know which columns to skip? That is, how can we tell which columns are not numeric? We "hard-coded" the script to skip the fifth column, which holds the species' names. But how do we make this flexible enough so we do not need users to enter which columns to skip? We can use the function `is.numeric` on each column to figure out which columns have numeric data and thus are appropriate for the standardization transformation.
+
+So we need to add another step to our function, where we look at the incoming data (a data frame called `df`). The first thing the function needs to do is figure out which columns in `df` are numeric and which columns are not numeric.
+
+```{r df-function-add-step, eval = FALSE}
+standardize_df <- function(df) {
+  # Identify numeric columns
+  # Run standardize on all numeric columns
+  # iris_stand <- apply(X = iris[, -5], MARGIN = 2, FUN = standardize)
+  # Convert output to data frame
+  # iris_stand <- as.data.frame(iris_stand)
+  # Add back species column
+  # iris_stand$Species <- iris$Species
+}
+```
+
+To extract this information, we can use the `sapply` function, which is related to `apply`; if you want to read more about `sapply` (and `apply` and `lapply`), there is a nice discussion at [https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/](https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/).
+
+The function `is.numeric` will tell us if an individual column has numeric data, so we can test out `sapply` and `is.numeric` on the iris data:
+
+```{r test-sapply}
+sapply(X = iris, FUN = is.numeric)
+```
+
+This is great! The value returned is a logical vector (a vector of TRUE/FALSE values) that tells us which columns are numeric (`r paste0(colnames(iris)[sapply(X = iris, FUN = is.numeric)], collapse = ", ")`) and which columns are not numeric (`r paste0(colnames(iris)[!sapply(X = iris, FUN = is.numeric)], collapse = ", ")`).
+
+We can update our function to extract the information about whether or not a column is numeric.
+
+```{r df-function-numeric, eval = FALSE}
+standardize_df <- function(df) {
+  # Identify numeric columns
+  col_numeric <- sapply(X = df, FUN = is.numeric)
+  # Run standardize on all numeric columns
+  # iris_stand <- apply(X = iris[, -5], MARGIN = 2, FUN = standardize)
+  # Convert output to data frame
+  # iris_stand <- as.data.frame(iris_stand)
+  # Add back species column
+  # iris_stand$Species <- iris$Species
+}
+```
+
+But now, the information stored within the function in the variable `col_numeric` allows us some efficiencies. Because `col_numeric` has as many elements as there are columns in `df`, we can get crafty with R to use our `standardize` function to _update_ columns of interest. If we can update columns rather than creating a new data frame, we can skip the step where we add back those non-numeric column. What does this look like, then? We change the `apply` command to use the `col_numeric` vector and update the data frame `df` rather than creating an entirely new data frame.
+
+```{r df-function-standardize, eval = FALSE}
+standardize_df <- function(df) {
+  # Identify numeric columns
+  col_numeric <- sapply(X = df, FUN = is.numeric)
+  # Run standardize on all numeric columns
+  # iris_stand <- apply(X = iris[, -5], MARGIN = 2, FUN = standardize)
+  df[, col_numeric] <- apply(X = df[, col_numeric], 
+                             MARGIN = 2,
+                             FUN = standardize)
+  # Convert output to data frame
+  # iris_stand <- as.data.frame(iris_stand)
+  # Add back species column
+  # iris_stand$Species <- iris$Species
+}
+```
+
+Note that I did not remove the comment with the old code. Take a moment to notice an important difference: we did not create a new data frame (in our hard-coded version, this was `iris_stand`). Instead, we assigned values to the numeric columns of `df` (via `df[, col_numeric]`). Similar to our previous code, though, inside the `apply` command we _did_ skip all non-numeric columns in the data frame (also via `df[, col_numeric]`).
+
+At this point, our function is almost done; we need to do two more things: 
+
+1. Use the `return` function
+2. Document the function
+
+While we add the `return` function, we can also clean up the commented-out code from inside the function.
+
+```{r df-function-cleanup, eval = FALSE}
+standardize_df <- function(df) {
+  # Identify numeric columns
+  col_numeric <- sapply(X = df, FUN = is.numeric)
+  # Run standardize on all numeric columns
+  df[, col_numeric] <- apply(X = df[, col_numeric], 
+                             MARGIN = 2,
+                             FUN = standardize)
+  return(df)
+}
+```
+
+And before we are done, we add the minimal documentation.
+
+```{r df-function-document, eval = FALSE}
+# Standardize all numeric columns of a data frame
+# df: data frame
+# returns: data frame with numeric columns standardized to mean = 0, sd = 1
+standardize_df <- function(df) {
+  # Identify numeric columns
+  col_numeric <- sapply(X = df, FUN = is.numeric)
+  # Run standardize on all numeric columns
+  df[, col_numeric] <- apply(X = df[, col_numeric], 
+                             MARGIN = 2,
+                             FUN = standardize)
+  return(df)
+}
+```
+
+At this point, we are ready to try it out, so save this file ("`r function_file_name`") and go back to our first script where we are doing the standardization of the iris data ("`r file_name_1`").
+
+Now we need one line:
+
+```{r test-standardize-df-1, error = TRUE}
+iris_stand <- standardize_df(df = iris)
+```
+
+This probably did not work. Why not?
+
+Remember, when we use functions that are located in another file, we will need to run the `source` command any time we have made changes. So after saving `r function_file_name`, we need to re-run the `source` command to load any changes we made to `r function_file_name`.
+
+```{r source-standardize-df, eval = FALSE}
+source(file = "standardization-functions.R")
+```
+
+```{r df-function-eval, echo = FALSE}
+# Standardize all numeric columns of a data frame
+# df: data frame
+# returns: data frame with numeric columns standardized to mean = 0, sd = 1
+standardize_df <- function(df) {
+  # Identify numeric columns
+  col_numeric <- sapply(X = df, FUN = is.numeric)
+  # Run standardize on all numeric columns
+  df[, col_numeric] <- apply(X = df[, col_numeric], 
+                             MARGIN = 2,
+                             FUN = standardize)
+  return(df)
+}
+```
+
+And re-run the line calling `standardize_df`.
+
+```{r test-standardize-df-2}
+iris_stand <- standardize_df(df = iris)
+```
+
+We can use `head` once more to see the first few rows of our new data frame.
+
+```{r check-standardize-df}
+head(iris_stand)
+```
+
+Woo-hoo!
+
+In summary, we created two files. One file, "`r function_file_name`", includes the two functions we wrote:
+
+```{r function-file, eval = FALSE}
+# Functions for standardizing data
+# Jeff Oliver
+# jcoliver@arizona.edu
+# 2020-05-20
+
+message("Loading functions from standarization-functions.R")
+
+# Standardize a vector of numerical data
+# data: vector of numerical data
+# returns: vector of original data standardized to have mean = 0, sd = 1
+standardize <- function(data) {
+  # Calculate mean of data
+  mean_data <- mean(data)
+  # Calculate standard deviation of data
+  sd_data <- sd(data)
+  # Calculate standardized scores
+  stand_data <- (data - mean_data)/sd_data
+  return(stand_data)
 }
 
-iris_stand <- standardize_df(data = iris, ignore = 5)
-```
-
-
-```{r standardize-df-names}
-# data: data frame to standardize
-# ignore: (optional) vector of columns to skip in standardization process
-# returns: data frame with all non-ignored columns standardized to have mean = 0, sd = 1
-standardize_df <- function(data, ignore = c()) {
-  # Do standardization calculation on all columns except those indicated by 
-  # ignore vector
-  df_stand <- apply(X = data[, -ignore], MARGIN = 2, FUN = standardize)
-
-  # To add the ignored columns back to the data frame of standarized values, 
-  # need to extract column names, so we know the order they should appear and 
-  # the column names of the ignored columns only
-  orig_colnames <- colnames(data)
-  ignored_colnames <- colnames(data)[ignored]
-  
-  # Extract the ignored columns and ensure they are a data frame (if only one 
-  # column is ignored, extracting it alone results in a vector, not a data 
-  # frame)
-  ignored_columns <- as.data.frame(data[, ignore])
-  
-  # Update column names for this data frame; really only necessary when a single
-  # column is ignored
-  colnames(ignored_columns) <- ignored_colnames
-  
-  df_stand <- cbind(df_stand, ignored_columns)
-  
-  # Ensure columns appear in original order
-  df_stand <- df_stand[, orig_colnames]
-  
-  return(df_stand)
+# Standardize all numeric columns of a data frame
+# df: data frame
+# returns: data frame with numeric columns standardized to mean = 0, sd = 1
+standardize_df <- function(df) {
+  # Identify numeric columns
+  col_numeric <- sapply(X = df, FUN = is.numeric)
+  # Run standardize on all numeric columns
+  df[, col_numeric] <- apply(X = df[, col_numeric], 
+                             MARGIN = 2,
+                             FUN = standardize)
+  return(df)
 }
-
-iris_stand <- standardize_df(data = iris, ignore = 5)
 ```
 
-***
-# Old Lesson
+Our analysis file is now quite small, as we have shifted much of the code to the `r function_file_name` file.
 
-#### Learning objectives
-1. Write and use functions in R
-2. Document functions for easy re-use
-3. Replace loops with functions optimized for vector calculations
-
-## Don't Repeat Yourself
-The [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) aims to reduce repetition in software engineering. By writing and using functions to accomplish a set of instructions multiple times, you reduce the opportunities for mistakes and often improve performance of the code you write. Functional programming makes it easy to apply the same analyses to different sets of data, without excessive copy-paste-update cycles that can introduce hard-to-detect errors.
-
-***
-
-## Writing functions
-Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy/pasting that code and changing the variable names. Then more copy/paste. Then we forget to change one of the variables and spend a day figuring out why our results don't make sense.
-
-For example, consider the `airquality` data set:
-
-```{r, echo = FALSE}
-head(airquality)
-```
-
-Let's start by writing a script to run linear regression to see if the solar radiation (the `Solar.R` column) predicts the ozone level (the `Ozone` column). Create a new file called "airquality-regression.R":
-
-```{r}
-# Analyze air quality data
-# Jeffrey Oliver
-# jcoliver@email.arizona.edu
-# 2017-06-22
-
-# Relationship between ozone and solar radiation
-simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
-
-```
-
-Now we are interested in just the correlation coefficient (r^2^) and the p-value for this relationship, so we use `summary` and extract those values:
-
-```{r}
-# Extract the model parameters
-simple.summary <- summary(simple)
-simple.r2 <- simple.summary$r.squared
-simple.p <- simple.summary$coefficients[2, 4]
-```
-
-And finally we can print out these two values with the `cat` command:
-
-```{r, results = "hold"}
-cat("Solar r^2 =", simple.r2)
-cat("Solar p =", simple.p)  
-```
-
-If we want to do the same thing for the relationship between ozone and wind, we can copy/paste this code and just change the predictor column specification in the `lm` command from `"Solar.R"` to `"Wind"` and update the message in the `cat` commands:
-
-```{r, eval = FALSE}
-simple <- lm(airquality[, "Ozone"] ~ airquality[, "Wind"])
-simple.summary <- summary(simple)
-simple.r2 <- simple.summary$r.squared
-simple.p <- simple.summary$coefficients[2, 4]
-cat("Wind r^2 =", simple.r2)
-cat("Wind p =", simple.p)  
-```
-
-This isn't too great an effort, but as the number of predictors grows, the time and opportunty for mistakes also grows. Since we are doing the same exact process for each predictor variable (run `lm`, run `summary`, extract values of interest, then print values of interest), we can encapsulate this in a function.
-
-### Behold, a function!
-
-To define a function, create a new file called "regression-functions.R". While functions do not necessarily have to exist outside of the R script in which they are called, it is generally considered good practice. Start this file with the usual header containing information about the contents:
-
-```{r, eval = FALSE}
-# Functions to automate linear regression
+```{r standardization-file, eval = FALSE}
+# Standardize iris values
 # Jeff Oliver
 # jcoliver@email.arizona.edu
-# 2017-06-15
+# 2018-08-16
+
+source(file = "standardization-functions.R")
+
+iris_stand <- standardize_df(df = iris)
 ```
 
-And we define a function pretty much the same way we assign values to a variable, but here we use the `function` function:
+### Actually developing a function
 
-```{r, eval = FALSE}
-RegressSimple <- function() {
+So I need to come clean about writing these functions. In the lesson above, they are consise and fairly clean. They were certainly not born that way. In writing the `standardize_df` function, which is effectively three lines of code (find the numeric columns, run the `standardize` function on each column, return the values), I probably wrote 30 lines of code testing different ways of performing those steps. When writing a function, here are a few things to consider:
+
+1. Clean out your workspace with `rm(list = ls())`. The code inside your function should not be dependent on _any_ "outside" variables or data. That is, you only want to use varibles that are (1) passed to the function (those variables we name when using `function`, e.g. the `data` variable in the `standardize` function, `standardize <- function(data)`) or (2) defined _within_ the function (like `mean_data <- mean(data)`).
+2. Step through the function one line at a time. The process for this does require you to assign values to all those arguments named in the function definition. So to test the `standardize` function, I first assigned a value to the `data` variable, in this case, the petal length column, by running `data <- iris$Petal.Length`. Then I ran the first line of code in the `standardize` function (`mean_data <- mean(data)`), then the second (`sd_data <- sd(data)`), and so on (in this development process, you _do not_ run the line defining the function, `standardize <- function(data)`). Along the way, do some reality checks to make sure things work the way they should. For example, you can compare the output of `mean(data)` for petal length with the output of `mean(iris$Petal.Length)` with `all(mean(data) == mean(iris$Petal.Length))`.
+3. Think from the point of a naive user. This is especially important when writing your documentation. Also, if you wait six months and come back to your functions, you will be that naive user.
+4. Clean out your workspace.
+
+### Debugging tips
+
+It is not working.
+
+Why is it not working?
+
+This will happen. Guaranteed. When debugging a function, one of the best functions to know about is `cat`. This allows you to print little messages to the console, building in those reality checks. Find points in your code where you know a variable should have a certain value and use the `cat` function (or multiple calls to `cat`) to print out what the value of the variable _really_ is. For example, if we are debugging the `standardize` function, we can `cat` the values of the mean for a column in our data frame to make sure the values are what we expect. We would first update the function with a call to `cat`:
+
+```{r cat-example, eval = FALSE}
+# Standardize a vector of numerical data
+# data: vector of numerical data
+# returns: vector of original data standardized to have mean = 0, sd = 1
+standardize <- function(data) {
+  # Calculate mean of data
+  mean_data <- mean(data)
+  cat("Value of mean: ", mean_data, "\n")
+  # Calculate standard deviation of data
+  sd_data <- sd(data)
+  # Calculate standardized scores
+  stand_data <- (data - mean_data)/sd_data
+  return(stand_data)
 }
 ```
 
-We have a general idea of what the function should do, so write that as a brief comment above the function:
+Note that in this case we provide three things to the `cat` function (which I am pretty sure stands for "concatenate"):
 
-```{r, eval = FALSE}
-# Run linear regression for all predictors and a response variable in a data frame
-RegressSimple <- function() {
-}
+1. `"Value of mean: "` is a bit of text that reminds me what is being printed
+2. `mean_data` is the name of the variable that stores the mean of the column of data that was passed to the function as `data`; `cat` will not print "mean_data", but rather the value stored in `mean_data`
+3. `\n` is the end of line character so whatever R outputs _after_ this call to `cat` appears on a new line
+
+Now we can run this function on the petal length column of the iris data (remember to reload `standardize` into memory first!) and compare the values to calcuations directly on the iris data:
+
+```{r run-cat-example, eval = FALSE}
+# Test standardize function on petal length
+petal_length_stand <- standardize(data = iris$Petal.Length)
+# Calculate and print actual mean value of petal length
+mean(iris$Petal.Length)
 ```
 
-Now what do we do? How does one actually go about writing functions? Maybe you know exactly what your function should do and all the inputs and outputs. I rarely find myself in that case. Rather, I start by doing the same thing as I did before: I copy paste the portion of code I want to run. So in this case, from the airquality-regression.R file, copy the section for the solar radiation analysis and paste it into the body of the `RegressSimple` function. That is, paste it between the pair of curly braces `{ }`:
+In addition to printing values, you can also use functions like `is.numeric` or `typeof` to ensure the data you _think_ you are working with really is in the form you want it to be.
 
-```{r, eval = FALSE}
-# Run linear regression for all predictors and a response variable in a data frame
-RegressSimple <- function() {
-  simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
-  simple.summary <- summary(simple)
-  simple.r2 <- simple.summary$r.squared
-  simple.p <- simple.summary$coefficients[2, 4]
-  cat("Solar r^2 =", simple.r2)
-  cat("Solar p =", simple.p)  
-}
-```
+You will eventually want to remove those calls to `cat`, or at the very least comment them out so they don't print every time you run your function.
 
-We don't want the function to print out values from the models, so delete the code that extracts the values and prints them with the two `cat` statements:
-```{r, eval = FALSE}
-# Run linear regression for all predictors and a response variable in a data frame
-RegressSimple <- function() {
-  simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
-  simple.summary <- summary(simple)
-}
-```
+When debugging, also remember to make incremental changes. Change one line. Check to make sure it works as expected. Check it again with different data. Change the next line. Avoid taking a 50-line function, and changing 30 lines all at once. Where there was once one bug, now there are three.
 
-At this point, we can consider input and output of the function. We'll need to give the function two pieces of input: the data to work with and which variable to use as the response. We specify input by declaring the names of the values (`data` and `response`) in the `function` call:
-
-```{r, eval = FALSE}
-# Run linear regression for all predictors and a response variable in a data frame
-RegressSimple <- function(data, response) {
-  simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
-  simple.summary <- summary(simple)
-}
-```
-
-And while we're at it, we need to document these inputs:
-```{r, eval = FALSE}
-# Run linear regression for all predictors and a response variable in a data frame
-# data: the data frame to analyze
-# response: the name of the response variable
-RegressSimple <- function(data, response) {
-  simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
-  simple.summary <- summary(simple)
-}
-```
-
-Now that we have inputs, we can update the variables in the code we copied from the regression script. What do we need to update?
-
-+ The name of the data frame we used, `airquality` is replaced by `data`
-+ The model specification now uses the abstracted response variable, stored in `response` instead of the hard coded `"Ozone"`; note that we _do not_ put `response` in double quotes
-
-```{r, eval = FALSE}
-# Run linear regression for all predictors and a response variable in a data frame
-# data: the data frame to analyze
-# response: the name of the response variable
-RegressSimple <- function(data, response) {
-  simple <- lm(data[, response] ~ data[, "Solar.R"])
-  simple.summary <- summary(simple)
-}
-```
-
-The goal of the function is to run linear regression for _all_ the predictors in the data frame, so how can we do this? The simplest way is to use a `for` loop for all the columns in the data frame, updating the `lm` call with the column specification of the predictor variable:
-
-```{r, eval = FALSE}
-# Run linear regression for all predictors and a response variable in a data frame
-# data: the data frame to analyze
-# response: the name of the response variable
-RegressSimple <- function(data, response) {
-  for (predictor in 1:ncol(data)) {
-    simple <- lm(data[, response] ~ data[, predictor])
-    simple.summary <- summary(simple)
-  }
-}
-```
-
-For output, we probably want the results of the linear model for each of our predictors. In this case, we'll use a `list` object and assigning the output of `summary` to an element in that list. Note because we are using a list, we use two-bracket notation `[[ ]]` to indicate an element in the list. And finally, we sent back these results with the `return` function:
-
-```{r, eval = FALSE}
-# Run linear regression for all predictors and a response variable in a data frame
-# data: the data frame to analyze
-# response: the name of the response variable
-RegressSimple <- function(data, response) {
-  model.summaries <- list()
-  for (predictor in 1:ncol(data)) {
-    simple <- lm(data[, response] ~ data[, predictor])
-    element.name <- colnames(data)[predictor]
-    model.summaries[[element.name]] <- summary(simple)
-  }
-  return(model.summaries)
-}
-```
-
-Before we try this out, update the documentation with a description of the output
-```{r}
-# Run linear regression for all predictors and a response variable in a data frame
-# data: the data frame to analyze
-# response: the name of the response variable
-# returns: a list where each element is the output from summary(lm)
-RegressSimple <- function(data, response) {
-  model.summaries <- list()
-  for (predictor in 1:ncol(data)) {
-    simple <- lm(data[, response] ~ data[, predictor])
-    element.name <- colnames(data)[predictor]
-    model.summaries[[element.name]] <- summary(simple)
-  }
-  return(model.summaries)
-}
-```
-
-### Using our function
-
-So how do we use this? We need to load this function into memory so we can use it. Go back to the script with our original regression analyses, "airquality-regression.R". Comment out our previous linear regression code and add a call to `source` to load our function file. Hint: in RStudio, you can select multiple lines and comment them out with the shortcut Shift-Ctrl-C.
-
-```{r, eval = FALSE}
-# Analyze air quality data
-# Jeffrey Oliver
-# jcoliver@email.arizona.edu
-# 2017-06-22
-
-source(file = "regression-functions.R")
-
-# Relationship between ozone and solar radiation
-# simple <- lm(airquality[, "Ozone"] ~ airquality[, "Solar.R"])
-
-# Extract the model parameters
-# simple.summary <- summary(simple)
-# simple.r2 <- simple.summary$r.squared
-# simple.p <- simple.summary$coefficients[2, 4]
-# cat("Solar r^2 =", simple.r2)
-# cat("Solar p =", simple.p)  
-```
-
-And we can now use this function, passing `airquality` as the `data` and `"Ozone"` as the `response`:
-
-```{r}
-airquality.models <- RegressSimple(data = airquality, response = "Ozone")
-```
-
-Hmmmm...that's an odd warning. Let's add some reporting code to see if we can figure out what it's doing. Update the `RegressSimple` function to print the name of the predictor using the `cat` function:
-
-```{r, eval = FALSE}
-# Run linear regression for all predictors and a response variable in a data frame
-# data: the data frame to analyze
-# response: the name of the response variable
-# returns: a list where each element is the output from summary(lm)
-RegressSimple <- function(data, response) {
-  model.summaries <- list()
-  for (predictor in 1:ncol(data)) {
-    simple <- lm(data[, response] ~ data[, predictor])
-    element.name <- colnames(data)[predictor]
-    model.summaries[[element.name]] <- summary(simple)
-    cat("Predictor:", element.name, "\n")
-  }
-  return(model.summaries)
-}
-```
-
-Now go back our airquality-regression.R script and run the `RegressSimple` command again.
-
-```{r}
-airquality.models <- RegressSimple(data = airquality, response = "Ozone")
-```
-
-Drat. Same warning, but no message printed? Why not? Because we made changes to the regression-functions.R file, but did not load them into memory with the `source` command, R is using the old version of the `RegressSimple` function. So we need to run the `source` command first:
-
-```{r, eval = FALSE}
-source(file = "regression-functions.R")
-```
-
-```{r, echo = FALSE}
-# Run linear regression for all predictors and a response variable in a data frame
-# data: the data frame to analyze
-# response: the name of the response variable
-# returns: a list where each element is the output from summary(lm)
-RegressSimple <- function(data, response) {
-  model.summaries <- list()
-  for (predictor in 1:ncol(data)) {
-    simple <- lm(data[, response] ~ data[, predictor])
-    element.name <- colnames(data)[predictor]
-    model.summaries[[element.name]] <- summary(simple)
-    cat("Predictor:", element.name, "\n")
-  }
-  return(model.summaries)
-}
-```
-
-Then the `RegressSimple` command:
-```{r}
-airquality.models <- RegressSimple(data = airquality, response = "Ozone")
-```
-
-OK, so there are some problems. First, we aren't really interested in the effect of `Day` or `Month` on ozone levels, so when we call `RegressSimple`, we should only pass it data we want to analyze. Here we drop the fifth and sixth columns, which are the Month and Day columns, respectively:
-
-```{r, eval = FALSE}
-airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
-```
-
-But look at the output from function call again. Our function actually ran regression on a model using ozone to predict ozone - that's probably what caused the warning message "summary may be unreliable". But we don't want to exclude ozone from the data we pass to the function, because that is the response variable. We therefore need to update our function definition so we don't run an `ozone ~ ozone` model. More generally, we need to make sure our response variable is not treated as a predictor. To do this, we:
-
-1. Find out which column is the `response` variable
-2. Create a vector of predictor variable names using `colnames`
-3. Update our `for` loop to only use those predictor variables
-4. Use the predictor variable name for the `model.summaries` list element name
-
-Open the regression-functions.R file and update `RegressSimple`:
-
-```{r}
-# Run linear regression for all predictors and a response variable in a data frame
-# data: the data frame to analyze
-# response: the name of the response variable
-# returns: a list where each element is the output from summary(lm)
-RegressSimple <- function(data, response) {
-  response.index <- which(colnames(data) == response)
-  predictors <- colnames(data)[-response.index]
-  model.summaries <- list()
-  for (predictor in predictors) {
-    simple <- lm(data[, response] ~ data[, predictor])
-    model.summaries[[predictor]] <- summary(simple)
-    cat("Predictor:", predictor, "\n")
-  }
-  return(model.summaries)
-}
-```
-
-Now when we run `RegressSimple`, there are only three predictors used in the models, as we expect:
-
-```{r, eval = FALSE}
-source(file = "regression-functions.R")
-airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
-```
-
-```{r, echo = FALSE}
-airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
-```
-
-Since it `RegressSimple` is now only running the models we want, remove the `cat` command from the function:
-
-```{r}
-# Run linear regression for all predictors and a response variable in a data frame
-# data: the data frame to analyze
-# response: the name of the response variable
-# returns: a list where each element is the output from summary(lm)
-RegressSimple <- function(data, response) {
-  response.index <- which(colnames(data) == response)
-  predictors <- colnames(data)[-response.index]
-  model.summaries <- list()
-  for (predictor in predictors) {
-    simple <- lm(data[, response] ~ data[, predictor])
-    model.summaries[[predictor]] <- summary(simple)
-  }
-  return(model.summaries)
-}
-```
-
-Because `airquality.models` is a list, we can access the objects using double-bracket notation:
-
-```{r, results = "hold"}
-solar.model <- airquality.models[["Solar.R"]]
-solar.corr <- solar.model$r.squared
-solar.p <- solar.model$coefficients[2, 4]
-cat("Solar r^2 = ", solar.corr, "\n")
-cat("Solar p = ", solar.p, "\n")
-```
-
-### Make it Class-y
-
-But now we're back to the copy-paste-update cycle if we want to get all the correlation coefficients and p-values. If we know that's all we want, we can create another function, one that does the work of heavy lifting of extracting coefficients and printing them out to the screen.
-
-In the file with our `RegressSimple` function, create _another_ function, and call it `print.RegressSimple`:
-
-```{r, eval = FALSE}
-print.RegressSimple <- function(x, ...) {
-}
-```
-
-Briefly, what we are doing is creating a function that specifies the output of anything that is `class RegressSimple` (we'll get to how we make that happen in a moment). The thing to note now is that in a `print.____` function, the first argument, `x` is the object we wish to print; in this case, a product of the function `RegressSimple`. Stick with me here, it will become clearer. For the purposes of this lesson, just remember that in the `print.RegressSimple` function, the variable `x` is the list that is produced from a call to `RegressSimple`. We want this function to extract the r^2^ and p-values for each model and display a table of those values for each predictor variable. Something like:
-
-```{r, echo = FALSE}
-cat("  ", "variable", "r2  ", "p", "\n", 
-    "  ", "Solar.R ", "0.12", "1.7e-04", "\n",
-    "  ", "Wind    ", "0.36", "9.2e-13", "\n", 
-    "  ", "Temp    ", "0.48", "2.9e-18", "\n", sep = "\t")
-##      variable r2        p           
-## [1,] Solar.R  0.1213419 1.793109e-04
-## [2,] Wind     0.3618582 9.271974e-13
-## [3,] Temp     0.4877072 2.931897e-18
-```
-
-Add a brief explanation of what this function does, then add code to get the names of the variables and set up a data frame to hold the values we want to print:
-
-```{r, eval = FALSE}
-# Print values of interest from each predictor in a RegressSimple object
-print.RegressSimple <- function(x, ...) {
-  # Get a vector of the elements' names
-  predictors <- names(x)
-  # Set up a dataframe for results of interest
-  model.results <- data.frame(variable = predictors,
-                           r2 = 0,
-                           p = 0)
-}
-```
-
-Now extract the values we want to print for each element in the `RegressSimple` object (which is the variable `x` in `print.RegressSimple`):
-
-```{r, eval = FALSE}
-# Print values of interest from each predictor in a RegressSimple object
-print.RegressSimple <- function(x, ...) {
-  # Get a vector of the elements' names
-  predictors <- names(x)
-  # Set up a dataframe for results of interest
-  model.results <- data.frame(variable = predictors,
-                           r2 = 0,
-                           p = 0)
-  # Extract r-squared and p-values
-  model.results$r2 <- sapply(x, "[[", "r.squared")
-  model.coeffs <- sapply(x, "[[", "coefficients")
-  model.results$p <- model.coeffs[8, ]
-}
-```
-
-Finally, we add `cat` and `print` statements to output the values.
-
-```{r}
-# Print values of interest from each predictor in a RegressSimple object
-print.RegressSimple <- function(x, ...) {
-  # Get a vector of the elements' names
-  predictors <- names(x)
-  # Set up a dataframe for results of interest
-  model.results <- data.frame(variable = predictors,
-                           r2 = 0,
-                           p = 0)
-  # Extract r-squared and p-values
-  model.results$r2 <- sapply(x, "[[", "r.squared")
-  model.coeffs <- sapply(x, "[[", "coefficients")
-  model.results$p <- model.coeffs[8, ]
-
-  # Print values
-  cat("Regression results: ", "\n")
-  print(as.matrix(model.results), quote = FALSE)
-}
-```
-
-Now when we run our code, we can just enter the name of the variable to have it print out our nice table of just the r^2^ and p-values.
-
-```{r, eval = FALSE}
-source(file = "regression-functions.R")
-airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
-airquality.models
-```
-
-```{r, echo = FALSE}
-airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
-airquality.models
-```
-
-Well that didn't work. It just printed out the each element of the list. That's because we need to take one final step. The `print.RegressSimple` only works on objects that are of `class RegressSimple`. So what is the class of our `airquality.models`?
-
-```{r}
-class(airquality.models)
-```
-
-It's a `r class(airquality.models)`, _not_ a `RegressSimple` object. So how do we instruct R to make the output of `RegressSimple` to be an object of `class RegressSimple`? Big surprise here, we use the `class` function! In our `RegressSimple` function, right before we return the `model.summaries` list, we set the class to be "RegressSimple":
-
-```{r}
-# Run linear regression for all predictors and a response variable in a data frame
-# data: the data frame to analyze
-# response: the name of the response variable
-# returns: a list where each element is the output from summary(lm)
-RegressSimple <- function(data, response) {
-  response.index <- which(colnames(data) == response)
-  predictors <- colnames(data)[-response.index]
-  model.summaries <- list()
-  for (predictor in predictors) {
-    simple <- lm(data[, response] ~ data[, predictor])
-    model.summaries[[predictor]] <- summary(simple)
-  }
-  
-  # Set class and return results
-  class(model.summaries) <- "RegressSimple"
-  return(model.summaries)
-}
-```
-
-Now re-run the lines in our regression script:
-```{r, eval = FALSE}
-source(file = "regression-functions.R")
-airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
-airquality.models
-```
-
-```{r, echo = FALSE}
-airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
-airquality.models
-```
-
-There it is, our table of values! Our final two files will then be:
-
-airquality-regression.R:
-
-```{r, eval = FALSE}
-# Analyze air quality data
-# Jeffrey Oliver
-# jcoliver@email.arizona.edu
-# 2017-06-22
-
-source(file = "regression-functions.R")
-airquality.models <- RegressSimple(data = airquality[, -c(5:6)], response = "Ozone")
-airquality.models
-```
-
-regression-functions.R:
-
-```{r, eval = FALSE}
-# Functions to automate linear regression
-# Jeff Oliver
-# jcoliver@email.arizona.edu
-# 2017-06-15
-
-################################################################################
-# Run linear regression for all predictors and a response variable in a data frame
-# data: the data frame to analyze
-# response: the name of the response variable
-# returns: a list where each element is the output from summary(lm)
-RegressSimple <- function(data, response) {
-  response.index <- which(colnames(data) == response)
-  predictors <- colnames(data)[-response.index]
-  model.summaries <- list()
-  for (predictor in predictors) {
-    simple <- lm(data[, response] ~ data[, predictor])
-    model.summaries[[predictor]] <- summary(simple)
-  }
-  
-  # Set class and return results
-  class(model.summaries) <- "RegressSimple"
-  return(model.summaries)
-}
-
-################################################################################
-# Print values of interest from each predictor in a RegressSimple object
-print.RegressSimple <- function(x, ...) {
-  # Get a vector of the elements' names
-  predictors <- names(x)
-  # Set up a dataframe for results of interest
-  model.results <- data.frame(variable = predictors,
-                           r2 = 0,
-                           p = 0)
-  # Extract r-squared and p-values
-  model.results$r2 <- sapply(x, "[[", "r.squared")
-  model.coeffs <- sapply(x, "[[", "coefficients")
-  model.results$p <- model.coeffs[8, ]
-
-  # Print values
-  cat("Regression results: ", "\n")
-  print(as.matrix(model.results), quote = FALSE)
-}
-```
+Finally, remember to keep functions small (when you can). We could have written a single function to do all the work. That is, we could have just written `standardize_df`, but it would have made it tougher to debug. Some zealots even assert that a function should do one thing and only one thing. While that is a bit extreme, it is a useful guiding principle that helps streamline the development process. Check out the resources below for more information about writing functions and best practices.
 
 ***
 
