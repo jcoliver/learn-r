@@ -686,6 +686,7 @@ standardize_df &lt;- function(df) {
 <p>At this point, we are ready to try it out, so save this file (“standardization-functions.R”) and go back to our first script where we are doing the standardization of the iris data (“standardize-iris.R”).</p>
 <p>Now we need one line:</p>
 <pre class="r"><code>iris_stand &lt;- standardize_df(df = iris)</code></pre>
+<pre><code>## Error in standardize_df(df = iris): could not find function &quot;standardize_df&quot;</code></pre>
 <p>This probably did not work. Why not?</p>
 <p>Remember, when we use functions that are located in another file, we will need to run the <code>source</code> command any time we have made changes. So after saving standardization-functions.R, we need to re-run the <code>source</code> command to load any changes we made to standardization-functions.R.</p>
 <pre class="r"><code>source(file = &quot;standardization-functions.R&quot;)</code></pre>
