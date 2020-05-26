@@ -2,10 +2,11 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 05  | May   | [Virtual](contingency.md) open lab |
-| 12  | May   | [Virtual](contingency.md) open lab |
-| 19  | May   | Writing your own functions in R    |
-| 26  | May   | [Virtual](contingency.md) open lab |
+| 02  | Jun   | [Virtual](contingency.md) open lab |
+| 09  | Jun   | [Virtual](contingency.md) open lab |
+| 16  | Jun   | Data wrangling with tidyverse      |
+| 23  | Jun   | [Virtual](contingency.md) open lab |
+| 30  | Jun   | [Virtual](contingency.md) open lab |
 
 In an effort to lessen the impact of COVID-19 and [flatten the curve](https://www.economist.com/briefing/2020/02/29/covid-19-is-now-in-50-countries-and-things-will-get-worse), Tuesday morning R sessions will be continuing, but in an online format. Please see the [contingency site](contingency.md) for details.
 

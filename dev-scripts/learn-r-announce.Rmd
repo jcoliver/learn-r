@@ -15,11 +15,12 @@ suppressPackageStartupMessages(expr = library(lubridate))
 
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2020-05-05",
-                                 "2020-05-12",
-                                 "2020-05-19",
-                                 "2020-05-26"),
-                       lessons = c(-1, -1, 7, -1))
+schedule <- data.frame(dates = c("2020-06-02",
+                                 "2020-06-09",
+                                 "2020-06-16",
+                                 "2020-06-23",
+                                 "2020-06-30"),
+                       lessons = c(-1, -1, 12, -1, -1))
 
 # Toggle indicating whether or not attendance files should be created
 create.files <- FALSE
@@ -69,10 +70,10 @@ for (i in 1:nrow(schedule)) {
 
 Additional resources:
 
-+ A tentative schedule of upcoming workshops is also available at: [https://jcoliver.github.io/learn-r/schedule](https://jcoliver.github.io/learn-r/schedule)
-+ Want more help? Sign up for the UA Data Science Slack workspace at: [https://jcoliver.github.io/uadatascience-slack/](https://jcoliver.github.io/uadatascience-slack/)
-+ Stay up to date with R workshops by signing up for the University of Arizona R Users mailing list at: [https://list.arizona.edu/sympa/subscribe/ruaz](https://list.arizona.edu/sympa/subscribe/ruaz)
-+ Find even more data science resources by signing up for the Data Science Events list at: [https://list.arizona.edu/sympa/info/data7-events](https://list.arizona.edu/sympa/info/data7-events)
++ A tentative schedule of upcoming workshops is also available at [https://jcoliver.github.io/learn-r/schedule](https://jcoliver.github.io/learn-r/schedule)
++ Want more help? Sign up for the UA Data Science Slack workspace at [https://jcoliver.github.io/uadatascience-slack/](https://jcoliver.github.io/uadatascience-slack/)
++ Stay up to date with R workshops by signing up for the University of Arizona R Users mailing list at [https://list.arizona.edu/sympa/subscribe/ruaz](https://list.arizona.edu/sympa/subscribe/ruaz)
++ Find even more data science resources at the Data Science Institute's events page at   [https://datascience.arizona.edu/events](https://datascience.arizona.edu/events)
 
 ***
 
