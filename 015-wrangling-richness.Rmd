@@ -109,6 +109,12 @@ summary(bird_data)
 
 There are still missing values in the Site column, but that's OK - those are observations from preceding days, which don't have any site data.
 
+Note also though that it is treating "Date" as categorical data when it really should be treated as, well, a date. So we can change the data in the Date column from categories to dates with the `as.Date` function:
+
+```{r convert-dates}
+bird_data$Date <- as.Date(bird_data$Date)
+```
+
 ***
 
 ## Species richness
@@ -129,6 +135,9 @@ Now that the package is installed, we also have to tell R to load the package in
 
 library(tidyverse)
 bird_data <- read.csv(file = "data/sweetwater-data-clean.csv")
+
+# Convert the Date column to date data type
+bird_data$Date <- as.Date(bird_data$Date)
 ```
 
 ```{r load-tidyverse-eval, echo = FALSE}
@@ -195,10 +204,14 @@ We do not actually want to delete these records from our data, but rather we nee
 # 2019-11-01
 
 bird_data <- read.csv(file = "data/sweetwater-data-clean.csv")
+
+# Convert the Date column to date data type
+bird_data$Date <- as.Date(bird_data$Date)
 ```
 
 ```{r read-data-03-eval, echo = FALSE}
 bird_data <- read.csv(file = "data/sweetwater-data-clean03.csv")
+bird_data$Date <- as.Date(bird_data$Date)
 ```
 
 Now we can update our richness calculation to only include observations that were identified to species. We do this by adding a filter to the process. Using the code we had before, before calling `group_by`, we use the `filter` function to only include those observations that have a 1 in the ID_to_species column.
@@ -318,10 +331,12 @@ Re-run the line at the top of our script with the `read.csv` command:
 
 ```{r read-data-04, eval = FALSE}
 bird_data <- read.csv(file = "data/sweetwater-data-clean.csv")
+bird_data$Date <- as.Date(bird_data$Date)
 ```
 
 ```{r read-data-04-eval, echo = FALSE}
 bird_data <- read.csv(file = "data/sweetwater-data-clean04.csv")
+bird_data$Date <- as.Date(bird_data$Date)
 ```
 
 Re-run the line counting the number of each species per day:
@@ -386,6 +401,9 @@ Add the `library` command to the top of our script:
 library(tidyverse)
 library(vegan)
 bird_data <- read.csv(file = "data/sweetwater-data-clean.csv")
+
+# Convert the Date column to date
+bird_data$Date <- as.Date(bird_data$Date)
 ```
 
 ```{r load-vegan-eval, echo = FALSE}
@@ -413,11 +431,12 @@ Where
 + each date corresponds to a single row
 + each species corresponds to a single column
 
-We can do this with the `spread` function that comes with tidyverse. Here we tell R to use the values in the Species column as new column names, and the numbers in the Count column to use as values.
+We can do this with the `pivot_wider` function that comes with tidyverse. Here we tell R to use the values in the Species column as new column names, and the numbers in the Count column to use as values.
 
 ```{r clean-wide}
 bird_data_wide <- bird_data_sums %>%
-  spread(key = Species, value = Count)
+  pivot_wider(names_from = Species, 
+              values_from = Count)
 ```
 
 Let's look at the first five columns of the "wide" formatted data:
@@ -504,6 +523,9 @@ library(vegan)
 
 # Read in data
 bird_data <- read.csv(file = "data/sweetwater-data-clean04.csv")
+
+# Convert the Date column to date data type
+bird_data$Date <- as.Date(bird_data$Date)
 ```
 
 The last line reads the data into R. You can look at these data by running `head(bird_data)` in the Console.
@@ -587,12 +609,13 @@ Where
 + each date corresponds to a single row
 + each species corresponds to a single column
 
-We use the `spread` function of tidyverse to accomplish this. We also need to replace NA values produced in this process to zeros:
+We use the `pivot_wider` function of tidyverse to accomplish this. We also need to replace NA values produced in this process to zeros:
 
 ```{r, clean-07}
 # Convert to wide format for species diversity calculation
 bird_data_wide <- bird_data_sums %>%
-  spread(key = Species, value = Count)
+  pivot_wider(names_from = Species,
+              values_from = Count)
 
 # Replace NA values with zeros
 bird_data_wide[is.na(bird_data_wide)] <- 0
