@@ -96,28 +96,24 @@ And transform it to one with a column for the gene and a column for expression, 
 options(scipen = 0)
 ```
 
-Thankfully, there is a function in the `tidyr` package called `gather` that is designed for creating this type of "tidy"" data. 
+Thankfully, there is a function in the `tidyr` package called `pivot_longer` that is designed for creating this type of "tidy"" data. 
 
-```{r}
-exp.long <- gather(data = exp.data, 
-                   key = gene, 
-                   value = expression)
+```{r pivot-longer-01, error = TRUE}
+exp.long <- pivot_longer(data = exp.data,
+                         cols = everything(),
+                         names_to = "gene",
+                         values_to = "expression")
 ```
 
-Take a look at this new data frame:
+Uh oh. That error is preventing us from transforming our data to long format. What R is telling us is that we tried to create a column with multiple data types in it, which is a big no-no in R. That is, it attempted to make a single column that had both the data from the "subject" column (which are text) with the data from the "IFNA5" column (which are numbers).
+
+We will need to tell `pivot_longer` to ignore the "subject" column in our original data frame during the transformation. By ignoring that column, R will carry the values over into our new data frame. We ignore columns by adding their names, preceded by a negation symbol("-"), to the `pivot_longer` call (we're going to ignore the treatment column, too, to make sure it ends up in our `exp.long` data frame):
 
 ```{r}
-head(exp.long)
-```
-
-Uh oh. Looks like something went wrong. Things didn't quite turn out the way we intended - there are only two columns, and "subject" ended up in the gene column and the subject ID is in the expression column. We will need to tell `gather` to ignore those two columns in our original data frame during the transformation. By ignoring them, R will carry their values over into our new data frame. We ignore the columns by adding their names, preceded by a negation symbol("-"), to the `gather` call (we're going to ignore the treatment column, too, to make sure it ends up in our `exp.long` data frame):
-
-```{r}
-exp.long <- gather(data = exp.data, 
-                   key = gene, 
-                   value = expression,
-                   -subject, # Ignores the subject column
-                   -treatment) # Ignores the treatment column
+exp.long <- pivot_longer(data = exp.data, 
+                         cols = -c(subject, treatment),
+                         names_to = "gene", 
+                         values_to = "expression")
 head(exp.long)
 ```
 
@@ -138,11 +134,10 @@ library("ggplot2")
 exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
 
 # Transform to "long" format
-exp.long <- gather(data = exp.data, 
-                   key = gene, 
-                   value = expression,
-                   -subject,
-                   -treatment)
+exp.long <- pivot_longer(data = exp.data, 
+                         cols = -c(subject, treatment),
+                         names_to = "gene", 
+                         values_to = "expression")
 ```
 
 ***
@@ -236,11 +231,10 @@ library("ggplot2")
 
 exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
 
-exp.long <- gather(data = exp.data, 
-                   key = gene, 
-                   value = expression, 
-                   -subject, 
-                   -treatment)
+exp.long <- pivot_longer(data = exp.data, 
+                         cols = -c(subject, treatment),
+                         names_to = "gene", 
+                         values_to = "expression")
 
 exp.long$log.expression <- log(exp.long$expression)
 

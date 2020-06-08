@@ -92,35 +92,40 @@ install.packages("tidyr")
 library("tidyr")
 ```
 
-In fact, we can do this transformation in one line with the `gather` function:
+In fact, we can do this transformation in one line with the `pivot_longer` function:
 
-```{r gather-01, warning = FALSE}
-mine.long <- gather(data = mine.data, key = Class, value = Abundance)
+```{r pivot-longer-01, error = TRUE}
+mine.long <- pivot_longer(data = mine.data, 
+                          cols = everything(),
+                          names_to = "Class", 
+                          values_to = "Abundance")
 ```
 
-Take a look at this new data frame:
+Uh oh. That error is preventing us from transforming our data to long format. What R is telling us is that we tried to create a column with multiple data types in it, which is a big no-no in R. That is, it attempted to make a single column that had both the data from the "Site" column (which are numbers) with the data from the "Sample.name" column, which is a factor (factors are what R calls categories).
 
-```{r head-long-01}
-head(mine.long)
-```
-
-Uh oh. Something's not right. The `Class` column should only have bacterical classes in it, but one of our columns (`Site`) ended up in that `Class` column. In fact, the `Class` column actually has _all_ the columns of the original data set, not just the bacterial classes. Consider our original data structure:
+Consider our original data structure:
 
 ```{r structure-long}
 str(mine.data)
 ```
 
-Notice there are columns that don't need to be transformed for our heatmap. Namely, Site, Depth, and Sample.name can all remain as-is. To do this, we instruct `gather` to ignore the first three columns of the data frame by negating those columns (`-c(1:3`):
+Notice there are columns that don't need to be transformed for our heatmap. Namely, Site, Depth, and Sample.name can all remain as-is. To do this, we instruct `pivot_longer` to ignore the first three columns of the data frame by negating those columns (`-c(1:3`):
 
-```{r gather-02}
-mine.long <- gather(data = mine.data, key = Class, value = Abundance, -c(1:3))
+```{r pivot-longer-02}
+mine.long <- pivot_longer(data = mine.data, 
+                          cols = -c(1:3), 
+                          names_to = "Class", 
+                          values_to = "Abundance")
 head(mine.long)
 ```
 
 Another approach, to accomplish the same thing, especially if the columns to ignore are not adjacent, is to explicitly name the columns to ignore:
 
-```{r gather-03, eval = FALSE}
-mine.long <- gather(data = mine.data, key = Class, value = Abundance, -Site, -Depth, -Sample.name)
+```{r pivot-longer-03, eval = FALSE}
+mine.long <- pivot_longer(data = mine.data, 
+                    cols = -c(Site, Depth, Sample.name), 
+                    names_to = "Class", 
+                    values_to = "Abundance")
 ```
 
 To recap, at this point we read in the data and transformed it for easy use with heatmap tools:
@@ -136,7 +141,10 @@ library("tidyr")
 
 # Read data and format for heatmap
 mine.data <- read.csv(file = "data/mine-data.csv")
-mine.long <- gather(data = mine.data, key = Class, value = Abundance, -c(1:3))
+mine.long <- pivot_longer(data = mine.data, 
+                    cols = -c(1:3), 
+                    names_to = "Class", 
+                    values_to = "Abundance")
 ```
 
 Now the data are ready - on to the plot!
@@ -165,7 +173,6 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
   xlab(label = "Sample")
 
 mine.heatmap
-
 ```
 
 Let's dissect these commands:
@@ -441,7 +448,10 @@ library("ggplot2")
 
 # Read data and format for heatmap
 mine.data <- read.csv(file = "data/mine-data.csv")
-mine.long <- gather(data = mine.data, key = Class, value = Abundance, -c(1:3))
+mine.long <- pivot_wider(data = mine.data,
+                         cols = -c(1:3),
+                         names_to = "Class",
+                         values_to = "Abundance")
 
 # Transform abundance data for better visualization
 mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
