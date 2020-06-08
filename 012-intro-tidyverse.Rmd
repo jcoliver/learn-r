@@ -39,7 +39,9 @@ suppressMessages(library("tidyverse"))
 
 ```{r goal-graphic, echo = FALSE}
 iris %>% 
-  gather(key = trait, value = measurement, -Species) %>%
+  pivot_longer(cols = -Species, 
+         names_to = "trait", 
+         values_to = "measurement") %>%
   group_by(Species, trait) %>%
   summarize(trait.mean = mean(measurement),
             trait.se = sd(measurement/sqrt(n()))) %>%
@@ -84,6 +86,12 @@ virginica.mean <- mean(iris$Sepal.Length[iris$Species == "virginica"])
 
 Which is a little cumbersome, especially if we also need to do the additional step of putting all these means into a single data frame. 
 
+```{r build-means-df, eval = FALSE}
+# Add these back into a data.frame
+iris.means <- data.frame(Species = c("setosa", "versicolor", "virginica"),
+                         SL.mean = c(setosa.mean, versicolor.mean, virginica.mean))
+```
+
 ### There's a better way
 
 A pair of commands can make this much easier: `group_by` and `summarize`. The first, `group_by` imposes structure on our data; for our immediate purposes, we will use it to group the data by the `Species` column:
@@ -100,9 +108,9 @@ library("tidyverse")
 iris.grouped <- group_by(iris, Species)
 ```
 
-If we look at the first few rows of these data, 
+If we look at the first few rows of these data with the `head` command, 
 
-```{r head-grouped, echo = FALSE}
+```{r head-grouped}
 head(iris.grouped)
 ```
 
@@ -163,7 +171,9 @@ Remember our plot:
 
 ```{r echo = FALSE}
 iris %>% 
-  gather(key = trait, value = measurement, -Species) %>%
+  pivot_longer(cols = -Species, 
+         names_to = "trait", 
+         values_to = "measurement") %>%
   group_by(Species, trait) %>%
   summarize(trait.mean = mean(measurement),
             trait.se = sd(measurement/sqrt(n()))) %>%
@@ -251,25 +261,28 @@ head(iris)
 But in order to capitalize on `ggplot` functionality, we need to reorganize the data so each row only has data for a _single trait_, like this:
 
 ```{r show-long, echo = FALSE}
-head(gather(data = iris, key = trait, value = measurement, -Species))
+head(pivot_longer(data = iris, 
+                  cols = -Species, 
+                  names_to = "trait", 
+                  values_to = "measurement"))
 ```
 
-This is known as "long" format, where each row only has a single trait observation. To make this data conversion, we use the the `gather` function:
+This is known as "long" format, where each row only has a single trait observation. To make this data conversion, we use the the `pivot_longer` function:
 
-```{r gather-intro}
-iris.long <- gather(data = iris,
-                    key = trait,
-                    value = measurement, 
-                    -Species)
+```{r pivot-longer-intro}
+iris.long <- pivot_longer(data = iris, 
+                    cols = -Species,
+                    names_to = "trait",
+                    values_to = "measurement")
 ```
-The arguments we pass to `gather` are:
+The arguments we pass to `pivot_longer` are:
 
 + `data = iris` this indicates `iris` is the data frame we want to transform
-+ `key = trait` "trait" is the column name for the variable names (e.g. "Sepal.Length", "Sepal.Width", etc.)
-+ `value = measurement` "measurement" is the column name for the actual values 
-+ `-Species` tells `gather` _not_ to treat the value in the Species column as a separate variable
++ `cols = -Species` tells `pivot_longer` _not_ to treat the value in the Species column as a separate variable
++ `names_to = "trait"` "trait" is the column name for the variable names (e.g. "Sepal.Length", "Sepal.Width", etc.)
++ `values_to = "measurement"` "measurement" is the column name for the actual values 
 
-Let's take this `gather` functionality and combine it with the `group_by` and `summarize` commands we used previously. Recall our earlier code to generate species' means and standard errors:
+Let's take this `pivot_longer` functionality and combine it with the `group_by` and `summarize` commands we used previously. Recall our earlier code to generate species' means and standard errors:
 
 ```{r group-summarize-reminder, eval = FALSE}
 iris.means <- iris %>%
@@ -278,16 +291,18 @@ iris.means <- iris %>%
             SL.se = sd(Sepal.Length)/sqrt(n()))
 ```
 
-We'll want to update this, inserting the `gather` function and updating the values used for calculating the mean and standard deviation:
+We'll want to update this, inserting the `pivot_longer` function and updating the values used for calculating the mean and standard deviation:
 
 ```{r by-species-stats}
 iris.means <- iris %>%
-  gather(key = trait, value = measurement, -Species) %>%
+  pivot_longer(cols = -Species, 
+               names_to = "trait", 
+               values_to = "measurement") %>%
   group_by(Species, trait) %>%
   summarize(trait.mean = mean(measurement),
             trait.se = sd(measurement)/sqrt(n()))
 ```
-Note the insertion of `gather` and the changes to `group_by` and `summarize`:
+Note the insertion of `pivot_longer` and the changes to `group_by` and `summarize`:
 
 + `group_by`: We add an additional term, `trait`, to indicate to create another grouping, based on each trait
 + `summarize`: We replace `SL.mean` with `trait.mean` and `SL.se` with `trait.se`
@@ -373,7 +388,9 @@ library("tidyverse")
 
 # Create data of summary statistics
 iris.means <- iris %>%
-  gather(key = trait, value = measurement, -Species) %>%
+  pivot_longer(cols = -Species,
+               names_to = "trait",
+               values_to = "measurement") %>%
   group_by(Species, trait) %>%
   summarize(trait.mean = mean(measurement),
             trait.se = sd(measurement)/sqrt(n()))
