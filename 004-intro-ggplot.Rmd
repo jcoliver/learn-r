@@ -16,12 +16,15 @@ knitr::opts_chunk$set(fig.height = 4)
 An introduction to using the `ggplot` package in R to produce publication-quality graphics.
 
 #### Learning objectives
+
 1. Install and use third-party packages for R
 2. Use layering to add elements to a plot
 3. Format plots with faceting
 
 ## Setup
+
 ### Workspace organization
+
 First we need to setup our development environment. We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses.
 ```{r, eval = FALSE}
 dir.create(path = "data")
@@ -36,10 +39,12 @@ download.file(url = "http://tinyurl.com/gapminder-five-year-csv",
 ```
 
 From this point on, we want to keep track of what we have done, so we will restrict our use of the console and instead use script files. Start a new script with some brief header information at the very top. We want, at the very least, to include:
+
 1. A short description of what the script does (no more than one line of text)
 2. Your name
 3. A means of contacting you (e.g. your e-mail address)
 4. The date, preferably in ISO format YYYY-MM-DD
+
 ```{r}
 # Plot gapminder data
 # Jeff Oliver
@@ -48,7 +53,9 @@ From this point on, we want to keep track of what we have done, so we will restr
 ```
 
 ### Installing additional packages
+
 There are two steps to using additional packages in R:
+
 1. Install the package through `install.packages()`
 2. Load the package into active memory with `library()`
 
@@ -74,11 +81,13 @@ library("ggplot2")
 ## Now plot!
 
 ### Scatterplot
+
 For our first plot, we will create an X-Y scatterplot to investigate a potential relationship between a country's gross domestic product (GDP) and the average life expectancy. We do so by creating a `ggplot` object, then calling `print` on that object:
 
 ```{r}
 # Load data
-gapminder <- read.csv(file = "data/gapminder.csv")
+gapminder <- read.csv(file = "data/gapminder.csv",
+                      stringsAsFactors = TRUE)
 
 # Create plot object
 lifeExp.plot <- ggplot(data = gapminder, 
@@ -182,7 +191,8 @@ Our final script for this scatterplot is then:
 library("ggplot2")
 
 # Load data
-gapminder <- read.csv(file = "data/gapminder.csv")
+gapminder <- read.csv(file = "data/gapminder.csv",
+                      stringsAsFactors = TRUE)
 
 # Create plot object
 lifeExp.plot <- ggplot(data = gapminder, 
@@ -220,7 +230,8 @@ Now with this call to `rm`, we have cleared out all our variables from memory, s
 
 ```{r fig.height = 3}
 # Load data
-gapminder <- read.csv(file = "data/gapminder.csv")
+gapminder <- read.csv(file = "data/gapminder.csv",
+                      stringsAsFactors = TRUE)
 
 # Create violin plot object
 gdp.plot <- ggplot(data = gapminder, 
@@ -310,7 +321,8 @@ Colors! But now you notice another problem with the plot - where's Oceania? We l
 
 ```{r}
 # Load data
-gapminder <- read.csv(file = "data/gapminder.csv")
+gapminder <- read.csv(file = "data/gapminder.csv",
+                      stringsAsFactors = TRUE)
 
 # Create violin plot object
 gdp.plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ], 
@@ -344,7 +356,8 @@ rm(list = ls())
 library("ggplot2")
 
 # Load data
-gapminder <- read.csv(file = "data/gapminder.csv")
+gapminder <- read.csv(file = "data/gapminder.csv",
+                      stringsAsFactors = TRUE)
 
 # Create violin plot object
 gdp.plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ], 
