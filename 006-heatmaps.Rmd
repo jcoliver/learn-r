@@ -10,16 +10,19 @@ output:
 A worked example of making heatmaps in R with the `ggplot` package, as well as some data wrangling to easily format the data needed for the plot.
 
 #### Learning objectives
+
 1. Manipulate data into a 'tidy' format
 2. Visualize data in a heatmap
 3. Become familiar with `ggplot` syntax for customizing plots
 
 ## Heatmaps & data wrangling
+
 Heatmaps are a great way of displaying three-dimensional data in only two dimensions. But how can we easily translate tabular data into a format for heatmap plotting? By taking advantage of "data munging" and graphics packages, heatmaps are relatively easy to produce in R. 
 
 ***
 
 ## Getting started
+
 Start by creating a new project in RStudio and creating two folders we'll use to organize our efforts. The two folders should be `data` and `output` and will store...data and output.
 ```{r setup-folders, eval = FALSE}
 dir.create("data")
@@ -36,6 +39,7 @@ This downloads the data and saves it in the `data` directory as `mine-data.csv`.
 ***
 
 ## Data Wrangling
+
 We'll need to start by reading the data into memory then formatting it for use by the ggplot package. We want all our work to be reproducible, so create a script where we can store all the commands we use to create the heatmap. We begin this script with brief information about the purpose of the script:
 
 ```{r script-header, eval = FALSE}
@@ -152,7 +156,9 @@ Now the data are ready - on to the plot!
 ***
 
 ## Plotting heatmaps
+
 ### The ggplot package
+
 To plot a heatmap, we are going to use the `ggplot2` package.
 
 ```{r install-ggplot2, eval = FALSE}
@@ -196,6 +202,7 @@ plot.object.name
 ```
 
 ### Faceting a plot
+
 The ggplot package includes a great way to visualize different categories of data. This approach, called "faceting" requires one additional layer to the plotting command called `facet_grid`. With `facet_grid` we indicate which column contains the categories we want to use for the plot:
 
 ```{r facet}
@@ -225,7 +232,9 @@ mine.heatmap
 That's better. There is still some room for improvement, but we'll get to that later. 
 
 ### Improving aesthetics
+
 #### Scale
+
 First let's deal with a scaling issue. Most values are dark blue, but this is partly caused by the distribution of values - there are a few really high values in the Abundance column. We can transform the data for display by taking the square root of abundance and plotting that. To do this, we need to add another column to our data frame and update our call to ggplot to reference this new column, `Sqrt.abundance`:
 
 ```{r sqrt-transform}
@@ -241,6 +250,7 @@ mine.heatmap
 ```
 
 #### Color
+
 What if we want to use a different set of colors besides the default? For example, how can we change the shading so low values are light and high values are dark? We change colours with `scale_fill_gradient`. In this case we pass three objects to `scale_fill_gradient`: `name` is a label to use in the legend and `low` and `high` are hex codes for color. In this case, we use white (#FFFFFF) for the low values and a dark blue (#012345) for high values.
 
 ```{r change-color}
@@ -259,6 +269,7 @@ mine.heatmap
 ```
 
 #### Theme elements
+
 A number of elements of the plot are controlled through the `theme` function of ggplot. We can use this function to alter axis titles and the placement of the facet titles. Remember the facets? We grouped the graphs based on the depth of the samples. The graph currently shows the depth labels (the boxes with 0.5, 3.5, or 25) between the graph and the sample name. We'd like to swap these positions, so the categories are shown at the very bottom. While we're at it, we should update the x-axis label, too. Setting `strip.placement` to "outside" should accomplish this.
 
 ```{r theme-elements}
@@ -278,6 +289,7 @@ mine.heatmap
 ```
 
 #### Plot title
+
 Plot titles can be added with `ggtitle`:
 
 ```{r plot-title}
@@ -318,6 +330,7 @@ mine.heatmap
 ```
 
 #### Miscellaneous Debris
+
 There are a couple more things we will change in the plot:
 
 1. Reverse the order of the y-axis, so 'Actinobacteria' is at the top
@@ -373,7 +386,7 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
   theme(strip.placement = "outside",
         plot.title = element_text(hjust = 0.5),
         axis.title.y = element_blank(), # Remove y-axis title
-        strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) + # Faint "Depth" boxes
+        strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) +
   ggtitle(label = "Microbe Class Diversity") +
   scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
 
@@ -473,9 +486,9 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
   theme(strip.placement = "outside", # Move depth boxes to bottom of plot
         plot.title = element_text(hjust = 0.5), # Center-justify plot title
         axis.title.y = element_blank(), # Remove y-axis title
-        strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) + # Faint "Depth" boxes
+        strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) +
   ggtitle(label = "Microbe Class Diversity") +
-  scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class)))) # Reverse order of y-axis
+  scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
 
 mine.heatmap
 ```
@@ -483,6 +496,7 @@ mine.heatmap
 ***
 
 ## Additional resources
+
 + Paper describing [tidy data](https://www.jstatsoft.org/article/view/v059i10)
 + A great introduction to [data tidying](http://garrettgman.github.io/tidying/)
 + A [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) for data wrangling
@@ -490,7 +504,6 @@ mine.heatmap
 + A [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) for ggplot
 + [Documentation](http://ggplot2.tidyverse.org/reference/geom_bin2d.html) for `geom_bin2d`, to create heatmaps for continuous x- and y-axes
 + A [PDF version](https://jcoliver.github.io/learn-r/006-heatmaps.pdf) of this lesson
-
 
 ***
 
