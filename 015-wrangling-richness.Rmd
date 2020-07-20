@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.height = 3)
 We collect data from a lot of sources, including field observations. Sometimes, though, the way will collect and understand data as humans doesn't work well with the way computers operate. Here we will work through a real data set to use best practices for data organization to analyze species richness and diversity.
 
 #### Learning objectives
+
 1. Demonstrate how to organize data in 'tidy' format
 2. Develop quality control processes for data
 3. Visualize measures of species richness and species diversity
@@ -109,7 +110,7 @@ summary(bird_data)
 
 There are still missing values in the Site column, but that's OK - those are observations from preceding days, which don't have any site data.
 
-Note also though that it is treating "Date" as categorical data when it really should be treated as, well, a date. So we can change the data in the Date column from categories to dates with the `as.Date` function:
+Note also though that it is treating "Date" as text data when it really should be treated as, well, a date. So we can change the data in the Date column from categories to dates with the `as.Date` function:
 
 ```{r convert-dates}
 bird_data$Date <- as.Date(bird_data$Date)
@@ -193,6 +194,7 @@ In addition to "Finch sp" we all so see two more examples of observations not id
 ***
 
 ## Computers are stupid
+
 ### Or, why quality control matters
 
 We do not actually want to delete these records from our data, but rather we need a means of indicating whether or not they are identified to the species level. This should probably be done in the sweetwater-data-clean.csv file we've been working with. So open that file in Excel and add another column, immediately to the right of Species. Call this one "ID_to_species" and fill in values of 1 for those identified to species (e.g. Gila woodpecker would be scored as a 1) and values of 0 for those not identified to species (e.g. Finch sp and duck sp. would be scored as a 0). Save the file with the same name as before (sweetwater-data-clean.csv).
