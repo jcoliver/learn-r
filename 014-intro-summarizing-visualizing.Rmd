@@ -12,6 +12,7 @@ urlcolor: blue
 The R programming language provides many tools for data analysis and visualization, but all the options can be daunting. This lesson provides an introduction to wrangling data in R and using graphics to tell a story with data.
 
 #### Learning objectives
+
 1. Understand the difference between files and R objects
 2. Modify data for proper data hygiene
 3. Summarize information from raw data
@@ -22,9 +23,11 @@ The R programming language provides many tools for data analysis and visualizati
 ## Getting started
 
 ### The tools: R and RStudio
+
 For this lesson, we will use the R programming language in the RStudio environment. RStudio provides a convenient interface for working with files and packages in R. If you have not done so already, install R and RStudio; details can be found on the [installation page](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
 
 ### Preparing our workplace
+
 Key to successful programming is organization. In RStudio, we use Projects to organize our work (a "Project" is really just a fancy name for a folder that contains all our files). For this lesson, we'll create a new project through the File menu (File > New Project). In the first dialog, select "New Directory", and select "New Project" in the second dialog. Next you'll be prompted to provide a directory name. This will be the name of our project, so we should give it an informative name. For this lesson, we will be using data from vegetation surveys of [Tumacacori National Historical Park](https://www.nps.gov/tuma/index.htm); so give our directory a descriptive name, like "vegetation". We need also to tell RStudio where to put the lesson on our computer; for this lesson, we will place the folder on our Desktop, so it is easy to find. In your own work, you may find it better to place project folders in your Documents folder.
 
 The last thing we need to do to set up our workspace is to use file organization that reinforces best practices. In general, there should be a one-way flow of information: we take information from _data_ and write code to produce _output_. We want to avoid any output from messing up our data, so we create separate folders for each. We want to create two folders, one for our data and one for any output, which may include results of statistical analyses or data visualization. In the R console,
@@ -54,6 +57,7 @@ Note if you click on the data folder in your project (there should be a file bro
 ## Data in R
 
 ### Data _outside_ R
+
 We are going to start by looking at those data we downloaded in a spreadsheet program like Excel or [LibreOffice](https://www.libreoffice.org/). Open your spreadsheet program and open the file we just downloaded. We can see the data are organized in columns and rows. This is a good example of what is known as "tidy data" where there is one observation per row and one type of data per column. In these data, each row corresponds to a single plant species in a single plot, and the columns have different data about that species, including the family name and the percent cover in that plot.  
 
 Take a moment to look at those data but don't change any of the values in the cells. Close the file, and make sure _not_ to save any changes to the file.
@@ -73,7 +77,8 @@ Note that RStudio is also telling us that we have unsaved changes: the text in t
 Now we are finally going to read data into R. When you opened the file in Excel you might have noticed that it has the file extension "csv", which stands for Comma-Separated Values. The CSV file format is common for data tables and has the benefit that it can be easily ready by many programs, which is not always the case for .xls and .xlsx files. To read the data into R, we use the `read.csv` function:
 
 ```{r load-data}
-plant_data <- read.csv(file = "data/tumacacori-vegetation.csv")
+plant_data <- read.csv(file = "data/tumacacori-vegetation.csv",
+                       stringsAsFactors = TRUE)
 ```
 
 The statement shows typical syntax for an R command. From an abstract perspective, most R statements look like:
@@ -82,7 +87,12 @@ $$
 Variable \enspace Name \leftarrow Function \enspace Name (Function \enspace Arguments)
 $$
 
-The _function_ (`read.csv`) is given one piece of information, or _argument_, in this case the name of the file we wish to read into memory. The data in the file are read into R, then stored in a _variable_ called `plant_data`. 
+The _function_ (`read.csv`) is given two pieces of information, or _arguments_:
+
+1. `file` which tells R where the file is located (in this case, in the data folder)
+2. `stringsAsFactors` which tells R to treat text data as categorical data
+
+The data in the file are read into R, then stored in a _variable_ called `plant_data`. 
 
 ### Quality Assurance
 
@@ -432,7 +442,8 @@ Our final script would look like this:
 library(dplyr)
 library(ggplot2)
 
-plant_data <- read.csv(file = "data/tumacacori-vegetation.csv")
+plant_data <- read.csv(file = "data/tumacacori-vegetation.csv",
+                       stringsAsFactors = TRUE)
 
 # Do not want rows with missing data
 plant_data <- na.omit(plant_data)
