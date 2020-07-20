@@ -11,6 +11,7 @@ output:
 Predicting ranges of species from latitude and longitude coordinates has become increasingly easier with a suite of R packages. This introductory tutorial will show you how to turn your coordinate data into a range map.
 
 #### Learning objectives
+
 1. Install packages for species distribution modeling
 2. Run species distribution models using `bioclim` approach
 3. Visualize model predictions on a map
@@ -20,9 +21,11 @@ Species distribution modeling in becoming an increasingly important tool to unde
 ***
 
 ## Getting started
+
 Before we do anything, we will need to set up our workspace, download example data, and install additional packages that are necessary to run the models and visualize their output. 
 
 ### Workspace organization
+
 So, to start, create a pair of folders in your workspace:
 ```{r workspace-setup, eval = FALSE}
 dir.create(path = "data")
@@ -31,9 +34,11 @@ dir.create(path = "output")
 It is good practice to keep input (i.e. the data) and output separate. Furthermore, any work that ends up in the `output` folder should be completely disposable. That is, the combination of data and the code we write should allow us (or anyone else, for that matter) to reproduce any output.
 
 ### Example data
+
 The data we are working with are observations of the [saguaro, _Carnegiea gigantea_](https://en.wikipedia.org/wiki/Saguaro). We are using a subset of records available from [GBIF](https://www.gbif.org/), the Global Biodiversity Information Facility. You can download the data from [https://tinyurl.com/saguaro-obs](https://tinyurl.com/saguaro-obs); save it in the `data` folder that you created in the step above.
 
 ### Install additional R packages
+
 Next, there are _five_ additional R packages that will need to be installed:
 
 + dismo
@@ -54,6 +59,7 @@ install.packages("sp")
 ***
 
 ## Components of the model
+
 The basic idea behind species distribution models is to take two sources of information to model the conditions in which a species is expected to occur. The two sources of information are:
 
 1. Occurrence data: these are usually latitude and longitude geographic coordinates where the species of interest has been observed. These are known as 'presence' data. Some models also make use of 'absence' data, which are geographic coordinates of locations where the species is known to _not_ occur. Absence data are a bit harder to come by, but are required by some modeling approaches. For this lesson, we will use the occurrence data of the saguaro that you downloaded earlier.
@@ -62,6 +68,7 @@ The basic idea behind species distribution models is to take two sources of info
 ***
 
 ## Data and quality control
+
 We'll start our script by loading those five libraries we need. And of course adding a little bit of information at the very top of our script that says what the script does and who is responsible!
 
 ```{r load-dependancies}
@@ -150,6 +157,7 @@ Looking good!
 ***
 
 ## Building a model and visualizing results
+
 Now that our occurrence data look OK, we can use the bioclimatic variables to create a model. The first thing we want to do though is limit our consideration to a reasonable geographic area. That is, for our purposes we are not looking to model saguaro habitat suitability _globally_, but rather to the general southwest region. So we can restrict the biolimatic variable data to the geographic extent of our occurrence data:
 
 ```{r bioclim-crop, error = TRUE}
@@ -203,7 +211,9 @@ There's one more step we need to take before we plot the model on a map. We need
 
 ```{r predict-presence}
 # Predict presence from model
-predict.presence <- dismo::predict(object = bc.model, x = bioclim.data, ext = geographic.extent)
+predict.presence <- dismo::predict(object = bc.model, 
+                                   x = bioclim.data, 
+                                   ext = geographic.extent)
 ```
 You might be wondering about why we use `dismo::predict` rather than just `predict`. Not surprisingly, different packages sometimes use the same function name to perform very different operations. In the case of `predict`, there are at least three packages loaded into memory that have a `predict` function: `dismo`, `sp`, and `stats`. Although we _probably_ would have been fine just using `predict` (R would have use the `dismo` version), specifying the `dismo` version explicitly communicates this fact to anyone else reading the code. So, rather than leaving others (or your future self!) guessing, we can use the `dismo::predict` syntax.
 
@@ -249,6 +259,7 @@ box()
 ```
 
 ## The pseudo-absence point
+
 One common work around for coercing presence-only data for use with presence/absence approaches is to use pseudo-absence, or "background" points. While "pseudo-absence" sounds fancy, it really just means that one randomly samples points from a given geographic area and treats them like locations where the species of interest is absent. A great resource investigating the influence and best practices of pseudo-absence points is a study by Barbet-Massin _et al._ (2012) (see [Additional Resources](#additional-resources) below for full details).
 
 For our purposes, we are going to create a set of background (aka pseudo-absence) points at random, with as many points as we have observations. We are going to use the bioclim data files for determining spatial resolution of the points, and restrict the sampling area to the general region of the observations of saguaros.
@@ -330,6 +341,7 @@ background.test <- background[group.background == testing.group, ]
 ```
 
 ## Training and testing the model
+
 Now that we have (1) our pseudo-absence points and (2) separate training and testing data, we can re-build the model, evaluate its performance, and draw a more aesthetically pleasing map. We build the model with the `bioclim` function as before, but instead of using all the observations in `obs.data` we only use the training data stored in `presence.train`:
 
 ```{r bioclim-training}
