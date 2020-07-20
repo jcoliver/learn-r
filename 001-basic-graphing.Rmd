@@ -9,7 +9,8 @@ output:
 
 This brief tutorial will demonstrate how to create a basic plot in R from a text file of data.  This introduction provides an entry point for those unfamiliar with R (or a refresher for those who are rusty).  We will start with a very minimal piece of code and work our way up to code that automates the creation of 12 different PDF files, each with a different X-Y scatterplot.
 
-####Learning objectives
+#### Learning objectives
+
 1. Gain familiarity with R
 2. Read data from a file
 3. Visualize data in a graph
@@ -17,7 +18,8 @@ This brief tutorial will demonstrate how to create a basic plot in R from a text
 
 In this tutorial, we will be using the 'gapminder' dataset, available here: [http://tinyurl.com/gapminder-five-year-csv](http://tinyurl.com/gapminder-five-year-csv) (right-click or Ctrl-click on link and Save As...).
 
-##Setup
+## Setup
+
 First we need to setup our development environment. Open RStudio and create a new project via:
 
 + File > New Project...
@@ -34,11 +36,14 @@ dir.create(path = "output")
 
 Finally, move the file you downloaded into the `data` folder you just created.
 
-##Your first plot
-###Plot the points!
+## Your first plot
+
+### Plot the points!
+
 ```{r}
 # Read in data
-gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                          stringsAsFactors = TRUE)
 ```
 When reading data into R, it is always a good idea to make sure you read in the data correctly.  There are a number of ways to investigate your data, but three common methods are:
 
@@ -67,7 +72,9 @@ plot(x = gapminder.2002$gdpPercap,
 ```
 
 ***
-##Make it pretty
+
+## Make it pretty
+
 Before we get to the next step we need to start using scripts, rather than typing directly into the console. This is the ideal way to save your work. You can create a new script in RStudio via File > New File > R Script (or the shortcut Ctrl+Shift+N / Cmd+Shift+N). Name the script something like "r-graphing.R" (without the quotes) - you will have to add the .R extension when you name the file. At the start of _every_ script you write, you should provide at least this basic information:
 
 + A brief description of what the script does
@@ -75,7 +82,8 @@ Before we get to the next step we need to start using scripts, rather than typin
 + Contact information
 + Date
 
-###Fix those axes titles
+### Fix those axes titles
+
 Our original graph was a good start, but those axis labels are pretty unseemly.  We can fix those up by setting values in the `plot` function call.  Namely, we will be passing values to the `main`, `xlab` (x-axis label), and `ylab` (y-axis label) parameters.
 
 ```{r}
@@ -85,7 +93,8 @@ Our original graph was a good start, but those axis labels are pretty unseemly. 
 # 2016-11-15
 
 # Read in data
-gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                          stringsAsFactors = TRUE)
 
 # Subset data
 gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
@@ -98,8 +107,11 @@ plot(x = gapminder.2002$gdpPercap,
 ```
 
 ***
-##Changing scales
-###Log-transform data
+
+## Changing scales
+
+### Log-transform data
+
 This does not look like a linear relationship, but we can try a simple log-transformation on the GDP data to see how that looks.
 ```{r}
 # Graphing Life Expectancy vs. GDP
@@ -108,7 +120,8 @@ This does not look like a linear relationship, but we can try a simple log-trans
 # 2016-11-15
 
 # Read in data
-gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                          stringsAsFactors = TRUE)
 
 # Subset data
 gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
@@ -124,8 +137,11 @@ plot(x = gapminder.2002$Log10GDP,
 ```
 
 ***
-##Make it <em>prettier</em>
-###Color the points
+
+## Make it <em>prettier</em>
+
+### Color the points
+
 We are not restricted to black and white colors.  Here we will color points by the continent each country is located on.
 ```{r}
 # Graphing Life Expectancy vs. GDP
@@ -134,7 +150,8 @@ We are not restricted to black and white colors.  Here we will color points by t
 # 2016-11-15
 
 # Read in data
-gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                          stringsAsFactors = TRUE)
 
 # Subset data
 gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
@@ -180,8 +197,11 @@ legend("topleft",
 ```
 
 ***
-##Prevent mistakes
-###Abstract the code
+
+## Prevent mistakes
+
+### Abstract the code
+
 When writing code, abstraction can be quite useful, to ensure consistency throughout your code.
 ```{r}
 # Graphing Life Expectancy vs. GDP
@@ -190,7 +210,8 @@ When writing code, abstraction can be quite useful, to ensure consistency throug
 # 2016-11-15
 
 # Read in data
-gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                          stringsAsFactors = TRUE)
 
 # Subset data
 gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
@@ -237,8 +258,11 @@ abline(lifeExp.lm, lty = 2, lwd = 2)
 ```
 
 ***
-##Even fewer mistakes via less code o.O
-###More code abstraction & loops
+
+## Even fewer mistakes via less code o.O
+
+### More code abstraction & loops
+
 Continuing with abstraction, we can simplify our code with control flow - here we use a `for` loop to accomplish the color assignment task.
 ```{r}
 # Graphing Life Expectancy vs. GDP
@@ -247,7 +271,8 @@ Continuing with abstraction, we can simplify our code with control flow - here w
 # 2016-11-15
 
 # Read in data
-gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                          stringsAsFactors = TRUE)
 
 # Subset data
 gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
@@ -291,8 +316,11 @@ abline(lifeExp.lm, lty = 2, lwd = 2)
 ```
 
 ***
-##Saving graphical output
-###Redirect graphics to PDF file
+
+## Saving graphical output
+
+### Redirect graphics to PDF file
+
 To save the file, we can redirect the output to a graphics device.  In this example we use a PDF writer; many other graphics devices are availble for writing different file formats, including `svg`, `jpeg`, and `png`.
 ```{r eval = FALSE}
 # Graphing Life Expectancy vs. GDP
@@ -301,7 +329,8 @@ To save the file, we can redirect the output to a graphics device.  In this exam
 # 2016-11-15
 
 # Read in data
-gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                          stringsAsFactors = TRUE)
 
 # Subset data
 gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
@@ -350,8 +379,11 @@ dev.off()
 ```
 
 ***
-##Automation!
-###Make 12 separate PDF graphs
+
+## Automation!
+
+### Make 12 separate PDF graphs
+
 Finally (well, almost finally, see below), we can automate this process to create a separate PDF of the same graph for each year of data in the gapminder datasets (there are 12 years of data for each country).
 ```{r eval = FALSE}
 # Graphing Life Expectancy vs. GDP
@@ -360,7 +392,8 @@ Finally (well, almost finally, see below), we can automate this process to creat
 # 2016-11-15
 
 # Read in data
-gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                          stringsAsFactors = TRUE)
 
 # Hold off on subsetting the data
 # Make new vector of Log GDP
@@ -418,8 +451,11 @@ for (curr.year in years) {
 ```
 
 ***
-##Advanced topic: making it even prettier
-###Add transparency to points
+
+## Advanced topic: making it even prettier
+
+### Add transparency to points
+
 And for advanced users, we can add some transparency to the points (skipping the step were the plot is saved to a PDF file).
 ```{r}
 # Graphing Life Expectancy vs. GDP
@@ -428,7 +464,8 @@ And for advanced users, we can add some transparency to the points (skipping the
 # 2016-11-15
 
 # Read in data
-gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder.all <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                          stringsAsFactors = TRUE)
 
 # Subset data
 gapminder.2002 <- gapminder.all[gapminder.all$year == 2002, ]
@@ -496,7 +533,14 @@ abline(lifeExp.lm, lty = 2, lwd = 2)
 ```
 
 ***
-For advanced graphing, the <a href="http://ggplot2.org/">ggplot2</a> package is *extremely* useful.
+
+## Additional resources 
+
++ For advanced graphing, the <a href="http://ggplot2.org/">ggplot2</a> package is *extremely* useful. A companion lesson for using ggplot2 is available at [https://jcoliver.github.io/learn-r/004-intro-ggplot.html](https://jcoliver.github.io/learn-r/004-intro-ggplot.html).
++ A [PDF version](https://jcoliver.github.io/learn-r/001-basic-graphing.pdf) of this lesson
+
+***
+
 
 <a href="index.html">Back to learn-r main page</a>
   
