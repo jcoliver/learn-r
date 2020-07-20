@@ -9,15 +9,18 @@ output:
 
 An introduction to using the R statistics package and the RStudio interface.
 
-####Learning objectives
+#### Learning objectives
+
 1. Read data from files and output results to files
 2. Extract relevant portions of datasets
 3. Run standard statistical tests in R, including Student's _t_, analysis of variance (ANOVA), and simple linear regression.
 
 ## Statistics in R
+
 R was _designed_ for statistical analyses. This lesson provides an overview of reading data and writing output, as well as running standard statistical tests in R, including t-tests, linear regression, and analysis of variance.
 
-##Setup
+## Setup
+
 First we need to setup our development environment. We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses.
 ```{r, eval = FALSE}
 dir.create(path = "data")
@@ -25,6 +28,7 @@ dir.create(path = "output")
 ```
 
 ## Data interrogation
+
 For our first set of analyses, we'll use a dataset that comes pre-loaded in R. The `iris` data is from early statistical work of R.A. Fisher, who used three species of _Iris_ flowers to develop linear discriminant analysis. Start by looking at the data with the `head` command:
 
 ```{r}
@@ -58,6 +62,7 @@ boxplot(formula = Petal.Length ~ species, data = iris)
 To keep track of what we do, we will switch from running commands directly in the console to writing R scripts that we can execute. These scripts are simple text files with R commands. 
 
 ## Student's _t_
+
 We are going to start by doing a single comparison, looking at the petal lengths of two species. We use a _t_-test to ask whether or not the values for two species were likely drawn from two separate populations. Just looking at the data for two species of irises, it looks like the petal lengths are different, but are they _significantly_ different?
 <style type="text/css">
 .table {
@@ -174,7 +179,7 @@ setosa.v.versicolor
 sink()
 ```
 
-> ###Challenge 1  
+> ### Challenge 1  
 Test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
 
 ([Solution](#solution-to-challenge-1))
@@ -182,6 +187,7 @@ Test for significant differences in petal lengths between _I. setosa_ and _I. vi
 ***
 
 ## Analysis of Variance (ANOVA)
+
 ANOVA allows us to simultaneously compare multiple groups, to test whether group membership has a significant effect on a variable of interest. Create a new script file called 'iris-anova.R' and the header information.
 
 ```{r}
@@ -256,14 +262,15 @@ summary(object = petal.length.aov)
 sink()
 ```
 
-> ###Challenge 2  
+> ### Challenge 2  
 Use ANOVA to test for differences in sepal width among the three species. What is the value of the _F_-statistic?
 
 ([Solution](#solution-to-challenge-2))
 
 ***
 
-##Linear regression
+## Linear regression
+
 For this final section, we will test for a relationship between life expectancy and per capita [gross domestic product](https://en.wikipedia.org/wiki/Gross_domestic_product) (GDP). Start by downloading the data from [https://tinyurl.com/gapminder-five-year-csv](https://tinyurl.com/gapminder-five-year-csv) (right-click or Ctrl-click on link and Save As...). Save this to the 'data' directory you created in the Setup section. The file has comma-separated values for 142 countries at twelve different years; the data can be loaded in R with the `read.csv` function:
 
 ```{r}
@@ -272,7 +279,8 @@ For this final section, we will test for a relationship between life expectancy 
 # jcoliver@email.arizona.edu
 # 2016-07-29
 
-orig.gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
+orig.gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                           stringsAsFactors = TRUE)
 ```
 
 This reads the file into memory and stores the data in a data frame called `orig.gapminder`.
@@ -312,7 +320,10 @@ We can see immediately that this is unlikely a linear relationship. For our purp
 gapminder$logGDP <- log10(gapminder$gdpPercap)
 
 # Plot again, with log-transformed GDP on the x-axis
-plot(x = gapminder$logGDP, y = gapminder$lifeExp, xlab = "log10(GDP)", ylab = "Life Expectancy")
+plot(x = gapminder$logGDP, 
+     y = gapminder$lifeExp, 
+     xlab = "log10(GDP)", 
+     ylab = "Life Expectancy")
 ```
   
 Notice also that we passed two additional arguments to the `plot` command: `xlab` and `ylab`. These are used to label the x- and y-axis, respectively (try the `plot` function without passing `xlab` and `ylab` arguments to see what happens without them).
@@ -354,7 +365,8 @@ The final script should be:
 # 2016-07-29
 
 # Read data from comma-separated values file
-orig.gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
+orig.gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                           stringsAsFactors = TRUE)
 
 # Subset 2007 data
 gapminder <- orig.gapminder[orig.gapminder$year == 2007, ]
@@ -366,7 +378,10 @@ plot(x = gapminder$gdpPercap, y = gapminder$lifeExp)
 gapminder$logGDP <- log10(gapminder$gdpPercap)
 
 # Plot new variable
-plot(x = gapminder$logGDP, y = gapminder$lifeExp, xlab = "log10(GDP)", ylab = "Life Expectancy")
+plot(x = gapminder$logGDP, 
+     y = gapminder$lifeExp, 
+     xlab = "log10(GDP)", 
+     ylab = "Life Expectancy")
 
 # Run linear model
 lifeExp.v.gdp <- lm(formula = lifeExp ~ logGDP, data = gapminder)
@@ -377,19 +392,20 @@ summary(lifeExp.v.gdp)
 sink()
 ```
 
-> ###Challenge 3  
+> ### Challenge 3  
 Test for a relationship between life expectancy and log base 2 of GDP for the 1982 data. How does life expectancy change with a four-fold increase in GDP?
 
 ([Solution](#solution-to-challenge-3))
 
 ***
 
-##Solutions to Challenges
-###Solution to Challenge 1  
+## Solutions to Challenges
+
+### Solution to Challenge 1  
 
 > Test for significant differences in petal lengths between _I. setosa_ and _I. virginica_ and between _I. versicolor_ and _I. virginica_.
 
-####First comparison: _I. setosa_ vs. _I. virginica_
+#### First comparison: _I. setosa_ vs. _I. virginica_
 
 ```{r}
 # Subset setosa data
@@ -406,7 +422,7 @@ _I. setosa_ and _I. virginica_ have significantly different petal lengths.
 
 ***
   
-####Second comparison: _I. versicolor_ and _I. virginica_
+#### Second comparison: _I. versicolor_ and _I. virginica_
 
 ```{r}
 # Subset versicolor data
@@ -423,7 +439,8 @@ _I. versicolor_ and _I. virginica_ also have different significantly different p
 
 ***
 
-###Solution to Challenge 2
+### Solution to Challenge 2
+
 > Use ANOVA to test for differences in sepal width among the three species. What is the value of the _F_-statistic?
 
 ```{r}
@@ -440,12 +457,14 @@ The _F_-statistic = `r round(x = f.stat, digits = 2)`, and the p-value is quite 
 
 ***
 
-###Solution to Challenge 3  
+### Solution to Challenge 3  
+
 > Test for a relationship between life expectancy and log base 2 of GDP for the 1982 data. How does life expectancy change with a four-fold increase in GDP?
 
 ```{r}
 # Read data from comma-separated values file
-gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                           stringsAsFactors = TRUE)
 
 # Subset 1982 data
 gapminder.1982 <- gapminder[gapminder$year == 1982, ]
@@ -476,6 +495,8 @@ the GDP data, so this coefficient indicates the change in life expectancy for ev
 + Early work by R.A. Fisher: [doi: 10.1111%2Fj.1469-1809.1936.tb02137.x](https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x)
 + A [PDF version](https://jcoliver.github.io/learn-r/002-intro-stats.pdf) of this lesson
 + An [Example of Tukey's test](https://www.r-bloggers.com/anova-and-tukeys-test-on-r/) for _post hoc_ pairwise comparisons from ANOVA results.
+
+***
 
 <a href="index.html">Back to learn-r main page</a>
   
