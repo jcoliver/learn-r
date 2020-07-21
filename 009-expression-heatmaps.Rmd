@@ -53,7 +53,8 @@ library("ggplot2")
 
 And then we read the data into memory:
 ```{r}
-exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", 
+                     stringsAsFactors = FALSE)
 ```
 
 Take a quick look at the data with the `str` command:
@@ -131,7 +132,8 @@ library("tidyr")
 library("ggplot2")
 
 # Read in the data
-exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", 
+                     stringsAsFactors = FALSE)
 
 # Transform to "long" format
 exp.long <- pivot_longer(data = exp.data, 
@@ -229,7 +231,8 @@ Our final script for this heatmap is then:
 library("tidyr")
 library("ggplot2")
 
-exp.data <- read.csv(file = "data/GSE68849-expression.csv", stringsAsFactors = FALSE)
+exp.data <- read.csv(file = "data/GSE68849-expression.csv", 
+                     stringsAsFactors = FALSE)
 
 exp.long <- pivot_longer(data = exp.data, 
                          cols = -c(subject, treatment),

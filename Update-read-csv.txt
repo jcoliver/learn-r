@@ -1,0 +1,12 @@
+DONE ./001-basic-graphing.Rmd
+DONE ./002-intro-stats.Rmd
+DONE ./003-intro-multivariate.Rmd
+DONE ./004-intro-ggplot.Rmd
+DONE ./006-heatmaps.Rmd
+DONE ./008-ggplot-dendrograms-and-heatmaps.Rmd
+DONE ./009-expression-heatmaps.Rmd
+DONE ./011-species-distribution-models.Rmd
+DONE ./014-intro-summarizing-visualizing.Rmd
+DONE ./015-wrangling-richness.Rmd
+DONE ./dev-scripts/learn-r-announce.Rmd
+DONE ./00X-multiple-linear-regression.Rmd

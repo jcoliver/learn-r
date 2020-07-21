@@ -10,6 +10,7 @@ output:
 Want to combine the visualization of quantitative data with clustering algorithms? Unsatisfied with the options provided by the base R packages? In this hands-on workshop, we'll use the `ggendro` package for R to make publication-quality graphics.
 
 #### Learning objectives
+
 1. Run clustering analysis and display dedrogram
 2. Visualize data in a heatmap
 3. Use `grid` package to create multi-plot figures
@@ -17,6 +18,7 @@ Want to combine the visualization of quantitative data with clustering algorithm
 ***
 
 ## Getting started
+
 Start by creating a new project in RStudio and creating two folders we'll use to organize our efforts. The two folders should be `data` and `output` and will store...data and output.
 ```{r eval = FALSE}
 dir.create("data")
@@ -55,7 +57,8 @@ library("reshape2")
 library("grid")
 
 # Read in data
-otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
+otter <- read.csv(file = "data/otter-mandible-data.csv",
+                  stringsAsFactors = TRUE)
 ```
 
 If we look at the first few rows of data, we see the first three columns have information about the specimen from which the measurements were taken, while columns 4-9 have data for six mandible measurements (`m1` - `m6`):
@@ -115,7 +118,8 @@ We need to start by transforming data to a "long" format, where each row only co
 otter.scaled[c(1:2), c(1:5)]
 
 # For demonstration purposes only, print the first few rows and columns
-otter.long.demo <- melt(otter.scaled[c(1:2), c(1:5)], id = c("species", "museum", "accession"))
+otter.long.demo <- melt(otter.scaled[c(1:2), c(1:5)], 
+                        id = c("species", "museum", "accession"))
 ```
 
 We want to transform it so there is only a single measurement in each row:
@@ -281,7 +285,8 @@ library("reshape2")
 library("grid")
 
 # Read in data
-otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
+otter <- read.csv(file = "data/otter-mandible-data.csv",
+                  stringsAsFactors = TRUE)
 
 # Restrict the data to only two species, A. cinerea & L. canadensis
 two.species <- c("A. cinerea", "L. canadensis")

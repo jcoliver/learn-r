@@ -10,13 +10,16 @@ output:
 An introduction to using the R statistics package and the RStudio interface for multivariate statistics.
 
 #### Learning objectives
+
 1. Prepare data in spreadsheet program (e.g. Excel, LibreOffice Calc) for export to R
 2. Read data from files into R
 3. Run Principal Components Analysis (PCA) and graphically display results
 4. Perform Discriminant Function Analysis (DFA) and interpret the results
 
 ## Setup
+
 ### Workspace organization
+
 First we need to setup our development environment. We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses.
 ```{r, eval = FALSE}
 dir.create(path = "data")
@@ -24,6 +27,7 @@ dir.create(path = "output")
 ```
 
 ### Preparing data in a format R can read
+
 + Download data file from [https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx](https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx) or [http://tinyurl.com/otter-data](http://tinyurl.com/otter-data) (the latter just re-directs to the former). These data are a subset of those used in a study on skull morphology and diet specialization in otters [doi: 10.1371/journal.pone.0143236](http://dx.doi.org/10.1371/journal.pone.0143236).
 + Open this file, otter-mandible-data.xlsx, in spreadsheet program like Microsoft Excel<sup>&reg;</sup> or LibreOffice Calc.
 + Save a copy of the file as a CSV (comma-separated values) file named 'otter-mandible-data.csv' in the data folder you created above:
@@ -33,8 +37,10 @@ dir.create(path = "output")
 ![(A) Skull morphology of _Lutra lutra_. (B) Six mandible measurements used in this lesson: m1 = mandible ramus width, m2 = mandible ramus height, m3 = moment arm temporalis, m4 = outlever at carnassal, m5 = moment arm masseter, m6 = jaw length. Adapted from [https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png](https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png).](images/otter-mandible.svg)
   
 ### Reading data into R for PCA
+
 ```{r}
-otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
+otter <- read.csv(file = "data/otter-mandible-data.csv", 
+                  stringsAsFactors = TRUE)
 ```
   
 Missing data can cause problems in downstream analyses, so we will just remove any rows that have missing data. Here we replace the original data object `otter` with one in which there are no missing values. Note, this _does not_ alter the data in the original file we read into R; it only alters the data object `otter` currently in R's memory.
@@ -48,6 +54,7 @@ rownames(otter) <- NULL
 ```
 
 ## Principal Components Analysis
+
 Why PCA? Very briefly, Principal Components Analysis is a way of re-describing the variation observed in your data. It serves as a means of reducing the dimensionality of data (i.e. reducing the number of predictor variables) and is often used for exploratory analyses. The full rationale and mathematically underpinnings are waaaaaaaay beyond the scope of this lesson, and other resources already do a fairly good job of explaining PCA. If you want a few perspectives for a relatively novice audience, check out this [Why PCA? (or "how to explain PCA to your grandmother")](http://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues) thread at Stack Overflow. If you are more inclined to print media, I highly recommend B.F.J. Manly's _Multivariate Statistical Methods: A primer_ (2004), which provides an excellent introduction to a variety of multivariate statistic topics.
 
 ### Running PCA
@@ -55,6 +62,7 @@ So, on to the code:
 ```{r}
 pca.fit <- prcomp(x = otter[, -c(1:3)], scale. = TRUE)
 ```
+
 That's PCA. We pass the data to the `x` parameter, skipping the first three columns `[, -c(1:3)]` because those columns have the specimen information (species identity and accession information). We also set the `scale.` parameter to `TRUE` because we want to transform the data so each column has a mean of zero and a variance of one.
   
 To look at the results, we use the `summary` command and assign the output to a variable.
@@ -70,6 +78,7 @@ pca.summary$importance
 The second row, `Proportion of Variance`, shows how much variation in the data is described by each component; notice that the first component, PC1, explains the most variance, `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2), 4)`, or `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2) * 100, 2)`% of the total variance, the second component explains the second most variance (`r round(pca.summary$sdev[2]^2/sum(pca.summary$sdev^2) * 100, 2)`%), and so on, with each successive component explaining a lower proportion of the total variance. For the remainder of the lesson, we will focus on the first two principal components, PC1 and PC2, which together explain `r round((pca.summary$sdev[1]^2 + pca.summary$sdev[2]^2)/sum(pca.summary$sdev^2) * 100, 2)`% of the observed variation in the skull measurements.
   
 ### A brief interpretion of PCA results (part one)
+
 But what about that variation? What are the principal components actually explaining? To address this (point 2 from above), we need to look at the loadings of the PCA. The `rotation` object from the summary call has the information we are interested in. Focus on the values in the PC1 column:
 ```{r}
 pca.summary$rotation
@@ -87,6 +96,7 @@ Looking at the signs of the loadings, we see they are all the same (`r direction
 The second principal component is a little more interesting. Two of the variables, m1 and m4 don't contribute much to the component (the magnitudes of their respective loadings (.173 and .031) are small compared to the other four skull measurements). The remaining four indicate a shape difference, with one pair of variables having positive loadings and one pair having negative loadings. This interpretation of the second principal component would benefit greatly from a graphical representation.
 
 ### Plotting PCA results  
+
 Plotting the results of a PCA can be done using a simple call to the `biplot` function:
 ```{r}
 biplot(x = pca.fit)
@@ -132,10 +142,15 @@ plot(x = pca.fit$x[, 1],
      ylab = "PC 2",
      pch = 19,
      col = pt.cols)
-legend("bottomleft", legend = species.names, pch = 19, col = legend.cols, cex = 0.8)
+legend("bottomleft", 
+       legend = species.names, 
+       pch = 19, 
+       col = legend.cols, 
+       cex = 0.8)
 ```
   
 ### A brief interpretion of PCA results (part two)
+
 Ah, now this plot is a little more interesting. Note the first principal component scores along the x-axis, and there is actually pretty clear separation among some of species. As mentioned above, this principal component is really an index of size, which we can visualize by looking at the actual skull measurements across the four species. First note the distribution of the four species along the x-axis: _A. cinerea_ has the lowest values, _E. lutris_ and _P. brasiliensis_ have the highest values, and _L. canadensis_ has values in the middle. We can use `boxplot` to show the distributions of each measurement for each species:
 
 ```{r}
@@ -165,7 +180,11 @@ plot(x = pca.fit$x[, 1],
      ylab = "PC 2",
      pch = 19,
      col = pt.cols)
-legend("bottomleft", legend = species.names, pch = 19, col = legend.cols, cex = 0.8)
+legend("bottomleft", 
+       legend = species.names, 
+       pch = 19, 
+       col = legend.cols, 
+       cex = 0.8)
 ```
 
 And the loadings for the first two components are:
@@ -207,6 +226,7 @@ m6; this contrasts with specimens with low values of PC2 (i.e. those of _P. bras
 by high values of m5 and low values of m6. The second principal component is thus describing variation in _relative_, not absolute, sizes of these four different measurements.
 
 ### Final script for PCA plot
+
 Our script for performing Principal Components Analysis and graphing the first two components should look like this:
 ```{r, eval = FALSE}
 # PCA on otter jaw measurements
@@ -215,7 +235,8 @@ Our script for performing Principal Components Analysis and graphing the first t
 # 2016-11-18
 
 # Read in data
-otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
+otter <- read.csv(file = "data/otter-mandible-data.csv", 
+                  stringsAsFactors = TRUE)
 
 # Drop rows with NA
 otter <- na.omit(otter)
@@ -249,18 +270,25 @@ plot(x = pca.fit$x[, 1],
      ylab = "PC 2",
      pch = 19,
      col = pt.cols)
-legend("bottomleft", legend = species.names, pch = 19, col = legend.cols, cex = 0.8)
+legend("bottomleft", 
+       legend = species.names, 
+       pch = 19, 
+       col = legend.cols, 
+       cex = 0.8)
 ```
 
 ***
 
 ## Discriminant Function Analysis
+
 Principal Components Analysis is useful to describe variation, especially when groups of samples are not known _a priori_. However, when the groups _are_ known, one can use Discriminant Function Analysis, DFA, to see if the these groups can be differentiated based on a suite of variables. We will use the same otter data to see if we can differentiate among the four species based on the jaw measurements.
 
 ### Reading data into R for DFA
+
 ```{r}
 # Read in data
-otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
+otter <- read.csv(file = "data/otter-mandible-data.csv", 
+                  stringsAsFactors = TRUE)
 
 # Drop rows with NA
 otter <- na.omit(otter)
@@ -270,6 +298,7 @@ rownames(otter) <- NULL
 ```
 
 ### Running DFA
+
 To run a DFA, we use a function in the `MASS` library, an additional package of R functions. To load a package for use in R, we use the `library` function and include the name of the package (see below if you want to learn more about [installing packages](#installing-r-packages)):
 ```{r}
 library("MASS")
@@ -285,6 +314,7 @@ lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6,
 We also indicate that assignment to each species is equally likely (25%) by setting the prior probabilities for group membership through the `prior` parameter. 
   
 ### Plotting DFA results
+
 We can plot DFA results in a similar fashion as we did for PCA results. In this case we plot the scores for the first and second discriminant functions.
 ```{r}
 # Get individual values based on lda model and original measurements
@@ -305,11 +335,16 @@ plot(x = plda$x[, 1],
      ylab = "LDA2",
      pch = 19,
      col = pt.cols)
-legend("topright", legend = levels(otter$species), cex = 0.8, col = legend.cols, pch = 19)
+legend("topright", 
+       legend = levels(otter$species), 
+       cex = 0.8, 
+       col = legend.cols, 
+       pch = 19)
 ```
 
 
 ### A brief interpretion of DFA results (part one)
+
 Let's take a look at how well the DFA did in classifying the specimens. In order to do this, we are going to call `lda` again, this time passing an additional argument to the `CV` parameter. By setting `CV = TRUE`, R will perform cross-validation on the model and provide posterior probabilities of group membership in the `posterior` object returned by `lda`.
 ```{r}
 lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6, 
@@ -330,6 +365,7 @@ In this case, we passed `table` two vectors:
 We also passed a value to the `dnn` parameter, which is used to label the table ("dnn" stands for _dimnames names_. Yes, that's right, _dimnames names_. Seems repetitive to me, too). The first row of the table shows how the specimens identified as _A. cinerea_ were assigned in the DFA - all were correctly assigned to _A. cinerea_. What should jump out at you in this table is that *all* specimens' DFA assignments match their _a priori_ identifications.
 
 ### A brief interpretion of DFA results (part two)
+
 But let's take a *closer* look at the results. The first six rows show the assignment probabilities for six specimens:
 ```{r}
 head(lda.fit$posterior)
@@ -389,6 +425,7 @@ ambiguous.results
 ```
 
 ### Plotting DFA assignment probabilities (ADVANCED)
+
 One way to visualize how well the analysis performed at distinguishing among the groups is to plot the posterior probabilities for each sample. These can be done with a stacked bar graph (much like the graphs used to visualize [STRUCTURE](http://pritchardlab.stanford.edu/structure.html) results). The first thing we need is a two-dimensional matrix of the posterior probabilities, with each sample corresponding to a _column_. The `lda.fit$posteriors` object has samples in rows, so we can use transpose, `t`, to exchange the rows and columns:
 ```{r}
 posteriors <- t(lda.fit$posterior)
@@ -443,11 +480,16 @@ The last thing we want is to show the _a priori_ assignments of the samples. Thi
 Because this isn't a standard way of labeling an axis, we tell R to skip labeling the x-axis in the `barplot` call (`xaxt = 'n'`), and instead, label the axis after the plot is drawn, with a pair of calls to the `axis` function. I'll leave it as an exercies for you to determin how `tick.pos` and `label.pos` are calculated (hint: documentation for `match` and `rev` will be helpful). Finally, we will need to add some more vertical space in our plot to prevent the species names on the x-axis from being cut off; we use the `par` function to temporarily change the margins of our plot, adding some space to the bottom margin.
   
 ```{r}
+# Besides the first element, which is 0, the remaining values in the vector we 
+# created are the cutoff points for each species. The second element takes the 
+# value of the position of the last occurrence of the first species, the third 
+# element takes the value of the position of the last occurrence of the second 
+# species, and so on.
 tick.pos <- c(0, 
-              nrow(otter) - match(levels(otter$species)[1], rev(otter$species)) + 1, # last occurrence of first species
-              nrow(otter) - match(levels(otter$species)[2], rev(otter$species)) + 1, # last occurrence of second species
-              nrow(otter) - match(levels(otter$species)[3], rev(otter$species)) + 1, # last occurrence of third species
-              nrow(otter) - match(levels(otter$species)[4], rev(otter$species)) + 1) # last occurrence of fourth species
+              nrow(otter) - match(levels(otter$species)[1], rev(otter$species)) + 1, 
+              nrow(otter) - match(levels(otter$species)[2], rev(otter$species)) + 1, 
+              nrow(otter) - match(levels(otter$species)[3], rev(otter$species)) + 1, 
+              nrow(otter) - match(levels(otter$species)[4], rev(otter$species)) + 1)
 
 label.pos <- c(floor((tick.pos[2] - tick.pos[1]) / 2),
                floor((tick.pos[3] - tick.pos[2]) / 2 + tick.pos[2]),
@@ -469,8 +511,16 @@ barplot(posteriors,
         col = legend.cols,
         legend.text = levels(otter$species),
         args.legend = list(cex = 0.7, x = ncol(posteriors) + 55, y = 0.6, xpd = TRUE))
-axis(side = 1, at = tick.pos, labels = FALSE) # tick marks
-axis(side = 1, at = label.pos, labels = levels(otter$species), tick = FALSE, par(las = 2, cex = 0.8))
+# Add tick marks
+axis(side = 1, 
+     at = tick.pos, 
+     labels = FALSE)
+# Add axis labels
+axis(side = 1, 
+     at = label.pos, 
+     labels = levels(otter$species), 
+     tick = FALSE, 
+     par(las = 2, cex = 0.8))
 
 # Restore graphics defaults
 par(mar = mar.default)
@@ -478,6 +528,7 @@ par(mar = mar.default)
 
 
 ### Final script for DFA posteriors
+
 The final script for running the DFA and creating the barplot of posterior probabilities would then be:
 ```{r, eval = FALSE}
 # DFA on otter jaw measurements
@@ -486,7 +537,8 @@ The final script for running the DFA and creating the barplot of posterior proba
 # 2016-11-18
 
 # Read in data
-otter <- read.csv(file = "data/otter-mandible-data.csv", header = TRUE)
+otter <- read.csv(file = "data/otter-mandible-data.csv", 
+                  stringsAsFactors = TRUE)
 
 # Drop rows with NA
 otter <- na.omit(otter)
@@ -503,12 +555,17 @@ lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6,
                prior = c(1,1,1,1)/4, 
                CV = TRUE)
 
-# Setup vectors for labeling x-axis with a priori assignments
+# Setup vectors for labeling x-axis with a priori assignments. 
+# Besides the first element, which is 0, the remaining values in the vector we 
+# created are the cutoff points for each species. The second element takes the 
+# value of the position of the last occurrence of the first species, the third 
+# element takes the value of the position of the last occurrence of the second 
+# species, and so on.
 tick.pos <- c(0, 
-              nrow(otter) - match(levels(otter$species)[1], rev(otter$species)) + 1, # last occurrence of first species
-              nrow(otter) - match(levels(otter$species)[2], rev(otter$species)) + 1, # last occurrence of second species
-              nrow(otter) - match(levels(otter$species)[3], rev(otter$species)) + 1, # last occurrence of third species
-              nrow(otter) - match(levels(otter$species)[4], rev(otter$species)) + 1) # last occurrence of fourth species
+              nrow(otter) - match(levels(otter$species)[1], rev(otter$species)) + 1, 
+              nrow(otter) - match(levels(otter$species)[2], rev(otter$species)) + 1, 
+              nrow(otter) - match(levels(otter$species)[3], rev(otter$species)) + 1, 
+              nrow(otter) - match(levels(otter$species)[4], rev(otter$species)) + 1)
 
 label.pos <- c(floor((tick.pos[2] - tick.pos[1]) / 2),
                floor((tick.pos[3] - tick.pos[2]) / 2 + tick.pos[2]),
@@ -544,30 +601,37 @@ par(mar = mar.default)
 ## Additional resources
 
 ### General multivariate analyses:
+
 + Manly, B.F.J. 2004. _Multivariate Statistical Methods: a primer_. Chapman & Hall, Boca Raton.
 
 ### PCA
+
 + [Quick-R page on PCA](http://www.statmethods.net/advstats/factor.html)
 + [Visualizing PCA results from r-bloggers](https://www.r-bloggers.com/computing-and-visualizing-pca-in-r/)
 + [Principal Components Regression from r-bloggers](https://www.r-bloggers.com/performing-principal-components-regression-pcr-in-r/)
 + [Why PCA? (or "how to explain PCA to your grandmother")](http://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues)
 
 ### DFA
+
 + [Quick-R page on DFA](http://www.statmethods.net/advstats/discriminant.html)
 + [R-bloggers DFA with visualization](https://www.r-bloggers.com/computing-and-visualizing-lda-in-r/)
 
 ***
 
 ### Installing R packages
+
 Note that if a package is not installed on your machine, a call to `library` will throw an error, indicating the package has to be installed first. For example, if we were to load a package called `mustelid` without installing it first:
 ```{r error = TRUE}
 library("mustelid")
 ```
+
 So how do I install packages? you ask. With `install.packages`:
 ```{r eval = FALSE}
 install.packages("mustelid")
 library("mustelid")
 ```
+(note there is no R package called "mustelid", so no matter how hard you try, this example will always end in failure)
+
 
 <a href="index.html">Back to learn-r main page</a>
   
