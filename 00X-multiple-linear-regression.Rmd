@@ -10,7 +10,8 @@ output: html_document
 ##Multivariate linear regression
 
 ```{r}
-gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv")
+gapminder <- read.csv(file = "data/gapminder-FiveYearData.csv",
+                      stringsAsFactors = TRUE)
 gapminder$logGDP <- log10(gapminder$gdpPercap)
 fit.one <- lm(formula = lifeExp ~ logGDP, data = gapminder)
 fit.two <- lm(formula = lifeExp ~ year + logGDP, data = gapminder)
