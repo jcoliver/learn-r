@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Jeff Oliver" />
@@ -269,7 +269,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -331,6 +330,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -342,18 +342,6 @@ summary {
   display: none;
 }
 </style>
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
 
 <!-- code folding -->
 
@@ -376,7 +364,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">learn-r Announcement message</h1>
 <h4 class="author">Jeff Oliver</h4>
-<h4 class="date">29 June, 2020</h4>
+<h4 class="date">28 July, 2020</h4>
 
 </div>
 
@@ -392,10 +380,10 @@ _All sessions will be 9-11 am on Tuesday in the Data Studios of the [Main Librar
 -->
 <p><em>All sessions will be 9-11 am (MST) on Tuesday through Zoom</em> at <a href="https://arizona.zoom.us/j/437855363">https://arizona.zoom.us/j/437855363</a>. To get the most out of these workshops, participants should bring a laptop with <a href="https://jcoliver.github.io/learn-r/000-setup-instructions.html">R and RStudio installed</a>.</p>
 <ul>
-<li>July 07: <strong>Open R lab</strong>: Bring your R questions or just come in to write some code and enjoy coffee and pastries.</li>
-<li>July 14: <strong>Introduction to R Graphing</strong>: This hands-on workshop will demonstrate how to create a basic plot in R from a text file of data. This introduction provides an entry point for those unfamiliar with R (or a refresher for those who are rusty).</li>
-<li>July 21: <strong>Open R lab</strong>.</li>
-<li>July 28: <strong>Open R lab</strong>.</li>
+<li>August 04: <strong>Open R lab</strong>: Bring your R questions or just come in to write some code and enjoy coffee and pastries.</li>
+<li>August 11: <strong>Open R lab</strong>.</li>
+<li>August 18: <strong>Dynamic reports with knitr</strong>: What if there was a way to include text and all the code we used for our analyses in a single document? What about a report that includes not only data visualization, but the actual code used to produce those visualizations? With <em>RMarkdown</em> and the knitr package, we write text and code in a single document - this way, we can update reports and manuscripts with new data or corrections with minimal effort.</li>
+<li>August 25: <strong>Open R lab</strong>.</li>
 </ul>
 <p>Additional resources:</p>
 <ul>
@@ -429,6 +417,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
