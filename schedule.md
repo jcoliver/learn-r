@@ -3,7 +3,7 @@
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
 | 04  | Aug   | [Virtual](contingency.md) open lab |
-| 11  | Aug   | Introduction to data visualization |
+| 11  | Aug   | [Virtual](contingency.md) open lab |
 | 18  | Aug   | Dynamic reports with RMarkdown     |
 | 25  | Aug   | [Virtual](contingency.md) open lab |
 
