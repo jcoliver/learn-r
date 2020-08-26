@@ -2,10 +2,11 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 04  | Aug   | [Virtual](contingency.md) open lab |
-| 11  | Aug   | [Virtual](contingency.md) open lab |
-| 18  | Aug   | Dynamic reports with RMarkdown     |
-| 25  | Aug   | [Virtual](contingency.md) open lab |
+| 01  | Sep   | [Virtual](contingency.md) open lab |
+| 08  | Sep   | [Virtual](contingency.md) open lab |
+| 15  | Sep   | Introduction to R Statistics       |
+| 22  | Sep   | [Virtual](contingency.md) open lab |
+| 29  | Sep   | [Virtual](contingency.md) open lab |
 
 All sessions will be 9-11 AM on Tuesday<!--in the [Data Studio](https://new.library.arizona.edu/visit/spaces/data-studio) of the Main Library-->. To get the most out of these workshops, participants should bring a laptop with [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
 
