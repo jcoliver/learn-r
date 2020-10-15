@@ -224,12 +224,29 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                                                        fill = Abundance)) +
   geom_tile() +
   xlab(label = "Sample") +
+  facet_grid(~ Depth, scales = "free_x", space = "free_x")
+
+mine.heatmap
+```
+
++ Passing `"free_x"` to the `scales` argument instructs R to allow different x-axis for each of our sub-plots. In this case, the default is for each site to appear in each sub-plot. Specifying `scales = "free_x"` removes any site from a sub-plot where there is no corresponding data. That is, it removes sites 1-S, 2-S, and 3-S from the 3.5 and 25 depth sub-plots, removes 1-M, 2-M, and 3-M from the 0.5 and 25 depth sub-plots, and removes 2-B and 3-B from the 0.5 and 3.5 depth sub-plots.
++ Passing `"free_x"` to `space` ensures that each column in the plot is the same width. Try it without specifying the `space` argument to see the effect of this behavior.
+
+While we are here, we can also move the boxes labelling each sub-plot (0.5, 3.5, and 25) from the top of the plot to the bottom of the plot with the `switch` argument in the `facet_grid()` function:
+
+```{r facet-switch}
+mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+                                                       y = Class,
+                                                       fill = Abundance)) +
+  geom_tile() +
+  xlab(label = "Sample") +
   facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x")
 
 mine.heatmap
 ```
 
-That's better. There is still some room for improvement, but we'll get to that later. 
+
+That's better. There is still some room for improvement, but we'll get to that later.
 
 ### Improving aesthetics
 
@@ -304,7 +321,7 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                       low = "#FFFFFF",
                       high = "#012345") +
   theme(strip.placement = "outside") +
-  ggtitle(label = "Microbe Class Diversity")
+  ggtitle(label = "Microbe Class Abundance")
 
 mine.heatmap
 ```
@@ -324,7 +341,7 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                       high = "#012345") +
   theme(strip.placement = "outside",
         plot.title = element_text(hjust = 0.5)) +
-  ggtitle(label = "Microbe Class Diversity")
+  ggtitle(label = "Microbe Class Abundance")
 
 mine.heatmap
 ```
@@ -364,7 +381,7 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                       high = "#012345") +
   theme(strip.placement = "outside",
         plot.title = element_text(hjust = 0.5)) +
-  ggtitle(label = "Microbe Class Diversity") +
+  ggtitle(label = "Microbe Class Abundance") +
   scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
 
 mine.heatmap
@@ -387,7 +404,7 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
         plot.title = element_text(hjust = 0.5),
         axis.title.y = element_blank(), # Remove y-axis title
         strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) +
-  ggtitle(label = "Microbe Class Diversity") +
+  ggtitle(label = "Microbe Class Abundance") +
   scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
 
 mine.heatmap
@@ -410,7 +427,7 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
         plot.title = element_text(hjust = 0.5),
         axis.title.y = element_blank(),
         strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) +
-  ggtitle(label = "Microbe Class Diversity") +
+  ggtitle(label = "Microbe Class Abundance") +
   scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class)))) +
   theme_bw() # Use the black and white theme
 
@@ -439,7 +456,7 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
         plot.title = element_text(hjust = 0.5),
         axis.title.y = element_blank(),
         strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) +
-  ggtitle(label = "Microbe Class Diversity") +
+  ggtitle(label = "Microbe Class Abundance") +
   scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
 
 mine.heatmap
@@ -487,7 +504,7 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
         plot.title = element_text(hjust = 0.5), # Center-justify plot title
         axis.title.y = element_blank(), # Remove y-axis title
         strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) +
-  ggtitle(label = "Microbe Class Diversity") +
+  ggtitle(label = "Microbe Class Abundance") +
   scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
 
 mine.heatmap
