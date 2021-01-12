@@ -1,6 +1,6 @@
 # Contingency plan for R workshops
 
-To reduce the potential for spreading the Coronavirus, the University of Arizona Libraries' Tuesday morning R sessions are moving to an online format. The sessions will occur 9-11am and participants can join through a variety of media. As was the case for in-person sessions, participants should have a computer with [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html). Sessions will be held in this virtual format until May 26, at which point we will reassess the situation.
+To reduce the potential for spreading the Coronavirus, the University of Arizona Libraries' Tuesday morning R sessions are currently conducted in an online format. The sessions will occur 9-11am and participants can join through a variety of media. As was the case for in-person sessions, participants should have a computer with [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html). Sessions will be held in this virtual format until Fall 2021, at which point we will reassess the situation.
 
 Participants can join in one or both ways:
 
