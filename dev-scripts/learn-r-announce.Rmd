@@ -14,14 +14,19 @@ suppressPackageStartupMessages(expr = library(lubridate))
 # TODO: Consider adding update to schedule.md as well
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2021-01-05",
-                                 "2021-01-12",
-                                 "2021-01-19",
-                                 "2021-01-26"),
-                       lessons = c(0, 0, -1, -1))
+schedule <- data.frame(dates = c("2021-02-02",
+                                 "2021-02-09",
+                                 "2021-02-16",
+                                 "2021-02-23"),
+                       lessons = c(-1, 2, -1, 1))
 
 # Toggle indicating whether or not attendance files should be created
 create.files <- TRUE
+
+# Where attendance files will be placed
+attend_destination <- "./"
+# attend_destination <- "../../learn-r-non-repo/admin/"
+
 ```
 
 ```{r prepare-data}
@@ -78,15 +83,12 @@ Additional resources:
 #### Attendance files set up:
 ```{r setup-files}
 if (create.files) {
-  destination <- "./"
-  # destination <- "../../learn-r-non-repo/admin/"
-  
   # Creating files with only header rows for tracking attendance
   header.row <- "Last,First,E-mail,College,Department,Position"
   for (i in 1:nrow(schedule)) {
     if (schedule$lessons[i] != 0) { # Don't set up a file if there is no lesson
       filename <- paste0(schedule$dates[i], "-main-", schedule$short.name[i], "-attendance.csv")
-      filename <- paste0(destination, filename)
+      filename <- paste0(attend_destination, filename)
       if (!file.exists(filename)) {
         file.create(filename)
         file.connection <- file(filename)
