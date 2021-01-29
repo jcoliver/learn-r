@@ -9,11 +9,15 @@ output:
 urlcolor: blue
 ---
 
-The Shiny package for R provides a way to transform your R code into interactive applications accessible through a web browser. This lesson provides a hands-on example of how you can use Shiny to create intuitive graphical user interfaces.
+The Shiny package for R provides a way to transform your R code into 
+interactive applications accessible through a web browser. This lesson provides 
+a hands-on example of how you can use Shiny to create intuitive graphical user 
+interfaces.
 
 #### Learning objectives
 
-1. Explain the different responsibilities of the user interface and the server function
+1. Explain the different responsibilities of the user interface and the server 
+function
 2. Manipulate user interface options in side panels
 3. Apply defensive programming techniques to reduce errors
 4. Diagnose problems with Shiny built-in debugging features
@@ -21,25 +25,184 @@ The Shiny package for R provides a way to transform your R code into interactive
 
 ## Description
 
-While the R programming language is immensely popular, not everyone has the time or resources to learn how to use it (a shame, I know). How then, can you share your awesome data visualization tools that you wrote in R? The [Shiny](https://shiny.rstudio.com/) package provides the architecture to build beautiful web applications without writing a single HTML tag. This workshop will introduce some of the functionality of the package as well as platforms you can use to share your work.
+While the R programming language is immensely popular, not everyone has the 
+time or resources to learn how to use it (a shame, I know). How then, can you 
+share your awesome data visualization tools that you wrote in R? The [Shiny](https://shiny.rstudio.com/) package provides the architecture to build 
+beautiful web applications without writing a single HTML tag. This workshop 
+will introduce some of the functionality of the package as well as platforms 
+you can use to share your work.
 
 ***
 
 ## Getting started
 
-install packages (shiny, ggplot2, palmerpenguins)
+To start with, we will need to install the [shiny](https://shiny.rstudio.com/) 
+package for R. For this lesson, we also be using the 
+[ggplot2](https://ggplot2.tidyverse.org/) package for data visualization and 
+the [palmerpenguins](https://allisonhorst.github.io/palmerpenguins/) package 
+for our data source.
 
-start shiny project
+```{r install-packages, eval = FALSE}
+install.packages("shiny")
+install.packages("ggplot2")
+install.packages("palmerpenguins")
+```
 
-File > New Project > New Directory > Shiny Web Application
+Note, I misspell "palmerpenguins" more frequently that I would like to admit, 
+so if you encounter installation problems with that package, double-check to 
+make sure it is spelled correctly.
 
-![The new Shiny web application dialog](images/new-shiny-project.png)
+We are now ready to start our Shiny Application!
+
++ From the File menu, select New Project...
++ Choose "New Directory" in the first dialog
++ In the Project Type dialog, select "Shiny Web Application", which is probably
+the third option in the list. If you do not see this as an option, try shutting 
+down RStudio and starting it up again.
+
+![The new Shiny web application dialog](images/shiny-new-project.png){ width=50% }
+
+Name your project "shiny-lesson" and be sure you save it somewhere you can 
+remember (I usually save these lessons to the Desktop or My Documents).
 
 ***
 
-## [TOPIC ONE]
+## Two halves make an app
 
-Look at two parts of file (`ui` and `server` (and  `shinyApp` at the very end of the file))
+The shiny application file you just created has the two critical parts:
+
+1. `ui`, which starts on line 13. `ui` handles all communication with the user:
+it records choices and information that the user inputs and displays any output
+based on those selections.
+2. `server` which starts on line 36. `server` takes care of any calculations 
+and does the heavy lifting for creating any data visualizations.
+
+The `ui` code:
+```{r ui-code, eval = FALSE}
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+
+    # Application title
+    titlePanel("Old Faithful Geyser Data"),
+
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel(
+            sliderInput("bins",
+                        "Number of bins:",
+                        min = 1,
+                        max = 50,
+                        value = 30)
+        ),
+
+        # Show a plot of the generated distribution
+        mainPanel(
+           plotOutput("distPlot")
+        )
+    )
+)
+```
+
+The `server` code:
+```{r server-code, eval = FALSE}
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+
+    output$distPlot <- renderPlot({
+        # generate bins based on input$bins from ui.R
+        x    <- faithful[, 2]
+        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+
+        # draw the histogram with the specified number of bins
+        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    })
+}
+```
+
+There is actually an important third part of the the file, too, at the very 
+end. Line 49 has:
+
+```{r run-app, eval = FALSE}
+shinyApp(ui = ui, server = server)
+```
+
+This command actually starts up the application so you can actually use it, so 
+make sure not to delete it.
+
+### Test drive the app
+
+Whenever you start a new Shiny app, the file will have the bare bones of an app 
+as in the file you see here. Let us first see what this app does, then we will 
+modify it for our own uses. Press the "Run App" button at the top of the app.R
+script.
+
+![Run the shiny app](images/shiny-run.png){ width=80% }
+
+This app takes one piece of input from the user (the number of bins to use for 
+the histogram) and updates the visualization based on the user's selection.
+
+If we look back at the code in our app script, the `ui` section adds the title 
+we see at the top of the app ("Old Faithful Geyser Data") and calls the 
+function `sidebarLayout()`. This is where most of your code for communicating 
+with the user is going to be. Here it does two things: 
+
+1. Creates the slider with `sliderInput()`
+2. Displays the plot with `plotOutput()`
+
+You probably also noted that the slider controls are with a call to 
+`sidebarPanel()` and the plot display happens inside a call to `mainPanel()`. 
+We will not mess around too much with this, but in general we will use 
+`sidebarPanel()` to gather user input and `mainPanel()` for any output we want 
+to display.
+
+### Don't start from scratch
+
+Our goal is to create an app that allows users to choose among three species 
+of penguins (Gentoo, Adelie, and Chinstrap) and display a plot of bill length 
+vs. bill depth.
+
+Now, we want an application that has nothing to do with geyser eruptions, but 
+instead of deleting everything in the file and starting from scratch, we start 
+by adding comments to indicate what we want to do and commenting out the 
+original code. We can delete the old code later, but for now we can keep it to 
+remind us of how shiny apps work.
+
+Since our app will use the ggplot2 and palmerpenguins packages, go ahead and 
+add library calls to those two packages right after the shiny package is loaded.
+
+```{r load-libraries, eval = FALSE}
+library(shiny)
+library(palmerpenguins)
+library(ggplot2)
+```
+
+Start by updating the title in the call to `titlePanel()`
+
+```{r update-title, eval = FALSE}
+titlePanel("Penguin size relationships")
+```
+
+Change the comment above sidebar layout to indicate what we want users to do, 
+that is, we will want them to select the name of a penguin species.
+
+```{r update-sidebar, eval = FALSE}
+# Sidebar with text input for penguin species
+```
+
+We can also update the comment above the main panel code to reflect the type of 
+plot we will display.
+
+```{r update-mainPanel, eval = FALSE}
+# Show a size plot for selected species
+```
+
+We are still at the point of writing comments, which are really instructions to 
+ourselves about the code we need to write. So scroll on down to the `server` 
+section add add a comment before `output$distPlot <- renderPlot`:
+
+```{r update-plot-comment, eval = FALSE}
+# Create size plot for penguin species
+```
 
 ***
 
