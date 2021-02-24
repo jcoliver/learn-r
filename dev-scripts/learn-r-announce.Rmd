@@ -14,11 +14,12 @@ suppressPackageStartupMessages(expr = library(lubridate))
 # TODO: Consider adding update to schedule.md as well
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2021-02-02",
-                                 "2021-02-09",
-                                 "2021-02-16",
-                                 "2021-02-23"),
-                       lessons = c(-1, 2, -1, 1))
+schedule <- data.frame(dates = c("2021-03-02",
+                                 "2021-03-09",
+                                 "2021-03-16",
+                                 "2021-03-23",
+                                 "2021-03-30"),
+                       lessons = c(-1, 4, -1, 10, -1))
 
 # Toggle indicating whether or not attendance files should be created
 create.files <- TRUE
@@ -44,7 +45,7 @@ Paste the following message into e-mail:
 
 ***
 
-Would you mind forwarding this announcement to researchers in your department? Please let me know if you have any questions. Thanks in advance!
+Would you mind forwarding this announcement to researchers and students in your department? Please let me know if you have any questions. Thanks in advance!
 
 \-\-\-\-\-
 
