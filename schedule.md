@@ -2,11 +2,11 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 02  | Mar   | [Virtual](contingency.md) open lab |
-| 09  | Mar   | Data visualization with ggplot     |
-| 16  | Mar   | [Virtual](contingency.md) open lab |
-| 23  | Mar   | Git and GitHub with RStudio        |
 | 30  | Mar   | [Virtual](contingency.md) open lab |
+| 06  | Apr   | Data science: more fun, less pain with tidyverse |
+| 13  | Apr   | [Virtual](contingency.md) open lab |
+| 20  | Apr   | Introduction to writing functions in R |
+| 27  | Apr   | [Virtual](contingency.md) open lab |
 
 All sessions will be 9-11 AM on Tuesday<!--in the [Data Studio](https://new.library.arizona.edu/visit/spaces/data-studio) of the Main Library-->. To get the most out of these workshops, participants should bring a laptop with [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
 
