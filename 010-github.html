@@ -166,7 +166,7 @@ pre code {
 
 <h1 class="title toc-ignore">Git and GitHub in RStudio</h1>
 <h4 class="author">Jeff Oliver</h4>
-<h4 class="date">23 March, 2021</h4>
+<h4 class="date">30 March, 2021</h4>
 
 </div>
 
@@ -199,9 +199,17 @@ pre code {
 <p>After installing Git, you’ll need to configure Git. You can do this through RStudio or in your command line interface of choice. In RStudio, open a new Terminal via Tools &gt; Terminal &gt; New Terminal and enter:</p>
 <pre class="bash"><code>git config --global user.name &#39;Your Name&#39;
 git config --global user.email &#39;your@email.com&#39;</code></pre>
-<p>Replacing ‘Your Name’ and ‘<a href="mailto:your@email.com" class="email">your@email.com</a>’ with your actual name and e-mail (surrounded by single-quotes).</p>
+<p>Replacing <code>&#39;Your Name&#39;</code> and <code>&#39;your@email.com&#39;</code> with your actual name and e-mail (surrounded by single-quotes).</p>
 <p>Next, if you have not already, <a href="https://github.com/join?source=header-home">sign up for a GitHub account</a>. Registration is free and simple. Make sure you remember your GitHub ID and password - we’ll need those later in the lesson.</p>
+<div id="xcrun-error-invalid-active-developer-path" class="section level3">
+<h3>xcrun: error: invalid active developer path</h3>
+<p>What? On some versions of Mac OS, you will need to install <em>one more</em> program in order to get RStudio and Git to talk with each other. If you see an error like</p>
+<pre class="bash"><code>xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun.</code></pre>
+<p>shut down RStudio, open the Terminal application and run</p>
+<pre class="bash"><code>xcode-select --install</code></pre>
+<p>open RStudio again and you should be all set! If you want to know more about this error, head over to Stack Overflow and read about <a href="https://apple.stackexchange.com/questions/254380/why-am-i-getting-an-invalid-active-developer-path-when-attempting-to-use-git-a">this in more detail</a>.</p>
 <hr />
+</div>
 </div>
 <div id="decision-time" class="section level2">
 <h2>Decision Time</h2>

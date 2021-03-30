@@ -55,12 +55,31 @@ git config --global user.name 'Your Name'
 git config --global user.email 'your@email.com'
 ```
   
-Replacing 'Your Name' and 'your@email.com' with your actual name and e-mail 
+Replacing `'Your Name'` and `'your@email.com'` with your actual name and e-mail 
 (surrounded by single-quotes).
   
 Next, if you have not already, [sign up for a GitHub account](https://github.com/join?source=header-home). 
 Registration is free and simple. Make sure you remember your GitHub ID and 
 password - we'll need those later in the lesson.
+
+### xcrun: error: invalid active developer path
+
+What? On some versions of Mac OS, you will need to install _one more_ program 
+in order to get RStudio and Git to talk with each other. If you see an error 
+like 
+
+```{bash eval = FALSE}
+xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun.
+```
+
+shut down RStudio, open the Terminal application and run
+
+```{bash eval = FALSE}
+xcode-select --install
+```
+
+open RStudio again and you should be all set! If you want to know more about
+this error, head over to Stack Overflow and read about [this in more detail](https://apple.stackexchange.com/questions/254380/why-am-i-getting-an-invalid-active-developer-path-when-attempting-to-use-git-a).
 
 ***
 
