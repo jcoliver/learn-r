@@ -78,6 +78,7 @@ based on those selections.
 and does the heavy lifting for creating any data visualizations.
 
 The `ui` code:
+
 ```{r ui-code, eval = FALSE}
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -104,6 +105,7 @@ ui <- fluidPage(
 ```
 
 The `server` code:
+
 ```{r server-code, eval = FALSE}
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -170,7 +172,7 @@ remind us of how shiny apps work.
 Since our app will use the ggplot2 and palmerpenguins packages, go ahead and 
 add library calls to those two packages right after the shiny package is loaded.
 
-```{r load-libraries, eval = FALSE}
+```{r load-libraries}
 library(shiny)
 library(palmerpenguins)
 library(ggplot2)
@@ -185,48 +187,282 @@ titlePanel("Penguin size relationships")
 Change the comment above sidebar layout to indicate what we want users to do, 
 that is, we will want them to select the name of a penguin species.
 
-```{r update-sidebar, eval = FALSE}
+```{r sidebar-comment, eval = FALSE}
 # Sidebar with text input for penguin species
+sidebarLayout(
+  sidebarPanel(
 ```
 
 We can also update the comment above the main panel code to reflect the type of 
 plot we will display.
 
-```{r update-mainPanel, eval = FALSE}
+```{r mainPanel-comment, eval = FALSE}
 # Show a size plot for selected species
 ```
 
 We are still at the point of writing comments, which are really instructions to 
 ourselves about the code we need to write. So scroll on down to the `server` 
-section add add a comment before `output$distPlot <- renderPlot`:
+section add add a comment before `output$distPlot <- renderPlot` (around line 
+37 in the file):
 
-```{r update-plot-comment, eval = FALSE}
+```{r plot-comment, eval = FALSE}
 # Create size plot for penguin species
 ```
 
 ***
 
-## [TOPIC TWO]
+## _Now_ we start updating the code
 
-Adding the interactivity
+At this point we haven't changed much besides some comments. If you run the app, 
+it is still going to be the one plotting eruptions of Old Faithful. There are 
+two changes we need to make to the actual code: one in the `ui` function and 
+one in the `server` function. The first (in `ui`) is all about getting 
+information from the user. 
 
-Do panel manipulation with Species first as a text field, then change this to a drop-down menu (defensive programming)
+Navigate to the sidebar panel, has a `sliderInput` function:
 
-`textInput`
+```{r sidebar-original, eval = FALSE}
+# Sidebar with text input for penguin species
+sidebarLayout(
+    sidebarPanel(
+        sliderInput("bins",
+                    "Number of bins:",
+                    min = 1,
+                    max = 50,
+                    value = 30)
+    ),
+```
+
+Start by deleting the `sliderInput`:
+
+```{r sidebar-panel-empty, eval = FALSE}
+# Sidebar with text input for penguin species
+sidebarLayout(
+    sidebarPanel(
+    ),
+```
+
+And add, inside the call to `sidebarPanel`, a call `textInput`:
+
+```{r sidebar-panel-input, eval = FALSE}
+# Sidebar with text input for penguin species
+sidebarLayout(
+    sidebarPanel(
+        textInput(inputId = "species",
+                  label = "Species",
+                  value = "Gentoo")
+    ),
+```
+
+For `textInput`:
+
+1. `inputId = "species"` is the identifier for the information the user enters; 
+we will see this in use later in the `server` section. Just remember that we 
+used all lower-case letters.
+2. `label = "Species"` is the text that will appear to the user. Note here we 
+capitalized "Species".
+3. `value = "Gentoo"` indicates the default value that `species` will take.
+
+The next change occurs in the `server` section. Navigate to the comment we 
+added about creating a plot (around line 35 of the file):
+
+```{r plot-original, eval = FALSE}
+# Create size plot for penguin species
+output$distPlot <- renderPlot({
+    # generate bins based on input$bins from ui.R
+    x    <- faithful[, 2]
+    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+
+    # draw the histogram with the specified number of bins
+    hist(x, breaks = bins, col = 'darkgray', border = 'white')
+})
+```
+
+Since we are not going to use the code for plotting a histogram, we can delete 
+all the code within `renderPlot` (but be sure to leave the opening `({` and 
+closing `})`):
+
+```{r plot-empty, eval = FALSE}
+# Create size plot for penguin species
+output$distPlot <- renderPlot({
+  
+})
+```
+
+And we now add our ggplot2 commands to create a scatter plot of bill depth 
+versus bill length. (not familiar with ggplot2? Check out the [introduction to ggplot lesson](https://jcoliver.github.io/learn-r/004-intro-ggplot.html)).
+
+```{r plot-input-01, eval = FALSE}
+# Create size plot for penguin species
+output$distPlot <- renderPlot({
+          ggplot(data = penguins[penguins$species == input$species, ], 
+           mapping = aes(x = bill_length_mm, 
+                         y = bill_depth_mm,
+                         color = sex)) +
+        geom_point()
+})
+```
+
+Note the data we specified to use for the plot:
+
+```{r data-subset-01, eval = FALSE}
+data = penguins[penguins$species == input$species, ]
+```
+
+`penguins$species` is the data set we loaded from the palmerpenguins package, 
+but what about that `input` thing? Where did that come from? Remember the work 
+we did on the `SidebarPanel`, and the `inputId`? The `input` object in the 
+`server` section of our app has all the information we collect from the `ui` 
+section of our app. We will play with this more in a bit, but now it is time to 
+test our app! Save any changes to your app.R file, and press the Run App button
+in the top-right of your script. You should see
+
+![An app! With penguins!](images/shiny-penguin-text.png){ width=80% }
+
+Try replacing "Gentoo" with "Chinstrap", then with "Adelie". Note the points 
+change in the plot for the different species.
 
 ### PEBKAC
 
-We've all been there. Here's the point for defensive programming (changing the text input field to a dropdown dialog)
+If you are like me, you probably managed to misspell "Adelie". If you didn't, 
+try it. What happens? When we enter the name of a species that does not 
+correspond to the three species in the data set (or if you misspell them), R 
+will try to pull out data for species that do not exist. You can see this 
+behavior by typing the following in your R console:
 
-Maybe also add an option checkbox to color by sex
+```{r zero-rows}
+penguins[penguins$species == "Adele", ]
+```
+
+The resulting data has zero rows because there are no rows with "Adele" in the 
+species column. remember that when we used this syntax in our `server` section, 
+it was pulling the value from `input$species`:
+
+```{r data-subset-02, eval = FALSE}
+data = penguins[penguins$species == input$species, ]
+```
+
+If a user types in an incorrect value, R will try to make a plot anyways. But if
+your user does not know how to spell Adelie, their error will not be evident. To 
+improve the experience a user will have when interacting with your Shiny app, we 
+can use [Defensive programming](https://en.wikipedia.org/wiki/Defensive_programming) 
+techniques to reduce these errors. In our app, we let users type in the name of 
+the penguin species, but instead of a text box, we can use a dropdown menu so 
+users could _only_ choose species that match rows in the penguins data. Let us 
+change the input from `textInput` to a dropdown menu. Start by navigating to the 
+`sidebarPanel` call:
+
+```{r sidebar-panel-text, eval = FALSE}
+# Sidebar with text input for penguin species
+sidebarLayout(
+    sidebarPanel(
+        textInput(inputId = "species",
+                  label = "Species",
+                  value = "Gentoo")
+    ),
+```
+
+and replace `textInput` with a call to `selectInput`:
+
+```{r sidebar-panel-select, eval = FALSE}
+# Sidebar with text input for penguin species
+sidebarLayout(
+  sidebarPanel(
+    selectInput(inputId = "species",
+                label = "Select species",
+                choices = unique(penguins$species))
+    ),
+```
+
+We will leave `inputId` as the same value, after all, the `server` section is 
+expecting a value for which species to use. We can update `label` to provide a 
+little more guidance for the user. Finally, instead of providing a default 
+value, we provide a list of choices; in this case, the only options available 
+are the unique values in the `species` column of the `penguin` data. You can 
+see these values by typing the following in the console:
+
+```{r unique-species}
+unique(penguins$species)
+```
+
+Once you have the `selectInput` information added, save the file and run the 
+app with the Run app button. Now the text input field should be replaced with 
+a dropdown menu of penguin species. No more misspelled species names!
+
+![The three penguin options](images/shiny-penguin-select.png)
 
 ***
 
-## [TOPIC THREE]
+## Shiny: not just for plots
 
-Add some bells & whistles, like the regression model output to the screen with `tableOutput` or `textOutput` functions.
+We are not limited to only providing graphical output. We can also provide the 
+use text or tabular output. We can see this by adding the results of a linear 
+regression model to the output of our app. This time, we are going to work 
+backwards: first we will write code in the `server` section to run the linear 
+model, then we will update the `ui` section to show the results. Navigate to 
+the `server` section with your ggplot code:
+
+```{r plot-input-02, eval = FALSE}
+# Create size plot for penguin species
+output$distPlot <- renderPlot({
+    ggplot(data = penguins[penguins$species == input$species, ], 
+           mapping = aes(x = bill_length_mm, 
+                         y = bill_depth_mm,
+                         color = sex)) +
+        geom_point()
+})
+```
+
+Immediately following that closing `})`, we can add the code for regression. 
+But before we do, note where our plot is stored. That is, all the code for our 
+plot is in a call to `renderPlot` and _that_ is assigned to the variable 
+`output$distPlot`. Hmm, `output` you say? Just like we use the `input` variable 
+to send information from the `ui` section to the `server` section, we can use 
+`output` to send information in the opposite direction (`server` $\rightarrow$ 
+`ui`). So we start by creating a new variable in the `output` object, and use 
+the `renderTable` method instead of `renderPlot`. Remember to add a comment 
+about the rationale for the code. We start after the `})` from `renderPlot`:
+
+```{r table-empty, eval = FALSE}
+        geom_point()
+})
+# Add results of a linear model to output
+output$statsTable <- renderTable({
+  
+})
+```
+
+Inside the call to `renderTable`, we can add the R code for performing a linear 
+regression between bill length and bill width, extracting the summary statistics 
+from the model, and pulling out the coefficient estimates from the model:
+
+```{r table-empty, eval = FALSE}
+        geom_point()
+})
+# Add results of a linear model to output
+output$statsTable <- renderTable({
+  model <- lm(formula = bill_depth_mm ~ bill_length_mm,
+              data = penguins[penguins$species == input$species, ])
+  model_summary <- summary(model)
+  model_summary$coefficients
+})
+```
+
+Note that our plot shows one penguin at a time, so we need to be sure to subset 
+the data like we did for the plot. We do this by using the value stored in 
+`input$species` like we did previously:
+
+```{r data-subset-03, eval = FALSE}
+data = penguins[penguins$species == input$species, ]
+```
+
+
+Need to add `rownames = TRUE` to `renderTable` so coefficient names show up.
 
 Introduce some error here, so it doesn't show up. Use `runApp(display.mode = "showcase")`
+
+
+
 
 Fix the problem
 

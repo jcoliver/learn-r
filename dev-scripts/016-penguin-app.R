@@ -49,15 +49,16 @@ server <- function(input, output) {
                              y = bill_depth_mm,
                              color = sex)) +
             geom_point()
-        
     })
     
+    # Add results of a linear model to output
     output$statsTable <- renderTable({
         model <- lm(formula = bill_depth_mm ~ bill_length_mm,
                     data = penguins[penguins$species == input$species, ])
         model_summary <- summary(model)
         model_summary$coefficients
-    })
+    },
+    rownames = TRUE)
 }
 
 # Run the application 
