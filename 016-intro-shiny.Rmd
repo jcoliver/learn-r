@@ -436,25 +436,113 @@ Inside the call to `renderTable`, we can add the R code for performing a linear
 regression between bill length and bill width, extracting the summary statistics 
 from the model, and pulling out the coefficient estimates from the model:
 
-```{r table-empty, eval = FALSE}
-        geom_point()
-})
+```{r table-comments, eval = FALSE}
 # Add results of a linear model to output
 output$statsTable <- renderTable({
+  # Create the linear model
+
+  # Extract summary statistics
+
+  # Print coefficient table
+
+})
+```
+
+And with those comments in place, we can fill in code as appropriate:
+
+```{r table-model, eval = FALSE}
+# Add results of a linear model to output
+output$statsTable <- renderTable({
+  # Create the linear model
   model <- lm(formula = bill_depth_mm ~ bill_length_mm,
               data = penguins[penguins$species == input$species, ])
+  # Extract summary statistics
   model_summary <- summary(model)
+  # Print coefficient table
   model_summary$coefficients
 })
 ```
 
 Note that our plot shows one penguin at a time, so we need to be sure to subset 
-the data like we did for the plot. We do this by using the value stored in 
-`input$species` like we did previously:
+the data in our call to `lm` like we did for the plot. We do this by using the 
+value stored in `input$species` like we did previously:
 
 ```{r data-subset-03, eval = FALSE}
 data = penguins[penguins$species == input$species, ]
 ```
+
+So we updated our `server` to run a model, but how do we get it to show up? If 
+you press the Run App button, you'll notice that nothing is changed. Just like 
+the plot, we have to explicitly tell the `ui` section to display the 
+information. To do this, navigate to the `mainPanel` function in the `ui` 
+section (it should be around line 29):
+
+```{r main-panel-plot, eval = FALSE}
+# Show a plot of the generated distribution
+mainPanel(
+   plotOutput("distPlot")
+)
+```
+
+We need to add the results from our linear regression model to the main panel 
+output. For the plot, we used `plotOutput`, but since we are displaying a table, 
+we use...wait for it...`tableOutput`. After the call to `plotOutput`, add a 
+comma, then a call to `tableOutput`, referencing the variable with our table:
+
+```{r main-panel-table, eval = FALSE}
+# Show a plot of the generated distribution
+mainPanel(
+   plotOutput("distPlot"),
+   tableOutput("statsTable")
+)
+```
+
+Note we need to have quotes around the reference `"statsTable"`. Now you can 
+save your file and run the app (press Run App in upper right corner of the 
+panel). If you see an error that includes
+
+```
+36:            plotOutput("distPlot")
+37:            tableOutput
+               ^
+Possible missing comma at:
+37:           tableOutput("statsTable")
+              ^
+```
+
+be sure that you have a comma after `plotOutput("distPlot")`. When you run the 
+app, you should now see, below the plot, the results of the linear regression 
+model.
+
+![Table with coefficient estimates of...what?](images/shiny-penguin-table-01.png)
+
+The coefficient estimates and associated statistics show up, but we do not 
+know what they are estimates for. When we look at this table in R, normally we 
+see that the first row corresponds to the intercept and the second row to our 
+coefficient for bill length.
+
+```{r model-output}
+  # Create the linear model
+  model <- lm(formula = bill_depth_mm ~ bill_length_mm,
+              data = penguins[penguins$species == "Gentoo", ])
+  # Extract summary statistics
+  model_summary <- summary(model)
+  # Print coefficient table
+  model_summary$coefficients
+```
+
+(If R complains that it cannot find "penguins", make sure the library is loaded 
+by running `library(palmerpenguins)` in the console).
+
+The output shows `(Intercept)` and `bill_length_mm`, but these turn out to be 
+row names for the coefficients matrix. Taking a look at the documentation for 
+`renderTable` (type `?renderTable` into the console), we see that the default 
+value of `rownames` is `FALSE` (look at the **Usage** section in the 
+documentation). So maybe if we pass `rownames = TRUE` to `renderTable`, it will 
+fix the problem. Let's update the `server` section
+
+![Table with labelled coefficient estimates](images/shiny-penguin-table-02.png)
+
 
 
 Need to add `rownames = TRUE` to `renderTable` so coefficient names show up.

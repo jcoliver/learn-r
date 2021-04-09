@@ -31,7 +31,7 @@ ui <- fluidPage(
                         choices = unique(penguins$species))
         ),
         
-        # Show a plot of the generated distribution
+        # Show a size plot for selected species
         mainPanel(
            plotOutput("distPlot"),
            tableOutput("statsTable")
