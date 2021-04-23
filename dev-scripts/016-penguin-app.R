@@ -13,7 +13,7 @@ library(ggplot2)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-
+    
     # Application title
     titlePanel("Penguin size relationships"),
 

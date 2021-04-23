@@ -190,7 +190,7 @@ that is, we will want them to select the name of a penguin species.
 ```{r sidebar-comment, eval = FALSE}
 # Sidebar with text input for penguin species
 sidebarLayout(
-  sidebarPanel(
+    sidebarPanel(
 ```
 
 We can also update the comment above the main panel code to reflect the type of 
@@ -224,12 +224,12 @@ Navigate to the sidebar panel, has a `sliderInput` function:
 ```{r sidebar-original, eval = FALSE}
 # Sidebar with text input for penguin species
 sidebarLayout(
-  sidebarPanel(
-    sliderInput("bins",
-                "Number of bins:",
-                min = 1,
-                max = 50,
-                value = 30)
+    sidebarPanel(
+      sliderInput("bins",
+                  "Number of bins:",
+                  min = 1,
+                  max = 50,
+                  value = 30)
   ),
 ```
 
@@ -238,8 +238,8 @@ Start by deleting the `sliderInput`:
 ```{r sidebar-panel-empty, eval = FALSE}
 # Sidebar with text input for penguin species
 sidebarLayout(
-  sidebarPanel(
-  ),
+    sidebarPanel(
+    ),
 ```
 
 And add, inside the call to `sidebarPanel`, a call `textInput`:
@@ -247,11 +247,11 @@ And add, inside the call to `sidebarPanel`, a call `textInput`:
 ```{r sidebar-panel-input, eval = FALSE}
 # Sidebar with text input for penguin species
 sidebarLayout(
-  sidebarPanel(
-    textInput(inputId = "species",
-              label = "Species",
-              value = "Gentoo")
-  ),
+    sidebarPanel(
+      textInput(inputId = "species",
+                label = "Species",
+                value = "Gentoo")
+    ),
 ```
 
 For `textInput`:
@@ -269,12 +269,12 @@ added about creating a plot (around line 35 of the file):
 ```{r plot-original, eval = FALSE}
 # Create size plot for penguin species
 output$distPlot <- renderPlot({
-  # generate bins based on input$bins from ui.R
-  x    <- faithful[, 2]
-  bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    # generate bins based on input$bins from ui.R
+    x    <- faithful[, 2]
+    bins <- seq(min(x), max(x), length.out = input$bins + 1)
 
-  # draw the histogram with the specified number of bins
-  hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    # draw the histogram with the specified number of bins
+    hist(x, breaks = bins, col = 'darkgray', border = 'white')
 })
 ```
 
@@ -295,11 +295,11 @@ versus bill length. (not familiar with ggplot2? Check out the [introduction to g
 ```{r plot-input-01, eval = FALSE}
 # Create size plot for penguin species
 output$distPlot <- renderPlot({
-  ggplot(data = penguins[penguins$species == input$species, ], 
-         mapping = aes(x = bill_length_mm, 
-                       y = bill_depth_mm,
-                       color = sex)) +
-  geom_point()
+    ggplot(data = penguins[penguins$species == input$species, ], 
+           mapping = aes(x = bill_length_mm, 
+                         y = bill_depth_mm,
+                         color = sex)) +
+    geom_point()
 })
 ```
 
@@ -355,11 +355,11 @@ change the input from `textInput` to a dropdown menu. Start by navigating to the
 ```{r sidebar-panel-text, eval = FALSE}
 # Sidebar with text input for penguin species
 sidebarLayout(
-  sidebarPanel(
-    textInput(inputId = "species",
-              label = "Species",
-              value = "Gentoo")
-  ),
+    sidebarPanel(
+      textInput(inputId = "species",
+                label = "Species",
+                value = "Gentoo")
+    ),
 ```
 
 and replace `textInput` with a call to `selectInput`:
@@ -367,11 +367,11 @@ and replace `textInput` with a call to `selectInput`:
 ```{r sidebar-panel-select, eval = FALSE}
 # Sidebar with text input for penguin species
 sidebarLayout(
-  sidebarPanel(
-    selectInput(inputId = "species",
-                label = "Select species",
-                choices = unique(penguins$species))
-  ),
+    sidebarPanel(
+      selectInput(inputId = "species",
+                  label = "Select species",
+                  choices = unique(penguins$species))
+    ),
 ```
 
 We will leave `inputId` as the same value, after all, the `server` section is 
@@ -405,11 +405,11 @@ the `server` section with your ggplot code:
 ```{r plot-input-02, eval = FALSE}
 # Create size plot for penguin species
 output$distPlot <- renderPlot({
-  ggplot(data = penguins[penguins$species == input$species, ], 
-         mapping = aes(x = bill_length_mm, 
-                       y = bill_depth_mm,
-                       color = sex)) +
-  geom_point()
+    ggplot(data = penguins[penguins$species == input$species, ], 
+           mapping = aes(x = bill_length_mm, 
+                         y = bill_depth_mm,
+                         color = sex)) +
+    geom_point()
 })
 ```
 
@@ -424,7 +424,7 @@ the `renderTable` method instead of `renderPlot`. Remember to add a comment
 about the rationale for the code. We start after the `})` from `renderPlot`:
 
 ```{r table-empty, eval = FALSE}
-  geom_point()
+    geom_point()
 })
 # Add results of a linear model to output
 output$statsTable <- renderTable({
@@ -439,11 +439,11 @@ from the model, and pulling out the coefficient estimates from the model:
 ```{r table-comments, eval = FALSE}
 # Add results of a linear model to output
 output$statsTable <- renderTable({
-  # Create the linear model
+    # Create the linear model
 
-  # Extract summary statistics
+    # Extract summary statistics
 
-  # Print coefficient table
+    # Print coefficient table
 
 })
 ```
@@ -453,13 +453,13 @@ And with those comments in place, we can fill in code as appropriate:
 ```{r table-model, eval = FALSE}
 # Add results of a linear model to output
 output$statsTable <- renderTable({
-  # Create the linear model
-  model <- lm(formula = bill_depth_mm ~ bill_length_mm,
-              data = penguins[penguins$species == input$species, ])
-  # Extract summary statistics
-  model_summary <- summary(model)
-  # Print coefficient table
-  model_summary$coefficients
+    # Create the linear model
+    model <- lm(formula = bill_depth_mm ~ bill_length_mm,
+                data = penguins[penguins$species == input$species, ])
+    # Extract summary statistics
+    model_summary <- summary(model)
+    # Print coefficient table
+    model_summary$coefficients
 })
 ```
 
@@ -480,7 +480,7 @@ section (it should be around line 29):
 ```{r main-panel-plot, eval = FALSE}
 # Show a plot of the generated distribution
 mainPanel(
-  plotOutput("distPlot")
+    plotOutput("distPlot")
 )
 ```
 
@@ -492,8 +492,8 @@ comma, then a call to `tableOutput`, referencing the variable with our table:
 ```{r main-panel-table, eval = FALSE}
 # Show a plot of the generated distribution
 mainPanel(
-  plotOutput("distPlot"),
-  tableOutput("statsTable")
+    plotOutput("distPlot"),
+    tableOutput("statsTable")
 )
 ```
 
@@ -546,13 +546,13 @@ but _before_ the closing parentheses, `)`, add `, rownames = TRUE`:
 ```{r table-model-rownames, eval = FALSE}
 # Add results of a linear model to output
 output$statsTable <- renderTable({
-  # Create the linear model
-  model <- lm(formula = bill_depth_mm ~ bill_length_mm,
-              data = penguins[penguins$species == input$species, ])
-  # Extract summary statistics
-  model_summary <- summary(model)
-  # Print coefficient table
-  model_summary$coefficients
+    # Create the linear model
+    model <- lm(formula = bill_depth_mm ~ bill_length_mm,
+                data = penguins[penguins$species == input$species, ])
+    # Extract summary statistics
+    model_summary <- summary(model)
+    # Print coefficient table
+    model_summary$coefficients
 }, rownames = TRUE)
 ```
 
@@ -560,11 +560,6 @@ Save your app file and run it again and the names of the coefficients in the
 model should now appear with the results.
 
 ![Table with labelled coefficient estimates](images/shiny-penguin-table-02.png)
-
-
-Introduce some error here, so it doesn't show up. Use `runApp(display.mode = "showcase")`
-
-Fix the problem
 
 ***
 
@@ -584,6 +579,7 @@ publishing your app.
 ## Additional resources
 
 + The invaluable [Shiny cheat sheet](https://shiny.rstudio.com/images/shiny-cheatsheet.pdf)
++ RStudio's resources for [debugging Shiny apps](https://shiny.rstudio.com/articles/debugging.html)
 + An [interactive Shiny course](https://rstudio-education.github.io/shiny-course/)
 + [shinyapps.io](https://www.shinyapps.io/) will host your app so other people can use it
 + A [PDF version](https://jcoliver.github.io/learn-r/016-intro-shiny.pdf) of this lesson
