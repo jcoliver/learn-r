@@ -166,7 +166,7 @@ pre code {
 
 <h1 class="title toc-ignore">Interactive web apps with Shiny</h1>
 <h4 class="author">Jeff Oliver</h4>
-<h4 class="date">23 April, 2021</h4>
+<h4 class="date">17 May, 2021</h4>
 
 </div>
 
@@ -358,8 +358,8 @@ output$distPlot &lt;- renderPlot({
 <p>If you are like me, you probably managed to misspell “Adelie”. If you didn’t, try it. What happens? When we enter the name of a species that does not correspond to the three species in the data set (or if you misspell them), R will try to pull out data for species that do not exist. You can see this behavior by typing the following in your R console:</p>
 <pre class="r"><code>penguins[penguins$species == &quot;Adele&quot;, ]</code></pre>
 <pre><code>## # A tibble: 0 x 8
-## # … with 8 variables: species &lt;fct&gt;, island &lt;fct&gt;, bill_length_mm &lt;dbl&gt;, bill_depth_mm &lt;dbl&gt;,
-## #   flipper_length_mm &lt;int&gt;, body_mass_g &lt;int&gt;, sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
+## # … with 8 variables: species &lt;fct&gt;, island &lt;fct&gt;, bill_length_mm &lt;dbl&gt;, bill_depth_mm &lt;dbl&gt;, flipper_length_mm &lt;int&gt;,
+## #   body_mass_g &lt;int&gt;, sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
 <p>The resulting data has zero rows because there are no rows with “Adele” in the species column. remember that when we used this syntax in our <code>server</code> section, it was pulling the value from <code>input$species</code>:</p>
 <pre class="r"><code>data = penguins[penguins$species == input$species, ]</code></pre>
 <p>If a user types in an incorrect value, R will try to make a plot anyways. But if your user does not know how to spell Adelie, their error will not be evident. To improve the experience a user will have when interacting with your Shiny app, we can use <a href="https://en.wikipedia.org/wiki/Defensive_programming">Defensive programming</a> techniques to reduce these errors. In our app, we let users type in the name of the penguin species, but instead of a text box, we can use a dropdown menu so users could <em>only</em> choose species that match rows in the penguins data. Let us change the input from <code>textInput</code> to a dropdown menu. Start by navigating to the <code>sidebarPanel</code> call:</p>
@@ -496,6 +496,12 @@ output$statsTable &lt;- renderTable({
 <li>RStudio’s resources for <a href="https://shiny.rstudio.com/articles/debugging.html">debugging Shiny apps</a></li>
 <li>An <a href="https://rstudio-education.github.io/shiny-course/">interactive Shiny course</a></li>
 <li><a href="https://www.shinyapps.io/">shinyapps.io</a> will host your app so other people can use it</li>
+<li>If you want a different look from the default Shiny theme, try
+<ul>
+<li>The <a href="https://rstudio.github.io/shinythemes/">shinythemes</a> package for different color schemes. The <a href="https://shiny.rstudio.com/gallery/shiny-theme-selector.html">Shiny theme selector</a> provides examples of all available themes in the package</li>
+<li>The <a href="https://rstudio.github.io/bslib/">bslib</a> package to create a custom theme. More information on using bslib can be found on RStudio’s <a href="https://shiny.rstudio.com/articles/themes.html">page on theming</a></li>
+<li>The <a href="https://rstudio.github.io/thematic/">thematic</a> package makes it easier to theme graphics from ggplot2, lattice, and even base R!</li>
+</ul></li>
 <li>A <a href="https://jcoliver.github.io/learn-r/016-intro-shiny.pdf">PDF version</a> of this lesson</li>
 </ul>
 <hr />

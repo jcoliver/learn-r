@@ -581,7 +581,17 @@ publishing your app.
 + The invaluable [Shiny cheat sheet](https://shiny.rstudio.com/images/shiny-cheatsheet.pdf)
 + RStudio's resources for [debugging Shiny apps](https://shiny.rstudio.com/articles/debugging.html)
 + An [interactive Shiny course](https://rstudio-education.github.io/shiny-course/)
-+ [shinyapps.io](https://www.shinyapps.io/) will host your app so other people can use it
++ [shinyapps.io](https://www.shinyapps.io/) will host your app so other people 
+can use it
++ If you want a different look from the default Shiny theme, try
+    + The [shinythemes](https://rstudio.github.io/shinythemes/) package for 
+    different color schemes. The [Shiny theme selector](https://shiny.rstudio.com/gallery/shiny-theme-selector.html)
+    provides examples of all available themes in the package
+    + The [bslib](https://rstudio.github.io/bslib/) package to create a custom 
+    theme. More information on using bslib can be found on RStudio's [page on 
+    theming](https://shiny.rstudio.com/articles/themes.html)
+    + The [thematic](https://rstudio.github.io/thematic/) package makes it 
+    easier to theme graphics from ggplot2, lattice, and even base R!
 + A [PDF version](https://jcoliver.github.io/learn-r/016-intro-shiny.pdf) of this lesson
 
 ***
