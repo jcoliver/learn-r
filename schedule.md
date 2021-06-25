@@ -2,11 +2,11 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 01  | Jun   | [Virtual](contingency.md) open lab |
-| 08  | Jun   | [Virtual](contingency.md) open lab |
-| 15  | Jun   | [Virtual](contingency.md) open lab |
-| 22  | Jun   | [Virtual](contingency.md) open lab |
 | 29  | Jun   | [Virtual](contingency.md) open lab |
+| 06  | Jun   | [Virtual](contingency.md) open lab |
+| 13  | Jun   | [Virtual](contingency.md) open lab |
+| 20  | Jun   | [Virtual](contingency.md) open lab |
+| 27  | Jun   | [Virtual](contingency.md) open lab |
 
 All sessions will be 9-11 AM on Tuesday<!--in the [Data Studio](https://new.library.arizona.edu/visit/spaces/data-studio) of the Main Library-->. To get the most out of these workshops, participants should bring a laptop with [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
 
