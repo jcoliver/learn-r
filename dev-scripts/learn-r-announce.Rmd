@@ -74,10 +74,17 @@ for (i in 1:nrow(schedule)) {
 
 Additional resources:
 
-+ A tentative schedule of upcoming workshops is also available at [https://jcoliver.github.io/learn-r/schedule](https://jcoliver.github.io/learn-r/schedule)
-+ Want more help? Sign up for the UA Data Science Slack workspace at [https://jcoliver.github.io/uadatascience-slack/](https://jcoliver.github.io/uadatascience-slack/)
-+ Stay up to date with R workshops by signing up for the University of Arizona R Users mailing list at [https://list.arizona.edu/sympa/subscribe/ruaz](https://list.arizona.edu/sympa/subscribe/ruaz)
-+ Find even more data science resources at the Data Science Institute's events page at   [https://datascience.arizona.edu/events](https://datascience.arizona.edu/events)
++ A tentative schedule of upcoming workshops is also available at
+[https://jcoliver.github.io/learn-r/schedule](https://jcoliver.github.io/learn-r/schedule)
++ Want more help? Sign up for the UA Data Science Slack workspace at
+[https://jcoliver.github.io/uadatascience-slack/](https://jcoliver.github.io/uadatascience-slack/)
++ Stay up to date with R workshops by signing up for the University of Arizona 
+R Users mailing list at
+[https://list.arizona.edu/sympa/subscribe/ruaz](https://list.arizona.edu/sympa/subscribe/ruaz)
++ If you cannot make it to the R session or just want more R, check out former 
+[Data Science Ambassador](http://datascience.arizona.edu/ambassadors) Kelsey 
+Gonzalez's lessons on YouTube at
+[https://www.youtube.com/playlist?list=PL6FsZxVq54ERrlMRNE5aq2qUFH042fbuM](https://www.youtube.com/playlist?list=PL6FsZxVq54ERrlMRNE5aq2qUFH042fbuM).
 
 ***
 
