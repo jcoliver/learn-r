@@ -22,7 +22,30 @@ Species distribution modeling in becoming an increasingly important tool to unde
 
 ## Getting started
 
-Before we do anything, we will need to set up our workspace, download example data, and install additional packages that are necessary to run the models and visualize their output. 
+Before we do anything, we will need to make sure we have necessary software, 
+set up our workspace, download example data, and install additional packages 
+that are necessary to run the models and visualize their output. 
+
+### Necessary software
+
+The packages necessary for species distribution modeling will likely require 
+additional, non-R software to work properly. Which software will depend on the 
+operating system of your computer.
+
+#### Linux
+
+On Debian Linux systems, you will likely need to install the libgdal-dev package.
+You can do this through the terminal via `sudo apt-get install libgdal-dev`.
+
+#### Windows
+
+On Windows machines, you should probably install Rtools. You can find downloads 
+and instructions at [https://cran.r-project.org/bin/windows/Rtools/](https://cran.r-project.org/bin/windows/Rtools/).
+
+#### Mac OS
+
+To use the raster package on Mac OS, you'll need to install Xcode Command Line 
+Tools package. You can do this through a terminal via `xcode-select --install`.
 
 ### Workspace organization
 
@@ -272,6 +295,9 @@ bil.files <- list.files(path = "data/wc2-5",
 
 # We only need one file, so use the first one in the list of .bil files
 mask <- raster(bil.files[1])
+
+# Set the seed for the random-number generator to ensure results are similar
+set.seed(20210707)
 
 # Randomly sample points (same number as our observed points)
 background <- randomPoints(mask = mask,     # Provides resolution of sampling points
@@ -550,9 +576,138 @@ box()
 
 ***
 
+## Advanced: Forecasting distributions
+
+Now that you have a species distribution model, you can make predictions about 
+the distribution under different climate scenarios. Let us pause for a moment 
+and be very clear about this approach. With all kinds of math wizardry on our 
+side, we are attempting to predict the future. Which means _any_ predictions we 
+make should be interpreted with extreme caution. If you are going to go about 
+an approach such as this, it would be wise to run a variety of different models
+and a variety of different climate scenarios. There are links to such resources 
+in the [Additional Resources](#additional-resources) section, below.
+
+### Forecast climate data
+
+We will need to download climate data for the time period of interest. For the 
+purposes of this lesson, we will look a climate projections for the year 2070. 
+We will use the GFDL-ESM2G model with an RCP of 4.5 CO2. For an examination of 
+different forecast models, see [McSweeney et al. 2015](https://link.springer.com/article/10.1007/s00382-014-2418-8). We can 
+download the data like we did before, using raster's `getData()` function, and 
+send it do the data folder:
+
+```{r download-forecast-real, echo = FALSE}
+suppressWarnings(expr = {
+forecast.data <- getData(name = "CMIP5", # forecast data
+                         var = "bio",    # bioclim
+                         res = 2.5,      # 2.5 minute resolution
+                         path = "data/", # destination directory
+                         model = "GD",   # GFDL-ESM2G
+                         rcp = "45",     # CO2 increase 4.5
+                         year = 70)      # 2070
+})
+```
+
+```{r download-forecast-example, eval = FALSE}
+forecast.data <- getData(name = "CMIP5", # forecast data
+                         var = "bio",    # bioclim
+                         res = 2.5,      # 2.5 minute resolution
+                         path = "data/", # destination directory
+                         model = "GD",   # GFDL-ESM2G
+                         rcp = "45",     # CO2 increase 4.5
+                         year = 70)      # 2070
+```
+
+You may see warning messages about "Discarded datum unknown in Proj4 
+definition", but we can ignore those for now.
+
+**Note:** As of this writing (2021-07-07), the forecast data download described 
+above retrieves the CMIP5 data, which are now obsolete. The [CMIP6](https://pcmdi.llnl.gov/CMIP6/) 
+data are now available at [https://www.worldclim.org/data/cmip6/cmip6climate.html](https://www.worldclim.org/data/cmip6/cmip6climate.html) 
+and users are recommended to download the bioclim data directly from the site. 
+You can find the corresponding 2.5 minute resolution data at [https://www.worldclim.org/data/cmip6/cmip6_clim2.5m.html](https://www.worldclim.org/data/cmip6/cmip6_clim2.5m.html); bioclim data are indicated as "bc".
+
+We need to do one more thing before we can use our data, and that is to make 
+sure the names in our model of bioclimatic variables line up with the names in 
+the forecast data object
+
+```{r name-forecast}
+names(forecast.data) <- names(bioclim.data)
+```
+
+### Get out the crystal ball
+
+Now that we have the forecast data, we can apply the model we build above, 
+`bc.model`, to the forecast climate data:
+
+```{r predict-forecast}
+# Predict presence from model with forecast data
+forecast.presence <- dismo::predict(object = bc.model, 
+                                    x = forecast.data, 
+                                    ext = geographic.extent)
+
+```
+
+If you want to look at the predicted probabilities of occurrence, you can 
+modify the code we used above.
+
+```{r map-predicted-probs}
+# Plot base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95")
+
+# Add model probabilities
+plot(forecast.presence, add = TRUE)
+
+# Redraw those country borders
+plot(wrld_simpl, add = TRUE, border = "grey5")
+
+# Add original observations
+points(obs.data$longitude, obs.data$latitude, col = "olivedrab", pch = 20, cex = 0.75)
+box()
+```
+
+We can also map our predictions for presence / absence, using the same 
+threshold that we did for predictions based on current climate data.
+
+```{r map-predicted-pa}
+# Plot base map
+plot(wrld_simpl, 
+     xlim = c(min.lon, max.lon),
+     ylim = c(min.lat, max.lat),
+     axes = TRUE, 
+     col = "grey95")
+
+# Only plot areas where probability of occurrence is greater than the threshold
+plot(forecast.presence > bc.threshold, 
+     add = TRUE, 
+     legend = FALSE, 
+     col = c(NA, "olivedrab"))
+
+# And add those observations
+points(x = obs.data$longitude, 
+       y = obs.data$latitude, 
+       col = "black",
+       pch = "+", 
+       cex = 0.6)
+
+# Redraw those country borders
+plot(wrld_simpl, add = TRUE, border = "grey5")
+box()
+```
+
+Oof. Things do not look great for saguaros under this climate forecast. Try 
+downloading other climate models to see how predictions differ. And remember to 
+interpret these results cautiously.
+
+***
+
 ## Additional resources
 
-+ [Vignette for `dismo` package](https://cran.r-project.org/web/packages/dismo/vignettes/sdm.pdf)
++ [Vignette for dismo package](https://rspatial.org/raster/sdm/)
 + [Species distribution models in R](http://www.molecularecologist.com/2013/04/species-distribution-models-in-r/)
 + [Fast and flexible Bayesian species distribution modelling using Gaussian processes](http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12523/pdf)
 + [Run a range of species distribution models](https://rdrr.io/cran/biomod2/man/BIOMOD_Modeling.html)
