@@ -166,7 +166,7 @@ pre code {
 
 <h1 class="title toc-ignore">Interactive web apps with Shiny</h1>
 <h4 class="author">Jeff Oliver</h4>
-<h4 class="date">19 May, 2021</h4>
+<h4 class="date">30 July, 2021</h4>
 
 </div>
 
@@ -358,9 +358,8 @@ output$distPlot &lt;- renderPlot({
 <p>If you are like me, you probably managed to misspell “Adelie”. If you didn’t, try it. What happens? When we enter the name of a species that does not correspond to the three species in the data set (or if you misspell them), R will try to pull out data for species that do not exist. You can see this behavior by typing the following in your R console:</p>
 <pre class="r"><code>penguins[penguins$species == &quot;Adele&quot;, ]</code></pre>
 <pre><code>## # A tibble: 0 x 8
-## # … with 8 variables: species &lt;fct&gt;, island &lt;fct&gt;, bill_length_mm &lt;dbl&gt;,
-## #   bill_depth_mm &lt;dbl&gt;, flipper_length_mm &lt;int&gt;, body_mass_g &lt;int&gt;, sex &lt;fct&gt;,
-## #   year &lt;int&gt;</code></pre>
+## # … with 8 variables: species &lt;fct&gt;, island &lt;fct&gt;, bill_length_mm &lt;dbl&gt;, bill_depth_mm &lt;dbl&gt;, flipper_length_mm &lt;int&gt;,
+## #   body_mass_g &lt;int&gt;, sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
 <p>The resulting data has zero rows because there are no rows with “Adele” in the species column. remember that when we used this syntax in our <code>server</code> section, it was pulling the value from <code>input$species</code>:</p>
 <pre class="r"><code>data = penguins[penguins$species == input$species, ]</code></pre>
 <p>If a user types in an incorrect value, R will try to make a plot anyways. But if your user does not know how to spell Adelie, their error will not be evident. To improve the experience a user will have when interacting with your Shiny app, we can use <a href="https://en.wikipedia.org/wiki/Defensive_programming">Defensive programming</a> techniques to reduce these errors. In our app, we let users type in the name of the penguin species, but instead of a text box, we can use a dropdown menu so users could <em>only</em> choose species that match rows in the penguins data. Let us change the input from <code>textInput</code> to a dropdown menu. Start by navigating to the <code>sidebarPanel</code> call:</p>
@@ -433,12 +432,12 @@ output$statsTable &lt;- renderTable({
 <p>Note that our plot shows one penguin at a time, so we need to be sure to subset the data in our call to <code>lm</code> like we did for the plot. We do this by using the value stored in <code>input$species</code> like we did previously:</p>
 <pre class="r"><code>data = penguins[penguins$species == input$species, ]</code></pre>
 <p>So we updated our <code>server</code> to run a model, but how do we get it to show up? If you press the Run App button, you’ll notice that nothing is changed. Just like the plot, we have to explicitly tell the <code>ui</code> section to display the information. To do this, navigate to the <code>mainPanel</code> function in the <code>ui</code> section (it should be around line 29):</p>
-<pre class="r"><code># Show a plot of the generated distribution
+<pre class="r"><code># Show plot
 mainPanel(
     plotOutput(&quot;distPlot&quot;)
 )</code></pre>
 <p>We need to add the results from our linear regression model to the main panel output. For the plot, we used <code>plotOutput</code>, but since we are displaying a table, we use…wait for it…<code>tableOutput</code>. After the call to <code>plotOutput</code>, add a comma, then a call to <code>tableOutput</code>, referencing the variable with our table:</p>
-<pre class="r"><code># Show a plot of the generated distribution
+<pre class="r"><code># Show plot and statistical results
 mainPanel(
     plotOutput(&quot;distPlot&quot;),
     tableOutput(&quot;statsTable&quot;)
@@ -488,6 +487,67 @@ output$statsTable &lt;- renderTable({
 <div id="sharing-is-caring" class="section level2">
 <h2>Sharing is caring</h2>
 <p>If you want to make your app available to other people on the web, the easiest way of sharing is through the <a href="https://www.shinyapps.io/">shinyapps.io</a> website. This resource, managed by the folks at RStudio, allows you to publish your app online so anyone with a web browser can use it. You can sign up for an account, or sign in with your GitHub credentials at <a href="https://www.shinyapps.io/admin/#/login">https://www.shinyapps.io/admin/#/login</a>. After signing in, you can follow instructions on the shinyapps.io page for publishing your app.</p>
+<hr />
+<p>The final app.R file will look like this:</p>
+<pre class="r"><code># A Shiny app showing penguin bill size relationships
+# Jeff Oliver
+# jcoliver@arizona.edu
+# 2021-07-30
+
+library(shiny)
+library(palmerpenguins)
+library(ggplot2)
+
+# Define UI for application that draws a scatterplot
+ui &lt;- fluidPage(
+
+    # Application title
+    titlePanel(&quot;Penguin size relationships&quot;),
+
+    # Sidebar with text input for penguin species
+    sidebarLayout(
+        sidebarPanel(
+            selectInput(inputId = &quot;species&quot;,
+                        label = &quot;Species&quot;,
+                        choices = unique(penguins$species))
+        ),
+        
+        # Show plot and statistical results
+        mainPanel(
+           plotOutput(&quot;distPlot&quot;),
+           tableOutput(&quot;statsTable&quot;)
+        )
+    )
+)
+
+# Define server logic required to draw a scatterplot
+server &lt;- function(input, output) {
+
+    # Make plot of bill depth vs. bill length
+    output$distPlot &lt;- renderPlot({
+        ggplot(data = penguins[penguins$species == input$species, ], 
+               mapping = aes(x = bill_length_mm, 
+                             y = bill_depth_mm,
+                             color = sex)) +
+            geom_point() +
+            xlab(&quot;Bill length (mm)&quot;) +
+            ylab(&quot;Bill depth (mm)&quot;)
+    })
+    
+    # Add results of a linear model to output
+    output$statsTable &lt;- renderTable({
+        # Create the linear model
+        model &lt;- lm(formula = bill_depth_mm ~ bill_length_mm,
+                    data = penguins[penguins$species == input$species, ])
+        # Extract summary statistics
+        model_summary &lt;- summary(model)
+        # Print coefficient table
+        model_summary$coefficients
+    }, rownames = TRUE)
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)</code></pre>
 <hr />
 </div>
 <div id="additional-resources" class="section level2">
