@@ -2,11 +2,23 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 03  | Aug   | [Virtual](contingency.md) open lab |
-| 10  | Aug   | [Virtual](contingency.md) open lab |
 | 17  | Aug   | [Virtual](contingency.md) open lab |
 | 24  | Aug   | Hybrid open lab                    |
 | 31  | Aug   | Introduction to R statistics       |
+| 07  | Sep   | Hybrid open lab                    |
+| 14  | Sep   | Data visualization with ggplot     |
+| 21  | Sep   | Hybrid open lab                    |
+| 28  | Sep   | Heatmaps & data wrangling          |
+| 05  | Oct   | Hybrid open lab                    |
+| 12  | Oct   | Introduction to functional programming |
+| 19  | Oct   | Hybrid open lab                    |
+| 26  | Oct   | Interactive web apps with Shiny    |
+| 02  | Nov   | Hybrid open lab                    |
+| 09  | Nov   | Data science: more fun, less pain with tidyverse |
+| 16  | Nov   | Hybrid open lab                    |
+| 23  | Nov   | Hybrid open lab                    |
+| 30  | Nov   | Dynamic reports with knitr         |
+| 07  | Dec   | Hybrid open lab                    |
 
 All sessions will be 9-11 AM on Tuesday morning (MST). Beginning August 24, 
 2021, these will be hybrid sessions, with the [Virtual](contingency.md) option
