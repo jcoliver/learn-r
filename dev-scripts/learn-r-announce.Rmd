@@ -14,12 +14,11 @@ suppressPackageStartupMessages(expr = library(lubridate))
 # TODO: Consider adding update to schedule.md as well
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2021-08-03",
-                                 "2021-08-10",
-                                 "2021-08-17",
-                                 "2021-08-24",
-                                 "2021-08-31"),
-                       lessons = c(-1, -1, -1, -1, 2))
+schedule <- data.frame(dates = c("2021-09-07",
+                                 "2021-09-14",
+                                 "2021-09-21",
+                                 "2021-09-28"),
+                       lessons = c(-1, 4, -1, 6))
 
 # Toggle indicating whether or not attendance files should be created
 create.files <- TRUE
@@ -52,14 +51,13 @@ Would you mind forwarding this announcement to researchers and students in your 
 <!--
 _All sessions will be 9-11 am on Tuesday in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio)_. 
 -->
-_All sessions will be 9-11 am (MST) on Tuesday_. August 3, 10, and 17 sessions 
-will be held on Zoom at [https://arizona.zoom.us/j/437855363](https://arizona.zoom.us/j/437855363).
-Starting August 24, 2021, sessions will be offered in hybrid format: we will be 
-in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
+_All sessions will be 9-11 am (MST) on Tuesday_. Sessions will be offered in 
+hybrid format: we will be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
 and running a concurrent Zoom session at [https://arizona.zoom.us/j/437855363](https://arizona.zoom.us/j/437855363).
 <!--
 _All sessions will be 9-11 am (MST) on Tuesday through Zoom_ at  [https://arizona.zoom.us/j/437855363](https://arizona.zoom.us/j/437855363). 
 -->
+
 To get the most out of these workshops, participants should bring a laptop with 
 [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html). 
 If you miss a session, you can always check out the collaborative blog at
@@ -104,7 +102,7 @@ Gonzalez's lessons on YouTube at
 ```{r setup-files}
 if (create.files) {
   # Creating files with only header rows for tracking attendance
-  header.row <- "Last,First,E-mail,College,Department,Position"
+  header.row <- "Last,First,E-mail,College,Department,Position,Attendance"
   for (i in 1:nrow(schedule)) {
     if (schedule$lessons[i] != 0) { # Don't set up a file if there is no lesson
       filename <- paste0(schedule$dates[i], "-main-", schedule$short.name[i], "-attendance.csv")
