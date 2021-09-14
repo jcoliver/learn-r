@@ -1,5 +1,5 @@
 ---
-title: "LESSON TITLE"
+title: "Parallel processing in R"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
@@ -12,9 +12,9 @@ urlcolor: blue
 [INTRODUCTORY SENTENCE]
 
 #### Learning objectives
-1. one
-2. two
-3. three
+1. Install packages for parallel processing in R
+2. Write code to automate repetitive tasks
+3. Translate iterative `for` loop code into parallel processing
 
 ## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
 
@@ -36,7 +36,7 @@ urlcolor: blue
 
 + [resource one](url-one)
 + [resource two](url-two)
-+ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
++ A [PDF version](https://jcoliver.github.io/learn-r/017-intro-parallel.pdf) of this lesson
 
 ***
 
