@@ -12,6 +12,7 @@ urlcolor: blue
 [INTRODUCTORY SENTENCE]
 
 #### Learning objectives
+
 1. Install packages for parallel processing in R
 2. Write code to automate repetitive tasks
 3. Translate iterative `for` loop code into parallel processing
@@ -22,20 +23,92 @@ urlcolor: blue
 
 ## Getting started
 
-***
-
-## [TOPIC ONE]
+<making a new project>
 
 ***
 
-## [TOPIC TWO]
+## Repeating ourselves
+
+<Something for each row in a data frame>
+Do leave-one-out linear regression
+
+```{r}
+# Leave one out of iris data
+errors <- numeric(nrow(iris))
+for (i in 1:nrow(iris)) {
+  one_model <- lm(Sepal.Length ~ Petal.Length, data = iris[-i, ])
+  predicted_fit <- predict(one_model, newdata = iris[i, ])
+  errors[i] <- iris$Sepal.Length[i] - predicted_fit[1]
+}
+
+mse <- mean(errors^2)
+
+library(parallel)
+
+n <- detectCores() - 2
+system.time({
+  clust <- makeCluster(n)
+  a <- parLapply(cl = clust,
+                 X = 1:nrow(iris),
+                 fun = function(x) {
+                   m <- lm(Sepal.Length ~ Petal.Length, data = iris[-x, ])
+                   p <- predict(m, newdata = iris[x, ])
+                   e <- iris$Sepal.Length[x] - p[1]
+                   return(e)
+                 })
+  stopCluster(cl = clust)
+})
+
+mean(unlist(a)^2)
+
+
+```
+
+***
+
+## Make it functional
+
+<convert the stuff from the for loop into a function>
+
+***
+
+## "Embarrasingly parallizable"
+
+```{r}
+# Takes about a second
+system.time(
+  for (i in 1:300) {
+    x <- rnorm(n = 10000)
+    y <- x + rnorm(n = length(x), sd = 0.1)
+    l <- lm(y ~ x)
+    s <- summary(l)
+  }
+)
+
+library(parallel)
+
+n <- detectCores() - 2
+clust <- makeCluster(n)
+system.time({
+  a <- parLapply(cl = clust,
+                 X = rnorm(n = 10000),
+                 fun = function(x) {
+                   y <- x + rnorm(n = length(x), sd = 0.1)
+                   l <- lm(y ~ x)
+                   s <- summary(l)
+                 })
+})
+stopCluster(cl = clust)
+
+```
 
 ***
 
 ## Additional resources
 
-+ [resource one](url-one)
-+ [resource two](url-two)
++ [Overview](https://dept.stat.lsa.umich.edu/~jerrick/courses/stat701/notes/parallel.html#using-sockets-with-parlapply) of parallel processing in R, with comparsions of 
+different approaches
++ Examples of parallel processing with [parallel, doParallel, and foreach packages](https://www.r-bloggers.com/2018/09/simple-parallel-processing-in-r/)
 + A [PDF version](https://jcoliver.github.io/learn-r/017-intro-parallel.pdf) of this lesson
 
 ***
