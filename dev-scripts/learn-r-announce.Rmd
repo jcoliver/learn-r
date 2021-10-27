@@ -14,11 +14,12 @@ suppressPackageStartupMessages(expr = library(lubridate))
 # TODO: Consider adding update to schedule.md as well
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2021-10-05",
-                                 "2021-10-12",
-                                 "2021-10-19",
-                                 "2021-10-26"),
-                       lessons = c(-1, 7, -1, 13))
+schedule <- data.frame(dates = c("2021-11-02",
+                                 "2021-11-09",
+                                 "2021-11-16",
+                                 "2021-11-23",
+                                 "2021-11-30"),
+                       lessons = c(-1, 12, -1, -1, 5))
 
 # Toggle indicating whether or not attendance files should be created
 create.files <- TRUE
