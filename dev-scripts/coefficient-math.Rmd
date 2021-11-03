@@ -304,11 +304,14 @@ $$
 
 I'll focus on just the last case, where $sexparents.F = Male$ and 
 $pemergencysupportnaF = Yes$. We will do calculations for two values of 
-`depsym` the minimum observed value and the maximum observed value (if 
+`depsym`: the minimum observed value and the maximum observed value (if 
 `depsym` is categorical with two levels, the minimum is 0 and maximum is 1). 
 When indexing the $\beta$ values, we have to remember to add 1 because R starts 
-numbering at 1, not zero. The $\beta$ values are stored in the first column of 
-the coefficients table.
+numbering at 1, not zero. That is, the coefficient for the intercept, 
+$\beta_0$, will be in the _first_ row of the coefficients table; the 
+value for $\beta_1$ will be in the _second_ row of the coefficients table, and 
+so on. The $\beta$ values are stored in the first column of the coefficients 
+table.
 
 ```{r calc-model, eval = FALSE}
 # Extract coefficients table from model
