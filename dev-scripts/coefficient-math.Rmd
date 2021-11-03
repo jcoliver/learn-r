@@ -1,0 +1,322 @@
+---
+title: "Interpreting Model Coefficients"
+author: "Jeff Oliver"
+date: "11/2/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+When interpreting coefficients of a model, I find it easiest to formalize the 
+model mathematically first. For example, in the following model:
+
+```{r full-model, eval = FALSE}
+lm(formula = ppengag ~ depsym * sexparents.F * pemergencysupportnaF +
+    pfinancialsupportnaF + pemotionalsupportnaF + childsex.F +
+    mathardship + currentrelatwithBSFna.F + seenchildpastmonthna.F +
+    livewithchildna.Fr, data = d)
+```
+
+we have 10 individual predictor variables, plus the interactions among three of 
+the variables (for another four predictors). For the remainder of this 
+explanation, we will focus on a simpler model, only including those variables 
+that are involved in interaction terms:
+
+```{r simple-model, eval = FALSE}
+lm(formula = ppengag ~ depsym * sexparents.F * pemergencysupportnaF, data = d)
+```
+
+This model can be mathematically expressed as
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_1 \times depsym + \beta_2 \times sexparents.F + \\
+  & \beta_3 \times pemergencysupportnaF + \\
+  & \beta_4 \times depsym \times sexparents.F + \\
+  & \beta_5 \times depsym \times pemergencysupportnaF + \\
+  & \beta_6 \times sexparents.F \times pemergencysupportnaF + \\
+  & \beta_7 \times depsym \times sexparents.F \times pemergencysupportnaF
+\end{aligned}
+$$
+
+We can use this formulation of the model with the output of the `summary` 
+command to see the predicted values for each situation. The output of `summary` 
+produces (among other things) a coefficients table (If you want to skip to the 
+R code without the math, head to the **Calculations** section near the end of 
+this document). The table below shows how the $\beta$ values from the equation 
+above correspond to values in the output of `summary`:
+
+|$\beta$  | Name in table | value |
+|:--------|:--------------|------:|
+|$\beta_0$| (Intercept) | 5.9929707 |
+|$\beta_1$| depsym | 0.0087369 |
+|$\beta_2$| sexparents.FMale | -0.1730717 |
+|$\beta_3$| pemergencysupportnaFYes | 0.0808494 |
+|$\beta_4$| depsym:sexparents.FMale | -0.8209010 |
+|$\beta_5$| depsym:pemergencysupportnaFYes | -0.0703307 |
+|$\beta_6$| sexparents.FMale:pemergencysupportnaFYes | -1.3248714 |
+|$\beta_7$| depsym:sexparents.FMale:pemergencysupportnaFYes | 0.8394927 |
+
+For `sexparents.F` and `pemergencysupportnaF`, there are two levels. R treats 
+the first level as a 0 and the second level as a 1. We can find out which level 
+is the _second_ level by looking at the coefficients table. The value used as 
+the second level shows up immediately after the name of the variable. So for 
+`sexparents.F`, we know the second level is Male because the variable always 
+shows up as `sexparents.FMale`. Similarly, the second level of 
+`pemergencysupportnaF` is Yes, because that variable shows up in the 
+coefficients table as `pemergencysupportnaFYes`.
+
+***
+
+We can now start creating separate formulas for the different cases. When 
+`sexparents.F` is Female, we substitute in a 0 for each `sexparents.F`:
+
+$sexparents.F = Female$
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_1 \times depsym + \beta_2 \times 0 + \\
+  & \beta_3 \times pemergencysupportnaF + \\
+  & \beta_4 \times depsym \times 0 + \\
+  & \beta_5 \times depsym \times pemergencysupportnaF + \\
+  & \beta_6 \times 0 \times pemergencysupportnaF + \\
+  & \beta_7 \times depsym \times 0 \times pemergencysupportnaF
+\end{aligned}
+$$
+Which reduces to:
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_1 \times depsym + \\
+  & \beta_3 \times pemergencysupportnaF + \\
+  & \beta_5 \times depsym \times pemergencysupportnaF
+\end{aligned}
+$$
+
+***
+
+For the case when `sexparents.F` is Male, we substitute in a 1 for each 
+`sexparents.F`:
+
+$sexparents.F = Male$
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_1 \times depsym + \beta_2 \times 1 + \\
+  & \beta_3 \times pemergencysupportnaF + \\
+  & \beta_4 \times depsym \times 1 + \\
+  & \beta_5 \times depsym \times pemergencysupportnaF + \\
+  & \beta_6 \times 1 \times pemergencysupportnaF + \\
+  & \beta_7 \times depsym \times 1 \times pemergencysupportnaF
+\end{aligned}
+$$
+Which simplifies to:
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_1 \times depsym + \beta_2 + \\
+  & \beta_3 \times pemergencysupportnaF + \\
+  & \beta_4 \times depsym  + \\
+  & \beta_5 \times depsym \times pemergencysupportnaF + \\
+  & \beta_6 \times pemergencysupportnaF + \\
+  & \beta_7 \times depsym \times pemergencysupportnaF
+\end{aligned}
+$$
+And we can group like terms:
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_2 + \\
+  & (\beta_1 + \beta_4) \times depsym + \\
+  & (\beta_3 + \beta_6) \times pemergencysupportnaF + \\
+  & (\beta_5 + \beta_7) \times depsym \times pemergencysupportnaF
+\end{aligned}
+$$
+
+***
+
+We now have two equations:
+
+$sexparents.F = Female$
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_1 \times depsym + \\
+  & \beta_3 \times pemergencysupportnaF + \\
+  & \beta_5 \times depsym \times pemergencysupportnaF
+\end{aligned}
+$$
+
+and 
+
+$sexparents.F = Male$
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_2 + \\
+  & (\beta_1 + \beta_4) \times depsym + \\
+  & (\beta_3 + \beta_6) \times pemergencysupportnaF + \\
+  & (\beta_5 + \beta_7) \times depsym \times pemergencysupportnaF
+\end{aligned}
+$$
+
+***
+
+Each of _those_ equations can be split into two equations, one each for the 
+two values of `pemergencysupportnaF`.
+
+For $sexparents.F = Female$ and $pemergencysupportnaF = No$, we substitute in 0 for 
+`pemergencysupportnaF`:
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_1 \times depsym + \\
+  & \beta_3 \times 0 + \\
+  & \beta_5 \times depsym \times 0
+\end{aligned}
+$$
+Which becomes
+
+$$
+\begin{aligned}
+ppengag = \beta_0 + \beta_1 \times depsym
+\end{aligned}
+$$
+
+***
+
+For $sexparents.F = Female$ and $pemergencysupportnaF = Yes$, we substitute in 1 
+for `pemergencysupportnaF`:
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_1 \times depsym + \\
+  & \beta_3 \times 1 + \\
+  & \beta_5 \times depsym \times 1
+\end{aligned}
+$$
+Which becomes (grouping like terms):
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_3 + \\
+  & (\beta_1 + \beta_5) \times depsym
+\end{aligned}
+$$
+
+***
+
+Turning to the other equation, where $sexparents.F = Male$, we start with the 
+case where $pemergencysupportnaF = No$, substituting 0 for 
+`pemergencysupportnaF`:
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_2 + \\
+  & (\beta_1 + \beta_4) \times depsym + \\
+  & (\beta_3 + \beta_6) \times 0 + \\
+  & (\beta_5 + \beta_7) \times depsym \times 0
+\end{aligned}
+$$
+Reducing to:
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_2 \\
+  & (\beta_1 + \beta_4) \times depsym
+\end{aligned}
+$$
+
+***
+
+For the final case, where $sexparents.F = Male$ and 
+$pemergencysupportnaF = Yes$, we again substitute 1 in for 
+`pemergencysupportnaF`:
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_2 + \\
+  & (\beta_1 + \beta_4) \times depsym + \\
+  & (\beta_3 + \beta_6) \times 1 + \\
+  & (\beta_5 + \beta_7) \times depsym \times 1
+\end{aligned}
+$$
+Reducing and grouping like terms:
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_2 + \beta_3 + \beta_6 + \\
+  & (\beta_1 + \beta_4 + \beta_5 + \beta_7) \times depsym
+\end{aligned}
+$$
+
+***
+
+We now have four equations that we can use to calculate each of the four 
+different cases.
+
+
+$sexparents.F = Female$ and $pemergencysupportnaF = No$
+
+$$
+\begin{aligned}
+ppengag = \beta_0 + \beta_1 \times depsym
+\end{aligned}
+$$
+
+***
+
+$sexparents.F = Female$ and $pemergencysupportnaF = Yes$
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_3 + \\
+  & (\beta_1 + \beta_5) \times depsym
+\end{aligned}
+$$
+
+***
+
+$sexparents.F = Male$ and $pemergencysupportnaF = No$
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_2 \\
+  & (\beta_1 + \beta_4) \times depsym
+\end{aligned}
+$$
+
+***
+
+$sexparents.F = Male$ and $pemergencysupportnaF = Yes$
+
+$$
+\begin{aligned}
+ppengag = & \beta_0 + \beta_2 + \beta_3 + \beta_6 + \\
+  & (\beta_1 + \beta_4 + \beta_5 + \beta_7) \times depsym
+\end{aligned}
+$$
+
+***
+
+## Calculations
+
+I'll focus on just the last case, where $sexparents.F = Male$ and 
+$pemergencysupportnaF = Yes$. We will do calculations for two values of 
+`depsym` the minimum observed value and the maximum observed value (if 
+`depsym` is categorical with two levels, the minimum is 0 and maximum is 1). 
+When indexing the $\beta$ values, we have to remember to add 1 because R starts 
+numbering at 1, not zero. The $\beta$ values are stored in the first column of 
+the coefficients table.
+
+```{r calc-model, eval = FALSE}
+# Extract coefficients table from model
+lm_coeff <- summary(lmslopes)$coefficients
+# Calculate value for smallest value of depsym
+max_depsym <- lm_coeff[1, 1] + lm_coeff[3, 1] + lm_coeff[4, 1] + lm_coeff[7, 1] + 
+  (lm_coeff[2, 1] + lm_coeff[5, 1] + lm_coeff[6, 1] + lm_coeff[8, 1]) * max(d$depsym) 
+# Calculate value for smallest value of depsym
+min_depsym <- lm_coeff[1, 1] + lm_coeff[3, 1] + lm_coeff[4, 1] + lm_coeff[7, 1] + 
+  (lm_coeff[2, 1] + lm_coeff[5, 1] + lm_coeff[6, 1] + lm_coeff[8, 1]) * min(d$depsym) 
+```
