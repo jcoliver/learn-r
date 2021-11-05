@@ -30,16 +30,16 @@ lm(formula = ppengag ~ depsym * sexparents.F * pemergencysupportnaF, data = d)
 
 This model can be mathematically expressed as
 
-$$
-\begin{aligned}
-ppengag = & \beta_0 + \beta_1 \times depsym + \beta_2 \times sexparents.F + \\
-  & \beta_3 \times pemergencysupportnaF + \\
-  & \beta_4 \times depsym \times sexparents.F + \\
-  & \beta_5 \times depsym \times pemergencysupportnaF + \\
-  & \beta_6 \times sexparents.F \times pemergencysupportnaF + \\
-  & \beta_7 \times depsym \times sexparents.F \times pemergencysupportnaF
-\end{aligned}
-$$
+\begin{equation}
+  \begin{aligned}
+  ppengag &= \beta_0 + \beta_1 \times depsym + \beta_2 \times sexparents.F + \\
+   & \beta_3 \times pemergencysupportnaF + \\
+   & \beta_4 \times depsym \times sexparents.F + \\
+   & \beta_5 \times depsym \times pemergencysupportnaF + \\
+   & \beta_6 \times sexparents.F \times pemergencysupportnaF + \\
+   & \beta_7 \times depsym \times sexparents.F \times pemergencysupportnaF
+  \end{aligned}
+\end{equation}
 
 We can use this formulation of the model with the output of the `summary` 
 command to see the predicted values for each situation. The output of `summary` 
@@ -136,15 +136,15 @@ $$
 
 ***
 
-We now have two equations:
+We now have two equations :
 
 $sexparents.F = Female$
 
 $$
 \begin{aligned}
-ppengag = & \beta_0 + \beta_1 \times depsym + \\
-  & \beta_3 \times pemergencysupportnaF + \\
-  & \beta_5 \times depsym \times pemergencysupportnaF
+  ppengag = & \beta_0 + \beta_1 \times depsym + \\
+    & \beta_3 \times pemergencysupportnaF + \\
+    & \beta_5 \times depsym \times pemergencysupportnaF
 \end{aligned}
 $$
 
@@ -154,16 +154,16 @@ $sexparents.F = Male$
 
 $$
 \begin{aligned}
-ppengag = & \beta_0 + \beta_2 + \\
-  & (\beta_1 + \beta_4) \times depsym + \\
-  & (\beta_3 + \beta_6) \times pemergencysupportnaF + \\
-  & (\beta_5 + \beta_7) \times depsym \times pemergencysupportnaF
+  ppengag = & \beta_0 + \beta_2 + \\
+    & (\beta_1 + \beta_4) \times depsym + \\
+    & (\beta_3 + \beta_6) \times pemergencysupportnaF + \\
+    & (\beta_5 + \beta_7) \times depsym \times pemergencysupportnaF
 \end{aligned}
 $$
 
 ***
 
-Each of _those_ equations can be split into two equations, one each for the 
+Each of _those_ equations  can be split into two equations , one each for the 
 two values of `pemergencysupportnaF`.
 
 For $sexparents.F = Female$ and $pemergencysupportnaF = No$, we substitute in 0 for 
@@ -253,52 +253,108 @@ $$
 
 ***
 
-We now have four equations that we can use to calculate each of the four 
+We now have four equations  that we can use to calculate each of the four 
 different cases.
 
 
 $sexparents.F = Female$ and $pemergencysupportnaF = No$
 
-$$
-\begin{aligned}
-ppengag = \beta_0 + \beta_1 \times depsym
-\end{aligned}
-$$
+\begin{equation}
+  \begin{aligned}
+    ppengag = \beta_0 + \beta_1 \times depsym
+  \end{aligned}
+\end{equation}
 
 ***
 
 $sexparents.F = Female$ and $pemergencysupportnaF = Yes$
 
-$$
-\begin{aligned}
-ppengag = & \beta_0 + \beta_3 + \\
-  & (\beta_1 + \beta_5) \times depsym
-\end{aligned}
-$$
+\begin{equation}
+  \begin{aligned}
+    ppengag = & \beta_0 + \beta_3 + \\
+      & (\beta_1 + \beta_5) \times depsym
+  \end{aligned}
+\end{equation}
 
 ***
 
 $sexparents.F = Male$ and $pemergencysupportnaF = No$
 
-$$
-\begin{aligned}
-ppengag = & \beta_0 + \beta_2 \\
-  & (\beta_1 + \beta_4) \times depsym
-\end{aligned}
-$$
+\begin{equation}
+  \begin{aligned}
+    ppengag = & \beta_0 + \beta_2 \\
+      & (\beta_1 + \beta_4) \times depsym
+  \end{aligned}
+\end{equation}
 
 ***
 
 $sexparents.F = Male$ and $pemergencysupportnaF = Yes$
 
-$$
-\begin{aligned}
-ppengag = & \beta_0 + \beta_2 + \beta_3 + \beta_6 + \\
-  & (\beta_1 + \beta_4 + \beta_5 + \beta_7) \times depsym
-\end{aligned}
-$$
+\begin{equation}
+  \begin{aligned}
+    ppengag = & \beta_0 + \beta_2 + \beta_3 + \beta_6 + \\
+      & (\beta_1 + \beta_4 + \beta_5 + \beta_7) \times depsym
+  \end{aligned}
+\end{equation}
 
 ***
+
+## _depsym_ slope calculation
+
+Given equations 2-4 above, there are _four_ different slopes for the effect of 
+`depsym` on `ppengag`. We will need to do two different comparisons for the 
+different levels of `pemergencysupportnaF`. That is, if we are interested in 
+comparing the slopes of `sexparents.F = Female` and `sexparents.F = Male`, we 
+have to make two separate comparisons. We can start with the case where 
+`pemergencysupportnaF = No`, so we use equations (2) and (4) from above. The 
+slopes from the equations are:
+
+\begin{align*}
+  \beta_1 &\mid sexparents.F = Female  \\
+  \beta_1 + \beta_4 &\mid sexparents.F = Male 
+\end{align*}
+
+In this case, the _difference_ in slopes between the two values of 
+`sexparents.F` is $\beta_4$. So if you are interested in calling out this 
+difference, you would access it through the coefficients table produced by 
+the `summary` command. For the full model you ran (the one that includes other 
+predictors, `pfinancialsupportnaF`, `pemotionalsupportnaF`, etc.), $\beta_4$ is 
+in the 14^th^ row (the one labeled `depsym:sexparents.FMale`).
+
+```{r slope-diff, eval = FALSE}
+lmsummary <- summary(lmslopes)
+lmcoeffs <- lmsummary$coefficients
+lmcoeffs[14, 1]
+```
+
+However, that just shows the _difference_ between the two sexes. If you want 
+the actual slopes, you'll need to do the addition for the case when 
+`sexparents.F = Male`.
+
+```{r slope-vals, eval = FALSE}
+lmsummary <- summary(lmslopes)
+lmcoeffs <- lmsummary$coefficients
+# Female slope is just beta 1, corresponding to depsym row in coefficients table
+female_slope <- lmcoeffs[2, 1]
+female_slope
+# Male slope is beta 1 + beta 4
+male_slope <- lmcoeffs[2, 1] + lmcoeffs[14, 1]
+male_slope
+```
+
+Note this only provides one of the two comparisons. The other comparison, for 
+the case when `pemergencysupportnaF = Yes`, would involve equations (3) and (5).
+The slopes from those equations are:
+
+\begin{align*}
+  \beta_1 + \beta_5 &\mid sexparents.F = Female  \\
+  \beta_1 + \beta_4 + \beta_5 + \beta_7 &\mid sexparents.F = Male 
+\end{align*}
+
+The difference between the two levels of `sexparents.F` is $\beta_4 + \beta_7$, 
+and the actual slopes can be calculated in a similar fashion as was done for 
+the case when `pemergencysupportnaF = No`.
 
 ## Calculations
 
@@ -323,3 +379,6 @@ max_depsym <- lm_coeff[1, 1] + lm_coeff[3, 1] + lm_coeff[4, 1] + lm_coeff[7, 1] 
 min_depsym <- lm_coeff[1, 1] + lm_coeff[3, 1] + lm_coeff[4, 1] + lm_coeff[7, 1] + 
   (lm_coeff[2, 1] + lm_coeff[5, 1] + lm_coeff[6, 1] + lm_coeff[8, 1]) * min(d$depsym) 
 ```
+
+***
+
