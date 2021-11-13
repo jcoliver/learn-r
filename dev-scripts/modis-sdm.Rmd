@@ -1,7 +1,7 @@
 ---
-title: "MODIS SDM"
+title: "Land cover data for species distribution modeling"
 author: "Jeff Oliver"
-date: "11/8/2021"
+date: "2021-11-12"
 output: pdf_document
 ---
 
@@ -11,142 +11,131 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Summary
 
-An investigation into the use of MODIS land-cover data for use in species 
-distribution models.
+An investigation into the use of MODIS land-cover data for species distribution 
+models.
 
-## Investingating options through MODISTools
+# Setup
+
+## Dependencies
+
+The work below uses additional package to download, visualize, and analyze the 
+data.
+
+```{r load-libraries, echo = FALSE}
+suppressPackageStartupMessages({
+  library(MODIStsp)    # downloading land cover data
+  library(raster)      # reading and transforming geospatial data
+  library(ggplot2)     # data visualization
+  library(dplyr)       # data wrangling
+})
+```
+
+```{r load-libraries-display, eval = FALSE}
+library(MODIStsp)    # downloading land cover data
+library(raster)      # reading and transforming geospatial data
+library(ggplot2)     # data visualization
+library(dplyr)       # data wrangling
+```
+
+## Earthdata access
+
+To access the data, you'll need to register with NASA's Earthdata system at 
+[https://urs.earthdata.nasa.gov/users/new](https://urs.earthdata.nasa.gov/users/new). 
+After registering, also be sure to navigate to your 
+[profile page](https://urs.earthdata.nasa.gov/profile), click the on the 
+Applications menu and the Authorized Apps submenu. Click the "Approve More 
+Applications" button near the bottom of the page and click the "Authorize" 
+button in the row labeled "LP DAAC Data Pool". Make a note of your username and 
+password, as we will need those when downloading the data. Note the password 
+is not super-securely stored by NASA, so don't use one that is especially 
+important to you (I'm not going to lecture anyone about never re-using 
+passwords - we all do it).
+
+# Data retrieval
+
+In this example, we use land cover data available from
+[MODIS](https://modis.gsfc.nasa.gov/data/dataprod/). There are many means of 
+categorizing land cover, and in this example we use the land cover scheme of 
+the International Geosphere-Biosphere Programme (IGBP) that identifies 17 
+classes of land cover. If you want to get details about data availability, you 
+can run:
 
 ```{r modis-check}
-library(MODISTools)
-products <- mt_products()
-head(products)
-land_cover_rows <- grep(pattern = "cover", x = products$description, ignore.case = TRUE, )
-print(land_cover_rows)
-products[land_cover_rows, c("product", "description")]
-prod_name <- "MCD12Q1"
+MODIStsp::MODIStsp_get_prodlayers("MCD12Q1")
 ```
 
-We want MCD12Q1, the land cover type. What bands are available?
+It's that first band that we want ("LC1", or "Land Cover Type 1 (IGBP)*"). To 
+download the data, we use the `MODIStsp()` function from the MODIStsp package. 
+Much of the code for downloading and visualizing these data from the example at 
+[https://rspatialdata.github.io/land_cover.html](https://rspatialdata.github.io/land_cover.html).
+Here's where you'll need to add your usename and password that you used to 
+register for NASA's Earthdata site. In the example below, I stored them in a 
+pair of plain text files called earthdata-username.txt and 
+earthdata-password.txt. I then read in the values and stored them in variables 
+`username` and `password` respectively.
 
-```{r modis-bands}
-bands <- mt_bands(product = prod_name)
-print(bands$description)
-```
-
-Download some land cover data (IGBP) for the Sonoran Desert
-
-```{r sonoran-land-cover}
-sonoran_lc <- mt_subset(product = "MCD12Q1",
-  lat = 31.997188, 
-  lon =  -111.849792,
-  band = "LC_Type1",
-  start = "2004-01-01",
-  end = "2004-3-20",
-  km_lr = 10, # max value is 100; may need to stitch
-  km_ab = 10,
-  site_name = "sonoran",
-  internal = TRUE,
-  progress = TRUE)
-```
-
-## Different approach, download raster
-
-Example of how to download raster land cover data from modis:
-[https://rspatialdata.github.io/land_cover.html](https://rspatialdata.github.io/land_cover.html)
-
-```{r modis-layes}
-library(MODIStsp)
-# See what we can get from MODIS
-MODIStsp_get_prodlayers("MCD12Q1")
-```
-
-First want a positive control test?
-
-```{r zim-test}
-# remotes::install_github("wmgeolab/rgeoboundaries")
-# install.packages("sf")
-library(rgeoboundaries)
-library(sf)
-# Downloading the country boundary of Zimbabwe
-map_boundary <- geoboundaries("Zimbabwe")
-# Defining filepath to save downloaded spatial file
-spatial_filepath <- "data/zimbabwe.shp"
-# Saving downloaded spatial file on to our computer
-st_write(map_boundary, paste0(spatial_filepath))
-
-# This times out (authentication issue with credentials) 2021-11-09:
-# Worked once as of 2021-11-11
-# On re-try, timed out three times, then worked
-MODIStsp(gui             = FALSE,
-         out_folder      = "data",
-         out_folder_mod  = "data",
-         selprod         = "LandCover_Type_Yearly_500m (MCD12Q1)",
-         bandsel         = "LC1",
-         user            = "mstp_test" ,
-         password        = "MSTP_test_01",
-         start_date      = "2019.01.01",
-         end_date        = "2019.12.31",
-         verbose         = TRUE,
-         spatmeth        = "file",
-         spafile         = spatial_filepath,
-         out_format      = "GTiff")
-```
-
-
-
-Want to try to get the first band (IGBP) for data relevant to saguaros.
-
-Doesn't currently work - times out after four tries...2021-11-09
-
-```{r download-sonoran-raster}
-# Note markdown current directory is directory of markdown file, not 
-# necessarily output of getwd()
+```{r load-credentials}
 username <- scan(file = "../keys/earthdata-username.txt", what = character())
 password <- scan(file = "../keys/earthdata-password.txt", what = character())
-
-# Boundary of interest (left, bottom, right, top)
-bounds <- c(-114, 26, -109, 35)
-# See https://modis-land.gsfc.nasa.gov/pdf/sn_bound_10deg.txt
-# Download to data file, not worrying about projection for now
-wkt_proj <- 'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]'
-  
-library(MODIStsp)
-MODIStsp(gui = FALSE,
-         out_folder = "data", # inside dev-scripts
-         out_folder_mod = "data", # inside dev-scripts
-         selprod         = "LandCover_Type_Yearly_500m (MCD12Q1)",
-         bandsel         = "LC1", 
-         user            = username,
-         password        = password,
-         start_date      = "2019.01.01", 
-         end_date        = "2019.12.31", 
-         verbose = TRUE,
-         reprocess = TRUE,
-         spatmeth = "bbox",
-         bbox = bounds,
-         out_projsel = "User Defined",
-         # output_proj = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs", # A WGS84 projection
-         output_proj = wkt_proj,
-         out_format = "GTiff")
 ```
 
-## 2021-11-09
-Consistently timing out. Checking [https://docs.ropensci.org/MODIStsp/articles/faq.html#data-download-problems](https://docs.ropensci.org/MODIStsp/articles/faq.html#data-download-problems). Had to explicitly check 
-to be authorized to use LP DAAC Data Pool
+You could also do this in the console if you don't want to store your username 
+and/or password in files (replacing `<INSERT USERNAME HERE>` and 
+`<INSERT PASSWORD HERE>` with your actual username and password):
 
-+ Updating the package (and all dependencies); using development version from 
-GitHub. If it still doesn't work try `get_mod_dirs()`
-+ Also, try using the interactive option, with `gui = TRUE`
+```{r assign-credentials, eval = FALSE}
+# Run in the console:
+username <- "<INSERT USERNAME HERE>"
+password <- "<INSERT PASSWORD HERE>"
+```
 
-## 2021-11-11
-Worked, although still has timeouts occasionally.
+We will download land cover data for a box that roughly encapsulates the 
+Sonoran desert. The code below downloads the data to a folder called "data", so 
+be sure that you have created such a folder first (i.e. `dir.create("data")`).
 
-Plot below works, too. Next step is to try sdm.
+```{r download-sonoran-raster, eval = FALSE}
+# Boundaries of interest (left, bottom, right, top); here we use very rough 
+# coordinates for the Sonoran desert
+bounds <- c(-114, 26, -109, 35)
+
+# Need to specify which projection to use; we do this with the WKT (Well Known 
+# Text) string for the WGS 84 projection. A terrifying thing, but it works.
+wkt_proj <- 'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS
+84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],
+PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",
+0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]'
+
+MODIStsp::MODIStsp(gui = FALSE,
+                   out_folder = "data",
+                   out_folder_mod = "data",
+                   selprod = "LandCover_Type_Yearly_500m (MCD12Q1)",
+                   bandsel = "LC1", 
+                   start_date = "2019.01.01", 
+                   end_date = "2019.12.31", 
+                   user = username,
+                   password = password,
+                   verbose = FALSE, # set to true if you want to see details
+                   reprocess = TRUE,
+                   spatmeth = "bbox",
+                   bbox = bounds,
+                   out_projsel = "User Defined",
+                   output_proj = wkt_proj,
+                   out_format = "GTiff")
+```
+
+The servers where these data live are notorious for timing out. Sometimes it 
+takes a few times of running the above code for it to actually work. If you see 
+multiple lines of 
+
+`Error in curl::curl_fetch_memory(url, handle = handle): Timeout was reached`
+
+Try running the `MODIStsp()` command again.
+
+As long as the download was successful, we can do a reality check and plot the 
+land cover data. We will need to read the data into memory and transform it 
+into a data frame for easier plotting with ggplot
 
 ```{r plot-raster}
-library(raster)
-library(ggplot2)
-library(dplyr)
 # Load in raster from file
 IGBP_raster <- raster(x = "data/LandCover_Type_Yearly_500m_v6/LC1/MCD12Q1_LC1_2019_001.tif")
 
@@ -154,8 +143,11 @@ IGBP_raster <- raster(x = "data/LandCover_Type_Yearly_500m_v6/LC1/MCD12Q1_LC1_20
 IGBP_df <- as.data.frame(IGBP_raster, xy = TRUE, na.rm = TRUE) %>%
   mutate(MCD12Q1_LC1_2019_001 = as.factor(round(MCD12Q1_LC1_2019_001)))
 
+# Reset rownames so they are numbered, starting at 1
 rownames(IGBP_df) <- c()
-# Renaming IGBP classification levels
+
+# Renaming IGBP classification levels, since incoming data just enumerates them
+# 1-17
 levels(IGBP_df$MCD12Q1_LC1_2019_001) <- c( "Evergreen needleleaf forests",
                                            "Evergreen broadleaf forests",
                                            "Deciduous needleleaf forests",
@@ -174,13 +166,18 @@ levels(IGBP_df$MCD12Q1_LC1_2019_001) <- c( "Evergreen needleleaf forests",
                                            "Barren",
                                            "Water bodies")
 # Visualising using ggplot2
-ggplot() + 
-  geom_raster(data = IGBP_df,
-              aes(x = x, y = y, fill = MCD12Q1_LC1_2019_001)) +
-  scale_fill_viridis_d(name = "Land Cover Type") +
-  labs(subtitle = "2019-01-01 - 2019-12-31",
+lc_plot <- ggplot(data = IGBP_df, 
+                  mapping = aes(x = x, y = y, fill = MCD12Q1_LC1_2019_001)) + 
+  geom_raster() +
+  scale_fill_viridis_d(name = "Land Cover Type") + # the color scheme
+  labs(subtitle = "Land cover 2019",
        x = "Longitude",
        y = "Latitude") +
-  theme_minimal()
+  theme_minimal() +
+  theme(legend.text = element_text(size = 8))
+print(lc_plot)
 ```
 
+# Species distribution modeling
+
+Stay tuned!
