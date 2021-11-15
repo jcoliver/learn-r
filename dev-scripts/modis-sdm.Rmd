@@ -26,6 +26,7 @@ suppressPackageStartupMessages({
   library(raster)      # reading and transforming geospatial data
   library(ggplot2)     # data visualization
   library(dplyr)       # data wrangling
+  library(terra)       # dealing with hdf-formatted files
   library(MODIStsp)    # downloading land cover data
 })
 ```
@@ -34,6 +35,7 @@ suppressPackageStartupMessages({
 library(raster)      # reading and transforming geospatial data
 library(ggplot2)     # data visualization
 library(dplyr)       # data wrangling
+library(terra)       # dealing with hdf-formatted files
 library(MODIStsp)    # downloading land cover data
 ```
 
@@ -66,64 +68,86 @@ data:
 ## Direct download
 
 The entirety of the land cover data from MODIS can be downloaded for years 
-2010-2019 from [](). For example, the 2019 data are available at [https://e4ftl01.cr.usgs.gov/MOTA/MCD12C1.006/2019.01.01/](https://e4ftl01.cr.usgs.gov/MOTA/MCD12C1.006/2019.01.01/) by downloading the file MCD12C1.A2019001.006.2020220162300.hdf.
-The file is fairly large (1.2 GB), so it might take a few minutes to download. 
-After it downloads, place this file in a "data" directory in your project. 
+2010-2019 from [https://e4ftl01.cr.usgs.gov/MOTA/MCD12C1.006/](https://e4ftl01.cr.usgs.gov/MOTA/MCD12C1.006/). 
+For this example, we will just use the 2019 data available at [https://e4ftl01.cr.usgs.gov/MOTA/MCD12C1.006/2019.01.01/](https://e4ftl01.cr.usgs.gov/MOTA/MCD12C1.006/2019.01.01/) 
+by downloading the file MCD12C1.A2019001.006.2020220162300.hdf. The file is 
+fairly large (1.2 GB), so it might take a few minutes to download. After it 
+downloads, place this file in a "data" directory in your project. 
 
-```{r hdf-to-geotiff}
-# Location of hdf with land cover data
+The downloaded file is global in extent and uses a bit of an old projection 
+system. So the next bit of code limits the data to the area of interest and 
+re-projects it into the commonly used WGS84 projection.
+
+```{r hdf-investigation}
+# Location of hdf file with land cover data
 hdf_file <- "data/MCD12C1.A2019001.006.2020220162300.hdf"
+
 # Look to see what layers are in that hdf file
 terra::describe(hdf_file, sds = TRUE)
+```
 
-# Load in the first subdataset only, which has IGBP land cover type; we'll 
-# only pull out data for western US + Mexico here
+The table above shows us that we are interested in the first sub-dataset, which
+has the IGBP land-cover classification information. When we load in the data, 
+we can pull in just that one sub-dataset of interest. We can then see what 
+coordinate reference system (CRS) or projection is being used with 
+`terra::crs()`:
+
+```{r hdf-projection}
+# Load in the first subdataset only, which has IGBP land cover type
 r <- terra::rast(hdf_file, subds = 1)
 
 # What projection is being used?
 terra::crs(r, describe = TRUE)
+```
 
+Well that's not the most useful information, but it turns out this vague 
+projection is [nearly identical to a more common one, NAD27](https://community.esri.com/t5/data-management-questions/converting-from-clarke-1866-to-wgs-1984/td-p/255165). So we are going to tell R to go ahead and re-categorize the 
+projection as NAD27.
+
+```{r update-crs}
 # Start by making it clear which EPSG:4008 projection this is (may not be 
 # entirely necessary)
 terra::crs(r) <- "epsg:4008"
 
-# Set the projection to something we know (NAD27 is apparently close)
-# https://community.esri.com/t5/data-management-questions/converting-from-clarke-1866-to-wgs-1984/td-p/255165
+# Set the projection to something we know (NAD27 is apparently close); the EPSG
+# identifier for NAD27 is 4267
 terra::crs(r) <- "epsg:4267"
+```
 
+Now R considers these data as NAD27, but we need to re-project the data into 
+yet _another_ coordinate system (well, we may not have to, but NAD27 is a bit 
+out of date). While we are at it, we can crop the data down to a smaller 
+geographic area so it doesn't take up as much memory.
+
+```{r re-project}
 # Crop to western US + Mexico
 crop_to <- raster::extent(x = c(-120, -104, 22, 49))
 r <- raster::crop(x = r, y = crop_to)
 
-# Write raster to file
-terra::writeRaster(x = r, filename = "data/lc_NAD27.tif", overwrite = TRUE)
-
-# Read that one in with raster::raster
-r_nad27 <- raster::raster(x = "data/lc_NAD27.tif")
+# Convert to a RasterLayer, which is easier to work with
+r_nad27 <- raster::raster(r)
 
 # Rename what the data are (otherwise it just uses the file name)
 names(r_nad27) <- "IGBP_Land_Cover_Type"
 
-# Convert the projection to good old WGS84 with sp::spTransform
+# Convert the projection to good old WGS84
 r_wgs84 <- raster::projectRaster(from = r_nad27, 
                                  method = "ngb", # For categorical data
                                  crs = sp::CRS(projargs = "+init=epsg:4326"))
 
-# Finally, crop this to Sonoran desert dimensions, save to a file and remove 
-# the temporary NAD27 file
+# Crop this to Sonoran desert dimensions
 sonoran <- raster::extent(x = c(-114, -109, 26, 35))
 r_wgs84 <- raster::crop(x = r_wgs84, y = sonoran)
 
+# Finally, save to a file
 raster::writeRaster(x = r_wgs84,
                     filename = "data/Sonoran_land_cover.tif",
                     overwrite = TRUE)
-file_rm <- file.remove("data/lc_NAD27.tif")
 ```
 
 
-If 
-you download the data this way, you can skip the next section and head straight 
-to [Data quality check](#data-quality-check).
+If you download the data this way, you can skip the next section and head 
+straight to [Data quality check](#data-quality-check).
 
 ## Use MODIStsp package
 
@@ -212,7 +236,8 @@ try running the `MODIStsp()` command again.
 
 After downloading the data, we can do a reality check and plot the land cover 
 data. We will need to read the data into memory and transform it into a data 
-frame for easier plotting with ggplot.
+frame for easier plotting with ggplot. In the code below, we'll assume you 
+used the first option ([Direct download](#direct-download)).
 
 ```{r plot-raster}
 # Load in raster from file
@@ -221,10 +246,13 @@ LC_raster <- raster::raster(x = "data/Sonoran_land_cover.tif")
 # Convert data to categorical (R thinks it is continuous)
 # LC_raster <- raster::as.factor(x = LC_raster)
 
-# Convert to a data frame for plotting
+# Convert to a data frame for plotting and make sure we set the land cover 
+# types to a 17-level factor (want to do this because our subset of data does 
+# not include all land cover types, but we need the factor to have all 17 
+# levels so we can assign land cover types appropriately)
 LC_df <- as.data.frame(LC_raster, xy = TRUE, na.rm = TRUE) %>%
   rename(lc_type = Sonoran_land_cover) %>%
-  mutate(lc_type = as.factor(lc_type))
+  mutate(lc_type = factor(lc_type, levels = 0:16))
 
 # Re-level data
 levels(LC_df$lc_type) <- c("Water Bodies",
@@ -248,50 +276,6 @@ levels(LC_df$lc_type) <- c("Water Bodies",
 # Visualize using ggplot2
 lc_plot <- ggplot(data = LC_df, 
                   mapping = aes(x = x, y = y, fill = lc_type)) + 
-  geom_raster() +
-  scale_fill_viridis_d(name = "Land Cover Type") + # the color scheme
-  labs(subtitle = "Land cover 2016",
-       x = "Longitude",
-       y = "Latitude") +
-  theme_minimal() +
-  theme(legend.text = element_text(size = 8))
-print(lc_plot)
-
-
-
-
-
-IGBP_raster <- raster::raster(x = "data/LandCover_Type_Yearly_500m_v6/LC1/MCD12Q1_LC1_2019_001.tif")
-
-# Convert to a data frame for plotting
-IGBP_df <- as.data.frame(IGBP_raster, xy = TRUE, na.rm = TRUE) %>%
-  mutate(MCD12Q1_LC1_2019_001 = as.factor(round(MCD12Q1_LC1_2019_001)))
-
-# Reset rownames so they are numbered, starting at 1
-rownames(IGBP_df) <- c()
-
-# Renaming IGBP classification levels, since incoming data just enumerates them
-# 0-16
-levels(IGBP_df$MCD12Q1_LC1_2019_001) <- c("Evergreen needleleaf forests",
-                                          "Evergreen broadleaf forests",
-                                          "Deciduous needleleaf forests",
-                                          "Deciduous broadleaf forests",
-                                          "Mixed forests",
-                                          "Closed shrublands",
-                                          "Open shrublands",
-                                          "Woody savannas",
-                                          "Savannas",
-                                          "Grasslands",
-                                          "Permanent wetlands",
-                                          "Croplands",
-                                          "Urban and built-up lands",
-                                          "Cropland/natural vegetation mosaics",
-                                          "Snow and ice",
-                                          "Barren",
-                                          "Water bodies")
-# Visualising using ggplot2
-lc_plot <- ggplot(data = IGBP_df, 
-                  mapping = aes(x = x, y = y, fill = MCD12Q1_LC1_2019_001)) + 
   geom_raster() +
   scale_fill_viridis_d(name = "Land Cover Type") + # the color scheme
   labs(subtitle = "Land cover 2019",
