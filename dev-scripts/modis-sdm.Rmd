@@ -288,4 +288,86 @@ print(lc_plot)
 
 # Species distribution modeling
 
-Stay tuned!
+We will use a suite of libraries for the SDM; they might have been loaded 
+already, but I put these `library()` calls here just to be sure.
+
+```{r load-sdm-libraries}
+# Load additional packages
+library(sp)       # general mapping and raster utility
+library(raster)   # for dealing with land cover data
+library(maptools) # mapping distributions and model predictions
+# library(rgdal)    
+# library(dismo)
+```
+
+
+## Preparing land cover data
+
+```{r prep-land-cover}
+
+```
+
+## Observational data
+
+We will use observations of the saguaro cactus, _Carnegiea gigantea_, for this 
+example. To run the SDM, we will need both presence and absence data.
+
+### Presence data
+
+You can download your own set of data from GBIF, or use the code below
+to read them in from a URL (these are the same data as used in the SDM lesson 
+at [https://jcoliver.github.io/learn-r/011-species-distribution-models.html](https://jcoliver.github.io/learn-r/011-species-distribution-models.html)).
+
+```{r load-saguaro}
+url <- "https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/Carnegiea-gigantea-GBIF.csv"
+obs_data <- read.csv(file = url)
+head(obs_data)
+```
+
+The data include more columns than we need, and some of the rows lack 
+geographical coordinate data, so we'll just keep the latitude and longitude 
+columns and remove rows missing latitude or longitude values.
+
+```{r clean-saguaro}
+# Drop any rows with NAs in latitude
+obs_data <- obs_data[!is.na(obs_data$latitude), ]
+
+# Only pull out those columns of interest and in the order we want them (i.e. 
+# longitude as the first column, latitude as the second column)
+obs_data <- obs_data[, c("longitude", "latitude")]
+head(obs_data)
+```
+
+### (Pseudo)absence data
+
+To simulate absence data, we will randomly sample points from a bounding box
+defined by the observations of saguaros. To do this, we find the minimum and 
+maximum of longitude and latitude and store that information in an `extent` 
+object. For the bounding box, we use `ceiling()` and `floor()` to round down or 
+up, respectively, to the nearest degree.
+
+```{r find-extent}
+# Determine geographic extent of our data
+max_lat = ceiling(max(obs_data$latitude))
+min_lat = floor(min(obs_data$latitude))
+max_lon = ceiling(max(obs_data$longitude))
+min_lon = floor(min(obs_data$longitude))
+geographic_extent <- raster::extent(x = c(min_lon, max_lon, min_lat, max_lat))
+```
+
+```{r create-background}
+
+```
+
+## Training & testing the model
+
+```{r create-sdm}
+
+```
+
+## Visualizing the results
+
+```{r visualize-sdm}
+
+```
+
