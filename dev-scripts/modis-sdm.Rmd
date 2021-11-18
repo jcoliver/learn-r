@@ -96,6 +96,10 @@ coordinate reference system (CRS) or projection is being used with
 # Load in the first subdataset only, which has IGBP land cover type
 r <- terra::rast(hdf_file, subds = 1)
 
+# TODO: Would it be better instead to use the 17 layers with actual percentages
+# rather than the single land cover type with the highest percentage?
+# r <- terra::rast(hdf_file, subds = 3)
+
 # What projection is being used?
 terra::crs(r, describe = TRUE)
 ```
@@ -131,6 +135,8 @@ r_nad27 <- raster::raster(r)
 names(r_nad27) <- "IGBP_Land_Cover_Type"
 
 # Convert the projection to good old WGS84
+# TODO: Sometimes this throws an idiosyncratic error:
+#     Error in x$.self$finalize() : attempt to apply non-function
 r_wgs84 <- raster::projectRaster(from = r_nad27, 
                                  method = "ngb", # For categorical data
                                  crs = sp::CRS(projargs = "+init=epsg:4326"))
@@ -297,20 +303,14 @@ library(sp)       # general mapping and raster utility
 library(raster)   # for dealing with land cover data
 library(maptools) # mapping distributions and model predictions
 # library(rgdal)    
-# library(dismo)
+library(dismo)    # background (pseudo-absence) point generation
 ```
 
-
-## Preparing land cover data
-
-```{r prep-land-cover}
-
-```
-
-## Observational data
+## Data preparation
 
 We will use observations of the saguaro cactus, _Carnegiea gigantea_, for this 
-example. To run the SDM, we will need both presence and absence data.
+example. To run the SDM, we will need both presence and absence data, as well 
+as the land cover data.
 
 ### Presence data
 
@@ -338,6 +338,17 @@ obs_data <- obs_data[, c("longitude", "latitude")]
 head(obs_data)
 ```
 
+### Preparing land cover data
+
+We need to make sure the land cover data are in a format we can use. Since the
+land cover data is categorical, we need to convert the data from a integer to 
+a factor.
+
+```{r prep-land-cover}
+lc_data <- raster::raster(x = "data/Sonoran_land_cover.tif")
+lc_data <- raster::as.factor(lc_data)
+```
+
 ### (Pseudo)absence data
 
 To simulate absence data, we will randomly sample points from a bounding box
@@ -346,22 +357,44 @@ maximum of longitude and latitude and store that information in an `extent`
 object. For the bounding box, we use `ceiling()` and `floor()` to round down or 
 up, respectively, to the nearest degree.
 
-```{r find-extent}
+```{r create-background}
 # Determine geographic extent of our data
 max_lat = ceiling(max(obs_data$latitude))
 min_lat = floor(min(obs_data$latitude))
 max_lon = ceiling(max(obs_data$longitude))
 min_lon = floor(min(obs_data$longitude))
 geographic_extent <- raster::extent(x = c(min_lon, max_lon, min_lat, max_lat))
-```
 
-```{r create-background}
-
+# Using the resolution of our predictor data (i.e. the land cover data), we 
+# randomly sample the same number of background points as we have observations
+background <- dismo::randomPoints(mask = lc_data,     # Provides resolution of sampling points
+                                  n = nrow(obs_data),      # Number of random points
+                                  ext = geographic_extent, # Spatially restricts sampling
+                                  extf = 1.25)             # Expands sampling a little bit
 ```
 
 ## Training & testing the model
 
+For training and test the model, we split the data into a training set, which 
+we used to build the model, and a testing set, which we use to evaluate the 
+model. We will use a 80:20 training:testing split, which is common for SDM 
+applications.
+
 ```{r create-sdm}
+# Arbitrarily assign group 1 as the testing data group
+testing.group <- 1
+
+# Create vector of group memberships
+group.presence <- kfold(x = obs.data, k = 5) # kfold is in dismo package
+
+# Separate observations into training and testing groups
+presence.train <- obs.data[group.presence != testing.group, ]
+presence.test <- obs.data[group.presence == testing.group, ]
+
+# Repeat the process for pseudo-absence points
+group.background <- kfold(x = background, k = 5)
+background.train <- background[group.background != testing.group, ]
+background.test <- background[group.background == testing.group, ]
 
 ```
 
