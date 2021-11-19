@@ -7,6 +7,7 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(package.startup.message = FALSE)
 ```
 
 # Summary
@@ -78,7 +79,7 @@ The downloaded file is global in extent and uses a bit of an old projection
 system. So the next bit of code limits the data to the area of interest and 
 re-projects it into the commonly used WGS84 projection.
 
-```{r hdf-investigation}
+```{r hdf-investigation, results = "hide"}
 # Location of hdf file with land cover data
 hdf_file <- "data/MCD12C1.A2019001.006.2020220162300.hdf"
 
@@ -86,11 +87,11 @@ hdf_file <- "data/MCD12C1.A2019001.006.2020220162300.hdf"
 terra::describe(hdf_file, sds = TRUE)
 ```
 
-The table above shows us that we are interested in the first sub-dataset, which
-has the IGBP land-cover classification information. When we load in the data, 
-we can pull in just that one sub-dataset of interest. We can then see what 
-coordinate reference system (CRS) or projection is being used with 
-`terra::crs()`:
+The table output from `terra::describe()` shows us that we are interested in 
+the first sub-dataset, which has the IGBP land-cover classification 
+information. When we load in the data, we can pull in just that one sub-dataset 
+of interest. We can then see what coordinate reference system (CRS) or 
+projection is being used with `terra::crs()`:
 
 ```{r hdf-projection}
 # Load in the first subdataset only, which has IGBP land cover type
@@ -137,6 +138,7 @@ names(r_nad27) <- "IGBP_Land_Cover_Type"
 # Convert the projection to good old WGS84
 # TODO: Sometimes this throws an idiosyncratic error:
 #     Error in x$.self$finalize() : attempt to apply non-function
+# if that happens, just try running it again
 r_wgs84 <- raster::projectRaster(from = r_nad27, 
                                  method = "ngb", # For categorical data
                                  crs = sp::CRS(projargs = "+init=epsg:4326"))
@@ -297,12 +299,22 @@ print(lc_plot)
 We will use a suite of libraries for the SDM; they might have been loaded 
 already, but I put these `library()` calls here just to be sure.
 
-```{r load-sdm-libraries}
+```{r load-sdm-libraries, echo = FALSE}
+suppressPackageStartupMessages({
 # Load additional packages
 library(sp)       # general mapping and raster utility
 library(raster)   # for dealing with land cover data
 library(maptools) # mapping distributions and model predictions
-# library(rgdal)    
+library(dplyr)    # data wrangling
+library(dismo)    # background (pseudo-absence) point generation
+})
+```
+
+```{r load-sdm-libraries-display, eval = FALSE}
+library(sp)       # general mapping and raster utility
+library(raster)   # for dealing with land cover data
+library(maptools) # mapping distributions and model predictions
+library(dplyr)    # data wrangling
 library(dismo)    # background (pseudo-absence) point generation
 ```
 
@@ -340,13 +352,14 @@ head(obs_data)
 
 ### Preparing land cover data
 
-We need to make sure the land cover data are in a format we can use. Since the
-land cover data is categorical, we need to convert the data from a integer to 
-a factor.
+We load in the land cover data that we saved previously. We need to make sure 
+the land cover data are in a format we can use. Since the land cover data is 
+categorical, we need to convert the data from a integer to a factor.
 
 ```{r prep-land-cover}
 lc_data <- raster::raster(x = "data/Sonoran_land_cover.tif")
 lc_data <- raster::as.factor(lc_data)
+names(lc_data) <- "lc_type" # Name the layer for ease of use later
 ```
 
 ### (Pseudo)absence data
@@ -371,36 +384,191 @@ background <- dismo::randomPoints(mask = lc_data,     # Provides resolution of s
                                   n = nrow(obs_data),      # Number of random points
                                   ext = geographic_extent, # Spatially restricts sampling
                                   extf = 1.25)             # Expands sampling a little bit
+# Rename column names of background to longitude and latitude (from x and y)
+colnames(background) <- c("longitude", "latitude")
 ```
 
 ## Training & testing the model
 
-For training and test the model, we split the data into a training set, which 
-we used to build the model, and a testing set, which we use to evaluate the 
-model. We will use a 80:20 training:testing split, which is common for SDM 
-applications.
+For this SDM, we will use a generalized linear model, instead of the `bioclim`
+approach designed for the bioclimate variables. To do this, we need to have our 
+data in a particular shape. That is, we are going to create a data frame that 
+includes all the observed data, the background (pseudo-absence) data, and the 
+landcover data. The data frame will also include a column called `fold` which 
+we use to determine if a row is part of the training data or part of the 
+testing data. For training and test the model, we split the data into a 
+training set, which we used to build the model, and a testing set, which we use 
+to evaluate the model. We will use a 80:20 training:testing split, which is 
+common for SDM applications.
 
-```{r create-sdm}
-# Arbitrarily assign group 1 as the testing data group
-testing.group <- 1
+The table will look like:
 
-# Create vector of group memberships
-group.presence <- kfold(x = obs.data, k = 5) # kfold is in dismo package
+| longitude | latitude | pa | fold | lc_type |
+|:----------|:---------|:---|:-----|:--------|
+| -110.90   | 32.34    |  1 |   2  |      1  |
+| -110.72   | 30.29    |  1 |   3  |      6  |
+| -112.38   | 30.18    |  0 |   1  |     10  |
 
-# Separate observations into training and testing groups
-presence.train <- obs.data[group.presence != testing.group, ]
-presence.test <- obs.data[group.presence == testing.group, ]
+Where 1 indicates "presence" and 0 indicates "absence" in the `pa` column. The 
+data for `pa = 1` rows will come from `obs_data` and the data for `pa = 0` rows 
+will come from `background`.
 
-# Repeat the process for pseudo-absence points
-group.background <- kfold(x = background, k = 5)
-background.train <- background[group.background != testing.group, ]
-background.test <- background[group.background == testing.group, ]
+```{r shape-data}
+# Use the observed points to pull out relevant predictor values
+predictors_presence <- raster::extract(x = lc_data, y = obs_data)
+predictors_absence <- raster::extract(x = lc_data, y = background)
 
+# Make a vector of appropriate length with 0/1 values for 
+# (pseudo)absence/presence
+pa_data <- c(rep(x = 1, times = nrow(obs_data)), 
+             rep(x = 0, times = nrow(background)))
+  
+# Set random number generator for repeatability of testing/training split
+set.seed(20211119)
+
+# Create a vector of folds for easier splitting into testing/training
+testing_group <- 1
+num_folds <- 5 # for 20/80 split
+fold <- c(rep(x = 1:num_folds, length.out = nrow(obs_data)),
+          rep(x = 1:num_folds, length.out = nrow(background)))
+  
+# Combine our presence / absence and fold vectors with environmental data we 
+# extracted
+full_data <- data.frame(cbind(pa = pa_data,
+                              fold = fold,
+                              lc_type = c(predictors_presence, 
+                                          predictors_absence)))
+
+# And we want to make sure the land cover data are treated as factors 
+# (categorical data) instead of numbers (continuous data).
+full_data$lc_type <- as.factor(x = full_data$lc_type)
+
+# Create separate data frames for testing and training presence data
+presence_train <- full_data %>%
+  filter(pa == 1) %>%
+  filter(fold != testing_group)
+presence_test <- full_data %>%
+  filter(pa == 1) %>%
+  filter(fold == testing_group)
+# Create separate data frames for testing and training (pseudo)absence data
+absence_train <- full_data %>%
+  filter(pa == 0) %>%
+  filter(fold != testing_group)
+absence_test <- full_data %>%
+  filter(pa == 0) %>%
+  filter(fold == testing_group)
+
+# Add presence and pseudoabsence training data into single data frame
+sdmtrain <- rbind(presence_train, absence_train)
+sdmtest <- rbind(presence_test, absence_test)
+```
+
+We are _finally_ ready to run the species distribution model!
+
+```{r run-sdm}
+# Run generalized linear model on training data
+sdm_model <- stats::glm(pa ~ lc_type, 
+                        data = sdmtrain, 
+                        family = binomial(link = "logit"))
+
+# Evaluate model performance with testing data
+sdm_eval <- dismo::evaluate(p = presence_test, 
+                            a = absence_test, 
+                            model = sdm_model)
+
+# Calculate threshold so we can make a presence/absence map later
+pres_threshold <- dismo::threshold(x = sdm_eval, 
+                                   stat = "spec_sens")
 ```
 
 ## Visualizing the results
 
-```{r visualize-sdm}
+Now that the model is built, we can generate a pair of maps:
 
+1. Showing probability of presence
+2. A threshold map, showing the distribution where the organism of interest is 
+predicted to be present
+
+We start with a map showing raw predicted probabilities from the model.
+
+```{r visualize-sdm-probs}
+# We are going to extend the predictions a bit beyond the observed data; here 
+# we extend the area for predictions by 50%
+pred_extf <- 1.5
+
+# Based on the sdm model and the original land cover data, we can predict the 
+# probabilities of presence
+probs <- predict(lc_data,
+                 sdm_model,
+                 ext = geographic_extent * pred_extf)
+
+# Because of the model we used (generalized linear model), it is possible to 
+# get predictions of negative probabilities (!), we will go ahead and set any 
+# negative probabilities to 0
+probs[probs < 0] <- 0
+# ...as well as probabilities above 1; we'll reset those to 1
+probs[probs > 1] <- 1
+
+# Plot base map
+data(wrld_simpl)
+plot(wrld_simpl, 
+     xlim = c(min(background[, "longitude"]), max(background[, "longitude"])),
+     ylim = c(min(background[, "latitude"]), max(background[, "latitude"])),
+     axes = TRUE, 
+     col = "grey95")
+
+# We add the probabilities to the map, although they are tough to interpret
+plot(probs, 
+     add = TRUE)
+
+# And add those observations
+points(x = obs_data$longitude, 
+       y = obs_data$latitude, 
+       col = "black",
+       pch = "+", 
+       cex = 0.6)
+
+# Redraw the borders
+plot(wrld_simpl, add = TRUE, border = "grey5")
 ```
 
+That map is a little funky, and we could clean it up, but for now we are going 
+to move on to use the model evaluation results to create a presence/absence map.
+
+```{r visualize-sdm-pa}
+# Plot base map
+data(wrld_simpl)
+plot(wrld_simpl, 
+     xlim = c(min(background[, "longitude"]), max(background[, "longitude"])),
+     ylim = c(min(background[, "latitude"]), max(background[, "latitude"])),
+     axes = TRUE, 
+     col = "grey95")
+
+# Only plot areas where probability of occurrence is greater than the threshold
+plot(probs > pres_threshold, 
+     add = TRUE, 
+     legend = FALSE, 
+     col = c(NA, "olivedrab"))
+
+# And add those observations
+points(x = obs_data$longitude, 
+       y = obs_data$latitude, 
+       col = "black",
+       pch = "+", 
+       cex = 0.75)
+
+# Redraw those country borders
+plot(wrld_simpl, add = TRUE, border = "grey5")
+```
+
+The green in the map show the areas where the saguaro is predicted to be 
+present based on the SDM model.
+
+_Closing note_: In the example above, we use land cover as a categorical 
+variable. That is, any particular site is categorized as one, and only one land 
+cover type. Even if the area of interest was measured as 51% open shrublands 
+and 49% grasslands, it was categorized as open shrublands. The land cover data 
+from MODIS actually includes percentages, and a more nuanced approach would be 
+to use those percentages as continuous-valued predictors, rather than the 
+categorical approach described here. That would take a different series of data 
+wrangling steps, but I'm pretty sure it's possible.
