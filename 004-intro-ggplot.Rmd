@@ -3,17 +3,16 @@ title: "Introduction to data visualization with ggplot"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
-  html_document:
-    css: stylesheets/markdown-styles.css
-  pdf_document:
-    latex_engine: xelatex
+  html_document: default
+  pdf_document: default
 ---
 
-```{r setup, include = FALSE}
+```{r set-fig-size, include = FALSE}
 knitr::opts_chunk$set(fig.height = 4)
 ```
 
-An introduction to using the `ggplot` package in R to produce publication-quality graphics.
+An introduction to using the `ggplot` package in R to produce 
+publication-quality graphics.
 
 #### Learning objectives
 
@@ -25,27 +24,45 @@ An introduction to using the `ggplot` package in R to produce publication-qualit
 
 ### Workspace organization
 
-First we need to setup our development environment. We need to create two folders: 'data' will store the data we will be analyzing, and 'output' will store the results of our analyses.
-```{r, eval = FALSE}
+First we need to setup our development environment. Open RStudio and create a 
+new project via:
+
++ File > New Project...
++ Select 'New Directory'
++ For the Project Type select 'New Project'
++ For Directory name, call it something like "r-graphing" (without the quotes)
++ For the subdirectory, select somewhere you will remember (like "My Documents" 
+or "Desktop")
+
+We need to create two folders: 'data' will store the data we will be analyzing, 
+and 'output' will store the results of our analyses.
+
+```{r setup, eval = FALSE}
 dir.create(path = "data")
 dir.create(path = "output")
 ```
 
-With this workspace organization, we can download the data, either manually or use R to automatically download it. For this lesson we'll do the latter, saving the file in the `data` directory we just created, and name the file `gapminder.csv`:
+With this workspace organization, we can download the data, either manually or 
+use R to automatically download it. For this lesson we'll do the latter, saving 
+the file in the `data` directory we just created, and name the file 
+`gapminder.csv`:
 
-```{r, eval = FALSE}
+```{r download-data, eval = FALSE}
 download.file(url = "http://tinyurl.com/gapminder-five-year-csv", 
               destfile = "data/gapminder.csv")
 ```
 
-From this point on, we want to keep track of what we have done, so we will restrict our use of the console and instead use script files. Start a new script with some brief header information at the very top. We want, at the very least, to include:
+From this point on, we want to keep track of what we have done, so we will 
+restrict our use of the console and instead use script files. Start a new 
+script with some brief header information at the very top. We want, at the very 
+least, to include:
 
 1. A short description of what the script does (no more than one line of text)
 2. Your name
 3. A means of contacting you (e.g. your e-mail address)
 4. The date, preferably in ISO format YYYY-MM-DD
 
-```{r}
+```{r script-header}
 # Plot gapminder data
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -61,14 +78,18 @@ There are two steps to using additional packages in R:
 
 For this exercise, we will install the `ggplot2` package:
 
-```{r eval = FALSE}
+```{r install-ggplot2, eval = FALSE}
 install.packages("ggplot2")
 library("ggplot2")
 ```
 
-It is important to note that for each computer you work on, the `install.packages` command need only be issued once, while the call to `library` will need to be issued for each session of R. Because of this, it is standard convention in scripts to comment out the `install.packages` command once it has been run on the machine, so our script now looks like:
+It is important to note that for each computer you work on, the 
+`install.packages` command need only be issued once, while the call to 
+`library` will need to be issued for each session of R. Because of this, it is 
+standard convention in scripts to comment out the `install.packages` command 
+once it has been run on the machine, so our script now looks like:
 
-```{r}
+```{r load-library}
 # Plot gapminder data
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -82,9 +103,12 @@ library("ggplot2")
 
 ### Scatterplot
 
-For our first plot, we will create an X-Y scatterplot to investigate a potential relationship between a country's gross domestic product (GDP) and the average life expectancy. We do so by creating a `ggplot` object, then calling `print` on that object:
+For our first plot, we will create an X-Y scatterplot to investigate a 
+potential relationship between a country's gross domestic product (GDP) and the 
+average life expectancy. We do so by creating a `ggplot` object, then calling 
+`print` on that object:
 
-```{r}
+```{r scatterplot-blank}
 # Load data
 gapminder <- read.csv(file = "data/gapminder.csv",
                       stringsAsFactors = TRUE)
@@ -97,9 +121,14 @@ lifeExp.plot <- ggplot(data = gapminder,
 print(lifeExp.plot)  
 ```
 
-_What happened?_ There are no points!? Here is where functionality of ggplot is evident. The way it works is by effectively drawing layer upon layer of graphics. So we have established the plot, but we need to add one more bit of information to tell ggplot what to put in that plot area. For a scatter plot, we use `geom_point()`, literally adding this to the ggplot object with a plus sign (+):
+_What happened?_ There are no points!? Here is where functionality of ggplot is 
+evident. The way it works is by effectively drawing layer upon layer of 
+graphics. So we have established the plot, but we need to add one more bit of 
+information to tell ggplot what to put in that plot area. For a scatter plot, 
+we use `geom_point()`, literally adding this to the ggplot object with a plus 
+sign (+):
 
-```{r}
+```{r scatterplot-points}
 # Create plot object
 lifeExp.plot <- ggplot(data = gapminder, 
                        mapping = aes(x = gdpPercap, y = lifeExp)) +
@@ -109,9 +138,12 @@ lifeExp.plot <- ggplot(data = gapminder,
 print(lifeExp.plot)  
 ```
 
-It is a little difficult to see how the points are distributed, as most are clustered on the left-hand side of the graph. To spread this distribution out, we can change the scale of the x-axis so GDP is displayed on a log scale by adding `scale_x_log10`:
+It is a little difficult to see how the points are distributed, as most are 
+clustered on the left-hand side of the graph. To spread this distribution out, 
+we can change the scale of the x-axis so GDP is displayed on a log scale by 
+adding `scale_x_log10`:
 
-```{r}
+```{r scatterplot-log10}
 # Create plot object
 lifeExp.plot <- ggplot(data = gapminder, 
                        mapping = aes(x = gdpPercap, y = lifeExp)) +
@@ -122,12 +154,18 @@ lifeExp.plot <- ggplot(data = gapminder,
 print(lifeExp.plot)  
 ```
 
-One thing of interest is to include additional information in the plot, such as which continent each point comes from. We can color points by another value in our data through the `aes` parameter in the initial call to `ggplot`. So in addition to telling R which data to use for the x and y axes, we indicate which data to use for point colors:
+One thing of interest is to include additional information in the plot, such as 
+which continent each point comes from. We can color points by another value in 
+our data through the `aes` parameter in the initial call to `ggplot`. So in 
+addition to telling R which data to use for the x and y axes, we indicate which 
+data to use for point colors:
 
-```{r}
+```{r scatterplot-colors}
 # Create plot object
 lifeExp.plot <- ggplot(data = gapminder, 
-                       mapping = aes(x = gdpPercap, y = lifeExp, color = continent)) +
+                       mapping = aes(x = gdpPercap, 
+                                     y = lifeExp, 
+                                     color = continent)) +
   geom_point() +
   scale_x_log10()
 
@@ -135,15 +173,22 @@ lifeExp.plot <- ggplot(data = gapminder,
 print(lifeExp.plot)  
 ```
 
-At this point, we want to change the colors of the points in two ways: (1) we want to make them slightly transparent because there is considerable overlap in some part of the graph; we do this by setting the `alpha` parameter in the `geom_point` call; (2) we want to use custom colors for each continent; this is done with the `scale_color_manual` function:
+At this point, we want to change the colors of the points in two ways: (1) we 
+want to make them slightly transparent because there is considerable overlap in 
+some part of the graph; we do this by setting the `alpha` parameter in the 
+`geom_point` call; (2) we want to use custom colors for each continent; this is 
+done with the `scale_color_manual` function:
 
-```{r}
+```{r scatterplot-transparency}
 # Create plot object
 lifeExp.plot <- ggplot(data = gapminder, 
-                       mapping = aes(x = gdpPercap, y = lifeExp, color = continent)) +
+                       mapping = aes(x = gdpPercap, 
+                                     y = lifeExp, 
+                                     color = continent)) +
   geom_point(alpha = 0.5) +
   scale_x_log10() +
-  scale_color_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet"))
+  scale_color_manual(values = c("red", "orange", "forestgreen", 
+                                "darkblue", "violet"))
 
 # Draw plot
 print(lifeExp.plot)  
@@ -151,13 +196,16 @@ print(lifeExp.plot)
 
 Finally, we should make those axis labels a little nicer.
 
-```{r}
+```{r scatterplot-axis-titles}
 # Create plot object
 lifeExp.plot <- ggplot(data = gapminder, 
-                       mapping = aes(x = gdpPercap, y = lifeExp, color = continent)) +
+                       mapping = aes(x = gdpPercap, 
+                                     y = lifeExp, 
+                                     color = continent)) +
   geom_point(alpha = 0.5) +
   scale_x_log10() +
-  scale_color_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
+  scale_color_manual(values = c("red", "orange", "forestgreen", 
+                                "darkblue", "violet")) +
   xlab("GDP per capita") +
   ylab("Life Expectancy")
 
@@ -165,23 +213,28 @@ lifeExp.plot <- ggplot(data = gapminder,
 print(lifeExp.plot)
 ```
 
-And if we want to save the plot to a file, we call `ggsave`, passing a filename and the plot object we want to save (the latter is optional, if we don't indicate which plot to save, `ggsave` will save the last plot that was displayed):
+And if we want to save the plot to a file, we call `ggsave`, passing a filename 
+and the plot object we want to save (the latter is optional, if we don't 
+indicate which plot to save, `ggsave` will save the last plot that was 
+displayed):
 
-```{r, eval = FALSE}
+```{r scatterplot-png, eval = FALSE}
 # Save plot to png file
 ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp.plot)
 ```
 
-Also note that `ggsave` will guess the type of file to save from the extension. For example, if we instead wanted to save a TIF instead of a PNG, we change the extension for the `filename` argument:
+Also note that `ggsave` will guess the type of file to save from the extension. 
+For example, if we instead wanted to save a TIF instead of a PNG, we change the 
+extension for the `filename` argument:
 
-```{r, eval = FALSE}
+```{r scatterplot-tif, eval = FALSE}
 # Save plot to tif file
 ggsave(filename = "output/gdp-lifeExp-plot.tiff", plot = lifeExp.plot)
 ```
 
 Our final script for this scatterplot is then:
 
-```{r, eval = FALSE}
+```{r scatterplot-script, eval = FALSE}
 # Plot gapminder data
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -196,10 +249,13 @@ gapminder <- read.csv(file = "data/gapminder.csv",
 
 # Create plot object
 lifeExp.plot <- ggplot(data = gapminder, 
-                       mapping = aes(x = gdpPercap, y = lifeExp, color = continent)) +
+                       mapping = aes(x = gdpPercap, 
+                                     y = lifeExp, 
+                                     color = continent)) +
   geom_point(alpha = 0.5) +
   scale_x_log10() +
-  scale_color_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
+  scale_color_manual(values = c("red", "orange", "forestgreen", 
+                                "darkblue", "violet")) +
   xlab("GDP per capita") +
   ylab("Life Expectancy")
 
@@ -214,7 +270,7 @@ ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp.plot)
 
 ### Violin plot
 
-```{r, eval = FALSE}
+```{r violin-start, eval = FALSE}
 # Violin plot of GDP data
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -226,9 +282,12 @@ rm(list = ls())
 library("ggplot2")
 ```
 
-Now with this call to `rm`, we have cleared out all our variables from memory, so we have to load the `gapminder` data again. To create a violin plot, we use the same approach as for a boxplot, but instead of `geom_point`, we use `geom_violin`:
+Now with this call to `rm`, we have cleared out all our variables from memory, 
+so we have to load the `gapminder` data again. To create a violin plot, we use 
+the same approach as for a boxplot, but instead of `geom_point`, we use 
+`geom_violin`:
 
-```{r fig.height = 3}
+```{r violin-plot, fig.height = 3}
 # Load data
 gapminder <- read.csv(file = "data/gapminder.csv",
                       stringsAsFactors = TRUE)
@@ -242,9 +301,12 @@ gdp.plot <- ggplot(data = gapminder,
 print(gdp.plot)
 ```
 
-A good start, but we can see we need to clean some things up. We'll start by changing the Y-axis to a log scale with `scale_y_log10` and adding a nicer looking axis title with `ylab`. Also, we will remove the gray background that comes with the default theme by using `theme_bw`:
+A good start, but we can see we need to clean some things up. We'll start by 
+changing the Y-axis to a log scale with `scale_y_log10` and adding a nicer 
+looking axis title with `ylab`. Also, we will remove the gray background that 
+comes with the default theme by using `theme_bw`:
 
-```{r fig.height = 3}
+```{r violin-log10, fig.height = 3}
 # Create violin plot object
 gdp.plot <- ggplot(data = gapminder, 
                    mapping = aes(x = continent, y = gdpPercap)) +
@@ -257,15 +319,22 @@ gdp.plot <- ggplot(data = gapminder,
 print(gdp.plot)
 ```
 
-One of the issues we have in the plot is not obvious just by looking at it. If we take a look at the data using `summary`, note the values in the `year` vector:
+One of the issues we have in the plot is not obvious just by looking at it. If 
+we take a look at the data using `summary`, note the values in the `year` 
+vector:
 
-```{r}
+```{r gapminder-summary}
 summary(gapminder)
 ```
 
-There are actually multiple years of data (1952 - 2007, at five year increments). So rather than plotting GDP for all years together, we should separate out each year of data. The `ggplot2` package makes this _very_ easy with faceting. To break the data apart into separate graphs for each year, we use `facet_wrap`, passing `year` as the column in the `gapminder` data we want to use for each graph:
+There are actually multiple years of data (1952 - 2007, at five year 
+increments). So rather than plotting GDP for all years together, we should 
+separate out each year of data. The `ggplot2` package makes this _very_ easy 
+with faceting. To break the data apart into separate graphs for each year, we 
+use `facet_wrap`, passing `year` as the column in the `gapminder` data we want 
+to use for each graph:
 
-```{r}
+```{r violin-facet}
 # Create violin plot object
 gdp.plot <- ggplot(data = gapminder, 
                    mapping = aes(x = continent, y = gdpPercap)) +
@@ -279,9 +348,13 @@ gdp.plot <- ggplot(data = gapminder,
 print(gdp.plot)
 ```
 
-One of the first things you might notice is that the X-axis is way to crowded now. Instead of using text to indicate each continent, we could instead use a separate color to indicate each continent, like we did in the scatterplot. We'll use `scale_fill_manual` for this purpose, and use the `theme` function to indicate that we do not want any x-axis text or an x-axis title.
+One of the first things you might notice is that the X-axis is way to crowded 
+now. Instead of using text to indicate each continent, we could instead use a 
+separate color to indicate each continent, like we did in the scatterplot. 
+We'll use `scale_fill_manual` for this purpose, and use the `theme` function to 
+indicate that we do not want any x-axis text or an x-axis title.
 
-```{r}
+```{r violin-color-1}
 # Create violin plot object
 gdp.plot <- ggplot(data = gapminder, 
                    mapping = aes(x = continent, y = gdpPercap)) +
@@ -290,7 +363,8 @@ gdp.plot <- ggplot(data = gapminder,
   ylab("GDP per capita") +
   theme_bw() +
   facet_wrap(~ year) +
-  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
+  scale_fill_manual(values = c("red", "orange", "forestgreen", 
+                               "darkblue", "violet")) +
   theme(axis.text.x = element_blank(),
         axis.title.x = element_blank())
 
@@ -298,18 +372,25 @@ gdp.plot <- ggplot(data = gapminder,
 print(gdp.plot)
 ```
 
-Okay, the x-axis is cleaned up, but where are the colors? If we look at our code, note that we said what colors we wanted, but not what they corresponded to. We need to explicitly tell ggplot that we want to fill the shapes by continent; this happens in the very first `ggplot` call, by passing an additional argument, `fill` to the `aes` function:
+Okay, the x-axis is cleaned up, but where are the colors? If we look at our 
+code, note that we said what colors we wanted, but not what they corresponded 
+to. We need to explicitly tell ggplot that we want to fill the shapes by 
+continent; this happens in the very first `ggplot` call, by passing an 
+additional argument, `fill` to the `aes` function:
 
-```{r}
+```{r violin-color-2}
 # Create violin plot object
 gdp.plot <- ggplot(data = gapminder, 
-                   mapping = aes(x = continent, y = gdpPercap, fill = continent)) +
+                   mapping = aes(x = continent, 
+                                 y = gdpPercap, 
+                                 fill = continent)) +
   geom_violin() +
   scale_y_log10() +
   ylab("GDP per capita") +
   theme_bw() +
   facet_wrap(~ year) +
-  scale_fill_manual(values = c("red", "orange", "forestgreen", "darkblue", "violet")) +
+  scale_fill_manual(values = c("red", "orange", "forestgreen", 
+                               "darkblue", "violet")) +
   theme(axis.text.x = element_blank(),
         axis.title.x = element_blank())
 
@@ -317,9 +398,15 @@ gdp.plot <- ggplot(data = gapminder,
 print(gdp.plot)
 ```
 
-Colors! But now you notice another problem with the plot - where's Oceania? We lost Australia and New Zealand! The problem is that there are now too few data points in the Oceania group in each map to create a violin plot (you need at least three points, and with only those two countries, there are only two points of data for each year). So for this plot, we are going to go ahead and explicitly omit the Oceania data from the plot. We do this by subsetting the `gapminder` data in the `ggplot` call:
+Colors! But now you notice another problem with the plot - where's Oceania? We 
+lost Australia and New Zealand! The problem is that there are now too few data 
+points in the Oceania group in each map to create a violin plot (you need at 
+least three points, and with only those two countries, there are only two 
+points of data for each year). So for this plot, we are going to go ahead and 
+explicitly omit the Oceania data from the plot. We do this by subsetting the 
+`gapminder` data in the `ggplot` call:
 
-```{r}
+```{r drop-oceania}
 # Load data
 gapminder <- read.csv(file = "data/gapminder.csv",
                       stringsAsFactors = TRUE)
@@ -344,7 +431,7 @@ Success!
 
 Our final script for this violin plot is then:
 
-```{r eval = FALSE}
+```{r violin-script, eval = FALSE}
 # Violin plot of GDP data
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -385,6 +472,6 @@ print(gdp.plot)
 
 ***
 
-<a href="index.html">Back to learn-r main page</a>
-  
-Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
+[Back to learn-r main page](index.html)
+
+Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.
