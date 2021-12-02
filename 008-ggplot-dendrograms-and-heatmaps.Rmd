@@ -7,7 +7,10 @@ output:
   pdf_document: default
 ---
 
-Want to combine the visualization of quantitative data with clustering algorithms? Unsatisfied with the options provided by the base R packages? In this hands-on workshop, we'll use the `ggendro` package for R to make publication-quality graphics.
+Want to combine the visualization of quantitative data with clustering 
+algorithms? Unsatisfied with the options provided by the base R packages? In 
+this hands-on workshop, we'll use the `ggendro` package for R to make
+publication-quality graphics.
 
 #### Learning objectives
 
@@ -19,36 +22,56 @@ Want to combine the visualization of quantitative data with clustering algorithm
 
 ## Getting started
 
-Start by creating a new project in RStudio and creating two folders we'll use to organize our efforts. The two folders should be `data` and `output` and will store...data and output.
-```{r eval = FALSE}
+First we need to setup our development environment. Open RStudio and create a 
+new project via:
+
++ File > New Project...
++ Select 'New Directory'
++ For the Project Type select 'New Project'
++ For Directory name, call it something like "r-graphing" (without the quotes)
++ For the subdirectory, select somewhere you will remember (like "My Documents" 
+or "Desktop")
+
+We need to create two folders: 'data' will store the data we will be analyzing, 
+and 'output' will store the results of our analyses. In the RStudio console:
+
+```{r setup, eval = FALSE}
 dir.create("data")
 dir.create("output")
 ```
 
-We will also need a few R packages that are not included in the standard distribution of R. Those packages are `ggplot2`, `ggdendro`, `reshape2`, and `grid` and can be installed with the `install.packages()` function. Note these packages need only be installed once on your machine.
-```{r eval = FALSE}
+We will also need a few R packages that are not included in the standard
+distribution of R. Those packages are `ggplot2`, `ggdendro`, `reshape2`, and 
+`grid` and can be installed with the `install.packages()` function. Note these
+packages need only be installed once on your machine.
+
+```{r install-packages, eval = FALSE}
 install.packages("ggplot2")
 install.packages("ggdendro")
 install.packages("reshape2")
 ```
 
-Finally, download data file from [https://jcoliver.github.io/learn-r/data/otter-mandible-data.csv](https://jcoliver.github.io/learn-r/data/otter-mandible-data.csv) or [http://tinyurl.com/otter-data-csv](http://tinyurl.com/otter-data-csv) (the latter just re-directs to the former). These data are a subset of those used in a study on skull morphology and diet specialization in otters [doi: 10.1371/journal.pone.0143236](http://dx.doi.org/10.1371/journal.pone.0143236). **Save this file in the `data` folder we just created**.
+Finally, download data file from
+[https://jcoliver.github.io/learn-r/data/otter-mandible-data.csv](https://jcoliver.github.io/learn-r/data/otter-mandible-data.csv) 
+or [http://tinyurl.com/otter-data-csv](http://tinyurl.com/otter-data-csv) (the
+latter just re-directs to the former). These data are a subset of those used in 
+a study on skull morphology and diet specialization in otters 
+[doi: 10.1371/journal.pone.0143236](http://dx.doi.org/10.1371/journal.pone.0143236). **Save this file in the "data" folder we just created**.
 
 ***
 
 ## Data preparation
 
-For any work that we do, we want to record all the steps we take, so instead of typing commands directly into the R console, we keep all our work in an R script. These scripts are just text files with R commands; by convention, we start the script with a brief bit of information about what the script does.
+For any work that we do, we want to record all the steps we take, so instead of
+typing commands directly into the R console, we keep all our work in an R 
+script. These scripts are just text files with R commands; by convention, we 
+start the script with a brief bit of information about what the script does.
 
-```{r}
+```{r read-data}
 # Cluster & heatmap on otter data
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-08-15
-
-rm(list = ls()) # clean up the environment
-
-################################################################################
 
 # Load dependencies
 library("ggplot2")
@@ -61,19 +84,29 @@ otter <- read.csv(file = "data/otter-mandible-data.csv",
                   stringsAsFactors = TRUE)
 ```
 
-If we look at the first few rows of data, we see the first three columns have information about the specimen from which the measurements were taken, while columns 4-9 have data for six mandible measurements (`m1` - `m6`):
-```{r}
+If we look at the first few rows of data, we see the first three columns have
+information about the specimen from which the measurements were taken, while 
+columns 4-9 have data for six mandible measurements (`m1` - `m6`):
+
+```{r otter-head}
 head(otter)
 ```
 
-For our purposes, we only want to look at the data for two species, so we subset the data, including only those rows that have either "A. cinerea" or "L. canadensis" in the `species` column. Note, this _does not_ alter the data in the original file we read into R; it only alters the data object `otter` currently in R's memory.
-```{r}
+For our purposes, we only want to look at the data for two species, so we 
+subset the data, including only those rows that have either "A. cinerea" or 
+"L. canadensis" in the `species` column. Note, this _does not_ alter the data 
+in the original file we read into R; it only alters the data object `otter`
+currently in R's memory.
+
+```{r subset-data}
 two.species <- c("A. cinerea", "L. canadensis")
 otter <- otter[otter$species %in% two.species, ]
 ```
 
-The last thing we need to do is scale the data variables (columns 4-9) so measurements have a mean value of 0 and a variance of 1.
-```{r}
+The last thing we need to do is scale the data variables (columns 4-9) so
+measurements have a mean value of 0 and a variance of 1.
+
+```{r rescale-data}
 otter.scaled <- otter
 otter.scaled[, c(4:9)] <- scale(otter.scaled[, 4:9])
 ```
@@ -82,9 +115,11 @@ otter.scaled[, c(4:9)] <- scale(otter.scaled[, 4:9])
 
 ## Clustering
 
-To make our figure, we will build the two plots (the cluster diagram and the heatmap) separately, then use the `grid` framework to put them together. We start by making the dendrogram (or cluster).
+To make our figure, we will build the two plots (the cluster diagram and the
+heatmap) separately, then use the `grid` framework to put them together. We 
+start by making the dendrogram (or cluster).
 
-```{r}
+```{r run-clustering}
 # Run clustering
 otter.matrix <- as.matrix(otter.scaled[, -c(1:3)])
 rownames(otter.matrix) <- otter.scaled$accession
@@ -99,7 +134,7 @@ print(dendro.plot)
 
 We can make those labels a bit smaller:
 
-```{r}
+```{r axis-labels}
 dendro.plot <- dendro.plot + theme(axis.text.y = element_text(size = 6))
 
 # Preview the plot
@@ -112,9 +147,11 @@ That's it for the cluster image (we'll make a few more changes later on).
 
 ## Heatmap
 
-We need to start by transforming data to a "long" format, where each row only contains values for one measurement. For example, our data started in this format:
+We need to start by transforming data to a "long" format, where each row only
+contains values for one measurement. For example, our data started in this 
+format:
 
-```{r echo = FALSE}
+```{r create-long, echo = FALSE}
 otter.scaled[c(1:2), c(1:5)]
 
 # For demonstration purposes only, print the first few rows and columns
@@ -124,23 +161,31 @@ otter.long.demo <- melt(otter.scaled[c(1:2), c(1:5)],
 
 We want to transform it so there is only a single measurement in each row:
 
-```{r echo = FALSE}
+```{r show-long, echo = FALSE}
 otter.long.demo
 ```
 
-This new data has columns that have information about the specimen (the "species", "museum", and "accession" columns), but now has "variable" and "value" columns. Instead of one column for each mandible measurement, each row only has one measurement in the "value" column, and the measurement type is stored in the "variable" column.  
+This new data has columns that have information about the specimen (the 
+"species", "museum", and "accession" columns), but now has "variable" and 
+"value" columns. Instead of one column for each mandible measurement, each row 
+only has one measurement in the "value" column, and the measurement type is 
+stored in the "variable" column.  
 
-We use the `reshape2` package's `melt` function to handle the data transformation:
+We use the `reshape2` package's `melt` function to handle the data 
+transformation:
 
-```{r}
+```{r to-long}
 # Heatmap
 # Data wrangling
 otter.long <- melt(otter.scaled, id = c("species", "museum", "accession"))
 ```
 
+Now we can use that new data frame, `otter.long` to create our heatmap. In the
+`ggplot` package, we use the `geom_tile` layer for creating a heatmap. Given 
+our prior experience with the y-axis labels being large, we will again use 
+`theme` to make the accession numbers (the y-axis labels) a little smaller:
 
-Now we can use that new data frame, `otter.long` to create our heatmap. In the `ggplot` package, we use the `geom_tile` layer for creating a heatmap. Given our prior experience with the y-axis labels being large, we will again use `theme` to make the accession numbers (the y-axis labels) a little smaller:
-```{r}
+```{r heatmap-1}
 heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
   geom_tile(aes(fill = value)) +
   scale_fill_gradient2() +
@@ -154,31 +199,49 @@ print(heatmap.plot)
 
 ## Putting it all together
 
-OK. We made a dendrogram. We made a heatmap. Now how to get them into the same figure? The `grid` package offers a way to combine separate plots.
+OK. We made a dendrogram. We made a heatmap. Now how to get them into the same
+figure? The `grid` package offers a way to combine separate plots.
 
-```{r}
+```{r grid-plot-1}
 grid.newpage()
-print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
+print(heatmap.plot, 
+      vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
+print(dendro.plot, 
+      vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
 ```
 
 OK, that's a start, but there are a few things we need to address:
 
-1. Notice the tips of the dendrogram are not in the same order as the y-axis of the heatmap. We'll need to re-order the heatmap to match the structure of the clustering.
-2. It would be nice to have the dendrogram and heatmap closer together, without a legend separating them.
-3. The dendrogram should be vertically stretched so each tip lines up with a row in the heatmap plot.
+1. Notice the tips of the dendrogram are not in the same order as the y-axis of 
+the heatmap. We'll need to re-order the heatmap to match the structure of the
+clustering.
+2. It would be nice to have the dendrogram and heatmap closer together, without 
+a legend separating them.
+3. The dendrogram should be vertically stretched so each tip lines up with a 
+row in the heatmap plot.
 
 ### Re-order heatmap rows to match dendrogram
 
-We'll use the order of the tips in the dendrogram to re-order the rows in our heatmap. The order of those tips are stored in the `otter.dendro` object, and we can extract it with the `order.dendro` function:
+We'll use the order of the tips in the dendrogram to re-order the rows in our
+heatmap. The order of those tips are stored in the `otter.dendro` object, and 
+we can extract it with the `order.dendro` function:
 
-```{r}
+```{r order-data}
 otter.order <- order.dendrogram(otter.dendro)
 ```
 
-And now for the fun part. By default, `ggplot` use the level order of the y-axis labels as the means of ordering the rows in the heatmap. That is, level 1 of the factor is plotted in the top row, level 2 is plotted in the second row, level 3 in the third row and so on. So we can dictate the order in which these rows are plotted by _setting_ the order of the levels in the column we use for the y-axis labels in the heatmap. The data we used for the heatmap was the long-format, `otter.long` object, and the column we used for the y-axis is `accession`. Using the order of the dendrogram tips (we stored this above in the `otter.order` vector), we can re-level the `otter.long$accession` column to match the order of the tips in the trees.
+And now for the fun part. By default, `ggplot` use the level order of the 
+y-axis labels as the means of ordering the rows in the heatmap. That is, level 
+1 of the factor is plotted in the top row, level 2 is plotted in the second 
+row, level 3 in the third row and so on. So we can dictate the order in which 
+these rows are plotted by _setting_ the order of the levels in the column we 
+use for the y-axis labels in the heatmap. The data we used for the heatmap was 
+the long-format, `otter.long` object, and the column we used for the y-axis is
+`accession`. Using the order of the dendrogram tips (we stored this above in 
+the `otter.order` vector), we can re-level the `otter.long$accession` column to
+match the order of the tips in the trees.
 
-```{r}
+```{r reorder-levels}
 # Order the levels according to their position in the cluster
 otter.long$accession <- factor(x = otter.long$accession,
                                levels = otter.scaled$accession[otter.order], 
@@ -186,9 +249,10 @@ otter.long$accession <- factor(x = otter.long$accession,
 
 ```
 
-At this point, we need to re-create the heatmap, because the underlying data (`otter.long`) has changed:
+At this point, we need to re-create the heatmap, because the underlying data
+(`otter.long`) has changed:
 
-```{r}
+```{r heatmap-2}
 # Heatmap
 heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
   geom_tile(aes(fill = value)) +
@@ -199,21 +263,28 @@ heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
 print(heatmap.plot)
 ```
 
-Now the rows have been re-arranged and we can see right away that the heatmap now does a better job of grouping "red" rows together and "blue" rows together.
+Now the rows have been re-arranged and we can see right away that the heatmap 
+now does a better job of grouping "red" rows together and "blue" rows together.
 
-The combined figure shows the accession numbers in the heatmap are now in the same order as the acession numbers in the dendrogram:
+The combined figure shows the accession numbers in the heatmap are now in the 
+same order as the acession numbers in the dendrogram:
 
-```{r}
+```{r grid-plot-2}
 grid.newpage()
-print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
+print(heatmap.plot, 
+      vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
+print(dendro.plot, 
+      vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
 ```
 
 ### Re-position legend
 
-We would like the legend to be somewere else besides in between the two graphs, so we will move it to the top of the heatmap. We do this with through the `theeme` layer when creating the heatmap, setting the value of `legend.position` to "top":
+We would like the legend to be somewere else besides in between the two graphs, 
+so we will move it to the top of the heatmap. We do this with through the 
+`theme` layer when creating the heatmap, setting the value of `legend.position` 
+to "top":
 
-```{r}
+```{r heatmap-3}
 # Heatmap
 heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
   geom_tile(aes(fill = value)) +
@@ -227,30 +298,55 @@ print(heatmap.plot)
 
 The combined figure now has the heatmap and dendrogram closer together:
 
-```{r}
+```{r grid-plot-3}
 grid.newpage()
-print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
+print(heatmap.plot, 
+      vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
+print(dendro.plot, 
+      vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
 ```
 
 ### Align dendrogram tips with heatmap rows
 
-Finally, we will need to adjust the height and alignment of dendrogram to ensure the tips line up with the corresponding rows in the heatmap. Unfortunately, because the two figures are actually independent graphics objects, this part involves considerable trial and error. In general, we will need to change two parameters in the `viewport` function when we call `print` on `dendro.plot`:  
+Finally, we will need to adjust the height and alignment of dendrogram to 
+ensure the tips line up with the corresponding rows in the heatmap. 
+Unfortunately, because the two figures are actually independent graphics 
+objects, this part involves considerable trial and error. In general, we will 
+need to change two parameters in the `viewport` function when we call `print` 
+on `dendro.plot`:  
 
-1. `y`: This argument sets the vertical justification. A value of 0.5 centers the graphic in the middle of the viewport to which it is assigned. Values closer to zero move the graphic towards the bottom of the viewport and values closer to one move the graphic towards the top of the viewport. In our case, we will probably want to move the dendrogram down a little bit, so we use a value below 0.5.
-2. `height`: This is the proportion of the viewport's vertical space the graphic should use. We initially set it to use all the vertical space (`height = 1.0`), but since the legend now occupies the real estate at the top of the graphic, we will need to make the dendrogram height smaller.
+1. `y`: This argument sets the vertical justification. A value of 0.5 centers 
+the graphic in the middle of the viewport to which it is assigned. Values 
+closer to zero move the graphic towards the bottom of the viewport and values 
+closer to one move the graphic towards the top of the viewport. In our case, we 
+will probably want to move the dendrogram down a little bit, so we use a value 
+below 0.5.
+2. `height`: This is the proportion of the viewport's vertical space the 
+graphic should use. We initially set it to use all the vertical space 
+(`height = 1.0`), but since the legend now occupies the real estate at the top 
+of the graphic, we will need to make the dendrogram height smaller.
 
-**Note:** The actual values you use will depend on the graphics device you ultimately use; that is, the values presented here are designed for an html to be viewed on the web, but if you are displaying on the screen or writing to a pdf file, you may need to use different values for `y` and `height` (e.g. when calling `print` on `dendro.plot`, it may work better on your screen to set `y = 0.4` and `height = 0.85`).
+**Note:** The actual values you use will depend on the graphics device you
+ultimately use; that is, the values presented here are designed for an html to 
+be viewed on the web, but if you are displaying on the screen or writing to a 
+pdf file, you may need to use different values for `y` and `height` (e.g. when
+calling `print` on `dendro.plot`, it may work better on your screen to set 
+`y = 0.4` and `height = 0.85`).
 
-```{r}
+```{r grid-plot-4}
 grid.newpage()
-print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92))
+print(heatmap.plot, 
+      vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
+print(dendro.plot, 
+      vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92))
 ```
 
-And lastly, as a bonus, we can remove the accession numbers from the heatmap, as they are already displayed at the tips of the dendrogram (and we made sure the heatmap rows and dendrogram tips match, above). We do so by setting the relevant theme elements to `element_blank()` in our call to `ggplot`:
+And lastly, as a bonus, we can remove the accession numbers from the heatmap, 
+as they are already displayed at the tips of the dendrogram (and we made sure 
+the heatmap rows and dendrogram tips match, above). We do so by setting the 
+relevant theme elements to `element_blank()` in our call to `ggplot`:
 
-```{r}
+```{r heatmap-grid}
 # Heatmap
 heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
   geom_tile(aes(fill = value)) +
@@ -261,20 +357,19 @@ heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
         legend.position = "top")
 
 grid.newpage()
-print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92))
+print(heatmap.plot, 
+      vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
+print(dendro.plot, 
+      vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92))
 ```
 
 Our final script would look like this:
 
-
-```{r, eval = FALSE}
+```{r final-script, eval = FALSE}
 # Cluster & heatmap on otter data
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-08-15
-
-rm(list = ls()) # clean up the environment
 
 ################################################################################
 
@@ -330,8 +425,10 @@ heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
 
 # All together
 grid.newpage()
-print(heatmap.plot, vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92))
+print(heatmap.plot, 
+      vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
+print(dendro.plot, 
+      vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92))
 ```
 
 ***
@@ -343,6 +440,6 @@ print(dendro.plot, vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92)
 
 ***
 
-<a href="index.html">Back to learn-r main page</a>
-  
-Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
+[Back to learn-r main page](index.html)
+
+Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.

@@ -4,33 +4,63 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document: default
-  pdf_document:
-    latex_engine: xelatex
+  pdf_document: default
 ---
 
-An application of heatmap visualization to investigate differential gene expression.
+An application of heatmap visualization to investigate differential gene 
+expression.
 
 #### Learning objectives
+
 1. Manipulate data into a 'tidy' format
 2. Visualize data in a heatmap
 3. Become familiar with `ggplot` syntax for customizing plots
 
 ## Heatmaps for differential gene expression
-Heatmaps are a great way of displaying three-dimensional data in only two dimensions. But how can we easily translate tabular data into a format for heatmap plotting? By taking advantage of "data munging" and graphics packages, heatmaps are relatively easy to produce in R. 
+
+Heatmaps are a great way of displaying three-dimensional data in only two
+dimensions. But how can we easily translate tabular data into a format for 
+heatmap plotting? By taking advantage of "data munging" and graphics packages,
+heatmaps are relatively easy to produce in R. 
 
 ***
 
 ## Getting started
-We are going to start by isolating different types of information by imposing structure in our file managment. That is, we are going to put our input data in one folder and any output such as plots or analytical results in a different folder. We can use the `dir.create` to create these two folders:
-```{r eval = FALSE}
+
+First we need to setup our development environment. Open RStudio and create a 
+new project via:
+
++ File > New Project...
++ Select 'New Directory'
++ For the Project Type select 'New Project'
++ For Directory name, call it something like "r-expression" (without the quotes)
++ For the subdirectory, select somewhere you will remember (like "My Documents" 
+or "Desktop")
+
+We are going to start by isolating different types of information by imposing
+structure in our file management. That is, we are going to put our input data 
+in one folder and any output such as plots or analytical results in a different
+folder. We can use the `dir.create()` function to create these two folders:
+
+```{r setup, eval = FALSE}
 dir.create("data")
 dir.create("output")
 ```
 
-For this lesson, we will use a subset of data on a study of gene expression in cells infected with the influenza virus ([doi: 10.4049/jimmunol.1501557](https://doi.org/10.4049/jimmunol.1501557)). The study infected human plasmacytoid dendritic cells with the influenza virus, and compared gene expression in those cells to gene expression in uninfected cells. The goal was to see how the flu virus affected the function of these immune system cells.  
-The data for this lesson is available at: [http://tinyurl.com/flu-expression-data](http://tinyurl.com/flu-expression-data) or [https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv](https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv). Download this comma separated file and put it in the `data` folder. 
+For this lesson, we will use a subset of data on a study of gene expression in 
+cells infected with the influenza virus 
+([doi: 10.4049/jimmunol.1501557](https://doi.org/10.4049/jimmunol.1501557)). 
+The study infected human plasmacytoid dendritic cells with the influenza virus, 
+and compared gene expression in those cells to gene expression in uninfected 
+cells. The goal was to see how the flu virus affected the function of these 
+immune system cells. The data for this lesson is available at: [http://tinyurl.com/flu-expression-data](http://tinyurl.com/flu-expression-data) 
+or [https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv](https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv). 
+Download this comma separated file and put it in the "data" folder. 
 
-Finally, we will be using two packages that are not distributed with the base R software, so we need to install them. Note that you only have to install packages once on your machine.
+Finally, we will be using two packages that are not distributed with the base R
+software, so we need to install them. Note that you only have to install 
+packages once on your machine.
+
 ```{r eval = FALSE}
 install.packages("ggplot2")
 install.packages("tidyr")

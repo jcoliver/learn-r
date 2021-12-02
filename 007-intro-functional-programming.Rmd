@@ -7,7 +7,8 @@ output:
   pdf_document: default
 ---
 
-An introduction to writing functions to improve your coding efficiency and optimize performance.
+An introduction to writing functions to improve your coding efficiency and 
+optimize performance.
 
 #### Learning objectives
 1. Write and use functions in R
@@ -15,17 +16,39 @@ An introduction to writing functions to improve your coding efficiency and optim
 3. Replace loops with functions optimized for vector calculations
 
 ## Don't Repeat Yourself
-The [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) aims to reduce repetition in software engineering. By writing and using functions to accomplish a set of instructions multiple times, you reduce the opportunities for mistakes and often improve performance of the code you write. Functional programming makes it easy to apply the same analyses to different sets of data, without excessive copy-paste-update cycles that can introduce hard-to-detect errors.
+The [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) aims 
+to reduce repetition in software engineering. By writing and using functions to
+accomplish a set of instructions multiple times, you reduce the opportunities 
+for mistakes and often improve performance of the code you write. Functional
+programming makes it easy to apply the same analyses to different sets of data,
+without excessive copy-paste-update cycles that can introduce hard-to-detect 
+errors.
 
 ```{r setup, echo = FALSE}
 file_name_1 <- "standardize-iris.R"
 function_file_name <- "standardization-functions.R"
 ```
 
+## Setup
+
+First we need to setup our development environment. Open RStudio and create a 
+new project via:
+
++ File > New Project...
++ Select 'New Directory'
++ For the Project Type select 'New Project'
++ For Directory name, call it something like "r-functions" (without the quotes)
++ For the subdirectory, select somewhere you will remember (like "My Documents" 
+or "Desktop")
+
 ***
 
 ## Writing functions
-Why do we write functions? Usually, we create functions after writing some code with certain variables, then copy/pasting that code and changing the variable names. Then more copy/paste. Then we forget to change one of the variables and spend a day figuring out why our results don't make sense.
+
+Why do we write functions? Usually, we create functions after writing some code 
+with certain variables, then copy/pasting that code and changing the variable 
+names. Then more copy/paste. Then we forget to change one of the variables and 
+spend a day figuring out why our results don't make sense.
 
 For example, consider the `iris` data set:
 
@@ -33,15 +56,25 @@ For example, consider the `iris` data set:
 head(iris)
 ```
 
-And if we look at the values for each of the four measurements, some are quite different in their ranges.
+And if we look at the values for each of the four measurements, some are quite
+different in their ranges.
 
 ```{r iris-summary}
 summary(iris)
 ```
 
-Given this variation in ranges and magnitudes, we will have to standardize the variables if we want to run analyses like principle components analysis (PCA) (PCA is beyond the scope of this lesson, but it is covered in a [separate lesson](https://jcoliver.github.io/learn-r/003-intro-multivariate.html)). Standardizing a variable means we transform the data so the mean value is zero and the standard deviation is one.
+Given this variation in ranges and magnitudes, we will have to standardize the
+variables if we want to run analyses like principle components analysis (PCA) 
+(PCA is beyond the scope of this lesson, but it is covered in a [separate lesson](https://jcoliver.github.io/learn-r/003-intro-multivariate.html)).
+Standardizing a variable means we transform the data so the mean value is zero 
+and the standard deviation is one.
 
-We'll start by creating an R script to hold our work. R scripts are simple text files with a series of R commands and are a great way to make our work reproducible. For all scripts, it is a good idea to start off with a little information about what the script does (and who is responsible for it). So create a script (from the File menu, select New File > R Script or use the keyboard shortcut of Ctrl+Shift+N or Cmd+Shift+N).
+We'll start by creating an R script to hold our work. R scripts are simple text
+files with a series of R commands and are a great way to make our work 
+reproducible. For all scripts, it is a good idea to start off with a little
+information about what the script does (and who is responsible for it). So 
+create a script (from the File menu, select New File > R Script or use the 
+keyboard shortcut of Ctrl+Shift+N or Cmd+Shift+N).
 
 ```{r script-header}
 # Standardize iris values
@@ -50,11 +83,17 @@ We'll start by creating an R script to hold our work. R scripts are simple text 
 # 2018-08-16
 ```
 
-R will ignore anything that appears to the right of the pound sign, `#`. This information allows anyone who is reading the script to quickly know (1) what the script does and (2) who to contact with questions. While we are at it, go ahead and save this file as "`r file_name_1`".
+R will ignore anything that appears to the right of the pound sign, `#`. This
+information allows anyone who is reading the script to quickly know (1) what 
+the script does and (2) who to contact with questions. While we are at it, go 
+ahead and save this file as "`r file_name_1`".
 
-To standardize a variable, we subtract observed values by the mean, and divide that difference by the standard deviation ($(x_i - \mu)/\sigma$).
+To standardize a variable, we subtract observed values by the mean, and divide 
+that difference by the standard deviation ($(x_i - \mu)/\sigma$).
 
-We start by performing the calculation on the petal length data, first calculating the two summary statistics (mean and standard deviation), then using them in the formula for standardization.
+We start by performing the calculation on the petal length data, first 
+calculating the two summary statistics (mean and standard deviation), then 
+using them in the formula for standardization.
 
 ```{r standardize-petal-length}
 # Standardize petal length
@@ -75,7 +114,8 @@ and the `sd` function to make sure the standard deviation is one.
 sd(standard_petal_length)
 ```
 
-Now that we have the calculation for petal length, we can copy the code and update it to perform calculation for petal width. 
+Now that we have the calculation for petal length, we can copy the code and 
+update it to perform calculation for petal width. 
 
 ```{r petal-width-standardization}
 # Standardize petal width
@@ -85,13 +125,20 @@ standard_petal_width <- (iris$Petal.Width - mean_petal_width)/sd_petal_width
 summary(standard_petal_width)
 ```
 
-But we had to change three instances of "Length" to "Width" and seven (seven!?) instances of "length" to "width". Did copy/paste really save time? And how many opportunities for mistakes?
+But we had to change three instances of "Length" to "Width" and seven (seven!?)
+instances of "length" to "width". Did copy/paste really save time? And how many
+opportunities for mistakes?
 
-Here we have a perfect opportunity to write a function that will do those three steps for any data we want. _And_ we can avoid the inevitable errors that arise with the copy-paste-update process.
+Here we have a perfect opportunity to write a function that will do those three
+steps for any data we want. _And_ we can avoid the inevitable errors that arise 
+with the copy-paste-update process.
 
 ### Write a function!
 
-When we write a function, it is very much like assigning a value to a variable. However, in this instance, we assign the value produced by a special function in R called `function` (shocking, I know). When writing functions, I generally start by naming the function and creating a function with nothing in it. We will call our function `standardize`:
+When we write a function, it is very much like assigning a value to a variable. However, in this instance, we assign the value produced by a special function 
+in R called `function` (shocking, I know). When writing functions, I generally 
+start by naming the function and creating a function with nothing in it. We 
+will call our function `standardize`:
 
 ```{r function-skeleton, eval = FALSE}
 standardize <- function(data) {
@@ -99,7 +146,10 @@ standardize <- function(data) {
 }
 ```
 
-Note that there is a variable `data` in the call to `function`. This is referring to the data that we will perform our standarization calculation on. The next step is to outline what actions the function will peform. I start with comments to help with this process.
+Note that there is a variable `data` in the call to `function`. This is 
+referring to the data that we will perform our standarization calculation on. 
+The next step is to outline what actions the function will peform. I start with
+comments to help with this process.
 
 ```{r function-steps, eval = FALSE}
 standardize <- function(data) {
@@ -109,7 +159,8 @@ standardize <- function(data) {
 }
 ```
 
-These comments then provide a roadmap of the code that needs to be written inside the function. We start by adding the mean calculation to the function:
+These comments then provide a roadmap of the code that needs to be written 
+inside the function. We start by adding the mean calculation to the function:
 
 ```{r function-mean, eval = FALSE}
 standardize <- function(data) {
@@ -133,7 +184,12 @@ standardize <- function(data) {
 }
 ```
 
-At this point, remember that we want to use this function with the iris data. However, at no point in the function are we referring to the iris data frame. This is because we want our function to be _generalizable_ to other data as well. The last thing we need to do is to send the standardized values back to the user. This is known as "returning" a value, and we use the function `return` to do so:
+At this point, remember that we want to use this function with the iris data.
+However, at no point in the function are we referring to the iris data frame. 
+This is because we want our function to be _generalizable_ to other data as 
+well. The last thing we need to do is to send the standardized values back to 
+the user. This is known as "returning" a value, and we use the function 
+`return` to do so:
 
 ```{r function-finish}
 standardize <- function(data) {
@@ -147,15 +203,22 @@ standardize <- function(data) {
 }
 ```
 
-At this point, our function is almost ready for use. The last thing we need to do is to read it into memory. We do this like we are running any other line of code in R: place your cursor on one of the curly braces and run the code with Ctrl-Enter or Cmd-Enter.
+At this point, our function is almost ready for use. The last thing we need to 
+do is to read it into memory. We do this like we are running any other line of 
+code in R: place your cursor on one of the curly braces and run the code with
+Ctrl-Enter or Cmd-Enter.
 
-Now we can use the function. We can replace the three lines that performed the calculation for petal length with a single line that calls our `standardize` function:
+Now we can use the function. We can replace the three lines that performed the
+calculation for petal length with a single line that calls our `standardize`
+function:
 
 ```{r use-function-length}
 standard_petal_length <- standardize(data = iris$Petal.Length)
 ```
 
-Like all code, we want to provide enough information so it is easy for someone else to use. So we want to add documentation that consists at a minimum of three things:
+Like all code, we want to provide enough information so it is easy for someone 
+else to use. So we want to add documentation that consists at a minimum of 
+three things:
 
 1. A brief explanation of what the function does
 2. A description of the information needs to be provided to the function
@@ -176,15 +239,23 @@ standardize <- function(data) {
 }
 ```
 
-Now we have a function we can use on each of the columns in our data frame. Yay, right? Well, almost. We still have to run the `standardize` function four times on the iris data frame. What if we had 100 columns of data? Or 1000 columns? That is simply too much copy and paste. We can use the `apply` function to run the `standardize` function on each column of data.
+Now we have a function we can use on each of the columns in our data frame. 
+Yay, right? Well, almost. We still have to run the `standardize` function four 
+times on the iris data frame. What if we had 100 columns of data? Or 1000 
+columns? That is simply too much copy and paste. We can use the `apply` 
+function to run the `standardize` function on each column of data.
 
 We need to tell `apply` three things:
 
 1. The data frame to use, in this case we are using the `iris` data
-2. Whether to do calculations for each row or each column; we use the `MARGIN` parameter for this: `MARGIN = 1` means do calculation for each _row_ while `MARGIN = 2` means do calculation for each _column_. We want to do calculations for each column
+2. Whether to do calculations for each row or each column; we use the `MARGIN`
+parameter for this: `MARGIN = 1` means do calculation for each _row_ while 
+`MARGIN = 2` means do calculation for each _column_. We want to do calculations 
+for each column
 3. The function to use; here we use the function we just wrote, `standardize`
 
-Note the `apply` function arguments `X`, `MARGIN`, and `FUN` are all capitalized. I have no idea why.
+Note the `apply` function arguments `X`, `MARGIN`, and `FUN` are all 
+capitalized. I have no idea why.
 
 ```{r apply-function-01, error = TRUE}
 iris_stand <- apply(X = iris, MARGIN = 2, FUN = standardize)
@@ -196,14 +267,20 @@ Well that didn't work. Why not? Let us look at the `iris` data again:
 head(iris)
 ```
 
-The error occurs because the `standardize` function is run on _all_ columns, including the "Species" column, which contains non-numerical data. We need to skip that column when we send data to the `apply` function. One way to do this is to use the negation operator (the minus sign, "-") with the index of the column we want to skip. In our case, the "Species" column is the fifth column, so we drop that column in our call to `apply` via `iris[, -5]`.
+The error occurs because the `standardize` function is run on _all_ columns,
+including the "Species" column, which contains non-numerical data. We need to 
+skip that column when we send data to the `apply` function. One way to do this 
+is to use the negation operator (the minus sign, "-") with the index of the 
+column we want to skip. In our case, the "Species" column is the fifth column, 
+so we drop that column in our call to `apply` via `iris[, -5]`.
 
 ```{r apply-function-02}
 # Run standardize on all numeric columns
 iris_stand <- apply(X = iris[, -5], MARGIN = 2, FUN = standardize)
 ```
 
-We also need to convert the output back to a data frame with `as.data.frame`. We can then look at the first few rows with `head`.
+We also need to convert the output back to a data frame with `as.data.frame`. 
+We can then look at the first few rows with `head`.
 
 ```{r convert-apply-output}
 # Convert output to data frame
@@ -211,7 +288,10 @@ iris_stand <- as.data.frame(iris_stand)
 head(iris_stand)
 ```
 
-Great. But what's missing? The "Species" column is not included in the results because we did not send it to the `apply` function (remember, we had to skip it because it contained non-numerical data). We can add it back, though, copying from the "Species" column in the original data.
+Great. But what's missing? The "Species" column is not included in the results
+because we did not send it to the `apply` function (remember, we had to skip it
+because it contained non-numerical data). We can add it back, though, copying 
+from the "Species" column in the original data.
 
 ```{r add-species-column}
 # Add back species column
@@ -219,7 +299,8 @@ iris_stand$Species <- iris$Species
 head(iris_stand)
 ```
 
-So to summarize at this point, we wrote a function, `standardize`, and applied that to all the numeric data columns in the iris data.
+So to summarize at this point, we wrote a function, `standardize`, and applied 
+that to all the numeric data columns in the iris data.
 
 ```{r summary-so-far}
 # Run standardize on all numeric columns
@@ -232,16 +313,24 @@ iris_stand$Species <- iris$Species
 
 At this point, though, we have to ask ourselves two questions:
 
-1. How can I use this function with other projects?
-2. Can we have a function do all that business with `apply`, converting back to a data frame, and add on those missing columns?
+1. Can I use this function with other projects?
+2. Can we have a function do all that business with `apply`, converting back to 
+a data frame, and add on those missing columns?
 
 The answer to both is, of course, yes.
 
 ### Use the `source`
 
-Right now, the function we wrote, `standardize`, is locked up inside the `r file_name_1` file. This makes it hard to use outside of this file. In order to make the `standardize` function useable elsewhere, we need to move the function to a separate file and use the `source` command in any script that we would like to use our function. For the first step, create a new R script through the File menu or with the keyboard shortcut (Ctrl+Shift+N or Cmd+Shift+N). Let us call this file "`r function_file_name`".
+Right now, the function we wrote, `standardize`, is locked up inside the 
+`r file_name_1` file. This makes it hard to use outside of this file. In order 
+to make the `standardize` function useable elsewhere, we need to move the 
+function to a separate file and use the `source` command in any script that we 
+would like to use our function. For the first step, create a new R script 
+through the File menu or with the keyboard shortcut (Ctrl+Shift+N or 
+Cmd+Shift+N). Let us call this file "`r function_file_name`".
 
-As we did with our script, we want to start the file with a header that has a little information about what is included in the script.
+As we did with our script, we want to start the file with a header that has a 
+little information about what is included in the script.
 
 ```{r function-file-header, eval = FALSE}
 # Functions for standardizing data
@@ -250,27 +339,37 @@ As we did with our script, we want to start the file with a header that has a li
 # 2020-05-20
 ```
 
-Now cut (Ctrl-X or Cmd-X) the function from our original script (the file called "`r file_name_1`") and paste (Ctrl-V or Cmd-V) it into this new script (the file called "`r function_file_name`").
+Now cut (Ctrl-X or Cmd-X) the function from our original script (the file 
+called "`r file_name_1`") and paste (Ctrl-V or Cmd-V) it into this new script 
+(the file called "`r function_file_name`").
 
-So we have done the first part (moving our function to a separate file), but how do we actually use it? 
+So we have done the first part (moving our function to a separate file), but 
+how do we actually use it? 
 
 The `source` command.
 
-But we should pause for a moment to clean up our workspace. We can remove all variables from memory by running:
+But we should pause for a moment to clean up our workspace. We can remove all
+variables from memory by running:
 
 ```{r clean-workspace, eval = FALSE}
 rm(list = ls())
 ```
 
-We are doing this now just to ensure we are using the `standardize` function defined in the file we just created.
+We are doing this now just to ensure we are using the `standardize` function 
+defined in the file we just created.
 
-When we use `source`, we tell R to run _all_ the code in a specific file. Go to your first script ("`r file_name_1`") and add the `source` command, setting `file` to the name of our script with the `standarize` function ("`r function_file_name`").
+When we use `source`, we tell R to run _all_ the code in a specific file. Go to 
+your first script ("`r file_name_1`") and add the `source` command, setting 
+`file` to the name of our script with the `standarize` function 
+("`r function_file_name`").
 
 ```{r add-source, eval = FALSE}
 source(file = "standardization-functions.R")
 ```
 
-An important thing to remember about the `source` function is that it will run _all_ the code in that file. We can see this behavior by adding a line before our `standardize` function and re-running the `source` function.
+An important thing to remember about the `source` function is that it will run 
+_all_ the code in that file. We can see this behavior by adding a line before 
+our `standardize` function and re-running the `source` function.
 
 First, add this line to the `r function_file_name` file:
 
@@ -278,7 +377,8 @@ First, add this line to the `r function_file_name` file:
 message("Loading functions from standarization-functions.R")
 ```
 
-Save the `r function_file_name` file, then re-run the line with `source` in "`r file_name_1`":
+Save the `r function_file_name` file, then re-run the line with `source` in 
+"`r file_name_1`":
 
 ```{r re-run-source, eval = FALSE}
 source(file = "standardization-functions.R")
@@ -288,13 +388,20 @@ source(file = "standardization-functions.R")
 message("Loading functions from standarization-functions.R")
 ```
 
-If there are additional commands in the file you call `source` on, such as variable declarations, it will run the code and those variables will be added to memory. Sometimes that is OK, but I will caution against using `source` for anything other than loading functions into memory. 
+If there are additional commands in the file you call `source` on, such as 
+variable declarations, it will run the code and those variables will be added 
+to memory. Sometimes that is OK, but I will caution against using `source` for
+anything other than loading functions into memory. 
 
 ### Functions within functions
 
-Now that we have a separate file for functions, let us return to the other point, about writing a function that standardizes _all_ numeric columns of a data frame. 
+Now that we have a separate file for functions, let us return to the other 
+point, about writing a function that standardizes _all_ numeric columns of a 
+data frame. 
 
-So let us go back to our file with the `standardize` function ("`r function_file_name`") and at the end of the file, start defining a new function we will call `standardize_df`. We will pass it one argument, `df`.
+So let us go back to our file with the `standardize` function 
+("`r function_file_name`") and at the end of the file, start defining a new 
+function we will call `standardize_df`. We will pass it one argument, `df`.
 
 ```{r df-function-skeleton, eval = FALSE}
 standardize_df <- function(df) {
@@ -302,7 +409,12 @@ standardize_df <- function(df) {
 }
 ```
 
-Just as we did with `standardize` let us start by enumerating the steps to take to accomplish this. Since we already wrote the code to do each of these steps, we can paste the code in the function and comment it out. We can use this to guide the code we write. (If you don't have code that is easy to copy/paste, you can skip to writing comments about the steps that need to occur in the function.)
+Just as we did with `standardize` let us start by enumerating the steps to take 
+to accomplish this. Since we already wrote the code to do each of these steps, 
+we can paste the code in the function and comment it out. We can use this to 
+guide the code we write. (If you don't have code that is easy to copy/paste, 
+you can skip to writing comments about the steps that need to occur in the
+function.)
 
 ```{r df-function-paste, eval = FALSE}
 standardize_df <- function(df) {
@@ -315,9 +427,17 @@ standardize_df <- function(df) {
 }
 ```
 
-Looking at what we did before, there presents a challenge: How do we know which columns to skip? That is, how can we tell which columns are not numeric? We "hard-coded" the script to skip the fifth column, which holds the species' names. But how do we make this flexible enough so we do not need users to enter which columns to skip? We can use the function `is.numeric` on each column to figure out which columns have numeric data and thus are appropriate for the standardization transformation.
+Looking at what we did before, there presents a challenge: How do we know which
+columns to skip? That is, how can we tell which columns are not numeric? We
+"hard-coded" the script to skip the fifth column, which holds the species' 
+names. But how do we make this flexible enough so we do not need users to 
+enter which columns to skip? We can use the function `is.numeric` on each 
+column to figure out which columns have numeric data and thus are appropriate 
+for the standardization transformation.
 
-So we need to add another step to our function, where we look at the incoming data (a data frame called `df`). The first thing the function needs to do is figure out which columns in `df` are numeric and which columns are not numeric.
+So we need to add another step to our function, where we look at the incoming 
+data (a data frame called `df`). The first thing the function needs to do is 
+figure out which columns in `df` are numeric and which columns are not numeric.
 
 ```{r df-function-add-step, eval = FALSE}
 standardize_df <- function(df) {
@@ -331,17 +451,26 @@ standardize_df <- function(df) {
 }
 ```
 
-To extract this information, we can use the `sapply` function, which is related to `apply`; if you want to read more about `sapply` (and `apply` and `lapply`), there is a nice discussion at [https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/](https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/).
+To extract this information, we can use the `sapply` function, which is related 
+to `apply`; if you want to read more about `sapply` (and `apply` and `lapply`),
+there is a nice discussion at
+[https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/](https://nsaunders.wordpress.com/2010/08/20/a-brief-introduction-to-apply-in-r/).
 
-The function `is.numeric` will tell us if an individual column has numeric data, so we can test out `sapply` and `is.numeric` on the iris data:
+The function `is.numeric` will tell us if an individual column has numeric 
+data, so we can test out `sapply` and `is.numeric` on the iris data:
 
 ```{r test-sapply}
 sapply(X = iris, FUN = is.numeric)
 ```
 
-This is great! The value returned is a logical vector (a vector of TRUE/FALSE values) that tells us which columns are numeric (`r paste0(colnames(iris)[sapply(X = iris, FUN = is.numeric)], collapse = ", ")`) and which columns are not numeric (`r paste0(colnames(iris)[!sapply(X = iris, FUN = is.numeric)], collapse = ", ")`).
+This is great! The value returned is a logical vector (a vector of TRUE/FALSE
+values) that tells us which columns are numeric 
+(`r paste0(colnames(iris)[sapply(X = iris, FUN = is.numeric)], collapse = ", ")`) 
+and which columns are not numeric 
+(`r paste0(colnames(iris)[!sapply(X = iris, FUN = is.numeric)], collapse = ", ")`).
 
-We can update our function to extract the information about whether or not a column is numeric.
+We can update our function to extract the information about whether or not a 
+column is numeric.
 
 ```{r df-function-numeric, eval = FALSE}
 standardize_df <- function(df) {
@@ -356,7 +485,14 @@ standardize_df <- function(df) {
 }
 ```
 
-But now, the information stored within the function in the variable `col_numeric` allows us some efficiencies. Because `col_numeric` has as many elements as there are columns in `df`, we can get crafty with R to use our `standardize` function to _update_ columns of interest. If we can update columns rather than creating a new data frame, we can skip the step where we add back those non-numeric column. What does this look like, then? We change the `apply` command to use the `col_numeric` vector and update the data frame `df` rather than creating an entirely new data frame.
+But now, the information stored within the function in the variable 
+`col_numeric` allows us some efficiencies. Because `col_numeric` has as many
+elements as there are columns in `df`, we can get crafty with R to use our
+`standardize` function to _update_ columns of interest. If we can update 
+columns rather than creating a new data frame, we can skip the step where we 
+add back those non-numeric column. What does this look like, then? We change 
+the `apply` command to use the `col_numeric` vector and update the data frame 
+`df` rather than creating an entirely new data frame.
 
 ```{r df-function-standardize, eval = FALSE}
 standardize_df <- function(df) {
@@ -374,14 +510,20 @@ standardize_df <- function(df) {
 }
 ```
 
-Note that I did not remove the comment with the old code. Take a moment to notice an important difference: we did not create a new data frame (in our hard-coded version, this was `iris_stand`). Instead, we assigned values to the numeric columns of `df` (via `df[, col_numeric]`). Similar to our previous code, though, inside the `apply` command we _did_ skip all non-numeric columns in the data frame (also via `df[, col_numeric]`).
+Note that I did not remove the comment with the old code. Take a moment to 
+notice an important difference: we did not create a new data frame (in our
+hard-coded version, this was `iris_stand`). Instead, we assigned values to the
+numeric columns of `df` (via `df[, col_numeric]`). Similar to our previous 
+code, though, inside the `apply` command we _did_ skip all non-numeric columns 
+in the data frame (also via `df[, col_numeric]`).
 
 At this point, our function is almost done; we need to do two more things: 
 
 1. Use the `return` function
 2. Document the function
 
-While we add the `return` function, we can also clean up the commented-out code from inside the function.
+While we add the `return` function, we can also clean up the commented-out code 
+from inside the function.
 
 ```{r df-function-cleanup, eval = FALSE}
 standardize_df <- function(df) {
@@ -412,7 +554,9 @@ standardize_df <- function(df) {
 }
 ```
 
-At this point, we are ready to try it out, so save this file ("`r function_file_name`") and go back to our first script where we are doing the standardization of the iris data ("`r file_name_1`").
+At this point, we are ready to try it out, so save this file 
+("`r function_file_name`") and go back to our first script where we are doing 
+the standardization of the iris data ("`r file_name_1`").
 
 Now we need one line:
 
@@ -422,7 +566,10 @@ iris_stand <- standardize_df(df = iris)
 
 This probably did not work. Why not?
 
-Remember, when we use functions that are located in another file, we will need to run the `source` command any time we have made changes. So after saving `r function_file_name`, we need to re-run the `source` command to load any changes we made to `r function_file_name`.
+Remember, when we use functions that are located in another file, we will need 
+to run the `source` command any time we have made changes. So after saving 
+`r function_file_name`, we need to re-run the `source` command to load any 
+changes we made to `r function_file_name`.
 
 ```{r source-standardize-df, eval = FALSE}
 source(file = "standardization-functions.R")
@@ -457,7 +604,8 @@ head(iris_stand)
 
 Woo-hoo!
 
-In summary, we created two files. One file, "`r function_file_name`", includes the two functions we wrote:
+In summary, we created two files. One file, "`r function_file_name`", includes 
+the two functions we wrote:
 
 ```{r function-file, eval = FALSE}
 # Functions for standardizing data
@@ -494,7 +642,8 @@ standardize_df <- function(df) {
 }
 ```
 
-Our analysis file is now quite small, as we have shifted much of the code to the `r function_file_name` file.
+Our analysis file is now quite small, as we have shifted much of the code to 
+the `r function_file_name` file.
 
 ```{r standardization-file, eval = FALSE}
 # Standardize iris values
@@ -509,11 +658,34 @@ iris_stand <- standardize_df(df = iris)
 
 ### Actually developing a function
 
-So I need to come clean about writing these functions. In the lesson above, they are consise and fairly clean. They were certainly not born that way. In writing the `standardize_df` function, which is effectively three lines of code (find the numeric columns, run the `standardize` function on each column, return the values), I probably wrote 30 lines of code testing different ways of performing those steps. When writing a function, here are a few things to consider:
+So I need to come clean about writing these functions. In the lesson above, 
+they are concise and fairly clean. They were certainly not born that way. In 
+writing the `standardize_df` function, which is effectively three lines of code
+(find the numeric columns, run the `standardize` function on each column, 
+return the values), I probably wrote 30 lines of code testing different ways of
+performing those steps. When writing a function, here are a few things to consider:
 
-1. Clean out your workspace with `rm(list = ls())`. The code inside your function should not be dependent on _any_ "outside" variables or data. That is, you only want to use varibles that are (1) passed to the function (those variables we name when using `function`, e.g. the `data` variable in the `standardize` function, `standardize <- function(data)`) or (2) defined _within_ the function (like `mean_data <- mean(data)`).
-2. Step through the function one line at a time. The process for this does require you to assign values to all those arguments named in the function definition. So to test the `standardize` function, I first assigned a value to the `data` variable, in this case, the petal length column, by running `data <- iris$Petal.Length`. Then I ran the first line of code in the `standardize` function (`mean_data <- mean(data)`), then the second (`sd_data <- sd(data)`), and so on (in this development process, you _do not_ run the line defining the function, `standardize <- function(data)`). Along the way, do some reality checks to make sure things work the way they should. For example, you can compare the output of `mean(data)` for petal length with the output of `mean(iris$Petal.Length)` with `all(mean(data) == mean(iris$Petal.Length))`.
-3. Think from the point of a naive user. This is especially important when writing your documentation. Also, if you wait six months and come back to your functions, you will be that naive user.
+1. Clean out your workspace with `rm(list = ls())`. The code inside your 
+function should not be dependent on _any_ "outside" variables or data. That is, 
+you only want to use varibles that are (1) passed to the function (those 
+variables we name when using `function`, e.g. the `data` variable in the
+`standardize` function, `standardize <- function(data)`) or (2) defined 
+_within_ the function (like `mean_data <- mean(data)`).
+2. Step through the function one line at a time. The process for this does 
+require you to assign values to all those arguments named in the function
+definition. So to test the `standardize` function, I first assigned a value to 
+the `data` variable, in this case, the petal length column, by running 
+`data <- iris$Petal.Length`. Then I ran the first line of code in the 
+`standardize` function (`mean_data <- mean(data)`), then the second 
+(`sd_data <- sd(data)`), and so on (in this development process, you _do not_ 
+run the line defining the function, `standardize <- function(data)`). Along the 
+way, do some reality checks to make sure things work the way they should. For
+example, you can compare the output of `mean(data)` for petal length with the 
+output of `mean(iris$Petal.Length)` with 
+`all(mean(data) == mean(iris$Petal.Length))`.
+3. Think from the point of a naive user. This is especially important when 
+writing your documentation. Also, if you wait six months and come back to your
+functions, you will be that naive user.
 4. Clean out your workspace.
 
 ### Debugging tips
@@ -522,7 +694,14 @@ It is not working.
 
 Why is it not working?
 
-This will happen. Guaranteed. When debugging a function, one of the best functions to know about is `cat`. This allows you to print little messages to the console, building in those reality checks. Find points in your code where you know a variable should have a certain value and use the `cat` function (or multiple calls to `cat`) to print out what the value of the variable _really_ is. For example, if we are debugging the `standardize` function, we can `cat` the values of the mean for a column in our data frame to make sure the values are what we expect. We would first update the function with a call to `cat`:
+This will happen. Guaranteed. When debugging a function, one of the best 
+functions to know about is `cat`. This allows you to print little messages to 
+the console, building in those reality checks. Find points in your code where 
+you know a variable should have a certain value and use the `cat` function (or
+multiple calls to `cat`) to print out what the value of the variable _really_ 
+is. For example, if we are debugging the `standardize` function, we can `cat` 
+the values of the mean for a column in our data frame to make sure the values 
+are what we expect. We would first update the function with a call to `cat`:
 
 ```{r cat-example, eval = FALSE}
 # Standardize a vector of numerical data
@@ -540,13 +719,19 @@ standardize <- function(data) {
 }
 ```
 
-Note that in this case we provide three things to the `cat` function (which I am pretty sure stands for "concatenate"):
+Note that in this case we provide three things to the `cat` function (which I 
+am pretty sure stands for "concatenate"):
 
 1. `"Value of mean: "` is a bit of text that reminds me what is being printed
-2. `mean_data` is the name of the variable that stores the mean of the column of data that was passed to the function as `data`; `cat` will not print "mean_data", but rather the value stored in `mean_data`
-3. `\n` is the end of line character so whatever R outputs _after_ this call to `cat` appears on a new line
+2. `mean_data` is the name of the variable that stores the mean of the column 
+of data that was passed to the function as `data`; `cat` will not print 
+"mean_data", but rather the value stored in `mean_data`
+3. `\n` is the end of line character so whatever R outputs _after_ this call to
+`cat` appears on a new line
 
-Now we can run this function on the petal length column of the iris data (remember to reload `standardize` into memory first!) and compare the values to calcuations directly on the iris data:
+Now we can run this function on the petal length column of the iris data 
+(remember to reload `standardize` into memory first!) and compare the values to
+calculations directly on the iris data:
 
 ```{r run-cat-example, eval = FALSE}
 # Test standardize function on petal length
@@ -555,13 +740,25 @@ petal_length_stand <- standardize(data = iris$Petal.Length)
 mean(iris$Petal.Length)
 ```
 
-In addition to printing values, you can also use functions like `is.numeric` or `typeof` to ensure the data you _think_ you are working with really is in the form you want it to be.
+In addition to printing values, you can also use functions like `is.numeric` or
+`typeof` to ensure the data you _think_ you are working with really is in the 
+form you want it to be.
 
-You will eventually want to remove those calls to `cat`, or at the very least comment them out so they don't print every time you run your function.
+You will eventually want to remove those calls to `cat`, or at the very least
+comment them out so they don't print every time you run your function.
 
-When debugging, also remember to make incremental changes. Change one line. Check to make sure it works as expected. Check it again with different data. Change the next line. Avoid taking a 50-line function, and changing 30 lines all at once. Where there was once one bug, now there are three.
+When debugging, also remember to make incremental changes. Change one line. 
+Check to make sure it works as expected. Check it again with different data. 
+Change the next line. Avoid taking a 50-line function, and changing 30 lines 
+all at once. Where there was once one bug, now there are three.
 
-Finally, remember to keep functions small (when you can). We could have written a single function to do all the work. That is, we could have just written `standardize_df`, but it would have made it tougher to debug. Some zealots even assert that a function should do one thing and only one thing. While that is a bit extreme, it is a useful guiding principle that helps streamline the development process. Check out the resources below for more information about writing functions and best practices.
+Finally, remember to keep functions small (when you can). We could have written 
+a single function to do all the work. That is, we could have just written
+`standardize_df`, but it would have made it tougher to debug. Some zealots even
+assert that a function should do one thing and only one thing. While that is a 
+bit extreme, it is a useful guiding principle that helps streamline the 
+development process. Check out the resources below for more information about
+writing functions and best practices.
 
 ***
 
@@ -574,6 +771,6 @@ Finally, remember to keep functions small (when you can). We could have written 
 
 ***
 
-<a href="index.html">Back to learn-r main page</a>
-  
-Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
+[Back to learn-r main page](index.html)
+
+Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.
