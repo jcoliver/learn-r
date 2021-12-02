@@ -61,7 +61,7 @@ Finally, we will be using two packages that are not distributed with the base R
 software, so we need to install them. Note that you only have to install 
 packages once on your machine.
 
-```{r eval = FALSE}
+```{r install-packages, eval = FALSE}
 install.packages("ggplot2")
 install.packages("tidyr")
 ```
@@ -69,9 +69,13 @@ install.packages("tidyr")
 ***
 
 ## Data Wrangling
-We'll need to start by reading the data into memory then formatting it for use by the ggplot package. We want all our work to be reproducible, so create a script where we can store all the commands we use to create the heatmap. We begin this script with brief information about the purpose of the script and load those two packages so we can use them:
+We'll need to start by reading the data into memory then formatting it for use 
+by the ggplot package. We want all our work to be reproducible, so create a 
+script where we can store all the commands we use to create the heatmap. We 
+begin this script with brief information about the purpose of the script and 
+load those two packages so we can use them:
 
-```{r}
+```{r script-header}
 # Gene expression heatmap
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -82,36 +86,53 @@ library("ggplot2")
 ```
 
 And then we read the data into memory:
-```{r}
+
+```{r read-data}
 exp.data <- read.csv(file = "data/GSE68849-expression.csv", 
                      stringsAsFactors = FALSE)
 ```
 
 Take a quick look at the data with the `str` command:
-```{r}
+
+```{r str-data}
 str(exp.data)
 ```
 
-The data frame has `r nrow(exp.data)` rows (or subjects) and `r ncol(exp.data)` columns (or variables). The first two columns have information about the observation (`r colnames(exp.data)[1:2]`), and the remaining columns have measurements for the expression of `r ncol(exp.data) - 2` genes.
+The data frame has `r nrow(exp.data)` rows (or subjects) and `r ncol(exp.data)` 
+columns (or variables). The first two columns have information about the 
+observation (`r colnames(exp.data)[1:2]`), and the remaining columns have 
+measurements for the expression of `r ncol(exp.data) - 2` genes.
 
-We ultimately want a heatmap where the different subjects are shown along the x-axis, the genes are shown along the y-axis, and the shading of the cell reflects how much each gene is expressed within a subject. This latter value, the measure of gene expression, is really just a third dimension. However, instead of creating a 3-dimensional plot that can be difficult to visualize, we instead use shading for our "z-axis". To this end, we need our data formatted so we have a column corresponding to each of these three dimensions:
+We ultimately want a heatmap where the different subjects are shown along the 
+x-axis, the genes are shown along the y-axis, and the shading of the cell 
+reflects how much each gene is expressed within a subject. This latter value, 
+the measure of gene expression, is really just a third dimension. However, 
+instead of creating a 3-dimensional plot that can be difficult to visualize, we 
+instead use shading for our "z-axis". To this end, we need our data formatted 
+so we have a column corresponding to each of these three dimensions:
 
 + X: Subject ID
 + Y: Gene symbol
 + Z: Expression
 
-The challenge is that our data are _not_ formatted like this. While the `subject` column corresponds to what we would like for our x-axis, we do not have columns that correspond to what is needed for the y- and z-axes. All the data are in our data frame, but we need to take a table that looks like this:
+The challenge is that our data are _not_ formatted like this. While the 
+`subject` column corresponds to what we would like for our x-axis, we do not 
+have columns that correspond to what is needed for the y- and z-axes. All the 
+data are in our data frame, but we need to take a table that looks like this:
 
-```{r set-scipen}
+```{r set-scipen, echo = FALSE}
+# Set penalty for printing numeric values to avoid scientific notation
 options(scipen = 999)
 ```
+
 | `r colnames(exp.data)[1]` | `r colnames(exp.data)[2]` | `r colnames(exp.data)[3]` | `r colnames(exp.data)[4]` | `r colnames(exp.data)[5]` |
 |:-------------------|:-------------------|:------------------------------|:------------------------------------|:------------------------------------|
 | `r exp.data[1, 1]` | `r exp.data[1, 2]` |  `r round(exp.data[1, 3], 3)` | `r round(exp.data[1, 4], 3)` | `r round(exp.data[1, 5], 3)` |
 | `r exp.data[2, 1]` | `r exp.data[2, 2]` |  `r round(exp.data[2, 3], 3)` | `r round(exp.data[2, 4], 3)` | `r round(exp.data[1, 5], 3)` |
 | ...                | ...                | ...                           | ...                                 |                                     |
 
-And transform it to one with a column for the gene and a column for expression, like this:
+And transform it to one with a column for the gene and a column for expression, 
+like this:
 
 | subject             | gene                      | expression |
 |:--------------------|:--------------------------|:----------|
@@ -123,24 +144,34 @@ And transform it to one with a column for the gene and a column for expression, 
 |  `r exp.data[2, 1]` | `r colnames(exp.data)[5]` |  `r round(exp.data[2, 5], 3)` |
 | ...                 | ...            | ...       |
 
-```{r reset-scipen}
+```{r reset-scipen, echo = FALSE}
 options(scipen = 0)
 ```
 
-Thankfully, there is a function in the `tidyr` package called `pivot_longer` that is designed for creating this type of "tidy"" data. 
+Thankfully, there is a function in the `tidyr` package called `pivot_longer` 
+that is designed for creating this type of "tidy"" data. 
 
-```{r pivot-longer-01, error = TRUE}
+```{r pivot-longer-1, error = TRUE}
 exp.long <- pivot_longer(data = exp.data,
                          cols = everything(),
                          names_to = "gene",
                          values_to = "expression")
 ```
 
-Uh oh. That error is preventing us from transforming our data to long format. What R is telling us is that we tried to create a column with multiple data types in it, which is a big no-no in R. That is, it attempted to make a single column that had both the data from the "subject" column (which are text) with the data from the "IFNA5" column (which are numbers).
+Uh oh. That error is preventing us from transforming our data to long format. 
+What R is telling us is that we tried to create a column with multiple data 
+types in it, which is a big no-no in R. That is, it attempted to make a single 
+column that had both the data from the "subject" column (which are text) with 
+the data from the "IFNA5" column (which are numbers).
 
-We will need to tell `pivot_longer` to ignore the "subject" column in our original data frame during the transformation. By ignoring that column, R will carry the values over into our new data frame. We ignore columns by adding their names, preceded by a negation symbol("-"), to the `pivot_longer` call (we're going to ignore the treatment column, too, to make sure it ends up in our `exp.long` data frame):
+We will need to tell `pivot_longer` to ignore the "subject" column in our 
+original data frame during the transformation. By ignoring that column, R will 
+carry the values over into our new data frame. We ignore columns by adding 
+their names, preceded by a negation symbol("-"), to the `pivot_longer` call 
+(we're going to ignore the treatment column, too, to make sure it ends up in 
+our `exp.long` data frame):
 
-```{r}
+```{r pivot-longer-2}
 exp.long <- pivot_longer(data = exp.data, 
                          cols = -c(subject, treatment),
                          names_to = "gene", 
@@ -150,9 +181,10 @@ head(exp.long)
 
 Aha! Much better. 
 
-To recap, at this point we loaded in the libraries we are dependent on, read in data from a file, and transformed the data for easy use with heatmap tools:
+To recap, at this point we loaded in the libraries we are dependent on, read in 
+data from a file, and transformed the data for easy use with heatmap tools:
 
-```{r eval = FALSE}
+```{r recap, eval = FALSE}
 # Gene expression heatmap
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -176,18 +208,26 @@ exp.long <- pivot_longer(data = exp.data,
 
 ## Visualize the data!
 
-For this plot, we are going to first create the heatmap object with the `ggplot` function, then print the plot. We create the object by assigning the output of the `ggplot` call to the variable `exp.heatmap`, then entering the name of this object to print it to the screen.
+For this plot, we are going to first create the heatmap object with the 
+`ggplot` function, then print the plot. We create the object by assigning the 
+output of the `ggplot` call to the variable `exp.heatmap`, then entering the 
+name of this object to print it to the screen.
 
-```{r}
+```{r heatmap-blank}
 exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
                                                      y = gene,
                                                      fill = expression))
 exp.heatmap
 ```
 
-_What happened?_ Our plot doesn't show any data!? Here is where functionality of ggplot is evident. The way it works is by effectively drawing layer upon layer of graphics. So we have established the plot, we told R what to put on the X and Y axes, but we need to add one more bit of information to tell ggplot _how_ to display data in the plot area. For a heat map, we use `geom_tile()`, literally adding this to the ggplot object with a plus sign (+):
+_What happened?_ Our plot doesn't show any data!? Here is where functionality 
+of ggplot is evident. The way it works is by effectively drawing layer upon 
+layer of graphics. So we have established the plot, we told R what to put on 
+the X and Y axes, but we need to add one more bit of information to tell ggplot 
+_how_ to display data in the plot area. For a heat map, we use `geom_tile()`, 
+literally adding this to the ggplot object with a plus sign (+):
 
-```{r}
+```{r heatmap-tile}
 exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
                                                      y = gene,
                                                      fill = expression)) +
@@ -198,13 +238,19 @@ exp.heatmap
 
 OK, that's a good start. But we need to fix a few things:
 
-1. The scale of the expression values is dominated by a few very large values. We should transform the data to so it is easier to see the variation among low expression values.
+1. The scale of the expression values is dominated by a few very large values. 
+We should transform the data to so it is easier to see the variation among low 
+expression values.
 2. The axes could be displayed better.
-3. It would be nice to have all the infected cells on one side of the graph and the control cells on the other side of the graph.
+3. It would be nice to have all the infected cells on one side of the graph and 
+the control cells on the other side of the graph.
 4. Finally, we should be able to save this plot to a pdf file.
 
-To better visualize the variation of lower expression values, we can create a new column in our data frame with the log~10~ expression values and use that for the heatmap shading:
-```{r}
+To better visualize the variation of lower expression values, we can create a 
+new column in our data frame with the log~10~ expression values and use that 
+for the heatmap shading:
+
+```{r log-transform}
 exp.long$log.expression <- log(exp.long$expression)
 
 exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
@@ -215,10 +261,13 @@ exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
 exp.heatmap
 ```
 
-Note we also had to update the value we pass to the `fill` parameter in the `aes` call of `ggplot`.
+Note we also had to update the value we pass to the `fill` parameter in the 
+`aes` call of `ggplot`.
   
-For the axes clean up, we'll use a nicer label for the x-axis title, rotate the values of the x-axis labels, and omit the title of the y-axis entirely:
-```{r}
+For the axes clean up, we'll use a nicer label for the x-axis title, rotate the 
+values of the x-axis labels, and omit the title of the y-axis entirely:
+
+```{r rotate-labels}
 exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
                                                      y = gene,
                                                      fill = log.expression)) +
@@ -230,8 +279,10 @@ exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
 exp.heatmap
 ```
 
-To separate out the control cells from flu cells, we use the `facet_grid` layer of ggplot:
-```{r}
+To separate out the control cells from flu cells, we use the `facet_grid` layer 
+of ggplot:
+
+```{r facet}
 exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
                                                      y = gene,
                                                      fill = log.expression)) +
@@ -245,14 +296,16 @@ exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
 exp.heatmap
 ```
 
-And the last thing is to save the image to a file. We can do this in a variety of ways, but the `ggsave` function will work fine in this case:
-```{r eval = FALSE}
+And the last thing is to save the image to a file. We can do this in a variety 
+of ways, but the `ggsave` function will work fine in this case:
+
+```{r export-pdf, eval = FALSE}
 ggsave(filename = "output/expression-heatmap.pdf", plot = exp.heatmap)
 ```
 
 Our final script for this heatmap is then:
 
-```{r eval = FALSE}
+```{r final-script, eval = FALSE}
 # Gene expression heatmap
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -298,6 +351,6 @@ ggsave(filename = "output/expression-heatmap.pdf", plot = exp.heatmap)
 
 ***
 
-<a href="index.html">Back to learn-r main page</a>
-  
-Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
+[Back to learn-r main page](index.html)
+
+Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.
