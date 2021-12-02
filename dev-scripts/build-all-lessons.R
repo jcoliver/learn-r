@@ -11,6 +11,6 @@ lesson_files <- list.files(pattern = "[0-9]{3}.*\\.Rmd$")
 # Loop over all Rmarkdown files and create html + pdfs
 for (rmd in lesson_files) {
   message(paste0("Rendering ", rmd))
-  # rmarkdown::render(input = rmd, 
-  #                   output_format = "all")  
+  rmarkdown::render(input = rmd,
+                    output_format = "all")
 }
