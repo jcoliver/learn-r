@@ -4,7 +4,9 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   html_document: default
-  pdf_document: default
+  pdf_document:
+    latex_engine: xelatex
+urlcolor: blue
 ---
 
 This brief tutorial will demonstrate how to create a basic plot in R from a 

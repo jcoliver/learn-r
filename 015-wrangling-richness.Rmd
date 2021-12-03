@@ -13,7 +13,11 @@ urlcolor: blue
 knitr::opts_chunk$set(echo = TRUE, fig.height = 3)
 ```
 
-We collect data from a lot of sources, including field observations. Sometimes, though, the way will collect and understand data as humans doesn't work well with the way computers operate. Here we will work through a real data set to use best practices for data organization to analyze species richness and diversity.
+We collect data from a lot of sources, including field observations. Sometimes,
+though, the way will collect and understand data as humans doesn't work well 
+with the way computers operate. Here we will work through a real data set to 
+use best practices for data organization to analyze species richness and 
+diversity.
 
 #### Learning objectives
 
@@ -25,9 +29,13 @@ We collect data from a lot of sources, including field observations. Sometimes, 
 
 ## Getting started
 
-> Happy families are all alike; every unhappy family is unhappy in its own way - Leo Tolstoy
+> Happy families are all alike; every unhappy family is unhappy in its own way 
+- Leo Tolstoy
 
-Since we are working in RStudio, start by making a new project from the File menu (File > New Project...). When prompted, select New Directory, then New Project. Name the project sweetwater-analysis. When the project opens, create a folder to hold the data by typing `dir.create(data)` in the Console.
+Since we are working in RStudio, start by making a new project from the File 
+menu (File > New Project...). When prompted, select New Directory, then New 
+Project. Name the project sweetwater-analysis. When the project opens, create a
+folder to hold the data by typing `dir.create(data)` in the Console.
 
 ### Tidy data
 
@@ -37,26 +45,41 @@ After Wickham 2014, "tidy" data is defined by:
 2. Each observation forms a row.
 3. Each type of observational unit forms a table.
 
-The survey data we are working with is available as an Excel file for download at [https://tinyurl.com/sweetwater-data](https://tinyurl.com/sweetwater-data). (if you want to skip the data wrangling, and work with the "tidy" data, you can download them [here](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/sweetwater-data-clean04.csv)). Make sure to move the file to the 'data' folder you created.
+The survey data we are working with is available as an Excel file for download 
+at [https://tinyurl.com/sweetwater-data](https://tinyurl.com/sweetwater-data). 
+(if you want to skip the data wrangling, and work with the "tidy" data, you can
+download them [here](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/sweetwater-data-clean04.csv)). 
+Make sure to move the file to the 'data' folder you created.
 
 Open the file in Excel. What can be done to make these data "tidy"?
 
-First, the data are effectively broken in two, with the most recent observations separate from observations from preceding days. So in some cases, a row has more than one observation. To fix this, we move the cells from the preceding observations to rows after the most recent observations. 
+First, the data are effectively broken in two, with the most recent 
+observations separate from observations from preceding days. So in some cases, 
+a row has more than one observation. To fix this, we move the cells from the
+preceding observations to rows after the most recent observations. 
 
 We also want to:
 
 + Delete any columns without data
 + Delete any rows without data
 + Add a column title for Date
-+ Make sure data for preceding observations lines up with column title (currently the Count column has species names and the Species column has count data)
++ Make sure data for preceding observations lines up with column title 
+(currently the Count column has species names and the Species column has count 
+data)
 
-Let's save this file as a CSV file so we can read it into R. We don't want to overwrite the original data file, so we'll call our file sweetwater-data-clean.csv.
+Let's save this file as a CSV file so we can read it into R. We don't want to
+overwrite the original data file, so we'll call our file 
+sweetwater-data-clean.csv.
 
 ***
 
 ## Data wrangling
 
-Now that the data are in CSV format, we can read it into R and take a look. We want to keep a record of all our work, so we are going to type commands into a script file and save the script. Create a new script via the File menu (File > New File > R Script). As we did before, we add a few lines of comments at the top of our script with some relevant information.
+Now that the data are in CSV format, we can read it into R and take a look. We 
+want to keep a record of all our work, so we are going to type commands into a
+script file and save the script. Create a new script via the File menu (File > 
+New File > R Script). As we did before, we add a few lines of comments at the 
+top of our script with some relevant information.
 
 ```{r read-data-01-eval, echo = FALSE}
 bird_data <- read.csv(file = "data/sweetwater-data-clean01.csv")
@@ -77,11 +100,23 @@ We can look at the first few rows with the `head` function:
 head(bird_data)
 ```
 
-And we see that in rows two through 6 there aren't any values for the Date and Site columns. This is a prime example of the difference between how a human interprets data and how a computer interprets the data. Let's open up our CSV file in Excel again. As humans, we can infer that the value for "Date" should be October 4th all the way to row 35. But the computer is stupid. The computer looks at row 3, sees no date, and infers that the date is _missing_. We need to explicitly tell the computer what the value for date is. Before we do that, we have the opportunity to go ahead and also change the date to the standard ISO date format of "YYYY-MM-DD". In this case, October 4th becomes 2019-10-04. 
+And we see that in rows two through 6 there aren't any values for the Date and 
+Site columns. This is a prime example of the difference between how a human
+interprets data and how a computer interprets the data. Let's open up our CSV 
+file in Excel again. As humans, we can infer that the value for "Date" should 
+be October 4th all the way to row 35. But the computer is stupid. The computer 
+looks at row 3, sees no date, and infers that the date is _missing_. We need to
+explicitly tell the computer what the value for date is. Before we do that, we 
+have the opportunity to go ahead and also change the date to the standard ISO 
+date format of "YYYY-MM-DD". In this case, October 4th becomes 2019-10-04. 
 
-Go ahead and update all the dates and fill in values appropriately. You should also note that for observations prior to October 10th, there is an offset that (1) needs to be fixed and (2) prompts deletion of now empty rows.
+Go ahead and update all the dates and fill in values appropriately. You should 
+also note that for observations prior to October 10th, there is an offset that 
+(1) needs to be fixed and (2) prompts deletion of now empty rows.
 
-Also, for the 2019-10-04 observations, do the same thing with data in the Site column - that is, fill in values where appropriate. Save the file as a CSV (you can use the same filename, sweetwater-data-clean.csv) and read it into R.
+Also, for the 2019-10-04 observations, do the same thing with data in the Site
+column - that is, fill in values where appropriate. Save the file as a CSV (you 
+can use the same filename, sweetwater-data-clean.csv) and read it into R.
 
 ```{r read-data-02-eval, echo = FALSE}
 bird_data <- read.csv(file = "data/sweetwater-data-clean02.csv")
@@ -96,7 +131,8 @@ bird_data <- read.csv(file = "data/sweetwater-data-clean02.csv")
 bird_data <- read.csv(file = "data/sweetwater-data-clean.csv")
 ```
 
-Looking at the updated data, we see those first six rows no longer have missing data.
+Looking at the updated data, we see those first six rows no longer have missing
+data.
 
 ```{r head-data-02}
 head(bird_data)
@@ -120,13 +156,22 @@ bird_data$Date <- as.Date(bird_data$Date)
 
 ## Species richness
 
-OK, so now let's actually look at species richness. We are going to look at each date separately, and count the total number of species observed. To do this, we are going to use an additional package called tidyverse; we will need to install the package and load it into memory before we try to use it. First, we check to see if the package is installed by looking at the Packages tab in the lower-right window. If tidyverse _is_ installed, we don't need to install it again. If tidyverse is not listed, you can install it through the R console with the command:
+OK, so now let's actually look at species richness. We are going to look at 
+each date separately, and count the total number of species observed. To do 
+this, we are going to use an additional package called tidyverse; we will need 
+to install the package and load it into memory before we try to use it. First, 
+we check to see if the package is installed by looking at the Packages tab in 
+the lower-right window. If tidyverse _is_ installed, we don't need to install 
+it again. If tidyverse is not listed, you can install it through the R console 
+with the command:
 
 ```{r install-tidyverse, eval = FALSE}
 install.packages("tidyverse")
 ```
 
-Now that the package is installed, we also have to tell R to load the package into memory, so we add a call to `library` to our script. We often add all `library` commands to the top of our script.
+Now that the package is installed, we also have to tell R to load the package 
+into memory, so we add a call to `library` to our script. We often add all 
+`library` commands to the top of our script.
 
 ```{r load-tidyverse, eval = FALSE}
 # Analyze sweetwater bird species richness
@@ -145,9 +190,13 @@ bird_data$Date <- as.Date(bird_data$Date)
 library(tidyverse)
 ```
 
-You might see some read messages when you load tidyverse. As long as you don't see the word "Error" everything should be fine.
+You might see some read messages when you load tidyverse. As long as you don't 
+see the word "Error" everything should be fine.
 
-Now we can use some tidyverse functions to calculate the total number of species seen on each day. We use the `group_by` function to first create a different pile of data for each day, then count the number of rows using the `n` function.
+Now we can use some tidyverse functions to calculate the total number of 
+species seen on each day. We use the `group_by` function to first create a 
+different pile of data for each day, then count the number of rows using the 
+`n` function.
 
 ```{r unclean-richness}
 # Calculate species richness per day
@@ -162,7 +211,8 @@ Let's look at the output by typing the name of our variable into the console:
 richness
 ```
 
-Pretty cool. We can even plot species richness for each day, too. We are going to use the ggplot2 package again, which comes with tidyverse.
+Pretty cool. We can even plot species richness for each day, too. We are going 
+to use the ggplot2 package again, which comes with tidyverse.
 
 To plot richness for each day, 
 
@@ -177,19 +227,26 @@ print(richness_plot)
 
 Hey, a plot!
 
-Let's take a moment though to think about the data that went into making these plots. In fact, let's look at the first six rows again:
+Let's take a moment though to think about the data that went into making these
+plots. In fact, let's look at the first six rows again:
 
 ```{r show-non-species-01}
 head(bird_data)
 ```
 
-Hmmm...row four has "Finch", which isn't a species. At Sweetwater Wetlands, House Finches and Lesser Goldfinches are common, and sometimes other rare finches show up. Another example is on row 17. We can take a look at this part of the data by specifying which rows to show. Here we ask for R to print out rows 15 through 20:
+Hmmm...row four has "Finch", which isn't a species. At Sweetwater Wetlands, 
+House Finches and Lesser Goldfinches are common, and sometimes other rare 
+finches show up. Another example is on row 17. We can take a look at this part 
+of the data by specifying which rows to show. Here we ask for R to print out 
+rows 15 through 20:
 
 ```{r show-non-species-02}
 bird_data[15:20, ]
 ```
 
-In addition to "Finch sp" we all so see two more examples of observations not identified to species. Because we don't actually know what species these were, we will need to exclude them from our analyses.
+In addition to "Finch sp" we all so see two more examples of observations not
+identified to species. Because we don't actually know what species these were, 
+we will need to exclude them from our analyses.
 
 ***
 
@@ -197,7 +254,15 @@ In addition to "Finch sp" we all so see two more examples of observations not id
 
 ### Or, why quality control matters
 
-We do not actually want to delete these records from our data, but rather we need a means of indicating whether or not they are identified to the species level. This should probably be done in the sweetwater-data-clean.csv file we've been working with. So open that file in Excel and add another column, immediately to the right of Species. Call this one "ID_to_species" and fill in values of 1 for those identified to species (e.g. Gila woodpecker would be scored as a 1) and values of 0 for those not identified to species (e.g. Finch sp and duck sp. would be scored as a 0). Save the file with the same name as before (sweetwater-data-clean.csv).
+We do not actually want to delete these records from our data, but rather we 
+need a means of indicating whether or not they are identified to the species 
+level. This should probably be done in the sweetwater-data-clean.csv file we've 
+been working with. So open that file in Excel and add another column, 
+immediately to the right of Species. Call this one "ID_to_species" and fill in
+values of 1 for those identified to species (e.g. Gila woodpecker would be 
+scored as a 1) and values of 0 for those not identified to species (e.g. Finch 
+sp and duck sp. would be scored as a 0). Save the file with the same name as 
+before (sweetwater-data-clean.csv).
 
 ```{r read-data-03, eval = FALSE}
 # Analyze sweetwater bird species richness
@@ -216,7 +281,10 @@ bird_data <- read.csv(file = "data/sweetwater-data-clean03.csv")
 bird_data$Date <- as.Date(bird_data$Date)
 ```
 
-Now we can update our richness calculation to only include observations that were identified to species. We do this by adding a filter to the process. Using the code we had before, before calling `group_by`, we use the `filter` function to only include those observations that have a 1 in the ID_to_species column.
+Now we can update our richness calculation to only include observations that 
+were identified to species. We do this by adding a filter to the process. Using 
+the code we had before, before calling `group_by`, we use the `filter` function 
+to only include those observations that have a 1 in the ID_to_species column.
 
 ```{r store-unclean-richness, echo = FALSE}
 # For comparing results before and after filter
@@ -243,7 +311,8 @@ to the new ones:
 richness
 ```
 
-And note the numbers have dropped a little when we exclude those observations. Now when we run the code for plotting, we see the results changed, too:
+And note the numbers have dropped a little when we exclude those observations. 
+Now when we run the code for plotting, we see the results changed, too:
 
 ```{r plot-clean-richness-01}
 richness_plot <- ggplot(data = richness,
@@ -253,7 +322,9 @@ richness_plot <- ggplot(data = richness,
 print(richness_plot)
 ```
 
-Let's take a quick look at the species that were observed on October 4, just to double check. We can do that in the console using the pipe (`%>%`) and the `filter` command (you'll see more than ten rows):
+Let's take a quick look at the species that were observed on October 4, just to
+double check. We can do that in the console using the pipe (`%>%`) and the 
+`filter` command (you'll see more than ten rows):
 
 ```{r view-one-day-species-01, eval = FALSE}
 bird_data %>% filter(Date == "2019-10-04")
@@ -263,7 +334,14 @@ bird_data %>% filter(Date == "2019-10-04")
 bird_data %>% filter(Date == "2019-10-04") %>% slice(1:10)
 ```
 
-We should see 34 rows. This lines up with our initial plot, that showed 34 species. But look a little closer, notably at rows 1 and 9. Both rows are observations of Mallard Ducks. So this species actually got counted (at least) twice. Because multiple sites were surveyed, We can't just count the number of rows in this data to get the number of species. We should actually do a little more data wrangling to get an accurate count of species for the October 4 sampling. What we are going to do is to create a new data object we'll call `bird_data_sums` that sums up the values for each species on each day.
+We should see 34 rows. This lines up with our initial plot, that showed 34 
+species. But look a little closer, notably at rows 1 and 9. Both rows are
+observations of Mallard Ducks. So this species actually got counted (at least)
+twice. Because multiple sites were surveyed, We can't just count the number of 
+rows in this data to get the number of species. We should actually do a little 
+more data wrangling to get an accurate count of species for the October 4 
+sampling. What we are going to do is to create a new data object we'll call
+`bird_data_sums` that sums up the values for each species on each day.
 
 ```{r sum-sites-01}
 # Sum species counts for each day
@@ -279,9 +357,18 @@ Now we can again look at the observations for October 4:
 bird_data_sums %>% filter(Date == "2019-10-04")
 ```
 
-Now this doesn't show us all the data, but looking at the end of the output, we see that R is showing us 10 rows of data, with `r nrow(bird_data_sums %>% filter(Date == "2019-10-04")) - 10` more rows. So we have gone from 34 species, down to `r nrow(bird_data_sums %>% filter(Date == "2019-10-04"))` species for October 4.
+Now this doesn't show us all the data, but looking at the end of the output, we 
+see that R is showing us 10 rows of data, with 
+`r nrow(bird_data_sums %>% filter(Date == "2019-10-04")) - 10` more rows. So we 
+have gone from 34 species, down to 
+`r nrow(bird_data_sums %>% filter(Date == "2019-10-04"))` species for October 
+4.
 
-We can update our code to calculate richness and re-create our plot. Remember to replace `bird_data` with `bird_data_sums` in the first line of the code. We can also remove the `filter` function, because we already filtered out observations that were not identified to species when we created `bird_data_sums`.
+We can update our code to calculate richness and re-create our plot. Remember 
+to replace `bird_data` with `bird_data_sums` in the first line of the code. We 
+can also remove the `filter` function, because we already filtered out 
+observations that were not identified to species when we created 
+`bird_data_sums`.
 
 ```{r richness-clean-02}
 # Calculate species richness per day
@@ -297,17 +384,28 @@ richness_plot <- ggplot(data = richness,
 print(richness_plot)
 ```
 
-The only thing to really change in our plot is for October 4. OK, some of you might have noticed this already, but let's look again at those October 4 data:
+The only thing to really change in our plot is for October 4. OK, some of you 
+might have noticed this already, but let's look again at those October 4 data:
 
 ```{r view-one-day-species-03}
 bird_data_sums %>% filter(Date == "2019-10-04")
 ```
 
-So, there's another issue to address. Look at rows 9 and 10. We have a species that is represented twice. Why? Here is a great example of computers only being able to do what you tell them to. We told R to count the total number of individuals for each species. Unfortunately, R sees "mallard" and "Mallard Duck" as two different species. 
+So, there's another issue to address. Look at rows 9 and 10. We have a species 
+that is represented twice. Why? Here is a great example of computers only being 
+able to do what you tell them to. We told R to count the total number of 
+individuals for each species. Unfortunately, R sees "mallard" and "Mallard 
+Duck" as two different species. 
 
 What do we do?
 
-At this point, the best thing is probably to go into the Excel file and change the species names to be consistent. Now so far, we haven't actually _changed_ any of the data - we added a column and we filled in values where appropriate, but we did not change anything. When changing data, you always want to be careful. At this point, we should be keeping track of changes we made to the data. We are going to do this in a separate file, with notes about what we did. So start by creating a new text file (File > New File > Text File) and adding:
+At this point, the best thing is probably to go into the Excel file and change 
+the species names to be consistent. Now so far, we haven't actually _changed_ 
+any of the data - we added a column and we filled in values where appropriate, 
+but we did not change anything. When changing data, you always want to be 
+careful. At this point, we should be keeping track of changes we made to the 
+data. We are going to do this in a separate file, with notes about what we did. 
+So start by creating a new text file (File > New File > Text File) and adding:
 
 ```
 README for sweetwater species data
@@ -319,13 +417,24 @@ README for sweetwater species data
 
 And save this file as "README.md".
 
-Now we actually have to do the standardization of the species names, so open up the sweetwater-data-clean.csv file in Excel. What's the best way of going about changing names? We could search for non-standard spellings like "Gambils quail" but that assumes we know all the alternative spellings. What might help our cause is to sort by the Species column so things like "mallard" and "Mallard Duck show up next to one another. **Note**: this sorting is going to rearrange the order of the rows, so we should _only_ do this if the order of the rows does not matter. Remember the original data? Where the date was only shown in the first row? If we had sorted those data it would have been _bad_. Why? Because in that case, order _did_ matter. But by using tidy data formats, we can re-order rows without losing any information for a single observation.
+Now we actually have to do the standardization of the species names, so open up 
+the sweetwater-data-clean.csv file in Excel. What's the best way of going about
+changing names? We could search for non-standard spellings like "Gambils quail" 
+but that assumes we know all the alternative spellings. What might help our 
+cause is to sort by the Species column so things like "mallard" and "Mallard 
+Duck show up next to one another. **Note**: this sorting is going to rearrange 
+the order of the rows, so we should _only_ do this if the order of the rows 
+does not matter. Remember the original data? Where the date was only shown in 
+the first row? If we had sorted those data it would have been _bad_. Why? 
+Because in that case, order _did_ matter. But by using tidy data formats, we 
+can re-order rows without losing any information for a single observation.
 
 So go ahead and change names so they are consistent. This includes 
 
 + consistent spelling (Gambel's vs. Gambils),
 + consistent capitalization (Gila Woodpecker vs. Gila woodpecker), and 
-+ constent use of punctuation (Red-winged Blackbird vs. Redwing black bird and Cooper's Hawk vs. Coopers' Hawk). 
++ constent use of punctuation (Red-winged Blackbird vs. Redwing black bird and
+Cooper's Hawk vs. Coopers' Hawk). 
 
 Save the file to sweetwater-data-clean.csv and go back into R.
 
@@ -369,24 +478,33 @@ print(richness_plot)
 
 Whew! 
 
-So at this point, let's think about what we've done in R. We really haven't had to do too much, we wrote code to read in the file, count the total number of each species seen each day, calculate species richness, and plot species richness. Most of our time was really spent wrangling the data into a format that could be used to analyze with a computer. This isn't unexpected. Data wrangling can take up as much as 80% of a data scientist's time (See [Furche et al. 2016. doi 10.5441/002/edbt.2016.44](http://dx.doi.org/10.5441/002/edbt.2016.44)).
+So at this point, let's think about what we've done in R. We really haven't had 
+to do too much, we wrote code to read in the file, count the total number of 
+each species seen each day, calculate species richness, and plot species 
+richness. Most of our time was really spent wrangling the data into a format 
+that could be used to analyze with a computer. This isn't unexpected. Data 
+wrangling can take up as much as 80% of a data scientist's time (See 
+[Furche et al. 2016. doi 10.5441/002/edbt.2016.44](http://dx.doi.org/10.5441/002/edbt.2016.44)).
 
 ***
 
 ## Species diversity
 
-Now we are ready for species diversity! We are going to use Shannon's index ($H$) of species diversity:
+Now we are ready for species diversity! We are going to use Shannon's index 
+($H$) of species diversity:
 
 $$
 H = -\sum_{i=1}^{s}{p_i \ln p_i}
 $$
-which is the sum over $s$ species, where $p_i$ is the proportion individuals of the $i^th$ species ($n_i$) out of the total number of inviduals ($N$), or:
+which is the sum over $s$ species, where $p_i$ is the proportion individuals of 
+the $i^th$ species ($n_i$) out of the total number of inviduals ($N$), or:
 
 $$
 p_i = \frac{n_i}{N}
 $$
 
-To calculate this measure of diversity, we are going to use the vegan package, which does _not_ come with tidyverse, so we'll have to install it with:
+To calculate this measure of diversity, we are going to use the vegan package, 
+which does _not_ come with tidyverse, so we'll have to install it with:
 
 ```{r install-vegan, eval = FALSE}
 install.packages("vegan")
@@ -412,7 +530,10 @@ bird_data$Date <- as.Date(bird_data$Date)
 library(vegan)
 ```
 
-We are going to use functions that come with the vegan package to help with these calculations. In order to use those functions, we need to convert the `bird_data_sums` from the "long" format it is now to "wide" format. That is, we need to change from:
+We are going to use functions that come with the vegan package to help with 
+these calculations. In order to use those functions, we need to convert the
+`bird_data_sums` from the "long" format it is now to "wide" format. That is, we 
+need to change from:
 
 | Date       | Species            | Count |
 |:-----------|:-------------------|:-----:| 
@@ -433,7 +554,9 @@ Where
 + each date corresponds to a single row
 + each species corresponds to a single column
 
-We can do this with the `pivot_wider` function that comes with tidyverse. Here we tell R to use the values in the Species column as new column names, and the numbers in the Count column to use as values.
+We can do this with the `pivot_wider` function that comes with tidyverse. Here 
+we tell R to use the values in the Species column as new column names, and the
+numbers in the Count column to use as values.
 
 ```{r clean-wide}
 bird_data_wide <- bird_data_sums %>%
@@ -447,7 +570,11 @@ Let's look at the first five columns of the "wide" formatted data:
 bird_data_wide[, 1:5]
 ```
 
-For the diversity calculations, it only works on count data, and our data include one column of dates. We create a new variable, `species_counts` which has all the data except the first column (the Date column), then we calculate species richness and look at the results by running the name of the variable (`bird_diversity`):
+For the diversity calculations, it only works on count data, and our data 
+include one column of dates. We create a new variable, `species_counts` which 
+has all the data except the first column (the Date column), then we calculate
+species richness and look at the results by running the name of the variable
+(`bird_diversity`):
 
 ```{r clean-diversity-01}
 species_counts <- bird_data_wide[, -1]
@@ -455,13 +582,17 @@ bird_diversity <- diversity(x = species_counts)
 bird_diversity
 ```
 
-All the values are `NA` because the input data (`bird_data_wide`) had `NA` values for every Date/Species combination with zero observations. In this case, we need to replace all those `NA` values with 0.
+All the values are `NA` because the input data (`bird_data_wide`) had `NA` 
+values for every Date/Species combination with zero observations. In this case, 
+we need to replace all those `NA` values with 0.
 
 ```{r replace-nas}
 bird_data_wide[is.na(bird_data_wide)] <- 0
 ```
 
-We re-run the diversity calculations after converting those `NA` values to zero. We then overwrite `bird_diversity` with a data frame that contains the Date and the results of the diversity calculations:
+We re-run the diversity calculations after converting those `NA` values to 
+zero. We then overwrite `bird_diversity` with a data frame that contains the 
+Date and the results of the diversity calculations:
 
 ```{r clean-diversity-02}
 # Calculate species diversity on count data
@@ -489,13 +620,17 @@ print(diversity_plot)
 
 ### Setup
 
-If you want to skip all the data wrangling and start with data that are already in tidy format, download the data [here](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/sweetwater-data-clean04.csv). 
+If you want to skip all the data wrangling and start with data that are already 
+in tidy format, download the data [here](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/sweetwater-data-clean04.csv). 
 
-Be sure you set up a new project as described in [Getting started](#getting-started), above.
+Be sure you set up a new project as described in [Getting started](#getting-started), 
+above.
 
 Move the file you downloaded to the 'data' folder.
 
-In order to save our work, we will use an R script, which is a text file where we place all our R commands. Create a new script through the file menu (File > New File > R Script). We start our script with a header of comments:
+In order to save our work, we will use an R script, which is a text file where 
+we place all our R commands. Create a new script through the file menu (File > 
+New File > R Script). We start our script with a header of comments:
 
 ```{r clean-01}
 # Analyze sweetwater bird species richness
@@ -504,14 +639,18 @@ In order to save our work, we will use an R script, which is a text file where w
 # 2019-11-01
 ```
 
-We're going to use some R code from packages that do not come with base R. Run these two lines in the console:
+We're going to use some R code from packages that do not come with base R. Run 
+these two lines in the console:
 
 ```{r clean-02, eval = FALSE}
 install.packages("tidyverse")
 install.packages("vegan")
 ```
 
-We also need to tell R in our script that we want to use those packages; we load them into memory with the `library` command. Generally, we try to add all the calls to `library` to the beginning of our code, so if someone opens the script, they can immediately see which additional packages are required.
+We also need to tell R in our script that we want to use those packages; we 
+load them into memory with the `library` command. Generally, we try to add all 
+the calls to `library` to the beginning of our code, so if someone opens the 
+script, they can immediately see which additional packages are required.
 
 ```{r clean-03}
 # Analyze sweetwater bird species richness
@@ -530,7 +669,8 @@ bird_data <- read.csv(file = "data/sweetwater-data-clean04.csv")
 bird_data$Date <- as.Date(bird_data$Date)
 ```
 
-The last line reads the data into R. You can look at these data by running `head(bird_data)` in the Console.
+The last line reads the data into R. You can look at these data by running
+`head(bird_data)` in the Console.
 
 ### Wrangle the data
 
@@ -544,7 +684,8 @@ bird_data_sums <- bird_data %>%
   summarise(Count = sum(Count))
 ```
 
-With the daily totals for each species, now we can calculate species richness (here we are measuring daily richness as the total number of species each day).
+With the daily totals for each species, now we can calculate species richness 
+(here we are measuring daily richness as the total number of species each day).
 
 ### Richness
 
@@ -555,7 +696,8 @@ richness <- bird_data_sums %>%
   summarize(Richness = n())
 ```
 
-We can investigate the richness data by typing the name of the variable into the console:
+We can investigate the richness data by typing the name of the variable into 
+the console:
 
 ```{r, eval = FALSE}
 > richness
@@ -565,7 +707,8 @@ We can investigate the richness data by typing the name of the variable into the
 richness
 ```
 
-Now that we have species richness calculated for each day, we can use the ggplot2 package, which comes with tidyverse, to plot the data:
+Now that we have species richness calculated for each day, we can use the 
+ggplot2 package, which comes with tidyverse, to plot the data:
 
 ```{r clean-06}
 # Plot daily species richness
@@ -578,19 +721,24 @@ print(richness_plot)
 
 ### Diversity
 
-For species diversity, we are going to use, $H$, Shannon's index of species diversity:
+For species diversity, we are going to use, $H$, Shannon's index of species
+diversity:
 
 $$
 H = -\sum_{i=1}^{s}{p_i \ln p_i}
 $$
 
-which is the sum over $s$ species, where $p_i$ is the proportion individuals of the $i^th$ species ($n_i$) out of the total number of inviduals ($N$), or:
+which is the sum over $s$ species, where $p_i$ is the proportion individuals of 
+the $i^th$ species ($n_i$) out of the total number of inviduals ($N$), or:
 
 $$
 p_i = \frac{n_i}{N}
 $$
 
-We are going to use functions that come with the vegan package to help with these calculations. In order to use those functions, we need to convert the `bird_data_sums` from the "long" format it is now to "wide" format. That is, we need to change from:
+We are going to use functions that come with the vegan package to help with 
+these calculations. In order to use those functions, we need to convert the
+`bird_data_sums` from the "long" format it is now to "wide" format. That is, we 
+need to change from:
 
 | Date       | Species            | Count |
 |:-----------|:-------------------|:-----:| 
@@ -611,7 +759,8 @@ Where
 + each date corresponds to a single row
 + each species corresponds to a single column
 
-We use the `pivot_wider` function of tidyverse to accomplish this. We also need to replace NA values produced in this process to zeros:
+We use the `pivot_wider` function of tidyverse to accomplish this. We also need 
+to replace NA values produced in this process to zeros:
 
 ```{r, clean-07}
 # Convert to wide format for species diversity calculation
@@ -623,7 +772,11 @@ bird_data_wide <- bird_data_sums %>%
 bird_data_wide[is.na(bird_data_wide)] <- 0
 ```
 
-The diversity calculation only works on count data, and our data include one column of dates. We create a new variable, `species_counts` which has all the data except the first column (the Date column), then we calculate species richness and look at the results by running the name of the variable (`bird_diversity`):
+The diversity calculation only works on count data, and our data include one 
+column of dates. We create a new variable, `species_counts` which has all the 
+data except the first column (the Date column), then we calculate species 
+richness and look at the results by running the name of the variable
+(`bird_diversity`):
 
 ```{r clean-08}
 # Calculate species diversity on count data
@@ -635,7 +788,8 @@ bird_diversity <- data.frame(Date = bird_data_wide$Date,
                         Diversity = bird_diversity)
 ```
 
-Now that we have species diversity, we can plot it using commands similar to those we used for species richness:
+Now that we have species diversity, we can plot it using commands similar to 
+those we used for species richness:
 
 ```{r clean-09}
 # Plot species diversity of each date
@@ -651,7 +805,8 @@ Recall the plot for richness:
 print(richness_plot)
 ```
 
-**Question**: Why is species richness of October 4 higher than richness of October 2, but species diversity is _lower_ on October 4 than on October 2?
+**Question**: Why is species richness of October 4 higher than richness of 
+October 2, but species diversity is _lower_ on October 4 than on October 2?
 
 ***
 
@@ -663,6 +818,6 @@ print(richness_plot)
 
 ***
 
-<a href="index.html">Back to learn-r main page</a>
-  
-Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
+[Back to learn-r main page](index.html)
+
+Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.
