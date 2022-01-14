@@ -9,9 +9,9 @@
 | 28  | Dec   | Go outside!  _No lab this day_     |
 | 04  | Jan   | Happy New Year! _No lab this day_  |
 | 11  | Jan   | _No lab this day_                  |
-| 18  | Jan   | Introduction to R graphing         |
+| 18  | Jan   | Introduction to R statistics       |
 | 25  | Jan   | Hybrid open lab                    |
-| 01  | Feb   | Introduction to R statistics       |
+| 01  | Feb   | Introduction to R graphing         |
 | 08  | Feb   | Hybrid open lab                    |
 | 15  | Feb   | Repeating things in R              |
 | 22  | Feb   | Hybrid open lab                    |
