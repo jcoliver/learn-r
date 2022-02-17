@@ -43,14 +43,15 @@ dir.create("output")
 ```
 
 We will also need a few R packages that are not included in the standard
-distribution of R. Those packages are `ggplot2`, `ggdendro`, `reshape2`, and 
+distribution of R. Those packages are `ggplot2`, `ggdendro`, `tidyr`, and 
 `grid` and can be installed with the `install.packages()` function. Note these
 packages need only be installed once on your machine.
 
 ```{r install-packages, eval = FALSE}
 install.packages("ggplot2")
 install.packages("ggdendro")
-install.packages("reshape2")
+install.packages("grid")
+install.packages("tidyr")
 ```
 
 Finally, download data file from
@@ -78,7 +79,7 @@ start the script with a brief bit of information about what the script does.
 # Load dependencies
 library("ggplot2")
 library("ggdendro")
-library("reshape2")
+library("tidyr")
 library("grid")
 
 # Read in data
@@ -101,16 +102,16 @@ in the original file we read into R; it only alters the data object `otter`
 currently in R's memory.
 
 ```{r subset-data}
-two.species <- c("A. cinerea", "L. canadensis")
-otter <- otter[otter$species %in% two.species, ]
+two_species <- c("A. cinerea", "L. canadensis")
+otter <- otter[otter$species %in% two_species, ]
 ```
 
 The last thing we need to do is scale the data variables (columns 4-9) so
 measurements have a mean value of 0 and a variance of 1.
 
 ```{r rescale-data}
-otter.scaled <- otter
-otter.scaled[, c(4:9)] <- scale(otter.scaled[, 4:9])
+otter_scaled <- otter
+otter_scaled[, c(4:9)] <- scale(otter_scaled[, 4:9])
 ```
 
 ***
@@ -123,24 +124,24 @@ start by making the dendrogram (or cluster).
 
 ```{r run-clustering}
 # Run clustering
-otter.matrix <- as.matrix(otter.scaled[, -c(1:3)])
-rownames(otter.matrix) <- otter.scaled$accession
-otter.dendro <- as.dendrogram(hclust(d = dist(x = otter.matrix)))
+otter_matrix <- as.matrix(otter_scaled[, -c(1:3)])
+rownames(otter_matrix) <- otter_scaled$accession
+otter_dendro <- as.dendrogram(hclust(d = dist(x = otter_matrix)))
 
 # Create dendro
-dendro.plot <- ggdendrogram(data = otter.dendro, rotate = TRUE)
+dendro_plot <- ggdendrogram(data = otter_dendro, rotate = TRUE)
 
 # Preview the plot
-print(dendro.plot)
+print(dendro_plot)
 ```
 
 We can make those labels a bit smaller:
 
 ```{r axis-labels}
-dendro.plot <- dendro.plot + theme(axis.text.y = element_text(size = 6))
+dendro_plot <- dendro_plot + theme(axis.text.y = element_text(size = 6))
 
 # Preview the plot
-print(dendro.plot)
+print(dendro_plot)
 ```
 
 That's it for the cluster image (we'll make a few more changes later on).
@@ -153,48 +154,55 @@ We need to start by transforming data to a "long" format, where each row only
 contains values for one measurement. For example, our data started in this 
 format:
 
-```{r create-long, echo = FALSE}
-otter.scaled[c(1:2), c(1:5)]
-
-# For demonstration purposes only, print the first few rows and columns
-otter.long.demo <- melt(otter.scaled[c(1:2), c(1:5)], 
-                        id = c("species", "museum", "accession"))
+```{r print-wide, echo = FALSE}
+otter_scaled[c(1:2), c(1:5)]
 ```
 
 We want to transform it so there is only a single measurement in each row:
 
-```{r show-long, echo = FALSE}
-otter.long.demo
+```{r print-long, echo = FALSE}
+# For demonstration purposes only; print the first few rows and columns
+otter_long_demo <- melt(otter_scaled[c(1:2), c(1:5)], 
+                        id = c("species", "museum", "accession"))
+otter_long_demo <- pivot_longer(data = otter_scaled[c(1:2), c(1:5)],
+                                cols = -c(species, museum, accession),
+                                names_to = "measurement",
+                                values_to = "value")
+
+otter_long_demo
 ```
 
 This new data has columns that have information about the specimen (the 
-"species", "museum", and "accession" columns), but now has "variable" and 
+"species", "museum", and "accession" columns), but now has "measurement" and 
 "value" columns. Instead of one column for each mandible measurement, each row 
 only has one measurement in the "value" column, and the measurement type is 
-stored in the "variable" column.  
+stored in the "measurement" column.  
 
-We use the `reshape2` package's `melt` function to handle the data 
+We use the `tidyr` package's `pivot_longer` function to handle the data 
 transformation:
 
 ```{r to-long}
 # Heatmap
 # Data wrangling
-otter.long <- melt(otter.scaled, id = c("species", "museum", "accession"))
+otter_long <- pivot_longer(data = otter_scaled,
+                           cols = -c(species, museum, accession),
+                           names_to = "measurement",
+                           values_to = "value")
 ```
 
-Now we can use that new data frame, `otter.long` to create our heatmap. In the
+Now we can use that new data frame, `otter_long` to create our heatmap. In the
 `ggplot` package, we use the `geom_tile` layer for creating a heatmap. Given 
 our prior experience with the y-axis labels being large, we will again use 
 `theme` to make the accession numbers (the y-axis labels) a little smaller:
 
 ```{r heatmap-1}
-heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
+heatmap_plot <- ggplot(data = otter_long, aes(x = measurement, y = accession)) +
   geom_tile(aes(fill = value)) +
   scale_fill_gradient2() +
   theme(axis.text.y = element_text(size = 6))
 
 # Preview the heatmap
-print(heatmap.plot)
+print(heatmap_plot)
 ```
 
 ***
@@ -206,9 +214,9 @@ figure? The `grid` package offers a way to combine separate plots.
 
 ```{r grid-plot-1}
 grid.newpage()
-print(heatmap.plot, 
+print(heatmap_plot, 
       vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, 
+print(dendro_plot, 
       vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
 ```
 
@@ -225,11 +233,11 @@ row in the heatmap plot.
 ### Re-order heatmap rows to match dendrogram
 
 We'll use the order of the tips in the dendrogram to re-order the rows in our
-heatmap. The order of those tips are stored in the `otter.dendro` object, and 
+heatmap. The order of those tips are stored in the `otter_dendro` object, and 
 we can extract it with the `order.dendro` function:
 
 ```{r order-data}
-otter.order <- order.dendrogram(otter.dendro)
+otter_order <- order.dendrogram(otter_dendro)
 ```
 
 And now for the fun part. By default, `ggplot` use the level order of the 
@@ -238,31 +246,31 @@ y-axis labels as the means of ordering the rows in the heatmap. That is, level
 row, level 3 in the third row and so on. So we can dictate the order in which 
 these rows are plotted by _setting_ the order of the levels in the column we 
 use for the y-axis labels in the heatmap. The data we used for the heatmap was 
-the long-format, `otter.long` object, and the column we used for the y-axis is
+the long-format, `otter_long` object, and the column we used for the y-axis is
 `accession`. Using the order of the dendrogram tips (we stored this above in 
-the `otter.order` vector), we can re-level the `otter.long$accession` column to
+the `otter_order` vector), we can re-level the `otter_long$accession` column to
 match the order of the tips in the trees.
 
 ```{r reorder-levels}
 # Order the levels according to their position in the cluster
-otter.long$accession <- factor(x = otter.long$accession,
-                               levels = otter.scaled$accession[otter.order], 
+otter_long$accession <- factor(x = otter_long$accession,
+                               levels = otter_scaled$accession[otter_order], 
                                ordered = TRUE)
 
 ```
 
 At this point, we need to re-create the heatmap, because the underlying data
-(`otter.long`) has changed:
+(`otter_long`) has changed:
 
 ```{r heatmap-2}
 # Heatmap
-heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
+heatmap_plot <- ggplot(data = otter_long, aes(x = measurement, y = accession)) +
   geom_tile(aes(fill = value)) +
   scale_fill_gradient2() +
   theme(axis.text.y = element_text(size = 6))
 
 # Preview the heatmap
-print(heatmap.plot)
+print(heatmap_plot)
 ```
 
 Now the rows have been re-arranged and we can see right away that the heatmap 
@@ -273,9 +281,9 @@ same order as the acession numbers in the dendrogram:
 
 ```{r grid-plot-2}
 grid.newpage()
-print(heatmap.plot, 
+print(heatmap_plot, 
       vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, 
+print(dendro_plot, 
       vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
 ```
 
@@ -288,23 +296,23 @@ to "top":
 
 ```{r heatmap-3}
 # Heatmap
-heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
+heatmap_plot <- ggplot(data = otter_long, aes(x = measurement, y = accession)) +
   geom_tile(aes(fill = value)) +
   scale_fill_gradient2() +
   theme(axis.text.y = element_text(size = 6),
         legend.position = "top")
 
 # Preview the heatmap
-print(heatmap.plot)
+print(heatmap_plot)
 ```
 
 The combined figure now has the heatmap and dendrogram closer together:
 
 ```{r grid-plot-3}
 grid.newpage()
-print(heatmap.plot, 
+print(heatmap_plot, 
       vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, 
+print(dendro_plot, 
       vp = viewport(x = 0.90, y = 0.445, width = 0.2, height = 1.0))
 ```
 
@@ -315,7 +323,7 @@ ensure the tips line up with the corresponding rows in the heatmap.
 Unfortunately, because the two figures are actually independent graphics 
 objects, this part involves considerable trial and error. In general, we will 
 need to change two parameters in the `viewport` function when we call `print` 
-on `dendro.plot`:  
+on `dendro_plot`:  
 
 1. `y`: This argument sets the vertical justification. A value of 0.5 centers 
 the graphic in the middle of the viewport to which it is assigned. Values 
@@ -332,14 +340,14 @@ of the graphic, we will need to make the dendrogram height smaller.
 ultimately use; that is, the values presented here are designed for an html to 
 be viewed on the web, but if you are displaying on the screen or writing to a 
 pdf file, you may need to use different values for `y` and `height` (e.g. when
-calling `print` on `dendro.plot`, it may work better on your screen to set 
+calling `print` on `dendro_plot`, it may work better on your screen to set 
 `y = 0.4` and `height = 0.85`).
 
 ```{r grid-plot-4}
 grid.newpage()
-print(heatmap.plot, 
+print(heatmap_plot, 
       vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, 
+print(dendro_plot, 
       vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92))
 ```
 
@@ -350,7 +358,7 @@ relevant theme elements to `element_blank()` in our call to `ggplot`:
 
 ```{r heatmap-grid}
 # Heatmap
-heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
+heatmap_plot <- ggplot(data = otter_long, aes(x = measurement, y = accession)) +
   geom_tile(aes(fill = value)) +
   scale_fill_gradient2() +
   theme(axis.text.y = element_blank(),
@@ -359,9 +367,9 @@ heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
         legend.position = "top")
 
 grid.newpage()
-print(heatmap.plot, 
+print(heatmap_plot, 
       vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, 
+print(dendro_plot, 
       vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92))
 ```
 
@@ -378,7 +386,7 @@ Our final script would look like this:
 # Load dependencies
 library("ggplot2")
 library("ggdendro")
-library("reshape2")
+library("tidyr")
 library("grid")
 
 # Read in data
@@ -386,38 +394,41 @@ otter <- read.csv(file = "data/otter-mandible-data.csv",
                   stringsAsFactors = TRUE)
 
 # Restrict the data to only two species, A. cinerea & L. canadensis
-two.species <- c("A. cinerea", "L. canadensis")
-otter <- otter[otter$species %in% two.species, ]
+two_species <- c("A. cinerea", "L. canadensis")
+otter <- otter[otter$species %in% two_species, ]
 
 # Force re-numbering of the rows after subsetting
 rownames(otter) <- NULL
 
 # Scale each measurement (independently) to have a mean of 0 and variance of 1
-otter.scaled <- otter
-otter.scaled[, c(4:9)] <- scale(otter.scaled[, 4:9])
+otter_scaled <- otter
+otter_scaled[, c(4:9)] <- scale(otter_scaled[, 4:9])
 
 # Run clustering
-otter.matrix <- as.matrix(otter.scaled[, -c(1:3)])
-rownames(otter.matrix) <- otter.scaled$accession
-otter.dendro <- as.dendrogram(hclust(d = dist(x = otter.matrix)))
+otter_matrix <- as.matrix(otter_scaled[, -c(1:3)])
+rownames(otter_matrix) <- otter_scaled$accession
+otter_dendro <- as.dendrogram(hclust(d = dist(x = otter_matrix)))
 
 # Create dendrogram plot
-dendro.plot <- ggdendrogram(data = otter.dendro, rotate = TRUE) + 
+dendro_plot <- ggdendrogram(data = otter_dendro, rotate = TRUE) + 
   theme(axis.text.y = element_text(size = 6))
 
 # Heatmap
 
 # Data wrangling
-otter.long <- melt(otter.scaled, id = c("species", "museum", "accession"))
+otter_long <- pivot_longer(data = otter_scaled,
+                           cols = -c(species, museum, accession),
+                           names_to = "measurement",
+                           values_to = "value")
 # Extract the order of the tips in the dendrogram
-otter.order <- order.dendrogram(otter.dendro)
+otter_order <- order.dendrogram(otter_dendro)
 # Order the levels according to their position in the cluster
-otter.long$accession <- factor(x = otter.long$accession,
-                               levels = otter.scaled$accession[otter.order], 
+otter_long$accession <- factor(x = otter_long$accession,
+                               levels = otter_scaled$accession[otter_order], 
                                ordered = TRUE)
 
 # Create heatmap plot
-heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
+heatmap_plot <- ggplot(data = otter_long, aes(x = measurement, y = accession)) +
   geom_tile(aes(fill = value)) +
   scale_fill_gradient2() +
   theme(axis.text.y = element_blank(),
@@ -427,9 +438,9 @@ heatmap.plot <- ggplot(data = otter.long, aes(x = variable, y = accession)) +
 
 # All together
 grid.newpage()
-print(heatmap.plot, 
+print(heatmap_plot, 
       vp = viewport(x = 0.4, y = 0.5, width = 0.8, height = 1.0))
-print(dendro.plot, 
+print(dendro_plot, 
       vp = viewport(x = 0.90, y = 0.43, width = 0.2, height = 0.92))
 ```
 
