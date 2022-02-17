@@ -203,36 +203,17 @@ each set of data to `x` and `y`.
 
 ```{r t-test}
 # Compare Petal.Length of these two species
-setosa.v.versicolor <- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
+t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
 ```
   
 The output of a _t_-test is a little different than what we will see later in 
-the ANOVA; we only have to enter the name of the variable to see the results.
-
-```{r t-test-results}
-setosa.v.versicolor
-```
-
-The results include:
+the ANOVA. The results include:
 
 + Test statistic, degrees of freedom, and p-value
 + The confidence interval for the difference in means between the two data sets
 + The means of each data set
 
-So we reject the hypothesis that these species have the same petal lengths. The 
-last thing we want to do with this code is save our results to a file. To do 
-so, we put the call to `summary` between a pair of calls to `sink`:
-
-```{r write-t-test, eval = FALSE}
-sink(file = "output/t-test.txt")
-setosa.v.versicolor
-sink()
-```
-
-Notice now that because we have directed output to the file "t-test.txt", the 
-output of `summary` will _not_ be output to the console. Open the file to make 
-sure the output was saved correctly.  
-
+So we reject the hypothesis that these species have the same petal lengths.
 
 The final script should be:
 
@@ -249,12 +230,7 @@ setosa <- iris[iris$Species == "setosa", ]
 versicolor <- iris[iris$Species == "versicolor", ]
 
 # Run t-test
-setosa.v.versicolor <- t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
-
-# Save results to file
-sink(file = "output/t-test.txt")
-setosa.v.versicolor
-sink()
+t.test(x = setosa$Petal.Length, y = versicolor$Petal.Length)
 ```
 
 > ### Challenge 1  
@@ -331,8 +307,8 @@ Tukey test comparing means would likely be the most appropriate option. A link
 to an example of how to do this is in the [Additional resources](#additional-resources) 
 section at the end of this lesson.
   
-As before, if we want to save these results to a file, we put the call to 
-`summary` between a pair of calls to `sink`:
+If we want to save these results to a file, we put the call to `summary` 
+between a pair of calls to `sink`:
 
 ```{r aov-write, eval = FALSE}
 sink(file = "output/petal-length-anova.txt")
@@ -541,9 +517,7 @@ setosa <- iris[iris$Species == "setosa", ]
 # Subset virginica data
 virginica <- iris[iris$Species == "virginica", ]
 # Run t-test
-setosa.v.virginica <- t.test(x = setosa$Petal.Length, y = virginica$Petal.Length)
-# Print the results
-setosa.v.virginica
+t.test(x = setosa$Petal.Length, y = virginica$Petal.Length)
 ```
   
 _I. setosa_ and _I. virginica_ have significantly different petal lengths.  
@@ -558,9 +532,7 @@ versicolor <- iris[iris$Species == "versicolor", ]
 # Subset virginica data
 virginica <- iris[iris$Species == "virginica", ]
 # Run t-test
-versicolor.v.virginica <- t.test(x = versicolor$Petal.Length, y = virginica$Petal.Length)
-# Print the results
-versicolor.v.virginica
+t.test(x = versicolor$Petal.Length, y = virginica$Petal.Length)
 ```
   
 _I. versicolor_ and _I. virginica_ also have different significantly different 
