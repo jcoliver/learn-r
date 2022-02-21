@@ -1,0 +1,71 @@
+---
+title: "Mapping with Open Street Maps in R"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+urlcolor: blue
+---
+
+An introduction to working with Open Street Map data in R.
+
+#### Learning objectives
+1. Install the osmdata R package
+2. Investigate data available from Open Street Maps
+3. Create a map of **XXXXX**
+
+[OpenStreetMap](https://www.openstreetmap.org/about) is a source of several 
+geographic data that you can use for analysis and visualization. The package 
+osmdata allows you to work with those data through R. In this workshop, we will 
+use osmdata and associated package to investigate OpenStreetMap data and use 
+them for geographical visualization.
+
+
+***
+
+## Getting started
+
+Setup project
+Install packages
++ osmdata
++ ggmap
+? tidyverse
+? dplyr
+? ggplot2
+
+***
+
+## [TOPIC ONE]
+
+Interrogating data, looking at layers
+
+***
+
+## [TOPIC TWO]
+Doing quick and easy road plot
+
+***
+
+## [TOPIC THREE]
+Add features like restaurants
+
+***
+
+## [TOPIC FOUR]
+Add external data; iNaturalist observations?
+
+***
+
+## Additional resources
+
++ [resource one](url-one)
++ [resource two](url-two)
++ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.
