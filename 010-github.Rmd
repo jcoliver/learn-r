@@ -58,7 +58,11 @@ executable. If it says something like "/usr/bin/git" or "C:/Program Files/Git/"
 then you already have Git installed. Yay! If instead it says "(Not Found)" in 
 the Git executable field, then you will need to install Git before proceeding.
 
-Head to the 
+(Another way you can do this is to use the command line to check for Git. On 
+Windows, you can run `which git` in your command prompt; on Mac OS or Linux, 
+you can run `git --version`)
+
+If Git is _not_ installed on your machine, head to the 
 [Software Carpentry instructions for Git](https://carpentries.github.io/workshop-template/#git) 
 and install whichever version is appropriate for your operating system. You 
 only need to do this step if the previous step indicated that Git was not 
@@ -78,9 +82,9 @@ Replacing `'Your Name'` and `'your@email.com'` with your actual name and e-mail
 (surrounded by single-quotes).
   
 Next, if you have not already, 
-[sign up for a GitHub account](https://github.com/join?source=header-home). 
-Registration is free and simple. Make sure you remember your GitHub ID and 
-password - we'll need those later in the lesson.
+[sign up for a GitHub account](https://github.com/join?source=header-home) at 
+github.com. Registration is free and simple. Make sure you remember your GitHub 
+ID and password - we'll need those later in the lesson.
 
 ### xcrun: error: invalid active developer path
 
@@ -89,7 +93,8 @@ in order to get RStudio and Git to talk with each other. If you see an error
 like 
 
 ```{bash xcrun-error, eval = FALSE}
-xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun.
+xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), 
+missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun.
 ```
 
 shut down RStudio, open the Terminal application and run
@@ -101,6 +106,44 @@ xcode-select --install
 open RStudio again and you should be all set! If you want to know more about
 this error, head over to Stack Overflow and read about 
 [this in more detail](https://apple.stackexchange.com/questions/254380/why-am-i-getting-an-invalid-active-developer-path-when-attempting-to-use-git-a).
+
+***
+
+### We can't have nice things
+
+In the old days, we were able to send changes from our machine to GitHub with 
+our username and password. But in those days we were also using poor passwords, 
+like "1234" or "password", which makes it easy for bad actors to mess with our 
+code. To counter this, GitHub now requires us to take different authentication 
+approaches. You can read about the various approaches on [GitHub Docs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github), 
+but for this lesson we will focus on Personal Access Tokens. These are 
+effectively really long, random passwords that are harder to guess. The GitHub 
+instructions for generating a token are at [https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-token)
+
+A couple of notes on those instructions:
+
++ In step 5, when you click "Generate a new token", the website may prompt you 
+for your password. For this field, use the password you use to log in to the 
+GitHub website.
++ In step 6, "Give your token a descriptive name." I will use the name of the 
+computer I am using. This way if I upgrade my machine, my computer dies, or god 
+forbid, someone steals it, I can revoke the token access.
++ In the expiration options in step 7, make this a short duration if you are 
+using a public machine or a loaner. Remember you can always delete this token 
+if you need to.
++ For scopes in step 8, check the box that says "*repo*".
+
+When you click the "Generate token" button, you will be taken to a new site 
+that displays this token. _This is the only time GitHub will **ever** show you
+this token_. I'm going to leave this tab in my browser open so I can copy the 
+token later in the lesson. If you are worried that you might close the tab, you 
+can copy and paste it into a text editor (_not_ in RStudio) for use later on. 
+If you lose your token, no worries, you can generate a new one (and delete the 
+one you lost).
+
+Now when you are working in RStudio and you are asked for your GitHub password,
+you will paste that long token into the window. We'll see this in action later 
+in the lesson.
 
 ***
 
@@ -123,14 +166,16 @@ communication between RStudio and GitHub.
 1. If you are just starting a project and want to use GitHub for collaboration, 
 it is easiest to start on GitHub. Using your favorite web browser, log into 
 your [GitHub account](https://github.com) and create a new repository. There is
-usually a big green button "New repository" you can click on.  
+usually a big green button "New repository" or "New" you can click on.  
 
-![](images/new-repo.png)  
+![](images/new-repo.png){ width=25% }  
 
-For this lesson enter `simulate-data` in the repository name field, "A 
-repository for simulating and plotting data" in the description field, and 
-click the "Create repository" button. Give yourself a pat on the back: You're 
-using GitHub!
+For this lesson,
+
++ enter "simulate-data" in the **repository name** field, and 
++ "A repository for simulating and plotting data" in the **description** field, 
+and click the "Create repository" button. Give yourself a pat on the back: You
+are using GitHub!
 
 At this point, leave the browser open and open RStudio. We want to make a new 
 project, using the GitHub repository we just created.
@@ -138,25 +183,25 @@ project, using the GitHub repository we just created.
 2. Create a new project (File > New Project...)
 3. Select the **Version Control** option
 
-![](images/version-control-project.png)
+![](images/version-control-project.png){ width=50% }  
 4. Select the **Git** option  
-![](images/git-project.png)
+![](images/git-project.png){ width=50% }  
 
 5. Finally, in the dialog that opens, you need only fill in information for the 
 Repository URL. You can copy the URL to the clipboard by navigating to your 
 GitHub repository website, clicking the green "code" button:
 
-![](images/github-code-button.png)  
+![](images/github-code-button.png){ width=50% }  
 
-This should open a dialog with the URL (it will end with ".git"). Copy the URL 
-by clicking the clipboard icon.
+This should open a dialog with the URL (it will start with "https" and end with 
+".git"). Copy the URL by clicking the clipboard icon.
 
-![](images/github-code-clipboard.png)
+![](images/github-code-clipboard.png){ width=50% }  
 
 
 Return to RStudio and paste into the Repository URL field:
 
-![](images/git-project-details.png)  
+![](images/git-project-details.png){ width=50% }  
 
 6. Click "Create Project" and you'll be connected. Jump to the 
 [Collaborate!](#collaborate) section below to use Git in RStudio.
@@ -168,12 +213,12 @@ Return to RStudio and paste into the Repository URL field:
 If you are going to use a repository that already exists on GitHub, you can 
 head to that repository GitHub site, and click the "Clone or download" button:
 
-![](images/clone-or-download.png)
+![](images/clone-or-download.png){ width=25% }  
   
 That should open a dialog with the repository URL. Copy the URL to the 
 clipboard.
 
-![](images/clone-url.png)
+![](images/clone-url.png){ width=50% }  
 
 At this point, follow steps 2-6 in the previous section 
 ([Starting from scratch](#starting-from-scratch)).
@@ -185,7 +230,7 @@ At this point, follow steps 2-6 in the previous section
 Let's say you have code on your machine that you want to push to GitHub. First, 
 log into [GitHub](https://github.com) and create a new repository (see step 1 
 in [Staring from scratch](#starting-from-scratch), above). Then, to connect 
-RStudio to this repository through the command line interface of RStudio 
+your machine to this repository through the command line interface of RStudio 
 (Tools > Terminal > New Terminal). 
 
 ```{bash push-local, eval = FALSE}
@@ -194,7 +239,7 @@ git init
 git add README.md
 git commit -m "first commit"
 git remote add origin https://github.com/jcoliver/simulate-data.git
-git push -u origin master
+git push -u origin main
 ```
 
 Make sure to substitute your GitHub repository URL in the 
@@ -289,11 +334,26 @@ press the commit button.
 a **Push**. Once again in the Git pane, find the Push button, indicated by a 
 green, upward-facing arrow.
 
-![](images/git-push-button.png)
+![](images/git-push-button.png){ width=15% }
 
 At this point, you may be prompted to enter your GitHub username and 
 password. Be sure to look at what the specific field is asking for (username or
-password) as _both_ dialog windows will be titled "Password".
+password) as _both_ dialog windows will be titled "Password". Remember for the 
+password, you want to paste in your Personal Access Token, that long string of 
+numbers and letters we generated at the beginning. 
+
+_Note_: if you have used RStudio to talk with GitHub in the past, you may need 
+to force R to ask you for your GitHub credentials. You can do with with the 
+[gitcreds](https://cran.r-project.org/web/packages/gitcreds/index.html) package 
+for R. If you _were_ prompted for your credentials, you do not need to do the 
+steps below.
+
+```{r gitcreds, eval = FALSE}
+install.packages("gitcreds")
+library(gitcreds)
+gitcreds_set()
+# Select option 2 and provide credentials at prompts.
+```
 
 Return to your web browser with your GitHub repository and refresh the page. 
 Your new file (simulate-data.R) should now be shown! Well done!
