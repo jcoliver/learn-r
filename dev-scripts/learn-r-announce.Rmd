@@ -13,11 +13,12 @@ suppressPackageStartupMessages(expr = library(lubridate))
 ```{r setup-schedule}
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2022-02-01",
-                                 "2022-02-08",
-                                 "2022-02-15",
-                                 "2022-02-22"),
-                       lessons = c(1, -1, -5, -1))
+schedule <- data.frame(dates = c("2022-03-01",
+                                 "2022-03-08",
+                                 "2022-03-15",
+                                 "2022-03-22",
+                                 "2022-03-29"),
+                       lessons = c(4, -1, 10, -1, -1))
 
 # Toggle indicating whether or not attendance files should be created
 create.files <- TRUE
@@ -50,18 +51,19 @@ Would you mind forwarding this announcement to researchers and students in your 
 <!--
 _All sessions will be 9-11 am on Tuesday in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio)_. 
 -->
-<!--
 _All sessions will be 9-11 am (MST) on Tuesday_. Sessions will be offered in 
 hybrid format: we will be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
 and running a concurrent Zoom session at [https://arizona.zoom.us/j/437855363](https://arizona.zoom.us/j/437855363).
--->
+<!--
 _All sessions will be 9-11 am (MST) on Tuesday through Zoom_ at  [https://arizona.zoom.us/j/437855363](https://arizona.zoom.us/j/437855363). 
-
+-->
 To get the most out of these workshops, participants should bring a laptop with 
 [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html). 
+<!--
 If you miss a session, you can always check out the collaborative blog at
 [https://hackmd.io/@jcoliver/SJVjEsOZw](https://hackmd.io/@jcoliver/SJVjEsOZw), 
 with helpful tips that come out of discussion sessions.
+-->
 
 ```{r print-schedule, results = "asis"}
 # Keep track of whether an open lab has been encountered; only print blurb for 
