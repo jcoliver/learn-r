@@ -41,6 +41,9 @@ Install packages
 
 Interrogating data, looking at layers
 
+```{r layer-check}
+```
+
 ***
 
 ## [TOPIC TWO]
@@ -51,6 +54,40 @@ Doing quick and easy road plot
 ## [TOPIC THREE]
 Add features like restaurants
 
+```{r restaurants}
+library(osmdata)
+
+# Query for Tucson restaurants
+tucson_rest <- getbb(place_name = "Tucson") %>%
+  opq() %>%
+  add_osm_feature(key = "amenity", value = "restaurant")
+
+str(tucson_rest)
+
+restaurants <- osmdata_sf(tucson_rest)
+restaurants
+
+
+# Idiosyncratic? Sometimes have to start from getbb scratch...
+tucson_mex <- tucson_rest %>%
+  add_osm_feature(key = "cuisine", value = "mexican")
+
+str(tucson_mex)
+
+mex <- osmdata_sf(tucson_mex)
+mex
+
+
+  
+#building the query
+q <- getbb("Madrid") %>%
+      opq() %>%
+       add_osm_feature("amenity", "cinema")
+
+str(q) #query structure
+
+```
+
 ***
 
 ## [TOPIC FOUR]
@@ -60,8 +97,10 @@ Add external data; iNaturalist observations?
 
 ## Additional resources
 
-+ [resource one](url-one)
-+ [resource two](url-two)
++ The [osmdata package on GitHub](https://github.com/ropensci/osmdata)
++ The official OSM wiki on [map features](https://wiki.openstreetmap.org/wiki/Map_features)
++ A tutorial on osmdata [mapping roads in Asheville, NC](http://joshuamccrain.com/tutorials/maps/streets_tutorial.html)
++ An example [mapping movie theaters in Spain](https://dominicroye.github.io/en/2018/accessing-openstreetmap-data-with-r/)
 + A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
 
 ***
