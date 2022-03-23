@@ -1,0 +1,226 @@
+---
+title: "Mapping with Open Street Maps in R"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+urlcolor: blue
+---
+
+An introduction to working with Open Street Map data in R.
+
+#### Learning objectives
+1. Install the osmdata R package
+2. Investigate data available from Open Street Maps
+3. Create a street map with restaurants in Tucson
+
+[OpenStreetMap](https://www.openstreetmap.org/about) is a source of several 
+geographic data that you can use for analysis and visualization. The package 
+osmdata allows you to work with those data through R. In this workshop, we will 
+use osmdata and associated package to investigate OpenStreetMap data and use 
+them for geographical visualization.
+
+***
+
+## Getting started
+
+We are going to be using the R language, with the RStudio IDE, so if you have 
+not already installed those pieces of software, you can find download links
+for both at the [installation page](https://jcoliver.github.io/learn-r/000-setup-instructions.html).
+
+First we need to setup our development environment. Open RStudio and create a 
+new project via:
+
++ File > New Project...
++ Select 'New Directory'
++ For the Project Type select 'New Project'
++ For Directory name, call it something like "osm-lesson" (without the quotes)
++ For the subdirectory, select somewhere you will remember (like "My Documents" 
+or "Desktop")
+
+The R software comes with lots of great features, but one of the best parts of 
+R is that there are lots of add-ons that you can use. These are called 
+"packages" and have to be explicitly installed to use them. The focus of 
+today's lesson is going to be the osmdata package, which lets us interface with 
+OpenStreetMap data. We are also going to use some packages for visualizing our 
+map, so we will install those, too. To install packages, we use the command 
+`install.packages()`; you can type and run the two commands into the console in 
+RStudio:
+
+```{r install-packages, eval = FALSE}
+install.packages("osmdata") # For getting and working with OpenStreetMap data
+install.packages("ggplot2") # For data visualization
+```
+
+***
+
+## Interrogating OpenStreetMap data
+
+When using packages like osmdata and ggplot2, we have to take one additional 
+step to actually _use_ them. Whenever we want to use those packages, we need to 
+load them explicitly with the `library()` command:
+
+```{r load-libraries}
+library(osmdata)
+library(ggplot2)
+```
+
+Let's start by looking at what kind of data are available through 
+OpenStreetMap. I usually start with `available_features()` to see the top-level 
+data organization:
+
+```{r feature-check, eval = FALSE}
+# List the features of OSM data
+available_features()
+```
+
+```{r feature-check-print, echo = FALSE}
+tail(available_features(), n = 20)
+```
+
+(we are just seeing the last twenty entries, you will probably see something in 
+the neighborhood of 230 different features.)
+
+In the list that printed out, note there is one called "water". We can look 
+further into these features to see what _kinds_ of water data are in OSM. We 
+use the function `available_tags()` and ask for tags for a particular feature.
+In this case, we will look for the tags of those water features:
+
+```{r tag-check}
+available_tags(feature = "water")
+```
+Note that not all features have attributes. For example, the feature "tunnel" 
+has no additional attributes; when you run `available_tags()` on a feature 
+without those additional attributes, the output will be `character(0)`:
+
+```{r no-tags}
+available_tags(feature = "tunnel")
+```
+
+***
+
+## But, what about maps?
+
+
+Doing quick and easy road plot
+```{r road-plot}
+library(ggplot2)
+
+tucson_major <- getbb(place_name = "Tucson") %>%
+  opq() %>%
+  add_osm_feature(key = "highway", value = c("primary", "secondary", "motorway")) %>%
+  osmdata_sf()
+
+street_plot <- ggplot() +
+  geom_sf(data = tucson_major$osm_lines,
+          inherit.aes = FALSE,
+          color = "black",
+          size = 0.2)
+# street_plot
+
+tucson_minor <- getbb(place_name = "Tucson") %>%
+  opq() %>%
+  add_osm_feature(key = "highway", value = c("tertiary", "residential")) %>%
+  osmdata_sf()
+
+street_plot <- street_plot +
+  geom_sf(data = tucson_minor$osm_lines,
+          inherit.aes = FALSE,
+          color = "#666666",
+          size = 0.1)
+# street_plot
+
+# street_plot <- street_plot +
+#   coord_sf(ylim = c(32.1, 32.3), # odd behavior only allows us to set x or y
+#            expand = FALSE)
+# street_plot
+
+```
+
+
+***
+
+## [TOPIC THREE]
+Add features like restaurants
+
+```{r restaurants}
+
+# Query for Tucson restaurants
+tucson_rest <- tucson_bb %>%# getbb(place_name = "Tucson") %>%
+  opq() %>%
+  add_osm_feature(key = "amenity", value = "restaurant")
+
+str(tucson_rest)
+
+restaurants <- osmdata_sf(tucson_rest)
+restaurants
+
+
+# Idiosyncratic? Sometimes have to start from getbb scratch...
+tucson_mex <- tucson_rest %>%
+  add_osm_feature(key = "cuisine", value = "mexican")
+
+str(tucson_mex)
+
+mex <- osmdata_sf(tucson_mex)
+mex
+
+# Now use that streetmap and add the restaurants
+rest_plot <- street_plot +
+  geom_sf(data = mex$osm_points,
+          inherit.aes = FALSE,
+          size = 1.5,
+          color = "#1B9E77") +
+  coord_sf(ylim = c(32.1, 32.3),
+           expand = FALSE) +
+  theme_void()
+
+rest_plot
+
+
+
+
+```
+
+***
+
+## [TOPIC FOUR]
+Add external data; iNaturalist observations?
+
+```{r external-data}
+# Download Harris' Hawk observations (source: iNaturalist)
+# TODO: Replace with tinyurl
+hh_obs <- read.csv(file = "data/Parabuteo-unicinctus-iNat.csv")
+head(hh_obs)
+
+hawk_plot <- street_plot + 
+  geom_point(data = hh_obs,
+             mapping = aes(x = longitude, y = latitude),
+             color = "#D95F02",
+             size = 1, 
+             inherit.aes = FALSE) +
+  coord_sf(ylim = c(32.1, 32.3),
+           expand = FALSE) +
+  theme_void()
+
+
+```
+
+***
+
+## Additional resources
+
++ The [osmdata package on GitHub](https://github.com/ropensci/osmdata)
++ The [OSM Wiki page](https://wiki.openstreetmap.org/wiki/Main_Page)
++ The wiki page on [map features](https://wiki.openstreetmap.org/wiki/Map_features)
++ A tutorial on osmdata [mapping roads in Asheville, NC](http://joshuamccrain.com/tutorials/maps/streets_tutorial.html)
++ An example [mapping movie theaters in Spain](https://dominicroye.github.io/en/2018/accessing-openstreetmap-data-with-r/)
++ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.
