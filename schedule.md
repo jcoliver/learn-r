@@ -21,9 +21,9 @@
 | 10  | May   | Hybrid open lab                    |
 | 17  | May   | Hybrid open lab                    |
 
-All sessions will be 9-11 AM on Tuesday morning (MST). For the month of January,
-these will be held [online](contingency.md). We hope to return to the hybrid 
-modality in February, COVID permitting.
+All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
+be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
+and running a concurrent Zoom session.
 
 For information on connecting to online sessions, reach out to us on the r 
 channel of the [UA Data Science Slack workspace](https://jcoliver.github.io/uadatascience-slack/) 
