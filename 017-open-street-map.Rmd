@@ -62,9 +62,14 @@ When using packages like osmdata and ggplot2, we have to take one additional
 step to actually _use_ them. Whenever we want to use those packages, we need to 
 load them explicitly with the `library()` command:
 
-```{r load-libraries}
+```{r load-libraries, eval = FALSE}
 library(osmdata)
 library(ggplot2)
+```
+
+```{r load-libraries-print, echo = FALSE}
+suppressPackageStartupMessages(library(osmdata))
+suppressPackageStartupMessages(library(ggplot2))
 ```
 
 Let's start by looking at what kind of data are available through 
@@ -91,6 +96,7 @@ In this case, we will look for the tags of those water features:
 ```{r tag-check}
 available_tags(feature = "water")
 ```
+
 Note that not all features have attributes. For example, the feature "tunnel" 
 has no additional attributes; when you run `available_tags()` on a feature 
 without those additional attributes, the output will be `character(0)`:
@@ -99,20 +105,103 @@ without those additional attributes, the output will be `character(0)`:
 available_tags(feature = "tunnel")
 ```
 
+If you want to take a deep dive into all the features, check out the OSM 
+[wiki page on map features](https://wiki.openstreetmap.org/wiki/Map_features).
+
 ***
 
 ## But, what about maps?
 
+Like any kind of data visualization, building maps is an interative process. 
+Here we are going to start with defining the geographic area we are interested
+in then add features to that area.
 
-Doing quick and easy road plot
-```{r road-plot}
-library(ggplot2)
+### Where are we going?
 
+There are two ways we can define our area of interest:
+
+1. Manually defining the latitude and longitude coordinates of a bounding box.
+2. Using OSM place names to automatically create the bounding box.
+
+The first option gives you complete control over the bounding box, but the 
+second option is much easier.
+
+If you want to do it the first way, you create a 2x2 matrix with four values 
+(min/max longitude and min/max latitude). In order to play nice with the 
+osmdata package, we also name the columns and rows accordingly:
+
+```{r tucson-bb-matrix}
+# A 2x2 matrix
+tucson_bb <- matrix(data = c(-111.0, -110.7, 31.0, 32.3),
+                    nrow = 2,
+                    byrow = TRUE)
+# Update column and row names
+colnames(tucson_bb) <- c("min", "max")
+rownames(tucson_bb) <- c("x", "y")
+# Print the matrix to the console
+tucson_bb
+```
+
+Now, control freaks like me might really like this approach, but the second 
+option presents a much easier way:
+
+```{r tucson-bb-osmdata}
+# Use the bounding box defined for Tucson by OSM
+tucson_bb <- getbb("Tucson")
+# Print the matrix to the console
+tucson_bb
+```
+
+This probably provides a better bounding box than my guesses at latitude and 
+longitude, so we will use this second approach.
+
+### Roads? Where we're going we...definitely need roads
+
+We'll start by adding roads to our map. For our purposes, we will have big 
+roads and small roads. This is a pretty artificial distinction, but it works 
+for our map. For the OSM data, we want to use data from the "highway" feature, 
+so we start by looking to see what tags are available for that feature:
+
+```{r highway-tags}
+available_tags(feature = "highway")
+```
+
+Okayyyyy, that's a lot. We are going to just use a subset of those tags, but 
+you can look at them all in depth on the 
+[OSM Wiki](https://wiki.openstreetmap.org/wiki/Map_features#Highway). We will 
+start with just the major roads. We start by getting the bounding box for 
+Tucson, then creating a query for the database with `opq()`, specifying which 
+features we want with `add_osm_feature()`, and finally converting it to simple 
+feature (sf) format with `osmdata_sf()`.
+
+```{r major-roads}
 tucson_major <- getbb(place_name = "Tucson") %>%
   opq() %>%
-  add_osm_feature(key = "highway", value = c("primary", "secondary", "motorway")) %>%
+  add_osm_feature(key = "highway", 
+                  value = c("motorway", "primary", "secondary")) %>%
   osmdata_sf()
+```
 
+In the code above, we chain together multiple commands with the pipe operator 
+(`%>%`). When you see the pipe, you can interpret this as the words "and then".
+If we wrote this as pseudocode, it would read:
+
+```
+tucson_major <- get the bounding box for Tucson *and then*
+  prepare an OSM query *and then*
+  specify the types of highways to include *and then*
+  convert the data to sf format
+```
+
+Looking at this object, it provides a little information about the geographic 
+extent and how many points, lines, and polygons are returned:
+
+```{r major-roads-print}
+tucson_major
+```
+
+
+```{r}
 street_plot <- ggplot() +
   geom_sf(data = tucson_major$osm_lines,
           inherit.aes = FALSE,
@@ -148,24 +237,24 @@ Add features like restaurants
 ```{r restaurants}
 
 # Query for Tucson restaurants
-tucson_rest <- tucson_bb %>%# getbb(place_name = "Tucson") %>%
+tucson_rest <- getbb(place_name = "Tucson") %>%
   opq() %>%
   add_osm_feature(key = "amenity", value = "restaurant")
 
-str(tucson_rest)
+# str(tucson_rest)
 
 restaurants <- osmdata_sf(tucson_rest)
-restaurants
+# restaurants
 
 
 # Idiosyncratic? Sometimes have to start from getbb scratch...
 tucson_mex <- tucson_rest %>%
   add_osm_feature(key = "cuisine", value = "mexican")
 
-str(tucson_mex)
+# str(tucson_mex)
 
 mex <- osmdata_sf(tucson_mex)
-mex
+# mex
 
 # Now use that streetmap and add the restaurants
 rest_plot <- street_plot +
@@ -178,21 +267,16 @@ rest_plot <- street_plot +
   theme_void()
 
 rest_plot
-
-
-
-
 ```
 
 ***
 
 ## [TOPIC FOUR]
-Add external data; iNaturalist observations?
 
 ```{r external-data}
 # Download Harris' Hawk observations (source: iNaturalist)
 # TODO: Replace with tinyurl
-hh_obs <- read.csv(file = "data/Parabuteo-unicinctus-iNat.csv")
+hh_obs <- read.csv(file = "https://bit.ly/hh-obs")
 head(hh_obs)
 
 hawk_plot <- street_plot + 
