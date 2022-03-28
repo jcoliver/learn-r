@@ -15,6 +15,7 @@ An introduction to working with Open Street Map data in R.
 1. Install the osmdata R package
 2. Investigate data available from Open Street Maps
 3. Create a street map with restaurants in Tucson
+4. Create a street map with external data
 
 [OpenStreetMap](https://www.openstreetmap.org/about) is a source of several 
 geographic data that you can use for analysis and visualization. The package 
@@ -64,7 +65,6 @@ load them explicitly with the `library()` command:
 
 ```{r load-libraries, eval = FALSE}
 library(osmdata)
-library(ggplot2)
 ```
 
 ```{r load-libraries-print, echo = FALSE}
@@ -116,9 +116,45 @@ Like any kind of data visualization, building maps is an interative process.
 Here we are going to start with defining the geographic area we are interested
 in then add features to that area.
 
+### Saving our work
+
+So far, we have been working in the console, which is fine for anything we 
+do not really care about saving. But from this point on, we want to keep a 
+record of our work by adding all the code to a script file. To create a new 
+script in RStudio, select File > New File > R Script. The script should open in 
+the top-left pane of RStudio and really be a big, blank, white page. Here we 
+will add our code, but we start with a little information about what the script 
+does and who is responsible. This information is for humans, not R, so we start 
+each of these lines with a pound sign (`#`, AKA the hashtag):
+
+```{r script-header}
+# Map Tucson restaurants
+# Jeff Oliver
+# jcoliver@arizona.edu
+# 2022-03-28
+```
+
+And you'll add your name and e-mail (_not_ my name and e-mail) in the 
+appropriate lines. At the beginning of the script we also add calls to 
+`library()` for any R packages that we will use later in the script. By putting 
+this information at the top, anyone reading this script can see what other 
+packages need to be installed.
+
+```{r script-load-libraries, eval = FALSE}
+# Map Tucson restaurants
+# Jeff Oliver
+# jcoliver@arizona.edu
+# 2022-03-28
+
+library(osmdata)
+library(ggplot2)
+```
+
+Now, to the maps!
+
 ### Where are we going?
 
-There are two ways we can define our area of interest:
+There are two ways we can define our geographic area of interest:
 
 1. Manually defining the latitude and longitude coordinates of a bounding box.
 2. Using OSM place names to automatically create the bounding box.
@@ -174,7 +210,7 @@ Tucson, then creating a query for the database with `opq()`, specifying which
 features we want with `add_osm_feature()`, and finally converting it to simple 
 feature (sf) format with `osmdata_sf()`.
 
-```{r major-roads}
+```{r major-roads, error = FALSE}
 tucson_major <- getbb(place_name = "Tucson") %>%
   opq() %>%
   add_osm_feature(key = "highway", 
@@ -193,81 +229,178 @@ tucson_major <- get the bounding box for Tucson *and then*
   convert the data to sf format
 ```
 
-Looking at this object, it provides a little information about the geographic 
-extent and how many points, lines, and polygons are returned:
+Aside: when querying OpenStreetMap for data, you may sometimes see an error 
+message about "Request failed":
+
+> Error in curl::curl_fetch_memory(url, handle = handle): HTTP/2 stream 0 was not closed cleanly: PROTOCOL_ERROR (err 1)
+Request failed [ERROR]. Retrying in 1 seconds...
+
+In most cases when this happens, the osmdata package will automatically try to 
+retrieve the data again. If it failed multiple times, wait a minute or two and 
+try again. If you find it times out consistently, you can increase the time the 
+query will wait for a response by passing `timeout = 50` to the `opq()` 
+function:
+
+```{r increase-timeout, eval = FALSE}
+tucson_major <- getbb(place_name = "Tucson") %>%
+  opq(timeout = 50) %>%
+  add_osm_feature(key = "highway", 
+                  value = c("motorway", "primary", "secondary")) %>%
+  osmdata_sf()
+```
+
+Looking at the `tucson_major` object, it provides a little information about 
+the geographic extent and how many points, lines, and polygons are returned:
 
 ```{r major-roads-print}
 tucson_major
 ```
 
+Let's go ahead and plot what we have so far. Here we will be using the R 
+package called ggplot2, which we installed and loaded earlier. If you have not
+already done that, load in the ggplot2 package via `library(ggplot2)`.
 
-```{r}
+```{r major-roads-plot, warning = FALSE}
+# Create the plot object, using the osm_lines element of tucson_major
 street_plot <- ggplot() +
   geom_sf(data = tucson_major$osm_lines,
           inherit.aes = FALSE,
           color = "black",
           size = 0.2)
-# street_plot
+# Print the plot
+street_plot
+```
 
+You might see a warning about the projection:
+
+> Warning in CPL_transform(x, crs, aoi, pipeline, reverse, desired_accuracy,  :
+  GDAL Error 1: PROJ: proj_as_wkt: DatumEnsemble can only be exported to WKT2:2019
+
+But we can ignore these warnings for now. Let us move on to retrieving data for 
+the smaller roads. We use the same pipeline of defining the area, creating a 
+query, then asking for the smaller road tags:
+
+```{r minor-roads, error = FALSE}
 tucson_minor <- getbb(place_name = "Tucson") %>%
   opq() %>%
   add_osm_feature(key = "highway", value = c("tertiary", "residential")) %>%
   osmdata_sf()
+```
 
+To plot these smaller roads, we will just add them to the major roads plot we 
+created already.
+
+```{r minor-roads-plot, warning = FALSE}
+# Create the plot object, using the osm_lines element of tucson_minor
 street_plot <- street_plot +
   geom_sf(data = tucson_minor$osm_lines,
           inherit.aes = FALSE,
-          color = "#666666",
-          size = 0.1)
-# street_plot
-
-# street_plot <- street_plot +
-#   coord_sf(ylim = c(32.1, 32.3), # odd behavior only allows us to set x or y
-#            expand = FALSE)
-# street_plot
-
+          color = "#666666",  # medium gray
+          size = 0.1) # half the width of the major roads
+# Print the plot
+street_plot
 ```
 
+There are some aesthetic changes we can make with this plot, such as zooming in 
+a bit and getting rid of the gray background. But for now we will wait on those 
+changes and pivot to adding other kinds of data to the map.
 
 ***
 
-## [TOPIC THREE]
-Add features like restaurants
+## The best 23 miles of Mexican food
 
-```{r restaurants}
+We in Tucson are proud of our restaurants, especially the diversity of cuisines 
+coming from our neighbors to the south. For the next step of our map, we want 
+to add points for all the restaurants in Tucson that specialize in Mexican 
+cuisine. To do this, we will start by retrieving data for _all_ restaurants in 
+that Tucson bounding box that we created earlier on.
 
+```{r restaurants, error = FALSE}
 # Query for Tucson restaurants
 tucson_rest <- getbb(place_name = "Tucson") %>%
   opq() %>%
-  add_osm_feature(key = "amenity", value = "restaurant")
+  add_osm_feature(key = "amenity", value = "restaurant") %>%
+  osmdata_sf()
+```
 
-# str(tucson_rest)
+Like we did before, we can get a snapshot of results by typing in the name of 
+the object into the console:
 
-restaurants <- osmdata_sf(tucson_rest)
-# restaurants
+```{r restaurants-print}
+tucson_rest
+```
+
+These data are points, and there are over 2,000 of them! We want to limit this 
+to only those restaurants specializing in Mexican cuisine. We can update our 
+previous query by adding another call to `add_osm_feature()`, this time setting 
+`key = cuisine` and `value = "mexican"`:
+
+```{r mex-restaurants, error = FALSE}
+# Query for Tucson restaurants, them filter to mexican cuisine
+tucson_rest <- getbb(place_name = "Tucson") %>%
+  opq() %>%
+  add_osm_feature(key = "amenity", value = "restaurant") %>%
+  add_osm_feature(key = "cuisine", value = "mexican") %>% # filters results
+  osmdata_sf()
+```
+
+And we should see the number of points reduced to a little over 200:
+
+```{r mex-restaurants-print}
+tucson_rest
+```
+
+Now that we have those points, we can create a street map and add those points
+onto the map. We are going to start with the `street_plot` object we created 
+earlier, and add in the points on top of the street data.
 
 
-# Idiosyncratic? Sometimes have to start from getbb scratch...
-tucson_mex <- tucson_rest %>%
-  add_osm_feature(key = "cuisine", value = "mexican")
-
-# str(tucson_mex)
-
-mex <- osmdata_sf(tucson_mex)
-# mex
-
-# Now use that streetmap and add the restaurants
+```{r rest-plot-1, warning = FALSE}
+# Create a new plot object, starting with the street map
 rest_plot <- street_plot +
-  geom_sf(data = mex$osm_points,
+  geom_sf(data = tucson_rest$osm_points,
+          inherit.aes = FALSE,
+          size = 1.5,
+          color = "#1B9E77") # approximately "elf green"???
+# Print the plot
+rest_plot
+```
+
+Nice! Now we're getting there. Earlier we mentioned that there were some 
+aesthetic changes we want to make. Specifically, we want to zoom in a little 
+bit (we do not need the map to extend so far south) and we want to remove the 
+gray background. For the zooming, we can limit the y-axis extent:
+
+```{r rest-plot-2, warning = FALSE}
+# Create a new plot object, starting with the street map
+rest_plot <- street_plot +
+  geom_sf(data = tucson_rest$osm_points,
           inherit.aes = FALSE,
           size = 1.5,
           color = "#1B9E77") +
-  coord_sf(ylim = c(32.1, 32.3),
-           expand = FALSE) +
-  theme_void()
-
+  coord_sf(ylim = c(32.1, 32.3), # Crop out southern part of map
+           expand = FALSE)  # if we don't set, will expand to fit data
+# Print map
 rest_plot
 ```
+
+And to drop the gray background, we use one of the built-in themes. In this 
+case, we add `theme_void()` at the very end of our map:
+
+```{r rest-plot-3, warning = FALSE}
+# Create a new plot object, starting with the street map
+rest_plot <- street_plot +
+  geom_sf(data = tucson_rest$osm_points,
+          inherit.aes = FALSE,
+          size = 1.5,
+          color = "#1B9E77") +
+  coord_sf(ylim = c(32.1, 32.3), # Crop out southern part of map
+           expand = FALSE) + # if we don't set, will expand to fit data
+  theme_void() # remove gray background
+# Print map
+rest_plot
+```
+
 
 ***
 
@@ -275,7 +408,6 @@ rest_plot
 
 ```{r external-data}
 # Download Harris' Hawk observations (source: iNaturalist)
-# TODO: Replace with tinyurl
 hh_obs <- read.csv(file = "https://bit.ly/hh-obs")
 head(hh_obs)
 
