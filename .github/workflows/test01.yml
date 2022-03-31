@@ -1,0 +1,13 @@
+name: Test workflow
+
+on: 
+  schedule:
+  # Friday 15:00 UTC
+    -cron: '0 15 * * 5'
+    
+jobs:
+  test_schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every time
+        run: echo "Workflow complete"
