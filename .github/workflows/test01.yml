@@ -3,7 +3,7 @@ name: Test workflow
 on: 
   schedule:
   # Friday 15:00 UTC
-    -cron: '0 15 * * 5'
+    - cron: '0 15 * * 5'
     
 jobs:
   test_schedule:
