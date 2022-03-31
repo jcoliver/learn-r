@@ -1,0 +1,12 @@
+name: Test workflow 2
+
+on:
+  schedule:
+    - cron: '0 15 * * 5`
+
+jobs:
+  test-print:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print message
+        run: echo "Message from workflow test"
