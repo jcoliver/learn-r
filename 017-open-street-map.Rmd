@@ -210,6 +210,11 @@ Tucson, then creating a query for the database with `opq()`, specifying which
 features we want with `add_osm_feature()`, and finally converting it to simple 
 feature (sf) format with `osmdata_sf()`.
 
+```{r sleep-1, echo = FALSE}
+# Here to slow down our queries to OSM
+Sys.sleep(time = 3)
+```
+
 ```{r major-roads, error = FALSE}
 tucson_major <- getbb(place_name = "Tucson") %>%
   opq() %>%
@@ -280,6 +285,11 @@ But we can ignore these warnings for now. Let us move on to retrieving data for
 the smaller roads. We use the same pipeline of defining the area, creating a 
 query, then asking for the smaller road tags:
 
+```{r sleep-2, echo = FALSE}
+# Here to slow down our queries to OSM
+Sys.sleep(time = 3)
+```
+
 ```{r minor-roads, error = FALSE}
 tucson_minor <- getbb(place_name = "Tucson") %>%
   opq() %>%
@@ -335,6 +345,11 @@ to only those restaurants specializing in Mexican cuisine. We can update our
 previous query by adding another call to `add_osm_feature()`, this time setting 
 `key = cuisine` and `value = "mexican"`:
 
+```{r sleep-3, echo = FALSE}
+# Here to slow down our queries to OSM
+Sys.sleep(time = 3)
+```
+
 ```{r mex-restaurants, error = FALSE}
 # Query for Tucson restaurants, them filter to mexican cuisine
 tucson_rest <- getbb(place_name = "Tucson") %>%
@@ -369,7 +384,8 @@ rest_plot
 Nice! Now we're getting there. Earlier we mentioned that there were some 
 aesthetic changes we want to make. Specifically, we want to zoom in a little 
 bit (we do not need the map to extend so far south) and we want to remove the 
-gray background. For the zooming, we can limit the y-axis extent:
+gray background. For the zooming, we can limit the y-axis extent with the 
+`coord_sf()` function:
 
 ```{r rest-plot-2, warning = FALSE}
 # Create a new plot object, starting with the street map
@@ -401,28 +417,104 @@ rest_plot <- street_plot +
 rest_plot
 ```
 
+One thing to point out with this map is that the features we are using require 
+a fair bit of curation to get to the level of detail we are asking for 
+(Tucson amenities that are restaurants that serve Mexican cuisine). Because of 
+this, the data may not be complete. Maybe when you're visiting Tucson you can 
+[contribute to the OSM project](https://www.openstreetmap.org/about) by adding 
+a Mexican restaurant that _isn't_ on the map we made?
 
 ***
 
-## [TOPIC FOUR]
+## Putting the "Open" in OpenStreetMaps
 
-```{r external-data}
-# Download Harris' Hawk observations (source: iNaturalist)
+You are not restricted to only using OpenStreetMap data for these maps. You can 
+add just about any other georeferenced data you would like. Here we are going 
+to take that Tucson street map and add observations of one of our local birds, 
+[Harris' Hawk](https://ebird.org/species/hrshaw). The observations come from 
+the [iNaturalist](https://www.inaturalist.org) community science project. I 
+already downloaded a subset of the observations from the Tucson vicinity, and 
+you can read them into memory with the `read.csv()` function, then look at the 
+first few rows of data with the `head()` command:
+
+```{r load-external-data}
+# Read Harris' Hawk observations (source: iNaturalist) into memory from online
 hh_obs <- read.csv(file = "https://bit.ly/hh-obs")
+# Print out first six rows of data
 head(hh_obs)
+```
 
+We see that there are longitude and latitude columns, so we will need to use 
+those for specifying our x and y coordinates, respectively. We start by making 
+a new plot object from our `street_plot`
+
+```{r plot-external-data-1, warning = FALSE}
+hawk_plot <- street_plot
+hawk_plot
+```
+
+Well, not so exciting yet because we haven't added those observations to our 
+map object. For these data, we will use `geom_point()`, since they are just x,y
+coordinates, not simple (or spatial) features. Because of this, we will need to 
+explicitly state which column in our data correspond to the horizontal 
+dimension (i.e. the x-axis) and which column corresponds to the vertical 
+dimension (i.e. the y-axis). We do this with the `mapping` argument. _Aside_: 
+yes, this might be confusing. Here we are "mapping" data to part of our plot - 
+it doesn't have anything to do with a map per se (we use the `mapping` argument 
+for all kinds of plots, not just maps). It is just one "fun" part of the 
+flexibility of the English language.
+
+```{r plot-external-data-2, warning = FALSE}
 hawk_plot <- street_plot + 
   geom_point(data = hh_obs,
              mapping = aes(x = longitude, y = latitude),
-             color = "#D95F02",
+             color = "#B8562B", # an orange to match the species' shoulders
+             size = 1, 
+             inherit.aes = FALSE)
+hawk_plot
+```
+
+OK! Hawks on the north side of town, but our map has that gray background again 
+and extends too far south. We need to crop the y-axis again and use 
+`theme_void()` to remove the background:
+
+```{r plot-external-data-3, warning = FALSE}
+hawk_plot <- street_plot + 
+  geom_point(data = hh_obs,
+             mapping = aes(x = longitude, y = latitude),
+             color = "#B8562B", # an orange to match the species' shoulders
              size = 1, 
              inherit.aes = FALSE) +
   coord_sf(ylim = c(32.1, 32.3),
            expand = FALSE) +
   theme_void()
-
-
+hawk_plot
 ```
+
+And now we have our map! Finally (why didn't we cover this before?), we can 
+output the map to a file with the `ggsave()` command. We just need to tell R 
+two things:
+
+1. Which plot do we want to save?
+2. Where do we want to save the plot?
+
+```{r save-external-data-plot-png, eval = FALSE, warning = FALSE}
+ggsave(plot = hawk_plot,
+       filename = "harris-hawk-tucson.png")
+```
+
+Note in the case above, R will guess the file type from the extension we use in 
+our file name. We could write to a PDF instead by using the .pdf file 
+extension:
+
+```{r save-external-data-plot-pdf, eval = FALSE, warning = FALSE}
+ggsave(plot = hawk_plot,
+       filename = "harris-hawk-tucson.pdf")
+```
+
+We really just scratched the surface of OpenStreetMap data. Take a look at the 
+additional resources section below to find out more about features and other 
+ways to use OSM data with R.
 
 ***
 
