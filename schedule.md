@@ -2,21 +2,30 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 24  | May   | Hybrid open lab                    |
-| 31  | May   | Hybrid open lab                    |
-| 07  | Jun   | Hybrid open lab                    |
-| 14  | Jun   | Hybrid open lab                    |
-| 21  | Jun   | Hybrid open lab                    |
-| 28  | Jun   | Hybrid open lab                    |
-| 05  | Jul   | Hybrid open lab                    |
-| 12  | Jul   | Hybrid open lab                    |
 | 19  | Jul   | Hybrid open lab                    |
 | 26  | Jul   | Hybrid open lab                    |
 | 02  | Aug   | Hybrid open lab                    |
 | 09  | Aug   | Hybrid open lab                    |
 | 16  | Aug   | Hybrid open lab                    |
-| 23  | Aug   | Hybrid open lab                    |
+| 23  | Aug   | Introduction to R graphing         |
 | 30  | Aug   | Hybrid open lab                    |
+| 06  | Sep   | Introduction to R statistics       |
+| 13  | Sep   | Hybrid open lab                    |
+| 20  | Sep   | Interactive dashboards with the Shiny package |
+| 27  | Sep   | Hybrid open lab                    |
+| 04  | Oct   | Data visualization with ggplot     |
+| 11  | Oct   | Hybrid open lab                    |
+| 18  | Oct   | Heatmaps in R (with data wrangling!) |
+| 25  | Oct   | Hybrid open lab                    |
+| 29  | Oct   |  Data science: more fun, less pain with tidyverse |
+| 01  | Nov   | Hybrid open lab                    |
+| 08  | Nov   | Creating maps with from the OpenStreetMap project |
+| 15  | Nov   | Hybrid open lab                    |
+| 22  | Nov   | Hybrid open lab                    |
+| 29  | Nov   | Reproducible reports with knitr & RMarkdown |
+| 06  | Dec   | Hybrid open lab                    |
+| 13  | Dec   | Hybrid open lab (final session of the year) |
+
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
