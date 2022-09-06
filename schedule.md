@@ -17,10 +17,9 @@
 | 11  | Oct   | Hybrid open lab                    |
 | 18  | Oct   | Heatmaps in R (with data wrangling!) |
 | 25  | Oct   | Hybrid open lab                    |
-| 29  | Oct   | Data science: more fun, less pain with tidyverse |
-| 01  | Nov   | Hybrid open lab                    |
-| 08  | Nov   | Creating maps with data from the OpenStreetMap project |
-| 15  | Nov   | Hybrid open lab                    |
+| 01  | Nov   | Data science: more fun, less pain with tidyverse |
+| 08  | Nov   | Hybrid open lab                    |
+| 15  | Nov   | Creating maps with data from the OpenStreetMap project |
 | 22  | Nov   | Hybrid open lab                    |
 | 29  | Nov   | Reproducible reports with knitr & RMarkdown |
 | 06  | Dec   | Hybrid open lab                    |
