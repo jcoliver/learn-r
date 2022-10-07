@@ -2,17 +2,6 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 19  | Jul   | Hybrid open lab                    |
-| 26  | Jul   | Hybrid open lab                    |
-| 02  | Aug   | Hybrid open lab                    |
-| 09  | Aug   | Hybrid open lab                    |
-| 16  | Aug   | Hybrid open lab                    |
-| 23  | Aug   | Introduction to R graphing         |
-| 30  | Aug   | Hybrid open lab                    |
-| 06  | Sep   | Introduction to R statistics       |
-| 13  | Sep   | Hybrid open lab                    |
-| 20  | Sep   | Interactive dashboards with the Shiny package |
-| 27  | Sep   | Hybrid open lab                    |
 | 04  | Oct   | Data visualization with ggplot     |
 | 11  | Oct   | Hybrid open lab                    |
 | 18  | Oct   | Heatmaps in R (with data wrangling!) |
