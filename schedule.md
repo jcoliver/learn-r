@@ -2,24 +2,18 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 18  | Jan   | Introduction to R statistics (online) |
-| 25  | Jan   | Virtual open lab                   |
-| 01  | Feb   | Introduction to R graphing         |
-| 08  | Feb   | Hybrid open lab                    |
-| 15  | Feb   | Repeating things in R              |
-| 22  | Feb   | Hybrid open lab                    |
-| 01  | Mar   | Data visualization with ggplot     |
-| 08  | Mar   | Hybrid open lab                    |
-| 15  | Mar   | Git and GitHub with RStudio        |
-| 22  | Mar   | Hybrid open lab                    |
-| 29  | Mar   | Hybrid open lab                    |
-| 05  | Apr   | Data science: more fun, less pain with tidyverse |
-| 12  | Apr   | Hybrid open lab                    |
-| 19  | Apr   | Introduction to functional programming |
-| 26  | Apr   | Hybrid open lab                    |
-| 03  | May   | Your first species distribution model |
-| 10  | May   | Hybrid open lab                    |
-| 17  | May   | Hybrid open lab                    |
+| 04  | Oct   | Data visualization with ggplot     |
+| 11  | Oct   | Hybrid open lab                    |
+| 18  | Oct   | Heatmaps in R (with data wrangling!) |
+| 25  | Oct   | Hybrid open lab                    |
+| 01  | Nov   | Data science: more fun, less pain with tidyverse |
+| 08  | Nov   | Hybrid open lab                    |
+| 15  | Nov   | Creating maps with data from the OpenStreetMap project |
+| 22  | Nov   | Hybrid open lab                    |
+| 29  | Nov   | Reproducible reports with knitr & RMarkdown |
+| 06  | Dec   | Hybrid open lab                    |
+| 13  | Dec   | Hybrid open lab (final session of the year) |
+
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
