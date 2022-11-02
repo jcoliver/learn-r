@@ -22,6 +22,10 @@ urlcolor: blue
 
 ## Getting started
 
++ Library installation (if necessary)
++ Project setup
++ Download data (if necessary)
+
 ***
 
 ## [TOPIC ONE]
