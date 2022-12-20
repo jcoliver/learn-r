@@ -2,14 +2,27 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 06  | Dec   | Hybrid open lab                    |
-| 13  | Dec   | Hybrid open lab (final session of the year) |
-| 20  | Dec   | No lab this day                    |
 | 27  | Dec   | Happy Holidays! (No lab this day)  |
 | 03  | Jan   | Happy New Year! (No lab this day)  |
 | 10  | Jan   | Get outside and enjoy the fresh air (No lab this day) |
 | 17  | Jan   | Introduction to statistics in R    |
-
+| 24  | Jan   | Hybrid open lab                    |
+| 31  | Jan   | Introduction to data visualization in R |
+| 07  | Feb   | Hybrid open lab                    |
+| 14  | Feb   | Using Git and GitHub with R        |
+| 21  | Feb   | Hybrid open lab                    |
+| 28  | Feb   | High-quality visualization with ggplot |
+| 07  | Mar   | Hybrid open lab                    |
+| 14  | Mar   | Writing your own functions in R    |
+| 21  | Mar   | Hybrid open lab                    |
+| 28  | Mar   | Introduction to data wrangling with the tidyverse! |
+| 04  | Apr   | Hybrid open lab                    |
+| 11  | Apr   | Interactive web apps with shiny    |
+| 18  | Apr   | Hybrid open lab                    |
+| 25  | Apr   | Introduction to species distribution models |
+| 02  | May   | Hybrid open lab                    |
+| 09  | May   | Hybrid open lab                    |
+| 16  | May   | Hybrid open lab                    |
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
