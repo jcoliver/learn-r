@@ -5,8 +5,8 @@
 | 27  | Dec   | Happy Holidays! (No lab this day)  |
 | 03  | Jan   | Happy New Year! (No lab this day)  |
 | 10  | Jan   | Get outside and enjoy the fresh air (No lab this day) |
-| 17  | Jan   | Introduction to statistics in R    |
-| 24  | Jan   | Hybrid open lab                    |
+| 17  | Jan   | Hybrid open lab                    |
+| 24  | Jan   | Introduction to statistics in R    |
 | 31  | Jan   | Introduction to data visualization in R |
 | 07  | Feb   | Hybrid open lab                    |
 | 14  | Feb   | Using Git and GitHub with R        |
