@@ -2,8 +2,6 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 27  | Dec   | Happy Holidays! (No lab this day)  |
-| 03  | Jan   | Happy New Year! (No lab this day)  |
 | 10  | Jan   | Get outside and enjoy the fresh air (No lab this day) |
 | 17  | Jan   | Hybrid open lab                    |
 | 24  | Jan   | Introduction to statistics in R    |
