@@ -2,9 +2,6 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 10  | Jan   | Get outside and enjoy the fresh air (No lab this day) |
-| 17  | Jan   | Hybrid open lab                    |
-| 24  | Jan   | Introduction to statistics in R    |
 | 31  | Jan   | Introduction to data visualization in R |
 | 07  | Feb   | Hybrid open lab                    |
 | 14  | Feb   | Using Git and GitHub with R        |
