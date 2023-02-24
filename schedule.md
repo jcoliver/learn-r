@@ -2,10 +2,6 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 31  | Jan   | Introduction to data visualization in R |
-| 07  | Feb   | Hybrid open lab                    |
-| 14  | Feb   | Using Git and GitHub with R        |
-| 21  | Feb   | Hybrid open lab                    |
 | 28  | Feb   | High-quality visualization with ggplot |
 | 07  | Mar   | Hybrid open lab                    |
 | 14  | Mar   | Writing your own functions in R    |
