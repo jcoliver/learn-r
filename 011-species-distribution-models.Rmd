@@ -170,34 +170,7 @@ variable data with the `worldclim_global()` function from the geodata package:
 bioclim_data <- worldclim_global(var = "bio",
                                  res = 2.5,
                                  path = "data/")
-bioclim_data <- stack(bioclim_data)
 ```
-
-<!--
-
-You might see a warning that starts
-
-```
-Warning in getData(name = "worldclim", var = "bio", res = 2.5, path = "data/")
-```
-
-but you do not need to worry about that right now.
-
-
-We're giving `getData` four critical pieces of information:
-
-1. `name = "worldclim"`: This indicates the name of the data set we would like 
-to download
-2. `var = "bio"`: This tells `getData` that we want to download all 19 of the
-bioclimatic variables, rather than individual temperature or precipitation
-measurements
-3. `res = 2.5`: This is the resolution of the data we want to download; in this
-case, it is 2.5 minutes of a degree. For other resolutions, you can check the
-documentation by typing `?getData` into the console.
-4. `path = "data/"`: Finally, this sets the location to which the files are
-downloaded. In our case, it is the `data` folder we created at the beginning.
-
--->
 
 We are giving the `worldclim_global()` function three critical pieces of 
 information:
@@ -213,6 +186,16 @@ downloaded. In our case, it is the `data` folder we created at the beginning.
 
 Note also that after the files are downloaded to the `data` folder, the are 
 read into memory and stored in the variable called `bioclim_data`
+
+Before we use these data, we need to transform them with raster's `stack()` 
+function:
+
+```{r stack-bioclim-data}
+bioclim_data <- stack(bioclim_data)
+```
+
+Now the climate data are in memory, and next we need to load in the 
+observations for the saguaro:
 
 ```{r load-saguaro-data}
 # Read in saguaro observations
@@ -255,7 +238,7 @@ Before we do any modeling, it is also a good idea to run a reality check on
 your occurrence data by plotting the points on a map.
 
 ```{r plot-occurrence-01}
-# Download data to use for our base map
+# Download data with geodata's world function to use for our base map
 world_map <- world(resolution = 3,
                    path = "data/")
 
@@ -263,9 +246,7 @@ world_map <- world(resolution = 3,
 my_map <- raster::crop(x = world_map, y = geographic_extent)
 
 # Plot the base map
-plot(world_map,
-     xlim = c(min_lon, max_lon),
-     ylim = c(min_lat, max_lat),
+plot(my_map,
      axes = TRUE, 
      col = "grey95")
 
@@ -385,8 +366,6 @@ add the model, and if we feel like it, add the original observations as points.
 ```{r plot-sdm-probabilities}
 # Plot base map
 plot(my_map, 
-     xlim = c(min_lon, max_lon),
-     ylim = c(min_lat, max_lat),
      axes = TRUE, 
      col = "grey95")
 
@@ -416,8 +395,6 @@ to _not_ occur. The problem is, we only have presence data for saguaros.
 ```{r plot-occurrence-02, echo = FALSE}
 # Plot the base map
 plot(my_map, 
-     xlim = c(min_lon, max_lon),
-     ylim = c(min_lat, max_lat),
      axes = TRUE, 
      col = "grey95",
      main = "Saguaro observations")
@@ -450,8 +427,8 @@ observations of saguaros.
 ```{r pseudo-absence-sampling}
 # Use the bioclim data files for sampling resolution
 tif_files <- list.files(path = "data/wc2.1_2.5m", 
-                          pattern = "*.tif$", 
-                          full.names = TRUE)
+                        pattern = "*.tif$", 
+                        full.names = TRUE)
 
 # We only need one file, so use the first one in the list of .tif files
 mask <- raster(tif_files[1])
@@ -477,8 +454,6 @@ We can also visualize them on a map, like we did for the observed points:
 ```{r pseudo-absence-plot}
 # Plot the base map
 plot(my_map, 
-     xlim = c(min_lon, max_lon),
-     ylim = c(min_lat, max_lat),
      axes = TRUE, 
      col = "grey95",
      main = "Presence and pseudo-absence points")
@@ -585,8 +560,6 @@ range of the saguaro!
 ```{r plot-sdm-threshold-bad-color}
 # Plot base map
 plot(my_map, 
-     xlim = c(min_lon, max_lon),
-     ylim = c(min_lat, max_lat),
      axes = TRUE, 
      col = "grey95")
 
@@ -627,8 +600,6 @@ plot call. Instead of just passing a single value, we provide a color for 0
 ```{r plot-sdm-threshold-good-color}
 # Plot base map
 plot(my_map, 
-     xlim = c(min_lon, max_lon),
-     ylim = c(min_lat, max_lat),
      axes = TRUE, 
      col = "grey95")
 
@@ -758,8 +729,6 @@ my_map <- raster::crop(x = world_map, y = geographic_extent)
 
 # Plot base map
 plot(my_map, 
-     xlim = c(min_lon, max_lon),
-     ylim = c(min_lat, max_lat),
      axes = TRUE, 
      col = "grey95")
 
@@ -804,7 +773,10 @@ and on the [CMIP6 page](https://pcmdi.llnl.gov/CMIP6/).
 
 We can download data for one model, using the `cmip6_world()` function from the
 geodata package. The syntax is very similar to the syntax we used for the 
-`worldclim_global()` function above.
+`worldclim_global()` function above. We are using one climate model and you can 
+see which models are available by looking at the documentation for 
+`worldclim_global()` (again, this can be done via `?worldclim_global` in the 
+console).
 
 ```{r download-cmip6-data}
 forecast_data <- cmip6_world(model = "MPI-ESM1-2-HR",
@@ -815,51 +787,8 @@ forecast_data <- cmip6_world(model = "MPI-ESM1-2-HR",
                              path = "data")
 ```
 
-<!--
-For these data, you will need to manually download forecast climate data from 
-the [WorldClim site](https://www.worldclim.org/data/cmip6/cmip6_clim2.5m.html). 
-You can directly download the data from
-[https://geodata.ucdavis.edu/cmip6/2.5m/MPI-ESM1-2-HR/ssp245/wc2.1_2.5m_bioc_MPI-ESM1-2-HR_ssp245_2061-2080.tif](https://geodata.ucdavis.edu/cmip6/2.5m/MPI-ESM1-2-HR/ssp245/wc2.1_2.5m_bioc_MPI-ESM1-2-HR_ssp245_2061-2080.tif) (the file is a little over 400 MB).
-
-You can do this by using R's `download.file()` function. The file is around 
-435 MB, so it might take a minute or two to download. By default, 
-`download.file` will timeout after 60 seconds, so if your internet connection 
-is not super-fast, you will want to increase the timeout limit with the 
-`options` function:
-
-```{r download-forecast-example, echo = TRUE, eval = FALSE}
-# Increase timeout to 600 seconds (10 minutes)
-options(timeout = max(600, getOption("timeout")))
-# Download file and save it to "data" folder
-download.file(url = "https://geodata.ucdavis.edu/cmip6/2.5m/MPI-ESM1-2-HR/ssp245/wc2.1_2.5m_bioc_MPI-ESM1-2-HR_ssp245_2061-2080.tif",
-              destfile = "data/cmip6-MPI-ESM-HR.tif")
-```
-
-This can take a few minutes. Now is a good time to refill your coffee or get a 
-drink of water.
-
-```{r download-forecast, echo = FALSE, message = FALSE}
-# Increase timeout to 600 seconds (10 minutes)
-options(timeout = max(600, getOption("timeout")))
-# Download file if it does not already exist
-if (!file.exists("data/cmip6-MPI-ESM-HR.tif")) {
-  download.file(url = "https://geodata.ucdavis.edu/cmip6/2.5m/MPI-ESM1-2-HR/ssp245/wc2.1_2.5m_bioc_MPI-ESM1-2-HR_ssp245_2061-2080.tif",
-                destfile = "data/cmip6-MPI-ESM-HR.tif")
-}
-```
-
-If you see a warning like
-
-> Warning: downloaded length 302055424 != reported length 456981041Warning: URL 'https://geodata.ucdavis.edu/cmip6/2.5m/MPI-ESM1-2-HR/ssp245/wc2.1_2.5m_bioc_MPI-ESM1-2-HR_ssp245_2061-2080.tif': Timeout of 600 seconds was reachedError in download.file(url = "https://geodata.ucdavis.edu/cmip6/2.5m/MPI-ESM1-2-HR/ssp245/wc2.1_2.5m_bioc_MPI-ESM1-2-HR_ssp245_2061-2080.tif",  : 
-  download from 'https://geodata.ucdavis.edu/cmip6/2.5m/MPI-ESM1-2-HR/ssp245/wc2.1_2.5m_bioc_MPI-ESM1-2-HR_ssp245_2061-2080.tif' failed
-
-
-Try increasing the timeout value from 600 to 1200 (20 minutes).
-
 We can load the forecast data into memory with the `brick()` function from the 
 raster package:
-
--->
 
 ```{r load-forecast}
 forecast_data <- brick(x = "data/wc2.1_2.5m/wc2.1_2.5m_bioc_MPI-ESM1-2-HR_ssp245_2061-2080.tif")
@@ -891,8 +820,6 @@ modify the code we used above.
 ```{r map-predicted-probs-1}
 # Plot base map
 plot(my_map, 
-     xlim = c(min_lon, max_lon),
-     ylim = c(min_lat, max_lat),
      axes = TRUE, 
      col = "grey95")
 
@@ -909,82 +836,6 @@ points(x = obs_data$longitude,
        pch = 20, 
        cex = 0.75)
 ```
-<!--
-
-This doesn't look right. We can look at the distribution of predicted 
-probabilities by typing the name of the variable into the console:
-
-```{r show-forecast-probs}
-forecast_presence
-```
-
-Looking and the last line, it says the maximum value is 0. That is _extremely_ 
-unlikely. In fact, the reason the probabilities are all zero is because the 
-historical climate data and the forecast climate data are, unfortunately, on 
-different scales. Specifically, the historical climate data for temperatures 
-are all in 10 x degrees Celsius while the forecast climate data for 
-temperatures are in untransformed degrees Celsius. This means that the 
-historical climate data stores a temperature of 20°C as 200, while the 
-forecast climate data stores a temperature of 20°C as 20. Because of this 
-difference, our model was built with data on a drastically different scale than 
-the data we are using to make predictions. There are two solutions: 
-
-1. Start at the beginning and transform the _historical_ climate data before the 
-model is built. This way, the model is built on data that are on the same scale 
-as the forecast climate data.
-2. Transform the _forecast_ climate data, so they are on the same scale as the 
-historical climate data on which the model was built.
-
-We will do the second option, transforming the forecast climate data. Note that 
-we only want to transform the temperature climate variables; specifically, this 
-means we need to transform bio1, bio2, and bio4 - bio11. We use the `message` 
-function to print out the status of the transformation.
-
-```{r transform-forecast, message = FALSE}
-# Make a vector of all the variables we need to transform
-#temp_biovars <- c("bio1", "bio2", "bio4", "bio5", "bio6", "bio7", 
-#                  "bio8", "bio9", "bio10", "bio11")
-# Loop over the the variables and multiply each by 10
-#for (biov in temp_biovars) {
-#  message("Updating ", biov)
-#  forecast_data[[biov]] <- 10 * forecast_data[[biov]]
-#}
-```
-
-Now we need to re-run the prediction code with that updated forecast data.
-
-```{r predict-forecast-2}
-# Predict presence from model with forecast data
-forecast_presence <- dismo::predict(object = bc_model, 
-                                    x = forecast_data, 
-                                    ext = geographic_extent)
-```
-
-And we plot those predictions as before:
-
-```{r map-predicted-probs-2}
-# Plot base map
-plot(my_map, 
-     xlim = c(min_lon, max_lon),
-     ylim = c(min_lat, max_lat),
-     axes = TRUE, 
-     col = "grey95")
-
-# Add model probabilities
-plot(forecast_presence, add = TRUE)
-
-# Redraw those country borders
-plot(my_map, add = TRUE, border = "grey5")
-
-# Add original observations
-points(x = obs_data$longitude, 
-       y = obs_data$latitude, 
-       col = "olivedrab", 
-       pch = 20, 
-       cex = 0.75)
-```
-
--->
 
 We can also map our predictions for presence / absence, using the same 
 threshold that we did for predictions based on current climate data.
@@ -992,8 +843,6 @@ threshold that we did for predictions based on current climate data.
 ```{r map-predicted-pa}
 # Plot base map
 plot(my_map, 
-     xlim = c(min_lon, max_lon),
-     ylim = c(min_lat, max_lat),
      axes = TRUE, 
      col = "grey95")
 
