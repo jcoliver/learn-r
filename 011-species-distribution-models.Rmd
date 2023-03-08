@@ -96,22 +96,18 @@ the 'data' folder that you created in the step above.
 
 ### Install additional R packages
 
-Next, there are _five_ additional R packages that will need to be installed:
+Next, there are _three_ additional R packages that will need to be installed:
 
 + dismo
-+ maptools
-+ rgdal
 + raster
-+ sp
++ geodata
 
 To install these, run:
 
 ```{r install-libraries, eval = FALSE}
 install.packages("dismo")
-install.packages("maptools")
-install.packages("rgdal")
 install.packages("raster")
-install.packages("sp")
+install.packages("geodata")
 ```
 
 ***
@@ -134,7 +130,7 @@ include abiotic measurements of temperature and precipitation as well as biotic
 factors, such as the presence or absence of other species (like predators,
 competitors, or food sources). In this lesson we will focus on the 19 abiotic
 variables available from [WorldClim](http://www.worldclim.org/bioclim). Rather 
-than downloading the data from WorldClim, we'll use functions from the `dismo`
+than downloading the data from WorldClim, we'll use functions from the `geodata`
 package to download these data (see below).
 
 ***
@@ -151,11 +147,9 @@ the script does and who is responsible!
 # jcoliver@email.arizona.edu
 # 2018-02-27
 
-library("sp")
-library("raster")
-library("maptools")
-library("rgdal")
-library("dismo")
+library(raster)
+library(dismo)
+library(geodata)
 ```
 
 There is a good chance you might have seen some red messages print out to the
@@ -167,14 +161,19 @@ messages. If loading the libraries _does_ result in an
 were installed properly.
 
 Now that we have those packages loaded, we can download the bioclimatic 
-variable data with the `getData` function:
+<!--
+variable data with the `getData` function
+-->
+variable data with the `worldclim_global()` function from the geodata package:
 
 ```{r get-bioclim-data, warning = FALSE}
-bioclim_data <- getData(name = "worldclim",
-                        var = "bio",
-                        res = 2.5,
-                        path = "data/")
+bioclim_data <- worldclim_global(var = "bio",
+                                 res = 2.5,
+                                 path = "data/")
+bioclim_data <- stack(bioclim_data)
 ```
+
+<!--
 
 You might see a warning that starts
 
@@ -196,6 +195,20 @@ measurements
 case, it is 2.5 minutes of a degree. For other resolutions, you can check the
 documentation by typing `?getData` into the console.
 4. `path = "data/"`: Finally, this sets the location to which the files are
+downloaded. In our case, it is the `data` folder we created at the beginning.
+
+-->
+
+We are giving the `worldclim_global()` function three critical pieces of 
+information:
+
+1. `var = "bio"`: This tells `worldclim_global()` that we want to download all 
+19 of the bioclimatic variables, rather than individual temperature or 
+precipitation measurements.
+2. `res = 2.5`: This is the resolution of the data we want to download; in this
+case, it is 2.5 minutes of a degree. For other resolutions, you can check the
+documentation by typing `?worldclim_global` into the console.
+3. `path = "data/"`: Finally, this sets the location to which the files are
 downloaded. In our case, it is the `data` folder we created at the beginning.
 
 Note also that after the files are downloaded to the `data` folder, the are 
@@ -242,11 +255,15 @@ Before we do any modeling, it is also a good idea to run a reality check on
 your occurrence data by plotting the points on a map.
 
 ```{r plot-occurrence-01}
-# Load the data to use for our base map
-data(wrld_simpl)
+# Download data to use for our base map
+world_map <- world(resolution = 3,
+                   path = "data/")
+
+# Crop the map to our area of interest
+my_map <- raster::crop(x = world_map, y = geographic_extent)
 
 # Plot the base map
-plot(wrld_simpl, 
+plot(world_map,
      xlim = c(min_lon, max_lon),
      ylim = c(min_lat, max_lat),
      axes = TRUE, 
@@ -258,8 +275,6 @@ points(x = obs_data$longitude,
        col = "olivedrab", 
        pch = 20, 
        cex = 0.75)
-# And draw a little box around the graph
-box()
 ```
 
 Looking good!
@@ -277,7 +292,7 @@ geographic extent of our occurrence data:
 
 ```{r bioclim-crop, error = TRUE}
 # Crop bioclim data to geographic extent of saguaro
-bioclim_data <- crop(x = bioclim_data, y = geographic_extent)
+bioclim_data <- raster::crop(x = bioclim_data, y = geographic_extent)
 
 # Build species distribution model
 bc_model <- bioclim(x = bioclim_data, p = obs_data)
@@ -369,7 +384,7 @@ add the model, and if we feel like it, add the original observations as points.
 
 ```{r plot-sdm-probabilities}
 # Plot base map
-plot(wrld_simpl, 
+plot(my_map, 
      xlim = c(min_lon, max_lon),
      ylim = c(min_lat, max_lat),
      axes = TRUE, 
@@ -379,7 +394,7 @@ plot(wrld_simpl,
 plot(predict_presence, add = TRUE)
 
 # Redraw those country borders
-plot(wrld_simpl, add = TRUE, border = "grey5")
+plot(my_map, add = TRUE, border = "grey5")
 
 # Add original observations
 points(x = obs_data$longitude, 
@@ -387,7 +402,6 @@ points(x = obs_data$longitude,
        col = "olivedrab", 
        pch = 20, 
        cex = 0.75)
-box()
 ```
 
 This plot shows the probability of occurrence of saguaros across the map. Note 
@@ -401,7 +415,7 @@ to _not_ occur. The problem is, we only have presence data for saguaros.
 
 ```{r plot-occurrence-02, echo = FALSE}
 # Plot the base map
-plot(wrld_simpl, 
+plot(my_map, 
      xlim = c(min_lon, max_lon),
      ylim = c(min_lat, max_lat),
      axes = TRUE, 
@@ -414,8 +428,6 @@ points(x = obs_data$longitude,
        col = "olivedrab", 
        pch = 20, 
        cex = 0.75)
-# And draw a little box around the graph
-box()
 ```
 
 ## The pseudo-absence point
@@ -437,21 +449,21 @@ observations of saguaros.
 
 ```{r pseudo-absence-sampling}
 # Use the bioclim data files for sampling resolution
-bil_files <- list.files(path = "data/wc2-5", 
-                          pattern = "*.bil$", 
+tif_files <- list.files(path = "data/wc2.1_2.5m", 
+                          pattern = "*.tif$", 
                           full.names = TRUE)
 
-# We only need one file, so use the first one in the list of .bil files
-mask <- raster(bil_files[1])
+# We only need one file, so use the first one in the list of .tif files
+mask <- raster(tif_files[1])
 
 # Set the seed for the random-number generator to ensure results are similar
 set.seed(20210707)
 
 # Randomly sample points (same number as our observed points)
-background <- randomPoints(mask = mask,     # Provides resolution of sampling points
-                   n = nrow(obs_data),      # Number of random points
-                   ext = geographic_extent, # Spatially restricts sampling
-                   extf = 1.25)             # Expands sampling a little bit
+background <- randomPoints(mask = mask,     # Provides sampling point resolution
+                           n = nrow(obs_data),      # Number of random points
+                           ext = geographic_extent, # Spatially restricts sampling
+                           extf = 1.25)             # Expands sampling a little bit
 ```
 
 Take a quick look at the `background` object we just created:
@@ -464,7 +476,7 @@ We can also visualize them on a map, like we did for the observed points:
 
 ```{r pseudo-absence-plot}
 # Plot the base map
-plot(wrld_simpl, 
+plot(my_map, 
      xlim = c(min_lon, max_lon),
      ylim = c(min_lat, max_lat),
      axes = TRUE, 
@@ -480,8 +492,6 @@ points(x = obs_data$longitude,
        col = "olivedrab", 
        pch = 20, 
        cex = 0.75)
-
-box()
 ```
 
 Now that we have our pseudo-absence points, we need to take one more step. 
@@ -574,7 +584,7 @@ range of the saguaro!
 
 ```{r plot-sdm-threshold-bad-color}
 # Plot base map
-plot(wrld_simpl, 
+plot(my_map, 
      xlim = c(min_lon, max_lon),
      ylim = c(min_lat, max_lat),
      axes = TRUE, 
@@ -594,8 +604,7 @@ points(x = obs_data$longitude,
        cex = 0.75)
 
 # Redraw those country borders
-plot(wrld_simpl, add = TRUE, border = "grey5")
-box()
+plot(my_map, add = TRUE, border = "grey5")
 ```
 
 Hmmm...that doesn't look right. It plotted a large portion of the map green. 
@@ -617,7 +626,7 @@ plot call. Instead of just passing a single value, we provide a color for 0
 
 ```{r plot-sdm-threshold-good-color}
 # Plot base map
-plot(wrld_simpl, 
+plot(my_map, 
      xlim = c(min_lon, max_lon),
      ylim = c(min_lat, max_lat),
      axes = TRUE, 
@@ -637,8 +646,7 @@ points(x = obs_data$longitude,
        cex = 0.75)
 
 # Redraw those country borders
-plot(wrld_simpl, add = TRUE, border = "grey5")
-box()
+plot(my_map, add = TRUE, border = "grey5")
 ```
 
 A final note on our approach: the map we have drawn presents a categorical
@@ -664,20 +672,16 @@ visualizing the results:
 # jcoliver@email.arizona.edu
 # 2018-02-27
 
-rm(list = ls())
-
 # Load additional packages
-library("sp")
-library("raster")
-library("maptools")
-library("rgdal")
-library("dismo")
+library(raster)
+library(dismo)
+library(geodata)
 
 # Download bioclim data and store in bioclim_data variable
-bioclim_data <- getData(name = "worldclim",
-                        var = "bio",
-                        res = 2.5,
-                        path = "data/")
+bioclim_data <- worldclim_global(var = "bio",
+                                 res = 2.5,
+                                 path = "data/")
+bioclim_data <- stack(bioclim_data)
 
 # Read in saguaro observations
 obs_data <- read.csv(file = "data/Carnegiea-gigantea-GBIF.csv")
@@ -696,16 +700,16 @@ min_lon = floor(min(obs_data$longitude))
 geographic_extent <- extent(x = c(min_lon, max_lon, min_lat, max_lat))
 
 # Crop the bioclim data to geographic extent of saguaro
-bioclim_data <- crop(x = bioclim_data, y = geographic_extent)
+bioclim_data <- raster::crop(x = bioclim_data, y = geographic_extent)
 
 # Create pseudo-absence, or background, points
 # Use the bioclim data files for sampling resolution
-bil_files <- list.files(path = "data/wc2-5", 
-                          pattern = "*.bil$", 
-                          full.names = TRUE)
+tif_files <- list.files(path = "data/wc2.1_2.5m", 
+                        pattern = "*.tif$", 
+                        full.names = TRUE)
 
-# We only need one file, so use the first one in the list of .bil files
-mask <- raster(bil_files[1])
+# We only need one file, so use the first one in the list of .tif files
+mask <- raster(tif_files[1])
 
 # Randomly sample points (same number as our observed points)
 background <- randomPoints(mask = mask,     # Provides resolution of sampling points
@@ -745,11 +749,15 @@ bc_eval <- evaluate(p = presence_test,   # The presence testing data
 # Determine minimum threshold for "presence"
 bc_threshold <- threshold(x = bc_eval, stat = "spec_sens")
 
-# Load map data for plotting
-data(wrld_simpl)
+# Download data to use for our base map
+world_map <- world(resolution = 3,
+                   path = "data/")
+
+# Crop the map to our area of interest
+my_map <- raster::crop(x = world_map, y = geographic_extent)
 
 # Plot base map
-plot(wrld_simpl, 
+plot(my_map, 
      xlim = c(min_lon, max_lon),
      ylim = c(min_lat, max_lat),
      axes = TRUE, 
@@ -769,8 +777,7 @@ points(x = obs_data$longitude,
        cex = 0.6)
 
 # Redraw those country borders
-plot(wrld_simpl, add = TRUE, border = "grey5")
-box()
+plot(my_map, add = TRUE, border = "grey5")
 ```
 
 ***
@@ -795,7 +802,20 @@ about the different models at
 [McSweeney et al. 2015](https://link.springer.com/article/10.1007/s00382-014-2418-8) 
 and on the [CMIP6 page](https://pcmdi.llnl.gov/CMIP6/). 
 
+We can download data for one model, using the `cmip6_world()` function from the
+geodata package. The syntax is very similar to the syntax we used for the 
+`worldclim_global()` function above.
 
+```{r download-cmip6-data}
+forecast_data <- cmip6_world(model = "MPI-ESM1-2-HR",
+                             ssp = "245",
+                             time = "2061-2080",
+                             var = "bioc",
+                             res = 2.5,
+                             path = "data")
+```
+
+<!--
 For these data, you will need to manually download forecast climate data from 
 the [WorldClim site](https://www.worldclim.org/data/cmip6/cmip6_clim2.5m.html). 
 You can directly download the data from
@@ -839,8 +859,10 @@ Try increasing the timeout value from 600 to 1200 (20 minutes).
 We can load the forecast data into memory with the `brick()` function from the 
 raster package:
 
+-->
+
 ```{r load-forecast}
-forecast_data <- brick(x = "data/cmip6-MPI-ESM-HR.tif")
+forecast_data <- brick(x = "data/wc2.1_2.5m/wc2.1_2.5m_bioc_MPI-ESM1-2-HR_ssp245_2061-2080.tif")
 ```
 
 We need to do one more thing before we can use our data, and that is to make 
@@ -861,7 +883,6 @@ Now that we have the forecast data, we can apply the model we build above,
 forecast_presence <- dismo::predict(object = bc_model, 
                                     x = forecast_data, 
                                     ext = geographic_extent)
-
 ```
 
 If you want to look at the predicted probabilities of occurrence, you can 
@@ -869,7 +890,7 @@ modify the code we used above.
 
 ```{r map-predicted-probs-1}
 # Plot base map
-plot(wrld_simpl, 
+plot(my_map, 
      xlim = c(min_lon, max_lon),
      ylim = c(min_lat, max_lat),
      axes = TRUE, 
@@ -879,7 +900,7 @@ plot(wrld_simpl,
 plot(forecast_presence, add = TRUE)
 
 # Redraw those country borders
-plot(wrld_simpl, add = TRUE, border = "grey5")
+plot(my_map, add = TRUE, border = "grey5")
 
 # Add original observations
 points(x = obs_data$longitude, 
@@ -887,8 +908,8 @@ points(x = obs_data$longitude,
        col = "olivedrab", 
        pch = 20, 
        cex = 0.75)
-box()
 ```
+<!--
 
 This doesn't look right. We can look at the distribution of predicted 
 probabilities by typing the name of the variable into the console:
@@ -921,13 +942,13 @@ function to print out the status of the transformation.
 
 ```{r transform-forecast, message = FALSE}
 # Make a vector of all the variables we need to transform
-temp_biovars <- c("bio1", "bio2", "bio4", "bio5", "bio6", "bio7", 
-                  "bio8", "bio9", "bio10", "bio11")
+#temp_biovars <- c("bio1", "bio2", "bio4", "bio5", "bio6", "bio7", 
+#                  "bio8", "bio9", "bio10", "bio11")
 # Loop over the the variables and multiply each by 10
-for (biov in temp_biovars) {
-  message("Updating ", biov)
-  forecast_data[[biov]] <- 10 * forecast_data[[biov]]
-}
+#for (biov in temp_biovars) {
+#  message("Updating ", biov)
+#  forecast_data[[biov]] <- 10 * forecast_data[[biov]]
+#}
 ```
 
 Now we need to re-run the prediction code with that updated forecast data.
@@ -943,7 +964,7 @@ And we plot those predictions as before:
 
 ```{r map-predicted-probs-2}
 # Plot base map
-plot(wrld_simpl, 
+plot(my_map, 
      xlim = c(min_lon, max_lon),
      ylim = c(min_lat, max_lat),
      axes = TRUE, 
@@ -953,7 +974,7 @@ plot(wrld_simpl,
 plot(forecast_presence, add = TRUE)
 
 # Redraw those country borders
-plot(wrld_simpl, add = TRUE, border = "grey5")
+plot(my_map, add = TRUE, border = "grey5")
 
 # Add original observations
 points(x = obs_data$longitude, 
@@ -961,15 +982,16 @@ points(x = obs_data$longitude,
        col = "olivedrab", 
        pch = 20, 
        cex = 0.75)
-box()
 ```
+
+-->
 
 We can also map our predictions for presence / absence, using the same 
 threshold that we did for predictions based on current climate data.
 
 ```{r map-predicted-pa}
 # Plot base map
-plot(wrld_simpl, 
+plot(my_map, 
      xlim = c(min_lon, max_lon),
      ylim = c(min_lat, max_lat),
      axes = TRUE, 
@@ -989,11 +1011,10 @@ points(x = obs_data$longitude,
        cex = 0.6)
 
 # Redraw those country borders
-plot(wrld_simpl, add = TRUE, border = "grey5")
-box()
+plot(my_map, add = TRUE, border = "grey5")
 ```
 
-Oof. Things do not look great for saguaros under this climate forecast. Try 
+Oof. Things don't look so good for saguaros under this climate forecast. Try 
 downloading other climate models to see how predictions differ. And remember to 
 interpret these results cautiously.
 
@@ -1004,6 +1025,7 @@ interpret these results cautiously.
 + The creators of the raster package have an excellent, in-depth 
 [guide to species distribution modeling in R](https://rspatial.org/raster/sdm/)
 + A lighter-weight introduction to [species distribution models in R](http://www.molecularecologist.com/2013/04/species-distribution-models-in-r/)
++ A really nice [comparison among different SDM methods](https://doi.org/10.1002/ecm.1486)
 + [Fast and flexible Bayesian species distribution modelling using Gaussian processes](http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12523/pdf)
 + [Run a range of species distribution models](https://rdrr.io/cran/biomod2/man/BIOMOD_Modeling.html)
 + [SDM polygons on a Google map](https://rdrr.io/rforge/dismo/man/gmap.html)
