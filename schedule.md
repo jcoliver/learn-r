@@ -2,10 +2,6 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 28  | Feb   | High-quality visualization with ggplot |
-| 07  | Mar   | Hybrid open lab                    |
-| 14  | Mar   | Writing your own functions in R    |
-| 21  | Mar   | Hybrid open lab                    |
 | 28  | Mar   | Introduction to data wrangling with the tidyverse! |
 | 04  | Apr   | Hybrid open lab                    |
 | 11  | Apr   | Interactive web apps with shiny    |
