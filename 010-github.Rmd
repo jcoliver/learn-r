@@ -250,6 +250,31 @@ GitHub.
 
 ***
 
+## A Warning
+
+You have set things up. Your GitHub repository is ready to use and you have it 
+connected to your local RStudio. The next step is to
+
+**Pause.**
+
+It bears mentioning that, by default, the maximum file size on GitHub is 100 
+MB (see caveat below). So _before_ you add any file to Git's history on your 
+local machine (that is, before you check the box next to the file name in the 
+Git tab), make sure the file is less than 100 MB. If you _do_ have files larger
+than 100 MB, you want to list them in your .gitignore file (this is a text file
+in your repository's folder that lists files you do not want Git to keep track 
+of - like large files). One work-around is to compress large files into a zip
+file (or file_s_, remember, they need to be below 100 MB) and add that .zip 
+file to your Git history.
+
+_Caveat_: You actually can store files larger than 100 MB on GitHub, but you 
+will need to set up Git LFS (Large File Storage). If you go this route, you 
+will need to set this up _before_ you add any large files to Git's history. Git
+LFS can be a bit of a headache to set up, but the official 
+[GitHub LFS documentation](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github) is a good place to start.
+
+***
+
 ## Collaborate!
 
 By now you have linked your RStudio project with a GitHub page. For the 
@@ -363,6 +388,7 @@ Your new file (simulate-data.R) should now be shown! Well done!
 ## Additional resources
 
 + Official RStudio Git [support page](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN)
++ [GitHub LFS documentation](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github)
 + Software Carpentry [Git and RStudio lesson](http://swcarpentry.github.io/git-novice/14-supplemental-rstudio/)
 + Library Carpentry [Git lesson](https://data-lessons.github.io/library-git/)
 + A [PDF version](https://jcoliver.github.io/learn-r/010-github.pdf) of this lesson
