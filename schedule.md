@@ -2,14 +2,17 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 28  | Mar   | Introduction to data wrangling with the tidyverse! |
-| 04  | Apr   | Hybrid open lab                    |
-| 11  | Apr   | Interactive web apps with shiny    |
-| 18  | Apr   | Hybrid open lab                    |
-| 25  | Apr   | Introduction to species distribution models |
-| 02  | May   | Hybrid open lab                    |
-| 09  | May   | Hybrid open lab                    |
 | 16  | May   | Hybrid open lab                    |
+| 23  | May   | Hybrid open lab                    |
+| 30  | May   | Hybrid open lab                    |
+| 06  | Jun   | Hybrid open lab                    |
+| 13  | Jun   | Hybrid open lab                    |
+| 20  | Jun   | Hybrid open lab                    |
+| 27  | Jun   | Hybrid open lab                    |
+| 04  | Jul   | No lab this day, go outside!       |
+| 11  | Jul   | Hybrid open lab                    |
+| 18  | Jul   | Hybrid open lab                    |
+| 25  | Jul   | Hybrid open lab                    |
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
