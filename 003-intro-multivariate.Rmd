@@ -14,11 +14,9 @@ multivariate statistics.
 
 #### Learning objectives
 
-1. Prepare data in spreadsheet program (e.g. Excel, LibreOffice Calc) for 
-export to R
-2. Read data from files into R
-3. Run Principal Components Analysis (PCA) and graphically display results
-4. Perform Discriminant Function Analysis (DFA) and interpret the results
+1. Read data from files into R
+2. Run Principal Components Analysis (PCA) and graphically display results
+3. Perform Discriminant Function Analysis (DFA) and interpret the results
 
 ## Setup
 
@@ -42,25 +40,17 @@ dir.create(path = "data")
 dir.create(path = "output")
 ```
 
-### Preparing data in a format R can read
+### Download data
 
 + Download data file from
-[https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx](https://jcoliver.github.io/learn-r/data/otter-mandible-data.xlsx) 
-or [http://tinyurl.com/otter-data](http://tinyurl.com/otter-data) (the latter 
+[https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/otter-mandible-data.csv](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/otter-mandible-data.csv) 
+or [https://bit.ly/otter-data](https://bit.ly/otter-data) (the latter 
 just re-directs to the former). These data are a subset of those used in a 
 study on skull morphology and diet specialization in otters 
 [doi: 10.1371/journal.pone.0143236](http://dx.doi.org/10.1371/journal.pone.0143236).
-+ Open this file, otter-mandible-data.xlsx, in spreadsheet program like 
-Microsoft Excel<sup>&reg;</sup> or LibreOffice Calc.
-+ Save a copy of the file as a CSV (comma-separated values) file named
-'otter-mandible-data.csv' in the data folder you created above:
-    + In MS Excel<sup>&reg;</sup>, select File > Save As... and in the dialog 
-    that appears, select CSV from the type dropdown menu.
-    + In LibreOffice Calc, select File > Save As... and in the dialog that 
-    appears, select Text CSV (.csv) in the Format dropdown in the lower-right 
-    portion of the dialog.
-  
-![(A) Skull morphology of _Lutra lutra_. (B) Six mandible measurements used in this lesson: m1 = mandible ramus width, m2 = mandible ramus height, m3 = moment arm temporalis, m4 = outlever at carnassal, m5 = moment arm masseter, m6 = jaw length. Adapted from [https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png](https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png).](images/otter-mandible.svg)
++ Move the file to the data folder you created above.
+
+![(A) Skull morphology of _Lutra lutra_. (B) Six mandible measurements used in this lesson: m1 = mandible ramus width, m2 = mandible ramus height, m3 = moment arm temporalis, m4 = outlever at carnassal, m5 = moment arm masseter, m6 = jaw length. Adapted from [https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png](https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png).](images/otter-mandible.png)
   
 ### Reading data into R for PCA
 
@@ -86,6 +76,18 @@ with `NA` values, we can force re-numbering via:
 rownames(otter) <- NULL
 ```
 
+> _Side note_: Before we go any further, it is important to note that the 
+remainder of this lesson uses what is known as "base R", or only those parts of 
+R that come along when you download and install R. This means it does not 
+include any code that comes from packages such as 
+[tidyverse](https://www.tidyverse.org/). Users of tidyverse packages 
+(especially ggplot2) may cringe at what you see below. It is left to the reader 
+as an exercise to execute the plots using the superb data visualization package 
+ggplot2. If you are so inclined, take a look at the separate lessons on 
+[ggplot2](https://jcoliver.github.io/learn-r/004-intro-ggplot.html) and 
+[tidyverse](https://jcoliver.github.io/learn-r/012-intro-tidyverse.html) for 
+more information.
+
 ## Principal Components Analysis
 
 Why PCA? Very briefly, Principal Components Analysis is a way of re-describing 
@@ -106,7 +108,7 @@ topics.
 So, on to the code:
 
 ```{r run-pca}
-pca.fit <- prcomp(x = otter[, -c(1:3)], scale. = TRUE)
+pca_fit <- prcomp(x = otter[, -c(1:3)], scale. = TRUE)
 ```
 
 That's PCA. 
@@ -123,8 +125,8 @@ To look at the results, we use the `summary` command and assign the output to a
 variable.
 
 ```{r pca-summary}
-pca.summary <- summary(pca.fit)
-ls(pca.summary) # Lists the objects produced by summary
+pca_summary <- summary(pca_fit)
+ls(pca_summary) # Lists the objects produced by summary
 ```
 
 We are interested to know (1) what are the important factors that emerge from 
@@ -133,18 +135,18 @@ factors actually say about the variation observed in our data. For (1), look at
 the `importance` object in the summary:
 
 ```{r pca-importance}
-pca.summary$importance
+pca_summary$importance
 ```
 
 The second row, `Proportion of Variance`, shows how much variation in the data 
 is described by each component; notice that the first component, PC1, explains 
-the most variance, `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2), 4)`, 
-or `r round(pca.summary$sdev[1]^2/sum(pca.summary$sdev^2) * 100, 2)`% of the 
-total variance, the second component explains the second most variance (`r round(pca.summary$sdev[2]^2/sum(pca.summary$sdev^2) * 100, 2)`%), and so on, 
+the most variance, `r round(pca_summary$sdev[1]^2/sum(pca_summary$sdev^2), 4)`, 
+or `r round(pca_summary$sdev[1]^2/sum(pca_summary$sdev^2) * 100, 2)`% of the 
+total variance, the second component explains the second most variance (`r round(pca_summary$sdev[2]^2/sum(pca_summary$sdev^2) * 100, 2)`%), and so on, 
 with each successive component explaining a lower proportion of the total 
 variance. For the remainder of the lesson, we will focus on the first two 
 principal components, PC1 and PC2, which together explain 
-`r round((pca.summary$sdev[1]^2 + pca.summary$sdev[2]^2)/sum(pca.summary$sdev^2) * 100, 2)`% 
+`r round((pca_summary$sdev[1]^2 + pca_summary$sdev[2]^2)/sum(pca_summary$sdev^2) * 100, 2)`% 
 of the observed variation in the skull measurements.
   
 ### A brief interpretion of PCA results (part one)
@@ -155,13 +157,13 @@ loadings of the PCA. The `rotation` object from the summary call has the
 information we are interested in. Focus on the values in the PC1 column:
 
 ```{r pca-rotation}
-pca.summary$rotation
+pca_summary$rotation
 ```
 
 ```{r pca-rotation-print, echo = FALSE}
 # Crude, but should be fine
 direction <- "positive"
-if (sum(pca.summary$rotation) < 0) {
+if (sum(pca_summary$rotation) < 0) {
   direction <- "negative" 
 }
 ```
@@ -175,9 +177,10 @@ first component.
   
 The second principal component is a little more interesting. Two of the 
 variables, m1 and m4 don't contribute much to the component (the magnitudes of 
-their respective loadings (.173 and .031) are small compared to the other four 
-skull measurements). The remaining four indicate a shape difference, with one 
-pair of variables having positive loadings and one pair having negative 
+their respective loadings (`r abs(round(pca_summary$rotation[1, 2], 3))` and 
+`r abs(round(pca_summary$rotation[4, 2], 3))`) are small compared to the other 
+four skull measurements). The remaining four indicate a shape difference, with 
+one pair of variables having positive loadings and one pair having negative 
 loadings. This interpretation of the second principal component would benefit 
 greatly from a graphical representation.
 
@@ -187,7 +190,7 @@ Plotting the results of a PCA can be done using a simple call to the `biplot`
 function:
 
 ```{r pca-biplot}
-biplot(x = pca.fit)
+biplot(x = pca_fit)
 ```
 
 But that figure really leaves much to be desired, and gets messier with larger 
@@ -196,11 +199,11 @@ figure is produced, look at the documentation for `biplot` (`?biplot`).
 
 Instead, we can plot the scores of the first two principal components using the 
 standard `plot` command, using the scores that are stored in the `x` object of 
-`pca.fit`:
+`pca_fit`:
 
 ```{r pca-plot}
-plot(x = pca.fit$x[, 1],
-     y = pca.fit$x[, 2],
+plot(x = pca_fit$x[, 1],
+     y = pca_fit$x[, 2],
      xlab = "PC 1",
      ylab = "PC 2")
 ```
@@ -212,49 +215,49 @@ colors:
 
 ```{r species-names}
 # Pull out the unique values in the 'species' column
-species.names <- unique(otter$species)
-species.names # a quick look at the values in the vector
+species_names <- unique(otter$species)
+species_names # a quick look at the values in the vector
 ```
   
 We want a vector of colors, too, one for each species. Since there are four 
 species, we have four colors:
 
 ```{r pca-legend}
-legend.cols <- c("black", "green4", "cyan3", "red3") 
+legend_cols <- c("black", "green4", "cyan3", "red3") 
 ```
 
-The legend.cols vector will be used for the legend, but we still need a color 
-vector for each _sample_. We can use the indexing of the `species.names` and 
-`legend.cols` to create a vector which has a value for each of the points we 
+The legend_cols vector will be used for the legend, but we still need a color 
+vector for each _sample_. We can use the indexing of the `species_names` and 
+`legend_cols` to create a vector which has a value for each of the points we 
 want to plot. Here we first assign all values the same color (the first color 
-in the `legend.cols` vector). Then we compare values in the `otter$species` 
-column to the second, third, and fourth possible values in the `species.names` 
+in the `legend_cols` vector). Then we compare values in the `otter$species` 
+column to the second, third, and fourth possible values in the `species_names` 
 vector.
 
 ```{r pca-colors}
-pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
-pt.cols[otter$species == species.names[2]] <- legend.cols[2]
-pt.cols[otter$species == species.names[3]] <- legend.cols[3]
-pt.cols[otter$species == species.names[4]] <- legend.cols[4]
+pt_cols <- rep(x = legend_cols[1], length = nrow(otter))
+pt_cols[otter$species == species_names[2]] <- legend_cols[2]
+pt_cols[otter$species == species_names[3]] <- legend_cols[3]
+pt_cols[otter$species == species_names[4]] <- legend_cols[4]
 ```
 
-> Question: Why did we not do the assignment / comparison for the first element 
-in `species.names` and `legend.cols`?
+> Question: Why did we _not_ do the assignment / comparison for the first 
+element in `species_names` and `legend_cols`?
 
 And finally, we draw the plot, adding point colors through the `col` parameter 
 and adding the legend after the plot is drawn.
 
 ```{r pca-color-plot-1}
-plot(x = pca.fit$x[, 1],
-     y = pca.fit$x[, 2],
+plot(x = pca_fit$x[, 1],
+     y = pca_fit$x[, 2],
      xlab = "PC 1",
      ylab = "PC 2",
      pch = 19,
-     col = pt.cols)
+     col = pt_cols)
 legend("bottomleft", 
-       legend = species.names, 
+       legend = species_names, 
        pch = 19, 
-       col = legend.cols, 
+       col = legend_cols, 
        cex = 0.8)
 ```
   
@@ -274,13 +277,14 @@ measurement for each species:
 # Set-up a multi-panel graph (2 rows, 3 columns), filling row by row
 par(mfrow = c(2, 3), las = 2) 
 
-# Plot each of the six measurements in a different plot
-boxplot(formula = m1 ~ species, data = otter)
-boxplot(formula = m2 ~ species, data = otter)
-boxplot(formula = m3 ~ species, data = otter)
-boxplot(formula = m4 ~ species, data = otter)
-boxplot(formula = m5 ~ species, data = otter)
-boxplot(formula = m6 ~ species, data = otter)
+# Plot each of the six measurements in a different plot, leaving x-axis title 
+# out of the plot
+boxplot(formula = m1 ~ species, data = otter, xlab = NA)
+boxplot(formula = m2 ~ species, data = otter, xlab = NA)
+boxplot(formula = m3 ~ species, data = otter, xlab = NA)
+boxplot(formula = m4 ~ species, data = otter, xlab = NA)
+boxplot(formula = m5 ~ species, data = otter, xlab = NA)
+boxplot(formula = m6 ~ species, data = otter, xlab = NA)
 
 # Restore graphing defaults
 par(mfrow = c(1, 1), las = 0)
@@ -294,69 +298,72 @@ Remember that second principal component, PC2, on the y-axis of our
 scatterplot: 
 
 ```{r pca-color-plot-2, echo = FALSE}
-plot(x = pca.fit$x[, 1],
-     y = pca.fit$x[, 2],
+plot(x = pca_fit$x[, 1],
+     y = pca_fit$x[, 2],
      xlab = "PC 1",
      ylab = "PC 2",
      pch = 19,
-     col = pt.cols)
+     col = pt_cols)
 legend("bottomleft", 
-       legend = species.names, 
+       legend = species_names, 
        pch = 19, 
-       col = legend.cols, 
+       col = legend_cols, 
        cex = 0.8)
 ```
 
 And the loadings for the first two components are:
 
 ```{r pca-loadings, echo = FALSE}
-pca.summary$rotation[, 1:2]
+pca_summary$rotation[, 1:2]
 ```
 
 In this second principal component, as mentioned before, m1 and m4 don't 
-contribute much to the component [the magnitudes of their respective loadings 
-(.173 and .031) are small compared to the other four skull measurements]. The 
-remaining four loadings indicate a shape difference, with one pair of variables 
-having positive loadings and one pair having negative loadings. This component 
-describes variation in the four variables: high values of PC1 correspond to 
-high values of m2 and m5 and low values of m3 and m6, while specimens with low 
-values of PC1 have the opposite (low m2 and m5, high m3 and m6). You can 
-confirm this looking again at a boxplot for these values, focusing only on 
-those four variables of interest for the two species that are differentiated 
-along PC2, _E. lutris_ and _P. brasiliensis_:
+contribute much to the component (the magnitudes of their respective loadings, 
+`r abs(round(pca_summary$rotation[1, 2], 3))` and 
+`r abs(round(pca_summary$rotation[4, 2], 3))`, respectively, are small compared 
+to the other four skull measurements). The remaining four loadings indicate a 
+shape difference, with one pair of variables having positive loadings and one 
+pair having negative loadings. This component describes variation in the four 
+variables: high values of PC1 correspond to high values of m2 and m5 and low 
+values of m3 and m6, while specimens with low values of PC1 have the opposite 
+(low m2 and m5, high m3 and m6). You can confirm this looking again at a 
+boxplot for these values, focusing only on those four variables of interest for 
+the two species that are differentiated along PC2, _E. lutris_ and 
+_P. brasiliensis_:
 
 ```{r two-species-plot}
 # Pull out the data for the two species of interest
-two.species <- c("E. lutris", "P. brasiliensis")
-otter.two <- otter[otter$species %in% two.species, ]
+two_species <- c("E. lutris", "P. brasiliensis")
+otter_two <- otter[otter$species %in% two_species, ]
 
 # Drop the levels corresponding to the two species we excluded
-otter.two$species <- factor(otter.two$species)
+otter_two$species <- factor(otter_two$species)
 
 # Prepare colors
-legend.cols <- c("black", "red3")
-pt.cols <- rep(x = legend.cols[1], length = nrow(otter.two))
-pt.cols[otter.two$species == two.species[2]] <- legend.cols[2]
+legend_cols <- c("black", "red3")
+pt_cols <- rep(x = legend_cols[1], length = nrow(otter_two))
+pt_cols[otter_two$species == two_species[2]] <- legend_cols[2]
 
 # Plot m6 against m5
-plot(x = otter.two$m5, 
-     y = otter.two$m6, 
+plot(x = otter_two$m5, 
+     y = otter_two$m6, 
      xlab = "m5",
      ylab = "m6",
      pch = 19, 
-     col = pt.cols)
-legend("topright", legend = two.species, pch = 19, col = legend.cols, cex = 0.8)
+     col = pt_cols)
+legend("topright", legend = two_species, pch = 19, col = legend_cols, cex = 0.8)
 ```
 
 Considering the scores of PC2, _P. brasilensis_ had low values, while 
-_E. lutris_ had high values. If we consider the loadings for just m5 and m6 
-(0.567 and -0.440, respectively), the plot above shows what we expect: 
-specimens with high values of PC2 (i.e. those of _E. lutris_), should have 
-relatively low values of m5 and high values of m6; this contrasts with 
-specimens with low values of PC2 (i.e. those of _P. brasilensis_), which are 
-characterized by high values of m5 and low values of m6. The second principal 
-component is thus describing variation in _relative_, not absolute, sizes of 
-these four different measurements.
+_E. lutris_ had high values. If we consider the loadings for just m5 and m6 on 
+PC2 (`r round(pca_summary$rotation[5, 2], 3)` and 
+`r round(pca_summary$rotation[6, 2], 3)`, respectively), the plot above shows 
+what we expect: specimens with high values of PC2 (i.e. those of _E. lutris_), 
+should have relatively low values of m5 and high values of m6; this contrasts 
+with specimens with low values of PC2 (i.e. those of _P. brasilensis_), which 
+are characterized by high values of m5 and low values of m6. The second 
+principal component is thus describing variation in _relative_, not absolute, 
+sizes of these four different measurements.
 
 ### Final script for PCA plot
 
@@ -379,35 +386,35 @@ otter <- na.omit(otter)
 rownames(otter) <- NULL
 
 # Run PCA
-pca.fit <- prcomp(x = otter[, -c(1:3)], scale. = TRUE)
-pca.summary <- summary(pca.fit)
+pca_fit <- prcomp(x = otter[, -c(1:3)], scale. = TRUE)
+pca_summary <- summary(pca_fit)
 
 # Plotting results
 # Pull out the unique values in the 'species' column for legend
-species.names <- unique(otter$species)
+species_names <- unique(otter$species)
 
 # Set up a vector of colors for the *legend*
-legend.cols <- c("black", "green4", "cyan3", "red3") 
+legend_cols <- c("black", "green4", "cyan3", "red3") 
 
 # Set up a vector of colors for the actual *plot*, based on values in the 
 # 'species' column and the legend colors vector. This vector has one element 
 # corresponding to each row of the otter data frame. 
-pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
-pt.cols[otter$species == species.names[2]] <- legend.cols[2]
-pt.cols[otter$species == species.names[3]] <- legend.cols[3]
-pt.cols[otter$species == species.names[4]] <- legend.cols[4]
+pt_cols <- rep(x = legend_cols[1], length = nrow(otter))
+pt_cols[otter$species == species_names[2]] <- legend_cols[2]
+pt_cols[otter$species == species_names[3]] <- legend_cols[3]
+pt_cols[otter$species == species_names[4]] <- legend_cols[4]
 
 # Plot the first two components
-plot(x = pca.fit$x[, 1],
-     y = pca.fit$x[, 2],
+plot(x = pca_fit$x[, 1],
+     y = pca_fit$x[, 2],
      xlab = "PC 1",
      ylab = "PC 2",
      pch = 19,
-     col = pt.cols)
+     col = pt_cols)
 legend("bottomleft", 
-       legend = species.names, 
+       legend = species_names, 
        pch = 19, 
-       col = legend.cols, 
+       col = legend_cols, 
        cex = 0.8)
 ```
 
@@ -455,7 +462,7 @@ analysis:
 
 ```{r run-dfa}
 # Run DFA, allowing equal probability assignment for each of four groups
-lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6,
+lda_fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6,
                     data = otter,
                     prior = c(1,1,1,1)/4)
 ```
@@ -471,27 +478,28 @@ case we plot the scores for the first and second discriminant functions.
 
 ```{r dfa-plot}
 # Get individual values based on lda model and original measurements
-plda <- predict(object = lda.fit,
+lda_predict <- predict(object = lda_fit,
                 newdata = otter)
 
 # Set up colors for each point, based on a priori identifications
-legend.cols <- c("black", "green4", "cyan3", "red3") 
-pt.cols <- rep(x = legend.cols[1], length = nrow(otter))
-pt.cols[otter$species == levels(otter$species)[2]] <- legend.cols[2]
-pt.cols[otter$species == levels(otter$species)[3]] <- legend.cols[3]
-pt.cols[otter$species == levels(otter$species)[4]] <- legend.cols[4]
+legend_cols <- c("black", "green4", "cyan3", "red3") 
+pt_cols <- rep(x = legend_cols[1], length = nrow(otter))
+pt_cols[otter$species == levels(otter$species)[2]] <- legend_cols[2]
+pt_cols[otter$species == levels(otter$species)[3]] <- legend_cols[3]
+pt_cols[otter$species == levels(otter$species)[4]] <- legend_cols[4]
 
-# Plot scores for first (plda$x[, 1]) and second (plda$x[, 2]) discriminant functions
-plot(x = plda$x[, 1], 
-     y = plda$x[, 2], 
+# Plot scores for first (lda_predict$x[, 1]) and second (lda_predict$x[, 2]) 
+# discriminant functions
+plot(x = lda_predict$x[, 1], 
+     y = lda_predict$x[, 2], 
      xlab = "LDA1", 
      ylab = "LDA2",
      pch = 19,
-     col = pt.cols)
+     col = pt_cols)
 legend("topright", 
        legend = levels(otter$species), 
        cex = 0.8, 
-       col = legend.cols, 
+       col = legend_cols, 
        pch = 19)
 ```
 
@@ -504,7 +512,7 @@ perform cross-validation on the model and provide posterior probabilities of
 group membership in the `posterior` object returned by `lda`.
 
 ```{r dfa-cross-validate}
-lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6, 
+lda_fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6, 
                data = otter, 
                prior = c(1,1,1,1)/4, 
                CV = TRUE)
@@ -513,7 +521,7 @@ lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6,
 To see how well the DFA does in categorizing each specimen, we use `table`.
 
 ```{r dfa-performance}
-table(otter$species, lda.fit$class, dnn = c("a priori", "assignment"))
+table(otter$species, lda_fit$class, dnn = c("a priori", "assignment"))
 ```
 
 In this case, we passed `table` two vectors:
@@ -521,7 +529,7 @@ In this case, we passed `table` two vectors:
 + The _a priori_ species identification of each sample, which is stored in 
 `otter$species`
 + The _a posteriori_ assignment of each sample from the DFA, stored in 
-`lda.fit$class`
+`lda_fit$class`
 
 We also passed a value to the `dnn` parameter, which is used to label the table 
 ("dnn" stands for _dimnames names_. Yes, that's right, _dimnames names_. Seems 
@@ -536,13 +544,13 @@ But let's take a *closer* look at the results. The first six rows show the
 assignment probabilities for six specimens:
 
 ```{r dfa-fit}
-head(lda.fit$posterior)
+head(lda_fit$posterior)
 ```
 
-The `lda.fit$posterior` matrix holds the posterior probability of assignment to 
+The `lda_fit$posterior` matrix holds the posterior probability of assignment to 
 each of the four species for each row of data in the original `otter` data. The 
 first row indicates the probabilities that the first observation in `otter` is 
-assigned to each species. For this first observation, the only non-negligible assignment probability is to _`r colnames(lda.fit$posterior)[which(lda.fit$posterior[1, ] == max(lda.fit$posterior[1, ]))]`_. 
+assigned to each species. For this first observation, the only non-negligible assignment probability is to _`r colnames(lda_fit$posterior)[which(lda_fit$posterior[1, ] == max(lda_fit$posterior[1, ]))]`_. 
 For this data set, most observations are assigned with high probability to a 
 single group.
 
@@ -550,7 +558,7 @@ However, some probabilities are not so trivial. Look at the values for row 88
 (rounding to three decimal places):
 
 ```{r dfa-one-row}
-round(lda.fit$posterior[88, ], 3)
+round(lda_fit$posterior[88, ], 3)
 ```
 
 How can we identify those with ambiguous assignments? We could go row-by-row to 
@@ -561,16 +569,16 @@ an ambiguous assignment.
 
 ```{r set-cutoff}
 # Set our cutoff value for what we call unambiguous
-minimum.prob <- 0.95
+minimum_prob <- 0.95
 ```
 
 We can then create a matrix of assignments based on this cutoff by comparing 
-the values in `lda.fit$posterior` to our cutoff value, `minimum.prob`:
+the values in `lda_fit$posterior` to our cutoff value, `minimum_prob`:
 
 ```{r dfa-unambiguous-find}
 # A new matrix of logicals, with TRUE for all cells with 
-# posterior prob > minimum.prob
-unambiguous <- lda.fit$posterior > minimum.prob
+# posterior prob > minimum_prob
+unambiguous <- lda_fit$posterior > minimum_prob
 ```
 
 Taking a look at the first few rows of the `unambiguous` object, we see it is 
@@ -580,12 +588,12 @@ filled with `TRUE` and `FALSE` values:
 head(unambiguous)
 ```
 
-A row where the assignment probabilities for every group was below the 
+A row where the assignment probabilities for **every** group was below the 
 threshold should only have values of FALSE. Take our example from row 88 as 
 described above. The posterior probabilities were:
 
 ```{r dfa-post-prob}
-round(lda.fit$posterior[88, ], 3)
+round(lda_fit$posterior[88, ], 3)
 ```
 
 And the corresponding values in our `unambiguous` object are:
@@ -595,48 +603,49 @@ unambiguous[88, ]
 ```
 
 Because we are only interested in those samples where assignment was ambiguous, 
-we need to identify those rows where all the values are `FALSE`:
+we need to identify those rows where **all** the values are `FALSE`:
 
 ```{r dfa-ambiguous-rows}
 # New vector indicating whether sample had any assignment greater than 
-# minimum.prob
-unambiguous.rows <- apply(X = unambiguous, MARGIN = 1, FUN = "any")
+# minimum_prob
+unambiguous_rows <- apply(X = unambiguous, MARGIN = 1, FUN = "any")
 
 # The converse (i.e. vector indicating samples with *no* assignment greater 
-# than minimum.prob)
-ambiguous.rows <- !unambiguous.rows
+# than minimum_prob)
+ambiguous_rows <- !unambiguous_rows
 
 # Use this to retrieve sample information for those rows and probabilities
-ambiguous.results <- otter[ambiguous.rows, c(1:3)]
-ambiguous.results <- cbind(ambiguous.results, lda.fit$posterior[ambiguous.rows, ])
+ambiguous_results <- otter[ambiguous_rows, c(1:3)]
+ambiguous_results <- cbind(ambiguous_results, lda_fit$posterior[ambiguous_rows, ])
 ```
 
-This new data frame, `ambiguous.results` contains the posterior probabilities 
+This new data frame, `ambiguous_results` contains the posterior probabilities 
 for all those samples with no assignment probabilities higher than the 
-`minimum.prob` threshold. It also has the metadata associated with those 
+`minimum_prob` threshold. It also has the metadata associated with those 
 samples, which we extracted from the original `otter` data frame. Looking at 
-this data frame, we see there were `r nrow(ambiguous.results)` samples could 
+this data frame, we see there were `r nrow(ambiguous_results)` samples could 
 not be unambiguously assigned to a group (assuming a posterior probability 
-threshold of `r minimum.prob`):
+threshold of `r minimum_prob`):
 
 ```{r dfa-ambiguous-print}
 # Show only those samples which didn't have high assignment probability to any 
 # group
-ambiguous.results
+ambiguous_results
 ```
 
 ### Plotting DFA assignment probabilities (ADVANCED)
 
 One way to visualize how well the analysis performed at distinguishing among 
 the groups is to plot the posterior probabilities for each sample. These can be 
-done with a stacked bar graph (much like the graphs used to visualize [STRUCTURE](http://pritchardlab.stanford.edu/structure.html) 
-results). The first thing we need is a two-dimensional matrix of the posterior
-probabilities, with each sample corresponding to a _column_. The 
-`lda.fit$posteriors` object has samples in rows, so we can use transpose, `t`, 
-to exchange the rows and columns:
+done with a stacked bar graph (much like the graphs used to visualize 
+[STRUCTURE](http://pritchardlab.stanford.edu/structure.html) results). The 
+first thing we need is a two-dimensional matrix of the posterior probabilities, 
+with each sample corresponding to a _column_. The `lda_fit$posteriors` object 
+has samples in rows, so we can use transpose, `t`, to exchange the rows and 
+columns:
 
 ```{r dfa-transpose-fit}
-posteriors <- t(lda.fit$posterior)
+posteriors <- t(lda_fit$posterior)
 ```
   
 And we can plot these posteriors with `barplot`:
@@ -660,14 +669,14 @@ And now we can add some color, making an adjustment to the x-axis (via `xlim`)
 so the legend shows up _outside_ the plot area:
 
 ```{r barplot-3}
-legend.cols <- c("black", "green4", "cyan3", "red3") 
+legend_cols <- c("black", "green4", "cyan3", "red3") 
 
 barplot(posteriors,
         ylab = "Posterior Probability",
         space = 0,
         border = NA,
         xlim = c(0, ncol(posteriors) + 45),
-        col = legend.cols,
+        col = legend_cols,
         legend.text = levels(otter$species))
 ```
   
@@ -675,14 +684,14 @@ The legend still overlaps the plot, so we'll need to pass some additional
 parameters to the legend maker.
 
 ```{r barplot-4}
-legend.cols <- c("black", "green4", "cyan3", "red3") 
+legend_cols <- c("black", "green4", "cyan3", "red3") 
 
 barplot(posteriors,
         ylab = "Posterior Probability",
         space = 0,
         border = NA,
         xlim = c(0, ncol(posteriors) + 45),
-        col = legend.cols,
+        col = legend_cols,
         legend.text = levels(otter$species),
         args.legend = list(cex = 0.7, x = ncol(posteriors) + 55, y = 0.6, xpd = TRUE))
 ```
@@ -690,17 +699,17 @@ barplot(posteriors,
 The last thing we want is to show the _a priori_ assignments of the samples. 
 This requires some creativity on our part. The code below assumes that the 
 original data being fed into the `lda` function were already sorted by species. 
-Two new vectors, `tick.pos` and `label.pos`, are used to add the _a priori_ 
+Two new vectors, `tick_pos` and `label_pos`, are used to add the _a priori_ 
 identification information to the x-axis. 
 
-+ `tick.pos` will draw five vertical tick marks on the x-axis, to serve as 
++ `tick_pos` will draw five vertical tick marks on the x-axis, to serve as 
 delimiters between species. 
-+ `label.pos` vector determines where to put the labels on the x-axis.
++ `label_pos` vector determines where to put the labels on the x-axis.
 
 Because this isn't a standard way of labeling an axis, we tell R to skip 
 labeling the x-axis in the `barplot` call (`xaxt = 'n'`), and instead, label 
 the axis after the plot is drawn, with a pair of calls to the `axis` function. 
-I'll leave it as an exercise for you to determine how `tick.pos` and `label.pos` 
+I'll leave it as an exercise for you to determine how `tick_pos` and `label_pos` 
 are calculated (hint: documentation for `match` and `rev` will be helpful). 
 Finally, we will need to add some more vertical space in our plot to prevent 
 the species names on the x-axis from being cut off; we use the `par` function 
@@ -713,22 +722,22 @@ margin.
 # value of the position of the last occurrence of the first species, the third 
 # element takes the value of the position of the last occurrence of the second 
 # species, and so on.
-tick.pos <- c(0, 
+tick_pos <- c(0, 
               nrow(otter) - match(levels(otter$species)[1], rev(otter$species)) + 1, 
               nrow(otter) - match(levels(otter$species)[2], rev(otter$species)) + 1, 
               nrow(otter) - match(levels(otter$species)[3], rev(otter$species)) + 1, 
               nrow(otter) - match(levels(otter$species)[4], rev(otter$species)) + 1)
 
-label.pos <- c(floor((tick.pos[2] - tick.pos[1]) / 2),
-               floor((tick.pos[3] - tick.pos[2]) / 2 + tick.pos[2]),
-               floor((tick.pos[4] - tick.pos[3]) / 2 + tick.pos[3]),
-               floor((tick.pos[5] - tick.pos[4]) / 2 + tick.pos[4]))
+label_pos <- c(floor((tick_pos[2] - tick_pos[1]) / 2),
+               floor((tick_pos[3] - tick_pos[2]) / 2 + tick_pos[2]),
+               floor((tick_pos[4] - tick_pos[3]) / 2 + tick_pos[3]),
+               floor((tick_pos[5] - tick_pos[4]) / 2 + tick_pos[4]))
 
-legend.cols <- c("black", "green4", "cyan3", "red3") 
+legend_cols <- c("black", "green4", "cyan3", "red3") 
 
 # Store graphics defaults
-mar.default <- c(5, 4, 4, 2) + 1 # from par documentation
-par(mar = mar.default + c(2, 0, 0, 0)) # add space to bottom margin
+mar_default <- c(5, 4, 4, 2) + 1 # from par documentation
+par(mar = mar_default + c(2, 0, 0, 0)) # add space to bottom margin
 
 barplot(posteriors,
         ylab = "Posterior Probability",
@@ -736,22 +745,22 @@ barplot(posteriors,
         border = NA,
         xaxt = 'n',
         xlim = c(0, ncol(posteriors) + 45),
-        col = legend.cols,
+        col = legend_cols,
         legend.text = levels(otter$species),
         args.legend = list(cex = 0.7, x = ncol(posteriors) + 55, y = 0.6, xpd = TRUE))
 # Add tick marks
 axis(side = 1, 
-     at = tick.pos, 
+     at = tick_pos, 
      labels = FALSE)
 # Add axis labels
 axis(side = 1, 
-     at = label.pos, 
+     at = label_pos, 
      labels = levels(otter$species), 
      tick = FALSE, 
      par(las = 2, cex = 0.8))
 
 # Restore graphics defaults
-par(mar = mar.default)
+par(mar = mar_default)
 ```
 
 ### Final script for DFA posteriors
@@ -779,7 +788,7 @@ rownames(otter) <- NULL
 library("MASS")
 
 # Run DFA
-lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6, 
+lda_fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6, 
                data = otter, 
                prior = c(1,1,1,1)/4, 
                CV = TRUE)
@@ -790,22 +799,22 @@ lda.fit <- lda(formula = species ~ m1 + m2 + m3 + m4 + m5 + m6,
 # value of the position of the last occurrence of the first species, the third 
 # element takes the value of the position of the last occurrence of the second 
 # species, and so on.
-tick.pos <- c(0, 
+tick_pos <- c(0, 
               nrow(otter) - match(levels(otter$species)[1], rev(otter$species)) + 1, 
               nrow(otter) - match(levels(otter$species)[2], rev(otter$species)) + 1, 
               nrow(otter) - match(levels(otter$species)[3], rev(otter$species)) + 1, 
               nrow(otter) - match(levels(otter$species)[4], rev(otter$species)) + 1)
 
-label.pos <- c(floor((tick.pos[2] - tick.pos[1]) / 2),
-               floor((tick.pos[3] - tick.pos[2]) / 2 + tick.pos[2]),
-               floor((tick.pos[4] - tick.pos[3]) / 2 + tick.pos[3]),
-               floor((tick.pos[5] - tick.pos[4]) / 2 + tick.pos[4]))
+label_pos <- c(floor((tick_pos[2] - tick_pos[1]) / 2),
+               floor((tick_pos[3] - tick_pos[2]) / 2 + tick_pos[2]),
+               floor((tick_pos[4] - tick_pos[3]) / 2 + tick_pos[3]),
+               floor((tick_pos[5] - tick_pos[4]) / 2 + tick_pos[4]))
 
-legend.cols <- c("black", "green4", "cyan3", "red3") 
+legend_cols <- c("black", "green4", "cyan3", "red3") 
 
 # Store graphics defaults
-mar.default <- c(5, 4, 4, 2) + 1 # from par documentation
-par(mar = mar.default + c(2, 0, 0, 0)) # add space to bottom margin
+mar_default <- c(5, 4, 4, 2) + 1 # from par documentation
+par(mar = mar_default + c(2, 0, 0, 0)) # add space to bottom margin
 
 barplot(posteriors,
         ylab = "Posterior Probability",
@@ -813,15 +822,15 @@ barplot(posteriors,
         border = NA,
         xaxt = 'n',
         xlim = c(0, ncol(posteriors) + 45),
-        col = legend.cols,
+        col = legend_cols,
         legend.text = levels(otter$species),
         args.legend = list(cex = 0.7, x = ncol(posteriors) + 55, y = 0.6, xpd = TRUE))
 # Add x-axis labels
-axis(side = 1, at = tick.pos, labels = FALSE) # tick marks
-axis(side = 1, at = label.pos, labels = levels(otter$species), tick = FALSE, par(las = 2, cex = 0.8))
+axis(side = 1, at = tick_pos, labels = FALSE) # tick marks
+axis(side = 1, at = label_pos, labels = levels(otter$species), tick = FALSE, par(las = 2, cex = 0.8))
 
 # Restore graphics defaults
-par(mar = mar.default)
+par(mar = mar_default)
 ```
 
 ***
