@@ -107,8 +107,31 @@ library("ggplot2")
 
 For our first plot, we will create an X-Y scatterplot to investigate a 
 potential relationship between a country's gross domestic product (GDP) and the 
-average life expectancy. We do so by creating a `ggplot` object, then calling 
-`print` on that object:
+average life expectancy. We ultimately want a plot that looks like:
+
+```{r scatterplot-goal, echo = FALSE}
+# Load data
+gapminder <- read.csv(file = "data/gapminder.csv",
+                      stringsAsFactors = TRUE)
+
+# Create plot object
+lifeExp.plot <- ggplot(data = gapminder, 
+                       mapping = aes(x = gdpPercap, 
+                                     y = lifeExp, 
+                                     color = continent)) +
+  geom_point(alpha = 0.5) +
+  scale_x_log10() +
+  scale_color_manual(values = c("red", "orange", "forestgreen", 
+                                "darkblue", "violet")) +
+  xlab("GDP per capita") +
+  ylab("Life Expectancy")
+
+# Draw plot
+print(lifeExp.plot)  
+```
+
+We do so by first reading in the data we downloaded, then creating a `ggplot` 
+object, and finally calling `print` on that object:
 
 ```{r scatterplot-blank}
 # Load data
@@ -400,20 +423,20 @@ gdp.plot <- ggplot(data = gapminder,
 print(gdp.plot)
 ```
 
-Colors! But now you notice another problem with the plot - where's Oceania? We 
-lost Australia and New Zealand! The problem is that there are now too few data 
-points in the Oceania group in each map to create a violin plot (you need at 
-least three points, and with only those two countries, there are only two 
-points of data for each year). So for this plot, we are going to go ahead and 
-explicitly omit the Oceania data from the plot. We do this by subsetting the 
-`gapminder` data in the `ggplot` call:
+Colors! But what's that funny violet shape on the right-hand side of each plot? 
+Remember we assigned the violet color to our Oceania countries. The problem is 
+that there are only two countries in Oceania: Australia and New Zealand. We 
+cannot really do a violin plot with only two points, so for this plot, we are 
+going to go ahead and explicitly omit the Oceania data from the plot. We do 
+this by subsetting the `gapminder` data in the `ggplot` call _and_ reducing the 
+number of colors to use to five:
 
 ```{r drop-oceania}
 # Load data
 gapminder <- read.csv(file = "data/gapminder.csv",
                       stringsAsFactors = TRUE)
 
-# Create violin plot object
+# Create violin plot object, excluding Oceania countries
 gdp.plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ], 
                    mapping = aes(x = continent, y = gdpPercap, fill = continent)) +
   geom_violin() +
@@ -448,7 +471,7 @@ library("ggplot2")
 gapminder <- read.csv(file = "data/gapminder.csv",
                       stringsAsFactors = TRUE)
 
-# Create violin plot object
+# Create violin plot object, excluding Oceania countries
 gdp.plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ], 
                    mapping = aes(x = continent, y = gdpPercap, fill = continent)) +
   geom_violin() +
@@ -468,8 +491,8 @@ print(gdp.plot)
 
 ## Additional resources
 
-+ Official [ggplot documentation](http://docs.ggplot2.org/current/)
-+ A handy [cheatsheet for ggplot](https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf)
++ Official [ggplot documentation](https://ggplot2.tidyverse.org/)
++ A handy [cheatsheet for ggplot](https://github.com/rstudio/cheatsheets/blob/main/data-visualization.pdf)
 + A [PDF version](https://jcoliver.github.io/learn-r/004-intro-ggplot.pdf) of this lesson
 
 ***
