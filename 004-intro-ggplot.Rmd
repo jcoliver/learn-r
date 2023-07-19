@@ -115,7 +115,7 @@ gapminder <- read.csv(file = "data/gapminder.csv",
                       stringsAsFactors = TRUE)
 
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, 
+lifeExp_plot <- ggplot(data = gapminder, 
                        mapping = aes(x = gdpPercap, 
                                      y = lifeExp, 
                                      color = continent)) +
@@ -127,7 +127,7 @@ lifeExp.plot <- ggplot(data = gapminder,
   ylab("Life Expectancy")
 
 # Draw plot
-print(lifeExp.plot)  
+print(lifeExp_plot)  
 ```
 
 We do so by first reading in the data we downloaded, then creating a `ggplot` 
@@ -139,11 +139,11 @@ gapminder <- read.csv(file = "data/gapminder.csv",
                       stringsAsFactors = TRUE)
 
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, 
+lifeExp_plot <- ggplot(data = gapminder, 
                        mapping = aes(x = gdpPercap, y = lifeExp))
 
 # Draw plot
-print(lifeExp.plot)  
+print(lifeExp_plot)  
 ```
 
 _What happened?_ There are no points!? Here is where functionality of ggplot is 
@@ -155,12 +155,12 @@ sign (+):
 
 ```{r scatterplot-points}
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, 
+lifeExp_plot <- ggplot(data = gapminder, 
                        mapping = aes(x = gdpPercap, y = lifeExp)) +
   geom_point()
 
 # Draw plot
-print(lifeExp.plot)  
+print(lifeExp_plot)  
 ```
 
 It is a little difficult to see how the points are distributed, as most are 
@@ -170,13 +170,13 @@ adding `scale_x_log10`:
 
 ```{r scatterplot-log10}
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, 
+lifeExp_plot <- ggplot(data = gapminder, 
                        mapping = aes(x = gdpPercap, y = lifeExp)) +
   geom_point() +
   scale_x_log10()
 
 # Draw plot
-print(lifeExp.plot)  
+print(lifeExp_plot)  
 ```
 
 One thing of interest is to include additional information in the plot, such as 
@@ -187,7 +187,7 @@ data to use for point colors:
 
 ```{r scatterplot-colors}
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, 
+lifeExp_plot <- ggplot(data = gapminder, 
                        mapping = aes(x = gdpPercap, 
                                      y = lifeExp, 
                                      color = continent)) +
@@ -195,7 +195,7 @@ lifeExp.plot <- ggplot(data = gapminder,
   scale_x_log10()
 
 # Draw plot
-print(lifeExp.plot)  
+print(lifeExp_plot)  
 ```
 
 At this point, we want to change the colors of the points in two ways: (1) we 
@@ -206,7 +206,7 @@ done with the `scale_color_manual` function:
 
 ```{r scatterplot-transparency}
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, 
+lifeExp_plot <- ggplot(data = gapminder, 
                        mapping = aes(x = gdpPercap, 
                                      y = lifeExp, 
                                      color = continent)) +
@@ -216,14 +216,14 @@ lifeExp.plot <- ggplot(data = gapminder,
                                 "darkblue", "violet"))
 
 # Draw plot
-print(lifeExp.plot)  
+print(lifeExp_plot)  
 ```
 
 Finally, we should make those axis labels a little nicer.
 
 ```{r scatterplot-axis-titles}
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, 
+lifeExp_plot <- ggplot(data = gapminder, 
                        mapping = aes(x = gdpPercap, 
                                      y = lifeExp, 
                                      color = continent)) +
@@ -235,7 +235,7 @@ lifeExp.plot <- ggplot(data = gapminder,
   ylab("Life Expectancy")
 
 # Draw plot
-print(lifeExp.plot)
+print(lifeExp_plot)
 ```
 
 And if we want to save the plot to a file, we call `ggsave`, passing a filename 
@@ -245,7 +245,7 @@ displayed):
 
 ```{r scatterplot-png, eval = FALSE}
 # Save plot to png file
-ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp.plot)
+ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp_plot)
 ```
 
 Also note that `ggsave` will guess the type of file to save from the extension. 
@@ -254,7 +254,7 @@ extension for the `filename` argument:
 
 ```{r scatterplot-tif, eval = FALSE}
 # Save plot to tif file
-ggsave(filename = "output/gdp-lifeExp-plot.tiff", plot = lifeExp.plot)
+ggsave(filename = "output/gdp-lifeExp-plot.tiff", plot = lifeExp_plot)
 ```
 
 Our final script for this scatterplot is then:
@@ -273,7 +273,7 @@ gapminder <- read.csv(file = "data/gapminder.csv",
                       stringsAsFactors = TRUE)
 
 # Create plot object
-lifeExp.plot <- ggplot(data = gapminder, 
+lifeExp_plot <- ggplot(data = gapminder, 
                        mapping = aes(x = gdpPercap, 
                                      y = lifeExp, 
                                      color = continent)) +
@@ -285,10 +285,10 @@ lifeExp.plot <- ggplot(data = gapminder,
   ylab("Life Expectancy")
 
 # Draw plot
-print(lifeExp.plot)  
+print(lifeExp_plot)  
 
 # Save plot to png file
-ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp.plot)
+ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp_plot)
 ```
 
 ***
@@ -318,12 +318,12 @@ gapminder <- read.csv(file = "data/gapminder.csv",
                       stringsAsFactors = TRUE)
 
 # Create violin plot object
-gdp.plot <- ggplot(data = gapminder, 
+gdp_plot <- ggplot(data = gapminder, 
                    mapping = aes(x = continent, y = gdpPercap)) +
   geom_violin()
 
 # Print plot
-print(gdp.plot)
+print(gdp_plot)
 ```
 
 A good start, but we can see we need to clean some things up. We'll start by 
@@ -333,7 +333,7 @@ comes with the default theme by using `theme_bw`:
 
 ```{r violin-log10, fig.height = 3}
 # Create violin plot object
-gdp.plot <- ggplot(data = gapminder, 
+gdp_plot <- ggplot(data = gapminder, 
                    mapping = aes(x = continent, y = gdpPercap)) +
   geom_violin() +
   scale_y_log10() +
@@ -341,7 +341,7 @@ gdp.plot <- ggplot(data = gapminder,
   theme_bw()
 
 # Print plot
-print(gdp.plot)
+print(gdp_plot)
 ```
 
 One of the issues we have in the plot is not obvious just by looking at it. If 
@@ -361,7 +361,7 @@ to use for each graph:
 
 ```{r violin-facet}
 # Create violin plot object
-gdp.plot <- ggplot(data = gapminder, 
+gdp_plot <- ggplot(data = gapminder, 
                    mapping = aes(x = continent, y = gdpPercap)) +
   geom_violin() +
   scale_y_log10() +
@@ -370,7 +370,7 @@ gdp.plot <- ggplot(data = gapminder,
   facet_wrap(~ year)
 
 # Print plot
-print(gdp.plot)
+print(gdp_plot)
 ```
 
 One of the first things you might notice is that the X-axis is way to crowded 
@@ -381,7 +381,7 @@ indicate that we do not want any x-axis text or an x-axis title.
 
 ```{r violin-color-1}
 # Create violin plot object
-gdp.plot <- ggplot(data = gapminder, 
+gdp_plot <- ggplot(data = gapminder, 
                    mapping = aes(x = continent, y = gdpPercap)) +
   geom_violin() +
   scale_y_log10() +
@@ -394,7 +394,7 @@ gdp.plot <- ggplot(data = gapminder,
         axis.title.x = element_blank())
 
 # Print plot
-print(gdp.plot)
+print(gdp_plot)
 ```
 
 Okay, the x-axis is cleaned up, but where are the colors? If we look at our 
@@ -405,7 +405,7 @@ additional argument, `fill` to the `aes` function:
 
 ```{r violin-color-2}
 # Create violin plot object
-gdp.plot <- ggplot(data = gapminder, 
+gdp_plot <- ggplot(data = gapminder, 
                    mapping = aes(x = continent, 
                                  y = gdpPercap, 
                                  fill = continent)) +
@@ -420,7 +420,7 @@ gdp.plot <- ggplot(data = gapminder,
         axis.title.x = element_blank())
 
 # Print plot
-print(gdp.plot)
+print(gdp_plot)
 ```
 
 Colors! But what's that funny violet shape on the right-hand side of each plot? 
@@ -437,7 +437,7 @@ gapminder <- read.csv(file = "data/gapminder.csv",
                       stringsAsFactors = TRUE)
 
 # Create violin plot object, excluding Oceania countries
-gdp.plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ], 
+gdp_plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ], 
                    mapping = aes(x = continent, y = gdpPercap, fill = continent)) +
   geom_violin() +
   scale_y_log10() +
@@ -449,7 +449,7 @@ gdp.plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ],
         axis.title.x = element_blank())
 
 # Print plot
-print(gdp.plot)
+print(gdp_plot)
 ```
 
 Success!
@@ -472,7 +472,7 @@ gapminder <- read.csv(file = "data/gapminder.csv",
                       stringsAsFactors = TRUE)
 
 # Create violin plot object, excluding Oceania countries
-gdp.plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ], 
+gdp_plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ], 
                    mapping = aes(x = continent, y = gdpPercap, fill = continent)) +
   geom_violin() +
   scale_y_log10() +
@@ -484,7 +484,7 @@ gdp.plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ],
         axis.title.x = element_blank())
 
 # Print plot
-print(gdp.plot)
+print(gdp_plot)
 ```
 
 ***
