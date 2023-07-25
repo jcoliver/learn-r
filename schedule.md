@@ -2,10 +2,6 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 04  | Jul   | No lab this day, go outside!       |
-| 11  | Jul   | Hybrid open lab                    |
-| 18  | Jul   | Hybrid open lab                    |
-| 25  | Jul   | Hybrid open lab                    |
 | 01  | Aug   | Hybrid open lab                    |
 | 08  | Aug   | Hybrid open lab                    |
 | 15  | Aug   | Hybrid open lab                    |
