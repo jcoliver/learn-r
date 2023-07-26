@@ -9,6 +9,22 @@ output:
 urlcolor: blue
 ---
 
+**TODO**: Lesson needs to be updated per switch from raster/dismo. Might as 
+well go ahead and move away from bioclim model to something more modern. The 
+glm is likely the most accessible. This requires not only code updates, but 
+also rearrangement of how/what is presented. Order is roughly:
+
+**DONE** 1. Read in (download) climate (bioclim) data
+**DONE** 2. Read in saguaro data
+**DONE** 3. Plot saguaro data
+4. Crop bioclim SpatRasters to extent (+25%?) of saguaro data
+5. Create background points (from one of those layers in the bioclim data)
+6. Merge saguaro and background points (and add pa column)
+7. Extract climate data for those saguaro and background points
+8. Run glm
+9. Predict probability values
+10 Calculate thresholds and plot results
+
 Predicting ranges of species from latitude and longitude coordinates has become
 increasingly easier with a suite of R packages. This introductory tutorial will 
 show you how to turn your coordinate data into a range map.
@@ -96,17 +112,15 @@ the 'data' folder that you created in the step above.
 
 ### Install additional R packages
 
-Next, there are _three_ additional R packages that will need to be installed:
+Next, there are _two_ additional R packages that will need to be installed:
 
-+ dismo
-+ raster
++ terra
 + geodata
 
 To install these, run:
 
 ```{r install-libraries, eval = FALSE}
-install.packages("dismo")
-install.packages("raster")
+install.packages("terra")
 install.packages("geodata")
 ```
 
@@ -141,14 +155,19 @@ We'll start our script by loading those five libraries we need. And of course
 adding a little bit of information at the very top of our script that says what 
 the script does and who is responsible!
 
-```{r load-dependancies}
+```{r load-dependencies-quiet, echo = FALSE}
+# Don't want terra message showing up in report
+suppressPackageStartupMessages(library(terra))
+suppressPackageStartupMessages(library(geodata))
+```
+
+```{r load-dependancies, eval = FALSE}
 # Species distribution modeling for saguaro
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2018-02-27
 
-library(raster)
-library(dismo)
+library(terra)
 library(geodata)
 ```
 
@@ -161,9 +180,6 @@ messages. If loading the libraries _does_ result in an
 were installed properly.
 
 Now that we have those packages loaded, we can download the bioclimatic 
-<!--
-variable data with the `getData` function
--->
 variable data with the `worldclim_global()` function from the geodata package:
 
 ```{r get-bioclim-data, warning = FALSE}
@@ -187,15 +203,9 @@ downloaded. In our case, it is the `data` folder we created at the beginning.
 Note also that after the files are downloaded to the `data` folder, the are 
 read into memory and stored in the variable called `bioclim_data`
 
-Before we use these data, we need to transform them with raster's `stack()` 
-function:
-
-```{r stack-bioclim-data}
-bioclim_data <- stack(bioclim_data)
-```
-
 Now the climate data are in memory, and next we need to load in the 
-observations for the saguaro:
+observations for the saguaro (these are the data we downloaded at the 
+[beginning of the lesson](#Example-data)):
 
 ```{r load-saguaro-data}
 # Read in saguaro observations
@@ -231,7 +241,7 @@ max_lat <- ceiling(max(obs_data$latitude))
 min_lat <- floor(min(obs_data$latitude))
 max_lon <- ceiling(max(obs_data$longitude))
 min_lon <- floor(min(obs_data$longitude))
-geographic_extent <- extent(x = c(min_lon, max_lon, min_lat, max_lat))
+geographic_extent <- ext(x = c(min_lon, max_lon, min_lat, max_lat))
 ```
 
 Before we do any modeling, it is also a good idea to run a reality check on 
@@ -243,7 +253,7 @@ world_map <- world(resolution = 3,
                    path = "data/")
 
 # Crop the map to our area of interest
-my_map <- raster::crop(x = world_map, y = geographic_extent)
+my_map <- crop(x = world_map, y = geographic_extent)
 
 # Plot the base map
 plot(my_map,
@@ -272,6 +282,11 @@ southwest region. So we can restrict the biolimatic variable data to the
 geographic extent of our occurrence data:
 
 ```{r bioclim-crop, error = TRUE}
+# We want to sample an area slightly larger than observations' extent, so we 
+# make an extent object that is 25% larger than our observations' extent
+sample_extent <- geographic_extent * 1.25
+
+
 # Crop bioclim data to geographic extent of saguaro
 bioclim_data <- raster::crop(x = bioclim_data, y = geographic_extent)
 
