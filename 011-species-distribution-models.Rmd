@@ -17,13 +17,14 @@ also rearrangement of how/what is presented. Order is roughly:
 **DONE** 1. Read in (download) climate (bioclim) data
 **DONE** 2. Read in saguaro data
 **DONE** 3. Plot saguaro data
-4. Crop bioclim SpatRasters to extent (+25%?) of saguaro data
-5. Create background points (from one of those layers in the bioclim data)
-6. Merge saguaro and background points (and add pa column)
-7. Extract climate data for those saguaro and background points
-8. Run glm
-9. Predict probability values
-10 Calculate thresholds and plot results
+**DONE** 4. Crop bioclim SpatRasters to extent (+25%?) of saguaro data
+**DONE** 5. Create background points (from one of those layers in the bioclim data)
+**DONE** 6. Merge saguaro and background points (and add pa column)
+**DONE** 7. Extract climate data for those saguaro and background points
+8. Add fold data for testing/training
+9. Run glm
+10. Predict probability values
+11. Calculate thresholds and plot results
 
 Predicting ranges of species from latitude and longitude coordinates has become
 increasingly easier with a suite of R packages. This introductory tutorial will 
@@ -112,16 +113,18 @@ the 'data' folder that you created in the step above.
 
 ### Install additional R packages
 
-Next, there are _two_ additional R packages that will need to be installed:
+Next, there are _three_ additional R packages that will need to be installed:
 
 + terra
 + geodata
++ predicts
 
 To install these, run:
 
 ```{r install-libraries, eval = FALSE}
 install.packages("terra")
 install.packages("geodata")
+install.packages("predicts")
 ```
 
 ***
@@ -159,6 +162,7 @@ the script does and who is responsible!
 # Don't want terra message showing up in report
 suppressPackageStartupMessages(library(terra))
 suppressPackageStartupMessages(library(geodata))
+suppressPackageStartupMessages(library(predicts))
 ```
 
 ```{r load-dependancies, eval = FALSE}
@@ -169,6 +173,7 @@ suppressPackageStartupMessages(library(geodata))
 
 library(terra)
 library(geodata)
+library(predicts)
 ```
 
 There is a good chance you might have seen some red messages print out to the
@@ -272,24 +277,220 @@ Looking good!
 
 ***
 
-## Building a model and visualizing results
+## Preparing data for modeling
 
 Now that our occurrence data look OK, we can use the bioclimatic variables to 
 create a model. The first thing we want to do though is limit our consideration 
 to a reasonable geographic area. That is, for our purposes we are not looking 
 to model saguaro habitat suitability _globally_, but rather to the general 
-southwest region. So we can restrict the biolimatic variable data to the 
-geographic extent of our occurrence data:
+southwest region. We start by building an Extent object that is just a little 
+larger than the extent of our saguaro observations. We then crop the 
+bioclimatic data to that larger, sampling extent. As a reality check we finish 
+by plotting the cropped version of first bioclimatic variable.
 
-```{r bioclim-crop, error = TRUE}
-# We want to sample an area slightly larger than observations' extent, so we 
-# make an extent object that is 25% larger than our observations' extent
+```{r bioclim-crop}
+# Make an extent that is 25% larger
 sample_extent <- geographic_extent * 1.25
 
+# Crop bioclim data to desired extent
+bioclim_data <- raster::crop(x = bioclim_data, y = sample_extent)
 
-# Crop bioclim data to geographic extent of saguaro
-bioclim_data <- raster::crop(x = bioclim_data, y = geographic_extent)
+# Plot the first of the bioclim variables to check on cropping
+plot(bioclim_data[[1]])
+```
 
+In order to evaluate species distribution models, and really understand the 
+factors influencing where saguaros occur, we need to include some absence 
+points, those sites where saguaros are known to _not_ occur. The problem is, we 
+only have presence data for saguaros.
+
+## The pseudo-absence point
+
+One common work around for coercing presence-only data for use with 
+presence/absence approaches is to use pseudo-absence, or "background" points. 
+While "pseudo-absence" sounds fancy, it really just means that one randomly 
+samples points from a given geographic area and treats them like locations 
+where the species of interest is absent. A great resource investigating the
+influence and best practices of pseudo-absence points is a study by 
+Barbet-Massin _et al._ (2012) (see 
+[Additional Resources](#additional-resources) below for full details).
+
+For our purposes, we are going to create a set of 1000 background (aka 
+pseudo-absence) points at random, and add these to our data. We are going to 
+use the bioclim data for determining spatial resolution of the points, and 
+restrict the sampling area to the general region of the observations of 
+saguaros.
+
+```{r pseudo-absence-sampling}
+# Set the seed for the random-number generator to ensure results are similar
+set.seed(20210707)
+
+# Randomly sample points (same number as our observed points)
+background <- spatSample(x = bioclim_data,
+                         size = 1000,
+                         values = FALSE, # don't need values
+                         xy = TRUE)      # just need coordinates
+
+# Look at first few rows of background
+head(background)
+```
+
+We can also plot those points, to see how the random sampling looks.
+
+```{r pseudo-absence-plot}
+# Plot the base map
+plot(my_map,
+     axes = TRUE, 
+     col = "grey95")
+
+# Add the background points
+points(background,
+       col = "grey30",
+       pch = 1,
+       cex = 0.75)
+
+# Add the points for individual observation
+points(x = obs_data$longitude, 
+       y = obs_data$latitude, 
+       col = "olivedrab", 
+       pch = 20, 
+       cex = 0.75)
+```
+
+We have observation data and pseudo-absence data and we need to first put them 
+into one data structure, then add in the climate data so we have a single data
+frame with observations, pseudo-absence points, and climate data for every 
+coordinate in the data frame. It sounds like a lot, but after putting the two
+coordinate datasets (observations and pseudo-absence points) together, the 
+terra package makes it easy to extract climate data. When we put the 
+observations and pseudo-absence points in the data frame, we need to make sure 
+we know which is which - that is, we need a column to indicate whether a pair 
+of coordinates indicates a presence point or a (pseudo) absence point. So we 
+start by preparing the two datasets:
+
+```{r prepare-coordinate-data}
+# Pull out coordinate columns, x (longitude) first, then y (latitude) from 
+# saguaro data
+presence <- obs_data[, c("longitude", "latitude")]
+# Add column indicating presence
+presence$pa <- 1
+
+# Convert background data to a data frame
+absence <- as.data.frame(background)
+# Update column names so they match presence points
+colnames(absence) <- c("longitude", "latitude")
+# Add column indicating absence
+absence$pa <- 0
+
+# Join data into single data frame
+all_points <- rbind(presence, absence)
+
+# Reality check on data
+head(all_points)
+```
+
+## Adding climate data
+
+We are now ready to add climate data to the coordinate data sets. As mentioned 
+above, the terra package helps with this. We will use the `extract()` function, 
+which takes geographic coordinates and raster data as in put, and pulls out 
+values in the raster data for each of the geographic coordinates.
+
+```{r extract-bioclim}
+bioclim_extract <- extract(x = bioclim_data,
+                           y = all_points[, c("longitude", "latitude")],
+                           ID = FALSE) # No need for an ID column
+```
+
+The process of extracting data results in a data frame with the climate data, 
+but that data frame doesn't have the coordinate information and, more 
+importantly, doesn't indicate which rows are presence points and which rows are
+pseudo-absence points. So we need to join these extracted data back with our 
+`all_points` data frame. After we do this, we do not need the latitude and 
+longitude coordinates anymore, so we can drop those two columns (at least for 
+building the model).
+
+```{r bind-obs-climate}
+# Add the point and climate datasets together
+points_climate <- cbind(all_points, bioclim_extract)
+
+# Identify columns that are latitude & longitude
+drop_cols <- which(colnames(points_climate) %in% c("longitude", "latitude"))
+drop_cols # print the values as a reality check
+
+# Remove the geographic coordinates from the data frame
+points_climate <- points_climate[, -drop_cols]
+```
+
+## Training and testing data
+
+Now that we have climate data for our presence and pseudo-absence points, we 
+need to take one more step. We are going to build our model using only part of 
+our data, and use the "set aside" data to evaluate model performance afterward. 
+This is known as separating our data into a **training** set (the data used to 
+_build_ the model) and a **testing** set (the data used to _evaluate_ the 
+model). We are going to reserve 20% of the data for testing, so we use the 
+`kfold()` function from the predicts package to evenly assign each point 
+to a random group. To make sure we have roughly representative sample of both 
+presence and pseudo-absence points, we use the `pa` column to tell R that our 
+data has these two sub-groups.
+
+```{r data-split-01}
+# Create vector indicating fold
+fold <- folds(x = points_climate,
+              k = 5,
+              by = points_climate$pa)
+```
+
+We now can use the `fold` vector to split data into a training set and a 
+testing set. Values in the `fold` vector are the integers 1, 2, 3, 4, and 5, 
+each evenly sampled:
+
+```{r show-folds}
+table(fold)
+```
+
+We will say that any observations in fold 1 will be testing data, and any 
+observations in the other folds (2, 3, 4, 5) will be training data.
+
+```{r data-split-02}
+testing <- points_climate[fold == 1, ]
+training <- points_climate[fold != 1, ]
+```
+
+## Model building
+
+Now that the data are ready, it is (finally!) time to build our species 
+distribution model! For this model, we will use the generalized linear model - 
+it's not the best and it's not the worst, but it will work for us. If you want 
+more information comparing different approaches, see references in the 
+[Additional Resources](#additional-resources) section below, especially the 
+work of [Valavi et al. 2021](https://doi.org/10.1002/ecm.1486).
+
+```{r bioclim-training}
+# Build a model using training data
+glm_model <- glm(pa~., data = testing)
+
+# Get predicted values from the model
+glm_predict <- predict(bioclim_data, glm_model)
+
+# Print predicted values
+plot(glm_predict)
+```
+
+OK, it is a map, but what does it mean?
+
+
+
+
+
+
+
+
+# EDITS TO HERE
+
+
+```{r building-model-01, error = TRUE}
 # Build species distribution model
 bc_model <- bioclim(x = bioclim_data, p = obs_data)
 ```
