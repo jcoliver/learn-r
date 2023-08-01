@@ -21,10 +21,11 @@ also rearrangement of how/what is presented. Order is roughly:
 **DONE** 5. Create background points (from one of those layers in the bioclim data)
 **DONE** 6. Merge saguaro and background points (and add pa column)
 **DONE** 7. Extract climate data for those saguaro and background points
-8. Add fold data for testing/training
-9. Run glm
-10. Predict probability values
-11. Calculate thresholds and plot results
+**DONE** 8. Add fold data for testing/training
+**DONE** 9. Run glm
+**DONE** 10. Predict probability values
+**DONE** 11. Calculate thresholds and plot results
+12. Update forecast prediction section
 
 Predicting ranges of species from latitude and longitude coordinates has become
 increasingly easier with a suite of R packages. This introductory tutorial will 
@@ -469,16 +470,121 @@ work of [Valavi et al. 2021](https://doi.org/10.1002/ecm.1486).
 
 ```{r bioclim-training}
 # Build a model using training data
-glm_model <- glm(pa~., data = testing)
+glm_model <- glm(pa~., data = training, family = binomial())
 
 # Get predicted values from the model
-glm_predict <- predict(bioclim_data, glm_model)
+glm_predict <- predict(bioclim_data, glm_model, type = "response")
 
 # Print predicted values
 plot(glm_predict)
 ```
 
-OK, it is a map, but what does it mean?
+OK, it is a map, but what does it mean? This plot shows the probability of 
+occurrence of saguaros across the map. Note the values are all quite below 1.0.
+
+We now take that model, and evaluate it using the observation data and the
+pseudo-absence points we reserved for model _testing_. We then use this test to
+establish a cutoff of occurrence probability to determine the boundaries of the
+saguaro range.
+
+# TODO: Lots of explanation could be added here.
+
+```{r testing-model}
+# Use testing data for model evaluation
+glm_eval <- pa_evaluate(p = testing[testing$pa == 1, ],
+                        a = testing[testing$pa == 0, ],
+                        model = glm_model)
+
+# Determine minimum threshold for "presence"
+glm_threshold <- glm_eval@thresholds$max_spec_sens
+```
+
+The `thresholds` element of `glm_eval` offers a number of means of determining 
+the threshold cutoff through the `stat` parameter. Here we chose 
+`max_spec_sens`, which sets "the threshold at which the sum of the sensitivity 
+(true positive rate) and specificity (true negative rate) is highest." For more 
+information, check out the documentation for the `pa_evaluate()` function 
+(`?pa_evaluate`, remember?).
+  
+And _finally_, we can use that threshold to paint a map with the predicted 
+range of the saguaro!
+
+```{r plot-sdm-threshold-bad-color}
+# Plot base map
+plot(my_map, 
+     axes = TRUE, 
+     col = "grey95")
+
+# Only plot areas where probability of occurrence is greater than the threshold
+plot(glm_predict > glm_threshold, 
+     add = TRUE, 
+     legend = FALSE, 
+     col = "olivedrab")
+
+# And add those observations
+points(x = obs_data$longitude, 
+       y = obs_data$latitude, 
+       col = "black",
+       pch = "+", 
+       cex = 0.75)
+
+# Redraw those country borders
+plot(my_map, add = TRUE, border = "grey5")
+```
+
+Hmmm...that doesn't look right. It plotted a large portion of the map green. 
+Let's look at what we actually asked R to plot, that is, we plot the value of
+`predict_presence > bc_threshold`. So what is that?
+
+```{r investigate-raster-comparison}
+glm_predict > glm_threshold
+```
+
+The comparison of these two rasters produces another raster with values of only 
+FALSE or TRUE: `FALSE` when the value in a grid cell of `glm_predict` is less 
+than or equal to the value in `glm_threshold` and `TRUE` for cells with a value 
+greater than `glm_threshold`. Since there are **two** values in this comparison 
+(`FALSE` and `TRUE`), we need to update what we pass to the `col` parameter in 
+our plot call. Instead of just passing a single value, we provide a color for 0 
+(`NA`) and a color for 1 (`"olivedrab"`):
+
+```{r plot-sdm-threshold-good-color}
+# Plot base map
+plot(my_map, 
+     axes = TRUE, 
+     col = "grey95")
+
+# Only plot areas where probability of occurrence is greater than the threshold
+plot(glm_predict > glm_threshold, 
+     add = TRUE, 
+     legend = FALSE, 
+     col = c(NA, "olivedrab")) # <-- Update the values HERE
+
+# And add those observations
+points(x = obs_data$longitude, 
+       y = obs_data$latitude, 
+       col = "black",
+       pch = "+", 
+       cex = 0.75)
+
+# Redraw those country borders
+plot(my_map, add = TRUE, border = "grey5")
+```
+
+A final note on our approach: the map we have drawn presents a categorical
+classification of whether a particular point on the landscape will be suitable 
+or not for the species of interest. This classification relies quite heavily on 
+the value of the threshold (see `glm_threshold` and the documentation for
+`pa_evaluate`) _and_ the pseudo-absence points. Given that we used random 
+sampling to generate those pseudo-absence points, there is potential for 
+variation in the predicted range if you run this code more than once (try it! 
+if you re-run the code from the point of creating the pseudo-absence points, 
+you are almost guaranteed a different map.). There are a number of approaches 
+to dealing with this variation, and the paper by 
+[Barbet-Massin et al. (2012)](https://dx.doi.org/10.1111/j.2041-210X.2011.00172.x)
+is a great resource. I'll leave it as homework for you to determine which 
+approach is most appropriate here!
+
 
 
 
