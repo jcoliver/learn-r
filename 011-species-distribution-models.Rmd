@@ -9,17 +9,14 @@ output:
 urlcolor: blue
 ---
 
-**TODO**: Some sections could use additional explanation of what the code is 
-doing. Especially areas where model objects are being used to predict values.
-
-Predicting ranges of species from latitude and longitude coordinates has become
-increasingly easier with a suite of R packages. This introductory tutorial will 
-show you how to turn your coordinate data into a range map.
+Predicting suitable habitats of species from latitude and longitude coordinates 
+has become increasingly easier with a suite of R packages. This introductory 
+tutorial will show you how to turn your coordinate data into a range map.
 
 #### Learning objectives
 
 1. Install packages for species distribution modeling
-2. Run species distribution models using `bioclim` approach
+2. Run species distribution models using a generalized linear model
 3. Visualize model predictions on a map
 
 Species distribution modeling in becoming an increasingly important tool to
@@ -27,7 +24,7 @@ understand how organisms might respond to current and future environmental
 changes. There is an ever-growing number of approaches and literature for 
 species distribution models (SDMs), and you are encouraged to check out the
 [Additional Resources](#additional-resources) section for a few of these 
-resources. The vignette for the `dismo` package is especially useful, and 
+resources. The materials in the terra package are especially useful, and 
 Jeremy Yoder's introduction is another great place to start. In this tutorial, 
 we'll use publicly available data to build, evaluate, and visualize a 
 distribution model for the saguaro cactus.
@@ -60,7 +57,7 @@ and instructions at
 
 #### Mac OS
 
-To use the raster package on Mac OS, you'll need to install Xcode Command Line 
+To use the terra package on Mac OS, you may need to install Xcode Command Line 
 Tools package. You can do this through a terminal via `xcode-select --install`.
 
 ### Workspace organization
@@ -84,7 +81,7 @@ dir.create(path = "output")
 ```
 
 It is good practice to keep input (i.e. the data) and output separate. 
-Furthermore, any work that ends up in the `output` folder should be completely
+Furthermore, any work that ends up in the **output** folder should be completely
 disposable. That is, the combination of data and the code we write should allow 
 us (or anyone else, for that matter) to reproduce any output.
 
@@ -133,7 +130,7 @@ include abiotic measurements of temperature and precipitation as well as biotic
 factors, such as the presence or absence of other species (like predators,
 competitors, or food sources). In this lesson we will focus on the 19 abiotic
 variables available from [WorldClim](http://www.worldclim.org/bioclim). Rather 
-than downloading the data from WorldClim, we'll use functions from the `geodata`
+than downloading the data from WorldClim, we'll use functions from the geodata
 package to download these data (see below).
 
 ***
@@ -155,15 +152,14 @@ suppressPackageStartupMessages(library(predicts))
 # Species distribution modeling for saguaro
 # Jeff Oliver
 # jcoliver@email.arizona.edu
-# 2018-02-27
+# 2023-08-08
 
 library(terra)
 library(geodata)
 library(predicts)
 ```
 
-There is a good chance you might have seen some red messages print out to the
-screen, especially when loading the maptools or rgdal libraries. This is 
+You might have seen some red messages print out to the screen. This is 
 normal, and as long as none of the messages include 
 "<span style="color:red">ERROR</span>", you can just hum right through those
 messages. If loading the libraries _does_ result in an 
@@ -191,8 +187,8 @@ documentation by typing `?worldclim_global` into the console.
 3. `path = "data/"`: Finally, this sets the location to which the files are
 downloaded. In our case, it is the `data` folder we created at the beginning.
 
-Note also that after the files are downloaded to the `data` folder, the are 
-read into memory and stored in the variable called `bioclim_data`
+Note also that after the files are downloaded to the `data` folder, they are 
+read into memory and stored in the variable called `bioclim_data`.
 
 Now the climate data are in memory, and next we need to load in the 
 observations for the saguaro (these are the data we downloaded at the 
@@ -224,7 +220,8 @@ are ready to proceed.
 To make species distribution modeling more streamlined, it is useful to have an 
 idea of how widely our species is geographically distributed. We are going to 
 find general latitudinal and longitudinal boundaries and store this information 
-for later use:
+for later use. We use the `ceiling()` and `floor()` to round up and down, 
+respectively, to the nearest integer:
 
 ```{r geographic-extent}
 # Determine geographic extent of our data
@@ -232,6 +229,7 @@ max_lat <- ceiling(max(obs_data$latitude))
 min_lat <- floor(min(obs_data$latitude))
 max_lon <- ceiling(max(obs_data$longitude))
 min_lon <- floor(min(obs_data$longitude))
+# Store boundaries in a single extent object
 geographic_extent <- ext(x = c(min_lon, max_lon, min_lat, max_lat))
 ```
 
@@ -269,10 +267,10 @@ Now that our occurrence data look OK, we can use the bioclimatic variables to
 create a model. The first thing we want to do though is limit our consideration 
 to a reasonable geographic area. That is, for our purposes we are not looking 
 to model saguaro habitat suitability _globally_, but rather to the general 
-southwest region. We start by building an Extent object that is just a little 
-larger than the extent of our saguaro observations. We then crop the 
-bioclimatic data to that larger, sampling extent. As a reality check we finish 
-by plotting the cropped version of first bioclimatic variable.
+southwest region of North America. We start by building an Extent object that 
+is just a little larger than the extent of our saguaro observations. We then 
+crop the bioclimatic data to that larger, sampling extent. As a reality check 
+we finish by plotting the cropped version of first bioclimatic variable.
 
 ```{r bioclim-crop}
 # Make an extent that is 25% larger
@@ -284,6 +282,8 @@ bioclim_data <- crop(x = bioclim_data, y = sample_extent)
 # Plot the first of the bioclim variables to check on cropping
 plot(bioclim_data[[1]])
 ```
+The plot shows the first bioclimatic varable (annual mean temperature in 
+degrees Celsius).
 
 In order to evaluate species distribution models, and really understand the 
 factors influencing where saguaros occur, we need to include some absence 
@@ -313,7 +313,7 @@ set.seed(20210707)
 
 # Randomly sample points (same number as our observed points)
 background <- spatSample(x = bioclim_data,
-                         size = 1000,
+                         size = 1000,    # generate 1,000 pseudo-absence points
                          values = FALSE, # don't need values
                          xy = TRUE)      # just need coordinates
 
@@ -345,14 +345,14 @@ points(x = obs_data$longitude,
 
 We have observation data and pseudo-absence data and we need to first put them 
 into one data structure, then add in the climate data so we have a single data
-frame with observations, pseudo-absence points, and climate data for every 
-coordinate in the data frame. It sounds like a lot, but after putting the two
+frame with presence points and pseudo-absence points, _and_ climate data for 
+each of these points. It sounds like a lot, but after putting the two
 coordinate datasets (observations and pseudo-absence points) together, the 
 terra package makes it easy to extract climate data. When we put the 
 observations and pseudo-absence points in the data frame, we need to make sure 
 we know which is which - that is, we need a column to indicate whether a pair 
-of coordinates indicates a presence point or a (pseudo) absence point. So we 
-start by preparing the two datasets:
+of latitude/longitude coordinates indicates a presence point or a (pseudo) 
+absence point. So we start by preparing the two datasets:
 
 ```{r prepare-coordinate-data}
 # Pull out coordinate columns, x (longitude) first, then y (latitude) from 
@@ -379,7 +379,7 @@ head(all_points)
 
 We are now ready to add climate data to the coordinate data sets. As mentioned 
 above, the terra package helps with this. We will use the `extract()` function, 
-which takes geographic coordinates and raster data as in put, and pulls out 
+which takes geographic coordinates and raster data as input, and pulls out 
 values in the raster data for each of the geographic coordinates.
 
 ```{r extract-bioclim}
@@ -416,7 +416,7 @@ our data, and use the "set aside" data to evaluate model performance afterward.
 This is known as separating our data into a **training** set (the data used to 
 _build_ the model) and a **testing** set (the data used to _evaluate_ the 
 model). We are going to reserve 20% of the data for testing, so we use the 
-`kfold()` function from the predicts package to evenly assign each point 
+`folds()` function from the predicts package to evenly assign each point 
 to a random group. To make sure we have roughly representative sample of both 
 presence and pseudo-absence points, we use the `pa` column to tell R that our 
 data has these two sub-groups.
@@ -430,14 +430,18 @@ fold <- folds(x = points_climate,
 
 We now can use the `fold` vector to split data into a training set and a 
 testing set. Values in the `fold` vector are the integers 1, 2, 3, 4, and 5, 
-each evenly sampled:
+each evenly sampled; we can see this with the `table()` function, which counts 
+how many times each of the fold values occurs:
 
 ```{r show-folds}
 table(fold)
 ```
 
 We will say that any observations in fold 1 will be testing data, and any 
-observations in the other folds (2, 3, 4, 5) will be training data.
+observations in the other folds (2, 3, 4, 5) will be training data. Note that 
+we _did not_ add a column for fold identity in the `points_climate` data frame, 
+but we can still use the information in the `fold` vector to separate training 
+data from testing data.
 
 ```{r data-split-02}
 testing <- points_climate[fold == 1, ]
@@ -455,8 +459,32 @@ work of [Valavi et al. 2021](https://doi.org/10.1002/ecm.1486).
 
 ```{r bioclim-training}
 # Build a model using training data
-glm_model <- glm(pa~., data = training, family = binomial())
+glm_model <- glm(pa ~ ., data = training, family = binomial())
+```
 
+OK, there's some odd syntax in that `glm()` code that warrants some 
+explanation, especially that `pa ~ .`. Here is the breakdown of the three 
+pieces of information passed to `glm()`:
+
++ `pa ~ .`: This is the formula we are analyzing, that is we are asking R to 
+predict the value in the `pa` column based on values in _all the remaining
+columns_. That is, instead of listing the names of all the bioclimatic 
+variables (`pa ~ bio1 + bio2 + bio3...`), we can use the dot (`.`) to mean "all 
+the columns except the column to the left of the tilda (`~`)."
++ `data = training`: This tells R to use only the data stored in the `training` 
+data frame to build the model.
++ `family = binomial()`: Because the response variable, `pa`, only takes values 
+of 0 or 1, we need to indicate this to R. 
+
+Now that we have built our model, we can use it to predict the habitat 
+suitability across the entire map. We do this with the `predict()` function, 
+passing the data to feed into the model (`bioclim_data`), the stored model 
+itself (`glm_model`), and finally what values we want as output 
+(`type = "response"`). This last argument (`type = "response"`) will return the
+predicted probabilities from our model. After calculating the predicted values, 
+we can print them out with the `plot()` command.
+
+```{r bioclim-predict}
 # Get predicted values from the model
 glm_predict <- predict(bioclim_data, glm_model, type = "response")
 
@@ -465,34 +493,56 @@ plot(glm_predict)
 ```
 
 OK, it is a map, but what does it mean? This plot shows the probability of 
-occurrence of saguaros across the map. Note the values are all quite below 1.0.
+occurrence of saguaros across the map. Note the values are all below 1.0.
 
 We now take that model, and evaluate it using the observation data and the
 pseudo-absence points we reserved for model _testing_. We then use this test to
 establish a cutoff of occurrence probability to determine the boundaries of the
 saguaro range.
 
-# TODO: Lots of explanation could be added here.
-
 ```{r testing-model}
 # Use testing data for model evaluation
 glm_eval <- pa_evaluate(p = testing[testing$pa == 1, ],
                         a = testing[testing$pa == 0, ],
                         model = glm_model)
+```
 
+Here is another spot that warrants some additional explanation. We pass three 
+pieces of information to the `pa_evaluate()` function:
+
++ `p = testing[testing$pa == 1, ]`: In this case, `p` stands for presence data, 
+so we pass all the rows in the testing data that correspond to a location where 
+there was a saguaro present (that is, the value in the `pa` column is equal to 
+1).
++ `a = testing[testing$pa == 0, ]`: Similarly, `a` stands for absence data, so 
+we pass all the pseudo-absence rows in our dataset (i.e. all rows where the 
+value in the `pa` column is equal to 0).
++ `model = glm_model`: This is the model object we are evaluating. One way to 
+think about this is that the `glm_model` is a calculator that takes bioclimatic
+data as input and provides probabilities as output.
+
+With the `pa_evaluate()` function, we pass data that we "know" what the right 
+answer should be for these probability calculations. That is, the `glm_model` 
+should predict values close to 1 for those rows that we pass to the `p` argument 
+(because we know that saguaros occur at those locations) and it should predict 
+values close to 0 for those rows that we pass to the `a` argument. We use this
+information on model performance to determine the probability value to use as a 
+cutoff to saying whether a particular location is suitable or unsuitable for 
+saguaros.
+
+```{r model-threshold}
 # Determine minimum threshold for "presence"
 glm_threshold <- glm_eval@thresholds$max_spec_sens
 ```
 
 The `thresholds` element of `glm_eval` offers a number of means of determining 
-the threshold cutoff through the `stat` parameter. Here we chose 
-`max_spec_sens`, which sets "the threshold at which the sum of the sensitivity 
-(true positive rate) and specificity (true negative rate) is highest." For more 
-information, check out the documentation for the `pa_evaluate()` function 
-(`?pa_evaluate`, remember?).
+the threshold cutoff. Here we chose `max_spec_sens`, which sets "the threshold 
+at which the sum of the sensitivity (true positive rate) and specificity (true 
+negative rate) is highest." For more information, check out the documentation 
+for the `pa_evaluate()` function (`?pa_evaluate`, remember?).
   
-And _finally_, we can use that threshold to paint a map with the predicted 
-range of the saguaro!
+And _finally_, we can use that threshold to paint a map with sites predicted to 
+be suitable for the saguaro!
 
 ```{r plot-sdm-threshold-bad-color}
 # Plot base map
@@ -530,8 +580,8 @@ FALSE or TRUE: `FALSE` when the value in a grid cell of `glm_predict` is less
 than or equal to the value in `glm_threshold` and `TRUE` for cells with a value 
 greater than `glm_threshold`. Since there are **two** values in this comparison 
 (`FALSE` and `TRUE`), we need to update what we pass to the `col` parameter in 
-our plot call. Instead of just passing a single value, we provide a color for 0 
-(`NA`) and a color for 1 (`"olivedrab"`):
+our second call to the `plot()` function. Instead of just passing a single 
+value, we provide a color for 0 (`NA`) and a color for 1 (`"olivedrab"`):
 
 ```{r plot-sdm-threshold-good-color}
 # Plot base map
@@ -560,7 +610,7 @@ A final note on our approach: the map we have drawn presents a categorical
 classification of whether a particular point on the landscape will be suitable 
 or not for the species of interest. This classification relies quite heavily on 
 the value of the threshold (see `glm_threshold` and the documentation for
-`pa_evaluate`) _and_ the pseudo-absence points. Given that we used random 
+`pa_evaluate()`) _and_ the pseudo-absence points. Given that we used random 
 sampling to generate those pseudo-absence points, there is potential for 
 variation in the predicted range if you run this code more than once (try it! 
 if you re-run the code from the point of creating the pseudo-absence points, 
@@ -577,7 +627,7 @@ visualizing the results:
 # Species distribution modeling for saguaro
 # Jeff Oliver
 # jcoliver@email.arizona.edu
-# 2022-08-03
+# 2023-08-08
 
 # Load required libraries
 library(terra)
