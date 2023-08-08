@@ -290,7 +290,8 @@ output$distPlot <- renderPlot({
 ```
 
 And we now add our ggplot2 commands to create a scatter plot of bill depth 
-versus bill length. (not familiar with ggplot2? Check out the [introduction to ggplot lesson](https://jcoliver.github.io/learn-r/004-intro-ggplot.html)).
+versus bill length. (not familiar with ggplot2? Check out the 
+[introduction to ggplot lesson](https://jcoliver.github.io/learn-r/004-intro-ggplot.html)).
 
 ```{r plot-input-01, eval = FALSE}
 # Create size plot for penguin species
@@ -342,15 +343,16 @@ it was pulling the value from `input$species`:
 data = penguins[penguins$species == input$species, ]
 ```
 
-If a user types in an incorrect value, R will try to make a plot anyways. But if
-your user does not know how to spell Adelie, their error will not be evident. To 
-improve the experience a user will have when interacting with your Shiny app, we 
-can use [Defensive programming](https://en.wikipedia.org/wiki/Defensive_programming) 
+If a user types in an incorrect value, R will try to make a plot anyways. But 
+if your user does not know how to spell Adelie, their error will not be 
+evident. To improve the experience a user will have when interacting with your 
+Shiny app, we can use 
+[Defensive programming](https://en.wikipedia.org/wiki/Defensive_programming) 
 techniques to reduce these errors. In our app, we let users type in the name of 
 the penguin species, but instead of a text box, we can use a dropdown menu so 
 users could _only_ choose species that match rows in the penguins data. Let us 
-change the input from `textInput` to a dropdown menu. Start by navigating to the 
-`sidebarPanel` call:
+change the input from `textInput` to a dropdown menu. Start by navigating to 
+the `sidebarPanel` call:
 
 ```{r sidebar-panel-text, eval = FALSE}
 # Sidebar with text input for penguin species
@@ -433,8 +435,9 @@ output$statsTable <- renderTable({
 ```
 
 Inside the call to `renderTable`, we can add the R code for performing a linear 
-regression between bill length and bill width, extracting the summary statistics 
-from the model, and pulling out the coefficient estimates from the model:
+regression between bill length and bill width, extracting the summary 
+statistics from the model, and pulling out the coefficient estimates from the 
+model:
 
 ```{r table-comments, eval = FALSE}
 # Add results of a linear model to output
@@ -485,9 +488,10 @@ mainPanel(
 ```
 
 We need to add the results from our linear regression model to the main panel 
-output. For the plot, we used `plotOutput`, but since we are displaying a table, 
-we use...wait for it...`tableOutput`. After the call to `plotOutput`, add a 
-comma, then a call to `tableOutput`, referencing the variable with our table:
+output. For the plot, we used `plotOutput`, but since we are displaying a 
+table, we use...wait for it...`tableOutput`. After the call to `plotOutput`, 
+add a comma, then a call to `tableOutput`, referencing the variable with our 
+table:
 
 ```{r main-panel-table, eval = FALSE}
 # Show plot and statistical results
@@ -644,14 +648,16 @@ shinyApp(ui = ui, server = server)
 
 ## Additional resources
 
-+ The invaluable [Shiny cheat sheet](https://shiny.rstudio.com/images/shiny-cheatsheet.pdf)
-+ RStudio's resources for [debugging Shiny apps](https://shiny.rstudio.com/articles/debugging.html)
++ The invaluable [Shiny cheat sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/shiny.pdf)
++ Posit's resources for [debugging Shiny apps](https://shiny.posit.co/r/articles/improve/debugging/)
 + An [interactive Shiny course](https://rstudio-education.github.io/shiny-course/)
 + [shinyapps.io](https://www.shinyapps.io/) will host your app so other people 
 can use it
++ If you want to build interactive maps in Shiny, take a look at the 
+[leaflet package](https://rstudio.github.io/leaflet/shiny.html).
 + You can also build Shiny apps to work with data that your users upload. 
-Uploads are usually handled by the `fileInput` function (see [documentation](https://shiny.rstudio.com/reference/shiny/1.6.0/fileInput.html))
-and you can find an example of its use in this [RStudio example](https://shiny.rstudio.com/articles/upload.html).
+Uploads are usually handled by the `fileInput` function (see [documentation](https://shiny.posit.co/r/reference/shiny/1.6.0/fileinput))
+and you can find an example of its use in this [RStudio example](https://shiny.posit.co/r/articles/build/upload/).
 + If you want a different look from the default Shiny theme, try
     + The [shinythemes](https://rstudio.github.io/shinythemes/) package for 
     different color schemes. The [Shiny theme selector](https://shiny.rstudio.com/gallery/shiny-theme-selector.html)
@@ -666,6 +672,6 @@ this lesson
 
 ***
 
-<a href="index.html">Back to learn-r main page</a>
-  
-Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
+[Back to learn-r main page](index.html)
+
+Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.
