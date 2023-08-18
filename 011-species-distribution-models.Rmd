@@ -249,7 +249,7 @@ plot(my_map,
      axes = TRUE, 
      col = "grey95")
 
-# Add the points for individual observation
+# Add the points for individual observations
 points(x = obs_data$longitude, 
        y = obs_data$latitude, 
        col = "olivedrab", 
@@ -282,6 +282,7 @@ bioclim_data <- crop(x = bioclim_data, y = sample_extent)
 # Plot the first of the bioclim variables to check on cropping
 plot(bioclim_data[[1]])
 ```
+
 The plot shows the first bioclimatic varable (annual mean temperature in 
 degrees Celsius).
 
@@ -315,6 +316,7 @@ set.seed(20210707)
 background <- spatSample(x = bioclim_data,
                          size = 1000,    # generate 1,000 pseudo-absence points
                          values = FALSE, # don't need values
+                         na.rm = TRUE,   # don't sample from ocean
                          xy = TRUE)      # just need coordinates
 
 # Look at first few rows of background
@@ -335,7 +337,7 @@ points(background,
        pch = 1,
        cex = 0.75)
 
-# Add the points for individual observation
+# Add the points for individual observations
 points(x = obs_data$longitude, 
        y = obs_data$latitude, 
        col = "olivedrab", 
@@ -504,7 +506,8 @@ saguaro range.
 # Use testing data for model evaluation
 glm_eval <- pa_evaluate(p = testing[testing$pa == 1, ],
                         a = testing[testing$pa == 0, ],
-                        model = glm_model)
+                        model = glm_model,
+                        type = "response")
 ```
 
 Here is another spot that warrants some additional explanation. We pass three 
@@ -671,6 +674,7 @@ set.seed(20210707)
 background <- spatSample(x = bioclim_data,
                          size = 1000,
                          values = FALSE, # don't need values
+                         na.rm = TRUE,   # don't sample from ocean
                          xy = TRUE)      # just need coordinates
 
 # Pull out coordinate columns, x (longitude) first, then y (latitude) from 
@@ -722,7 +726,8 @@ glm_predict <- predict(bioclim_data, glm_model, type = "response")
 # Use testing data for model evaluation
 glm_eval <- pa_evaluate(p = testing[testing$pa == 1, ],
                         a = testing[testing$pa == 0, ],
-                        model = glm_model)
+                        model = glm_model,
+                        type = "response")
 
 # Determine minimum threshold for "presence"
 glm_threshold <- glm_eval@thresholds$max_spec_sens
