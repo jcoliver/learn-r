@@ -319,6 +319,26 @@ single graph.
 
 ***
 
+## An aside: narratives in data
+
+All the data we deal with are, in some way, collected by humans. Even if data 
+are collected with data loggers or automated systems, humans were still 
+involved in deciding how, where, and when to collect those data. When we use 
+data, we should consider rationale behind the people who created the dataset. 
+What was their motivation? What was the story they intended to tell? We can ask 
+this about the _Iris_ flower data we are working on; use the resources you have 
+(in this case, a search engine in a web browser), to answer the following 
+questions:
+
+1. Who generated these data?
+2. What were the data originally used for?
+3. Have the data been used for other purposes?
+
+You can read more about narratives in data science from the ADSA Data Science 
+Ethos page at [https://ethos.academicdatascience.org/lenses/narratives/](https://ethos.academicdatascience.org/lenses/narratives/).
+
+***
+
 ## The _long_ way
 
 The iris data are organized like this:
