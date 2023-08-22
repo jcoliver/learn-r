@@ -2,11 +2,25 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 01  | Aug   | Hybrid open lab                    |
-| 08  | Aug   | Hybrid open lab                    |
-| 15  | Aug   | Hybrid open lab                    |
-| 22  | Aug   | Hybrid open lab                    |
 | 29  | Aug   | Hybrid open lab                    |
+| 05  | Sep   | Hybrid open lab                    |
+| 12  | Sep   | Introduction to R statistics       |
+| 19  | Sep   | Introduction to R graphing         |
+| 26  | Sep   | Hybrid open lab                    |
+| 03  | Oct   | Introduction to data visualization with ggplot |
+| 10  | Oct   | Hybrid open lab                    |
+| 17  | Oct   | Reproducible reports with knitr    |
+| 24  | Oct   | Hybrid open lab                    |
+| 31  | Oct   | Heatmaps & data wrangling          |
+| 07  | Nov   | Hybrid open lab                    |
+| 14  | Nov   | Git and GitHub with RStudio        |
+| 21  | Nov   | Hybrid open lab                    |
+| 28  | Nov   | Data science: more fun, less pain with tidyverse |
+| 05  | Dec   | Hybrid open lab                    |
+| 12  | Dec   | Hybrid open lab                    |
+| 19  | Dec   | _No R session this day_            |
+| 26  | Dec   | _No R session this day_            |
+
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
