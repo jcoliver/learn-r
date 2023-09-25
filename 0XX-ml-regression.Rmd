@@ -1,0 +1,77 @@
+---
+title: "Machine learning in R part 1: regression"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+urlcolor: blue
+---
+
+[INTRODUCTORY SENTENCE]
+
+**Something about machine learning, introduction to the concept**
+
+#### Learning objectives
+1. one
+2. two
+3. three
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+
+
+***
+
+## Getting started
+
++ Library installation (if necessary)
++ Project setup
++ Download data (if necessary)
+
+***
+
+## [INTRODUCTION]
+
+Machine learning is different enough that it warrants a little introduction, 
+largely just the y-hat vs. beta-hat nature of machine learning vs. statistics.
+
+***
+
+## [TOPIC ONE]
+
+Running the two models
+
+Vanilla linear regression
+Regression trees
+
+***
+
+## [TOPIC TWO]
+
+Comparing the two models via MSE (no training/testing split)
+
+***
+
+## [TOPIC THREE]
+
+Training & testing split, a little bit why, mostly how
+Comparing the two models via MSE means
+
+***
+
+## Additional resources
+
++ An extremely useful resource is [An Introduction to Statistical Learning with Applications in R](https://arizona-primo.hosted.exlibrisgroup.com/permalink/f/evot53/01UA_ALMA51605092790003843), 
+by Gareth James and colleagues. This book provides an accessible introduction 
+to several machine learning approaches, including regression and classification
+techniques, along with _a lot_ of worked examples and R code.
++ [resource two](url-two)
++ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.
