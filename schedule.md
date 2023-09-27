@@ -9,7 +9,7 @@
 | 26  | Sep   | Hybrid open lab                    |
 | 03  | Oct   | Introduction to data visualization with ggplot |
 | 10  | Oct   | Hybrid open lab                    |
-| 17  | Oct   | Reproducible reports with knitr    |
+| 17  | Oct   | Hybrid open lab                    |
 | 24  | Oct   | Hybrid open lab                    |
 | 31  | Oct   | Heatmaps & data wrangling          |
 | 07  | Nov   | Hybrid open lab                    |
