@@ -39,6 +39,33 @@ largely just the y-hat vs. beta-hat nature of machine learning vs. statistics.
 
 ***
 
+```{r dev-block}
+# Place for experimentation; replace later
+# Merging Taylor Swift data
+
+library(dplyr)
+
+# Song characteristics
+# https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-10-17/taylor_all_songs.csv
+# Billboard performance
+# https://github.com/scharfsteina/BigDataFinalProject/blob/main/data/billboard.csv
+
+
+songs <- read.csv(file = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_all_songs.csv")
+scores <- read.csv(file = "https://raw.githubusercontent.com/scharfsteina/BigDataFinalProject/main/data/billboard.csv")
+colnames(scores)[1] <- "id"
+
+# songs <- read.csv(file = "~/Desktop/taylor_all_songs.csv")
+# scores <- read.csv(file = "~/Desktop/billboard.csv")
+
+songs$track_name <- tolower(songs$track_name)
+
+combined <- scores %>%
+  left_join(songs, by = join_by(song == track_name))
+
+
+```
+
 ## [TOPIC ONE]
 
 Running the two models
