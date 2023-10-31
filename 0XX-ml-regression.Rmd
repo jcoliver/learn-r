@@ -14,9 +14,11 @@ urlcolor: blue
 **Something about machine learning, introduction to the concept**
 
 #### Learning objectives
-1. one
-2. two
-3. three
+1. Explain the difference between machine learning and inferential statistics
+2. Load tabular data into R
+3. Build a predictive model and evaluate model performance
+4. Split data into training and testing sets
+5. Apply iteration to model evaluation and model selection
 
 ## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
 
@@ -44,6 +46,11 @@ largely just the y-hat vs. beta-hat nature of machine learning vs. statistics.
 # Merging Taylor Swift data
 
 library(dplyr)
+
+# Chart data for Beyonce (& TS) available at 
+# https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-09-29
+# How do we get song characteristics? Might look at how it was done for TS:
+# https://github.com/wjakethompson/taylor
 
 # Song characteristics
 # https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-10-17/taylor_all_songs.csv
