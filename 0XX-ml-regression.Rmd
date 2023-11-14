@@ -46,6 +46,7 @@ largely just the y-hat vs. beta-hat nature of machine learning vs. statistics.
 # Merging Taylor Swift data
 
 library(dplyr)
+library(randomForest)
 
 # Chart data for Beyonce (& TS) available at 
 # https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-09-29
@@ -70,7 +71,39 @@ songs$track_name <- tolower(songs$track_name)
 combined <- scores %>%
   left_join(songs, by = join_by(song == track_name))
 
+# We want to predict peak_position
+# Predictors (aka "features")
+# danceability energy loudness speechiness acousticness instrumentalness liveness valence tempo explicit mode_name
 
+model_data <- combined %>%
+  select(peak_position, danceability, energy, loudness, speechiness, 
+         acousticness, instrumentalness, liveness, valence, tempo, explicit, 
+         mode_name) %>% 
+  na.omit()
+
+# Run a linear model with all predictors
+linear_model <- lm(peak_position ~ ., data = model_data)
+
+# Run a random forest model with all predictors
+rf_model <- randomForest(peak_position ~ ., data = model_data)
+
+# Comparing model performance
+
+# Predict song's peak position based on linear model
+linear_prediction <- predict(linear_model, newdata = model_data)
+
+# Predict song's peak position based on random forest model
+rf_prediction <- predict(rf_model, newdata = model_data)
+
+# Calculate RMSE for each model: square root of the mean squared error
+linear_mse <- mean((model_data$peak_position - linear_prediction)^2)
+linear_rmse <- sqrt(linear_mse)
+
+rf_mse <- mean((model_data$peak_position - rf_prediction)^2)
+rf_rmse <- sqrt(rf_mse)
+
+cat("Linear model RMSE: ", linear_rmse, "\n")
+cat("Random forest RMSE: ", rf_rmse)
 ```
 
 ## [TOPIC ONE]
