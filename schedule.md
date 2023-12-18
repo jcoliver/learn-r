@@ -2,25 +2,25 @@
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 29  | Aug   | Hybrid open lab                    |
-| 05  | Sep   | Hybrid open lab                    |
-| 12  | Sep   | Introduction to R statistics       |
-| 19  | Sep   | Introduction to R graphing         |
-| 26  | Sep   | Hybrid open lab                    |
-| 03  | Oct   | Introduction to data visualization with ggplot |
-| 10  | Oct   | Hybrid open lab                    |
-| 17  | Oct   | Hybrid open lab                    |
-| 24  | Oct   | Hybrid open lab                    |
-| 31  | Oct   | Heatmaps & data wrangling          |
-| 07  | Nov   | Hybrid open lab                    |
-| 14  | Nov   | Git and GitHub with RStudio        |
-| 21  | Nov   | Hybrid open lab                    |
-| 28  | Nov   | Data science: more fun, less pain with tidyverse |
-| 05  | Dec   | Hybrid open lab                    |
-| 12  | Dec   | Hybrid open lab                    |
-| 19  | Dec   | _No R session this day_            |
-| 26  | Dec   | _No R session this day_            |
-
+| 02  | Jan   | Happy New Year! _No lab this day_  |
+| 09  | Jan   | _No lab this day._ Go outside!     |
+| 16  | Jan   | Hybrid open lab                    |
+| 23  | Jan   | Hybrid open lab                    |
+| 30  | Jan   | Writing functions in R             |
+| 06  | Feb   | Hybrid open lab                    |
+| 13  | Feb   | Data science: more fun, less pain with **Python** |
+| 20  | Feb   | Hybrid open lab                    |
+| 27  | Feb   | Data science: more fun, less pain with tidyverse |
+| 05  | Mar   | Hybrid open lab                    |
+| 12  | Mar   | Introduction to data visualization with ggplot |
+| 19  | Mar   | Hybrid open lab                    |
+| 26  | Mar   | A brief introduction to species distribution modeling|
+| 02  | Apr   | Hybrid open lab                    |
+| 09  | Apr   | Your first machine learning application |
+| 16  | Apr   | Hybrid open lab                    |
+| 23  | Apr   | Git and GitHub with RStudio        |
+| 30  | Apr   | Hybrid open lab                    |
+| 07  | May   | Hybrid open lab                    |
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
