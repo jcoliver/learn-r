@@ -4,7 +4,7 @@
 |:---:|:-----:|:----------------------------------:|
 | 02  | Jan   | Happy New Year! _No lab this day_  |
 | 09  | Jan   | _No lab this day._ Go outside!     |
-| 16  | Jan   | Hybrid open lab                    |
+| 16  | Jan   | Abbreviated hybrid open lab (10-11 am) |
 | 23  | Jan   | Hybrid open lab                    |
 | 30  | Jan   | Writing functions in R             |
 | 06  | Feb   | Hybrid open lab                    |
