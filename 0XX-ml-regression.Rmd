@@ -22,22 +22,78 @@ urlcolor: blue
 
 ## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
 
-
-
 ***
 
 ## Getting started
 
-+ Library installation (if necessary)
-+ Project setup
-+ Download data (if necessary)
+### Install additional R packages
+
+There are _two_ additional R packages that will need to be installed:
+
++ dplyr
++ randomforest
+
+To install these, run:
+
+```{r install-libraries, eval = FALSE}
+install.packages("dplyr")
+install.packages("randomforest")
+```
+
+### Workspace organization
+
+First we need to setup our development environment. Open RStudio and create a 
+new project via:
+
++ File > New Project...
++ Select 'New Directory'
++ For the Project Type select 'New Project'
++ For Directory name, call it something like "ml-regression" (without the quotes)
++ For the subdirectory, select somewhere you will remember (like "My Documents" 
+or "Desktop")
+
+We need to create two folders: 'data' will store the data we will be analyzing, 
+and 'output' will store the results of our analyses. In the RStudio console:
+
+```{r workspace-setup, eval = FALSE}
+dir.create(path = "data")
+dir.create(path = "output")
+```
+
+It is good practice to keep input (i.e. the data) and output separate. 
+Furthermore, any work that ends up in the **output** folder should be completely
+disposable. That is, the combination of data and the code we write should allow 
+us (or anyone else, for that matter) to reproduce any output.
+
+### Example data
+
+Explain where the data come from
+
+save it in the 'data' folder that you created in the step above.
 
 ***
 
-## [INTRODUCTION]
+## Machine learning in a nutshell
 
-Machine learning is different enough that it warrants a little introduction, 
-largely just the y-hat vs. beta-hat nature of machine learning vs. statistics.
+In this lesson, we are going to run through an relatively minimal example of 
+machine learning. The term "machine learning" gets thrown around a lot, often 
+with little explanation, so we will start with a _very_ brief explanation. The 
+big difference between "traditional" statistics and machine learning is the 
+goal of each approach (aside: the modifier "traditional" is in no way meant to 
+imply a lesser status or utility of statistics - I just could not come up with 
+a better term). That is, the statistics we learned in class are generally 
+focused on making inferences about how the world works, i.e. how does $X$ 
+affect $Y$? In contrast, machine learning is less concerned with the details of 
+how $X$ and $Y$ are related, but rather focused on using $X$ to make accurate 
+predictions of $Y$. If we consider this in a linear regression framework, 
+statistics cares about getting accurate values for the beta hats 
+($\hat{\beta}$) on the right-hand side of the equation, while machine learning 
+cares about being able to make accurate predictions for the Y hats ($\hat{Y}$) 
+on the left-hand side of the equation:
+
+$$
+\hat{Y} = \hat{\beta}_0 + \hat{\beta}_1 X_1 
+$$
 
 ***
 
@@ -59,7 +115,7 @@ library(randomForest)
 # https://github.com/scharfsteina/BigDataFinalProject/blob/main/data/billboard.csv
 
 
-## TOPIC ONE
+## TOPIC FIVE (data wrangling)
 
 songs <- read.csv(file = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_all_songs.csv")
 scores <- read.csv(file = "https://raw.githubusercontent.com/scharfsteina/BigDataFinalProject/main/data/billboard.csv")
@@ -228,6 +284,13 @@ Next steps
 1. Variable (feature) selection
 2. Poisson regression instead of vanilla linear regression
 3. Poisson model for random forest
+
+***
+
+## [TOPIC FIVE]
+
+Data wrangling code (read from tidytuesday sources & reduction to only those 
+variables of interest)
 
 ***
 
