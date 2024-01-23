@@ -8,9 +8,9 @@
 | 23  | Jan   | Hybrid open lab                    |
 | 30  | Jan   | Writing functions in R             |
 | 06  | Feb   | Hybrid open lab                    |
-| 13  | Feb   | Data science: more fun, less pain with **Python** |
+| 13  | Feb   | Data science: more fun, less pain with tidyverse |
 | 20  | Feb   | Hybrid open lab                    |
-| 27  | Feb   | Data science: more fun, less pain with tidyverse |
+| 27  | Feb   | Data science: more fun, less pain with **Python** |
 | 05  | Mar   | Hybrid open lab                    |
 | 12  | Mar   | Introduction to data visualization with ggplot |
 | 19  | Mar   | Hybrid open lab                    |
