@@ -50,9 +50,9 @@ _All sessions will be 9-11 am on Tuesday in the Data Studios of the [Main Librar
 -->
 _All sessions will be 9-11 am (MST) on Tuesday_. Sessions will be offered in 
 hybrid format: we will be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
-and running a concurrent Zoom session at [https://arizona.zoom.us/j/437855363](https://arizona.zoom.us/j/437855363).
+and running a concurrent Zoom session at [https://arizona.zoom.us/j/81985869620](https://arizona.zoom.us/j/81985869620).
 <!--
-_All sessions will be 9-11 am (MST) on Tuesday through Zoom_ at  [https://arizona.zoom.us/j/437855363](https://arizona.zoom.us/j/437855363). 
+_All sessions will be 9-11 am (MST) on Tuesday through Zoom_ at  [https://arizona.zoom.us/j/81985869620](https://arizona.zoom.us/j/81985869620). 
 -->
 To get the most out of these workshops, participants should bring a laptop with 
 [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html). 
