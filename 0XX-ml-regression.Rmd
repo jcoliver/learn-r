@@ -9,9 +9,8 @@ output:
 urlcolor: blue
 ---
 
-[INTRODUCTORY SENTENCE]
-
-**Something about machine learning, introduction to the concept**
+An introduction to the concept of machine learning, with a worked application 
+showing model comparison and evaluation of model performance.
 
 #### Learning objectives
 1. Explain the difference between machine learning and inferential statistics
@@ -20,7 +19,11 @@ urlcolor: blue
 4. Split data into training and testing sets
 5. Apply iteration to model evaluation and model selection
 
-## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+Machine learning has been all the rage, but there remains a lot of mystery 
+about what machine learning really _is_. In this workshop, we will work through 
+an example of how we use machine learning to make predictions and how to assess 
+how good those predictions really are. The material is designed for people who 
+have little to no experience with machine learning.
 
 ***
 
@@ -287,7 +290,138 @@ Next steps
 
 ***
 
-## [TOPIC FIVE]
+## Bonus Track: Data Wrangling
+
+The data we used for this lesson did not come in the form that we used them. 
+That is, there were several steps that needed to happen _before_ we started 
+using the data in the models. These steps were:
+
+1. Downloading the original song data
+2. Downloading the original score data for each song
+3. Combining the two above data sources
+4. Removing unnecessary columns from data
+5. Removing any rows that are missing data
+
+The section below illustrates these four steps. Note the cleaned data are all 
+available (**TODO**: add a link to data), so you do not need to run the code below in order to do the machine 
+learning parts of the lesson. But for those who are curious, the code below 
+highlights that most machine learning applications require substantial curation 
+of data sources before any models are built.
+
+```{r data-download}
+# Location of song data on Tidy Tuesday site 2023-10-17
+song_url <- "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_all_songs.csv"
+# Location of Billboard chart data
+scores_url <- "https://raw.githubusercontent.com/scharfsteina/BigDataFinalProject/main/data/billboard.csv"
+
+# Download both datasets
+songs <- read.csv(file = song_url)
+scores <- read.csv(file = scores_url)
+```
+
+We can look at the column names for both datasets as a reality check. We will 
+need to join the data sets together, so they will need to have one column with 
+the same information. The column _names_ do not necessarily have to match, but 
+the data do. The `songs` data has the following columns:
+
+```{r songs-columns}
+colnames(songs)
+```
+
+Since we are doing an analysis on the level of the song (remember, we want to 
+predict an individual song's highest spot on the Billboard chart), the fifth 
+column, `r colnames(songs)[5]`, looks like the one we will use to join it with 
+the `scores` data. Speaking of the `scores` data, it has the following columns:
+
+```{r scores-columns}
+colnames(scores)
+```
+
+There are two things of note:
+
+1. There is no `track_name` column in the `scores` data, but there is a `song` 
+column.
+2. The first column is just called `X`, which is  not very informative.
+
+Let us look at the first six rows of the `scores` data:
+
+```{r scores-head}
+head(scores)
+```
+
+So the `song` column looks like it has the information wee need to join with 
+the `songs` data. The `X` column just looks like an identifier, so we can 
+rename the column with a more informative name.
+
+```{r rename-x}
+# Rename first column of scores data from "X" to "id"
+colnames(scores)[1] <- "id"
+```
+
+Before we join the data together it is worthwhile glancing at the values in the 
+`track_name` column of the `songs` data. Here we will just look at the first 
+ten values:
+
+```{r songs-tracks}
+songs$track_name[1:10]
+```
+
+And compare that to the first ten songs in the `scores` data:
+
+```{r scores-songs}
+scores$song[1:10]
+```
+
+Now the song names in the two datasets are in different orders, but that is not 
+a concern, because we will use functions in R that know how to line the rows up 
+correctly. However, note that the song names in the `songs` data have capital 
+letters (it uses title case), while song names in the `scores` data are all 
+lower case letters. If we leave the data like this, R will not be able to join 
+the data together the right way. That is, if we tried to join the datasets 
+together as is, R would think that "Shake It Off" and "shake it off" are 
+different songs. _We_ know that these are the same song, but we need to change 
+the data so R also sees them as the same song. The easiest way to do this is to 
+change _all_ the letters in song names to lower case. It looks like the song 
+names in the `scores` data are already lower case, but we can do the 
+transformation on both datasets, just to be sure.
+
+```{r songs-to-lower}
+# Change song names to lower case
+songs$track_name <- tolower(songs$track_name)
+scores$song <- tolower(scores$song)
+```
+
+One final check and we can see that both datasets now have song names that are 
+all lower case letters:
+
+```{r songs-check}
+songs$track_name[1:10]
+```
+
+```{r scores-check}
+scores$song[1:10]
+```
+
+**TODO**: Need to deal with punctuation. Scores has "i knew you were trouble.", 
+but songs has "i knew you were trouble".
+
+```{r}
+combined <- scores %>%
+  left_join(songs, by = join_by(song == track_name))
+
+# We want to predict peak_position
+# Predictors (aka "features")
+# danceability energy loudness speechiness acousticness instrumentalness liveness valence tempo explicit mode_name
+
+model_data <- combined %>%
+  select(peak_position, danceability, energy, loudness, speechiness, 
+         acousticness, instrumentalness, liveness, valence, tempo, explicit, 
+         mode_name) %>% 
+  na.omit()
+
+
+
+```
 
 Data wrangling code (read from tidytuesday sources & reduction to only those 
 variables of interest)
