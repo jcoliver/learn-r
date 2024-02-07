@@ -308,6 +308,11 @@ learning parts of the lesson. But for those who are curious, the code below
 highlights that most machine learning applications require substantial curation 
 of data sources before any models are built.
 
+Just in case you haven't already loaded the dplyr library, we do so now.
+```{r prep-libraries, eval = FALSE}
+library(dplyr)
+```
+
 ```{r data-download}
 # Location of song data on Tidy Tuesday site 2023-10-17
 song_url <- "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_all_songs.csv"
@@ -402,29 +407,71 @@ songs$track_name[1:10]
 scores$song[1:10]
 ```
 
-**TODO**: Need to deal with punctuation. Scores has "i knew you were trouble.", 
-but songs has "i knew you were trouble".
+We're almost there. For some reason, the song "I Knew You Were Trouble" 
+includes a period in the `scores` dataset, but does not in the `songs` dataset. 
+We need to make sure these song names match _exactly_ or R will consider them 
+different songs. For this case, we will just replace the version in the 
+`scores` dataset so that it does not include a period.
+
+```{r scores-trouble}
+scores$song <- gsub(pattern = "i knew you were trouble.",
+                    replacement = "i knew you were trouble",
+                    x = scores$song,
+                    fixed = TRUE)
+```
+
+And looking at the first few songs in the `scores` dataset, we see that one 
+song has been updated:
+
+```{r scores-check-2}
+scores$song[1:10]
+```
+
+You can also check for any additional differences between the datasets by using 
+base R's `setdiff()` function or dplyr's version of `setdiff()`. For now we 
+will skip this step, the set operations are useful for comparing things before 
+merges and joins.
+
+We are now ready to join the song data with the scores data. We can do this 
+with functions from dplyr, including the pipe, `%>%` and the `left_join()` 
+function. We can join the datasets by telling the `left_join()` functions which 
+columns to use when merging the datasets:
+
+```{r join-data}
+combined <- left_join(scores, songs, by = join_by(song == track_name))
+```
+
+Here we are telling R to add rows together from the "left" dataset (`scores` in 
+our case) to the "right" dataset (`songs`). We tell it to use the "song" column 
+of the "left" dataset to find the corresponding row in the "track_name" column 
+of the "right" dataset. The distinction of "left" and "right" really just 
+relies on where they appear in the `inner_join()` function: `scores` is on the 
+left, `songs` is on the right.
+
+These data now have all the columns from `songs` and all the columns from 
+`scores` (a total of `r length(combined$song)` columns). For the purposes of 
+this lesson, we only need (1) the highest position on the charts the song 
+achieved (that is, the thing we are trying to predict) and (2) song 
+characteristics (the things we use to make predictions, AKA features), such as 
+how loud and how danceable a song is (aren't they _all_ danceable?). So the 
+last steps are to select only those columns of interest, drop any remaining 
+rows that are missing data, and write the data to a CSV file.
 
 ```{r}
-combined <- scores %>%
-  left_join(songs, by = join_by(song == track_name))
-
 # We want to predict peak_position
-# Predictors (aka "features")
-# danceability energy loudness speechiness acousticness instrumentalness liveness valence tempo explicit mode_name
-
+# Predictors (aka "features"):
+# danceability energy loudness speechiness acousticness instrumentalness 
+# liveness valence tempo explicit mode_name
 model_data <- combined %>%
   select(peak_position, danceability, energy, loudness, speechiness, 
          acousticness, instrumentalness, liveness, valence, tempo, explicit, 
          mode_name) %>% 
-  na.omit()
+  na.omit() # Drop any rows missing data
 
-
-
+write.csv(file = "data/swift-data.csv",
+          x = model_data,
+          row.names = FALSE)
 ```
-
-Data wrangling code (read from tidytuesday sources & reduction to only those 
-variables of interest)
 
 ***
 
