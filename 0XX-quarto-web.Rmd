@@ -9,12 +9,15 @@ output:
 urlcolor: blue
 ---
 
-[INTRODUCTORY SENTENCE]
+Setting up a webpage can be daunting, but the Quarto package makes it easier to 
+create a professional-looking website from text files.
 
 #### Learning objectives
-1. one
-2. two
-3. three
+
+1. Demonstrate how to start a Quarto website project
+2. Add content and adjust theme of home page
+3. Publish content online by sending files to GitHub
+4. Add additional pages to the website
 
 ## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
 
@@ -23,24 +26,57 @@ urlcolor: blue
 ## Getting started
 
 + Library installation (if necessary)
-+ Project setup
-+ Download data (if necessary)
++ Project setup (skip until later)
++ GitHub account (if necessary)
 
 ***
 
-## [TOPIC ONE]
+## Starting the project
+
++ Start at GitHub
+  + New repo screenshot
++ New RStudio project
+  + From existing GitHub repo?
+    + Can do this from the console as long as Quarto is installed?
++ Add name and intro sentence
++ Send to GitHub
 
 ***
 
-## [TOPIC TWO]
+## Let's get fancy
+
++ Add a photo
++ Add a theme
++ Layout?
++ Send to GitHub
+
+***
+
+## More than a page
+
++ Add another page (need to come up with what this page actually is...)
++ Send to GitHub
+
+***
+
+## Add some bells and whistles
+
++ E-mail links
++ GitHub links
++ Picture shape?
++ Send to GitHub
 
 ***
 
 ## Additional resources
 
-+ [resource one](url-one)
-+ [resource two](url-two)
-+ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
++ Sam Csik's [guide to getting started](https://ucsb-meds.github.io/creating-quarto-websites/) 
+is another great place to get ideas. Sam's lesson was the inspiration for much 
+of the materials here.
++ The [Official Quarto website documentation](https://quarto.org/docs/websites/)
++ A [PDF version](https://jcoliver.github.io/learn-r/0XX-quarto-web.pdf) of this lesson
+
+# FIX lesson PDF link ^^^
 
 ***
 
