@@ -25,23 +25,20 @@ an example of how we use machine learning to make predictions and how to assess
 how good those predictions really are. The material is designed for people who 
 have little to no experience with machine learning.
 
+#### The setting
+
+So. Taylor Swift. Music phenom. The obvious focus of our machine learning 
+lesson. Let us imagine we are in Taylor's position of releasing a new album. 
+Before we release the album, we want to start it off by dropping a single. Not 
+just any single, but one that will race up the charts to build the anticipation 
+for the album. This leads to our goal: build a machine learning algorithm, 
+based on Taylor Swift's released songs, that will predict the billboard 
+position of a new song so Taylor can choose the first single from the album to 
+release.
+
 ***
 
 ## Getting started
-
-### Install additional R packages
-
-There are _two_ additional R packages that will need to be installed:
-
-+ dplyr
-+ randomforest
-
-To install these, run:
-
-```{r install-libraries, eval = FALSE}
-install.packages("dplyr")
-install.packages("randomforest")
-```
 
 ### Workspace organization
 
@@ -68,11 +65,47 @@ Furthermore, any work that ends up in the **output** folder should be completely
 disposable. That is, the combination of data and the code we write should allow 
 us (or anyone else, for that matter) to reproduce any output.
 
+### Install additional R packages
+
+There are _two_ additional R packages that will need to be installed:
+
++ dplyr
++ randomforest
+
+To install these, run:
+
+```{r install-libraries, eval = FALSE}
+install.packages("dplyr")
+install.packages("randomforest")
+```
+
 ### Example data
 
-Explain where the data come from
+The data we are using comes from two sources:
 
-save it in the 'data' folder that you created in the step above.
+1. We have a variety of song characteristics from W. Jake Thompson, who 
+assembled the data from Genius and the Spotify API. These data were initially 
+retrieved from the Tidy Tuesday website for [October 17, 2023](https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-10-17). 
+The song characteristics include measurements of loudness, tempo, and 
+acousticness.
+
+2. We also have the highest position for Taylor Swift's released songs. These 
+come from a [GitHub project](https://github.com/scharfsteina/BigDataFinalProject) 
+by Ava Scharfstein and Aimi Wen. The authors used Python webscraping tools to 
+retrieve Billboard chart positions for a majority of Taylor Swift songs. They 
+did a bunch of neat analyses and you can check them out on the 
+[Project Webpage](https://medium.com/@aimiwen33/exploring-taylor-swifts-music-2bce11a7aab2).
+
+Note that I went ahead and joined these two datasets together. If you want to 
+learn more about that process, see the [Bonus Track](#Bonus-Track-Data-Wrangling)
+section at the end of this lesson.
+
+The data are available at [BITLY LINK](BITLY LINK) and [learn-rlink](learn-rlink) 
+(the former just re-directs to the latter). Use a web browser to navigate to 
+one of those URLs and download the file as a plain text or CSV file (on some 
+systems, you can save as an Excel CSV, which is fine, too). Make sure after you 
+download the file that you move it into the "data" folder you created at the 
+beginning of this lesson.
 
 ***
 
@@ -145,6 +178,9 @@ model_data <- combined %>%
 # Run a linear model with all predictors
 linear_model <- lm(peak_position ~ ., data = model_data)
 
+# Run a glm with all predictors and poisson model
+gl_model <- glm(peak_position ~ ., data = model_data, family = "poisson")
+
 # Run a random forest model with all predictors
 rf_model <- randomForest(peak_position ~ ., data = model_data)
 
@@ -155,6 +191,9 @@ rf_model <- randomForest(peak_position ~ ., data = model_data)
 # Predict song's peak position based on linear model
 linear_prediction <- predict(linear_model, newdata = model_data)
 
+# Predict song's peak position based on glm
+glm_prediction <- predict(gl_model, newdata = model_data, type = "response")
+
 # Predict song's peak position based on random forest model
 rf_prediction <- predict(rf_model, newdata = model_data)
 
@@ -162,10 +201,14 @@ rf_prediction <- predict(rf_model, newdata = model_data)
 linear_mse <- mean((model_data$peak_position - linear_prediction)^2)
 linear_rmse <- sqrt(linear_mse)
 
+glm_mse <- mean((model_data$peak_position - glm_prediction)^2)
+glm_rmse <- sqrt(glm_mse)
+
 rf_mse <- mean((model_data$peak_position - rf_prediction)^2)
 rf_rmse <- sqrt(rf_mse)
 
 cat("Linear model RMSE: ", linear_rmse, "\n")
+cat("GLM RMSE: ", glm_rmse)
 cat("Random forest RMSE: ", rf_rmse)
 
 ## TOPIC THREE
@@ -186,11 +229,17 @@ testing <- model_data %>%
 # Run a linear model with all predictors
 linear_model <- lm(peak_position ~ ., data = training)
 
+# Run a glm with all predictors and poisson model
+gl_model <- glm(peak_position ~ ., data = training, family = "poisson")
+
 # Run a random forest model with all predictors
 rf_model <- randomForest(peak_position ~ ., data = training)
 
 # Predict song's peak position based on linear model for TESTING data
 linear_prediction <- predict(linear_model, newdata = testing)
+
+# Predict song's peak position based on glm for TESTING data
+glm_prediction <- predict(gl_model, newdata = testing, type = "response")
 
 # Predict song's peak position based on random forest model for TESTING data
 rf_prediction <- predict(rf_model, newdata = testing)
@@ -199,11 +248,15 @@ rf_prediction <- predict(rf_model, newdata = testing)
 linear_mse <- mean((testing$peak_position - linear_prediction)^2)
 linear_rmse <- sqrt(linear_mse)
 
+glm_mse <- mean((testing$peak_position - glm_prediction)^2)
+glm_rmse <- sqrt(glm_mse)
+
 rf_mse <- mean((testing$peak_position - rf_prediction)^2)
 rf_rmse <- sqrt(rf_mse)
 
-# cat("Linear model RMSE: ", linear_rmse, "\n")
-# cat("Random forest RMSE: ", rf_rmse)
+cat("Linear model RMSE: ", linear_rmse, "\n")
+cat("GLM RMSE: ", glm_rmse, "\n")
+cat("Random forest RMSE: ", rf_rmse)
 
 # Note both got worse, but RF got considerably worse (almost double RMSE)
 
@@ -211,6 +264,7 @@ rf_rmse <- sqrt(rf_mse)
 # Data frame to hold results
 ml_results <- data.frame(fold = 1:5,
                          linear_rmse = NA,
+                         glm_rmse = NA,
                          rf_rmse = NA)
 for (f in 1:5) {
   # One test/train
@@ -224,11 +278,17 @@ for (f in 1:5) {
   # Run a linear model with all predictors
   linear_model <- lm(peak_position ~ ., data = training)
   
+  # Run a glm with all predictors and poisson model
+  gl_model <- glm(peak_position ~ ., data = training, family = "poisson")
+  
   # Run a random forest model with all predictors
   rf_model <- randomForest(peak_position ~ ., data = training)
   
   # Predict song's peak position based on linear model for TESTING data
   linear_prediction <- predict(linear_model, newdata = testing)
+  
+  # Predict song's peak position based on glm for TESTING data
+  glm_prediction <- predict(gl_model, newdata = testing, type = "response")
   
   # Predict song's peak position based on random forest model for TESTING data
   rf_prediction <- predict(rf_model, newdata = testing)
@@ -236,11 +296,15 @@ for (f in 1:5) {
   # Calculate RMSE for each model: square root of the mean squared error
   linear_mse <- mean((testing$peak_position - linear_prediction)^2)
   linear_rmse <- sqrt(linear_mse)
+
+  glm_mse <- mean((testing$peak_position - glm_prediction)^2)
+  glm_rmse <- sqrt(glm_mse)
   
   rf_mse <- mean((testing$peak_position - rf_prediction)^2)
   rf_rmse <- sqrt(rf_mse)
   
   ml_results$linear_rmse[f] <- linear_rmse
+  ml_results$glm_rmse[f] <- glm_rmse
   ml_results$rf_rmse[f] <- rf_rmse
 }
 
@@ -248,9 +312,11 @@ ml_results
 
 # Calculate means for each
 linear_mean <- mean(ml_results$linear_rmse)
+glm_mean <- mean(ml_results$glm_rmse)
 rf_mean <- mean(ml_results$rf_rmse)
 
 cat("Linear model mean RMSE: ", linear_mean, "\n")
+cat("GLM mean RMSE: ", glm_mean, "\n")
 cat("Random forest mean RMSE: ", rf_mean, "\n")
 
 # Make a plot?
@@ -260,7 +326,11 @@ cat("Random forest mean RMSE: ", rf_mean, "\n")
 
 ## [TOPIC ONE]
 
+Starting the script
+Load the libraries
+
 Running the two models
+
 
 Vanilla linear regression
 Regression trees
