@@ -324,22 +324,146 @@ cat("Random forest mean RMSE: ", rf_mean, "\n")
 
 ```
 
-## [TOPIC ONE]
+## Building our first machines
 
-Starting the script
-Load the libraries
+We are going to start by creating two different model. One is a common model 
+used in inferential statistics: the linear regression model. The second is a 
+tree-based model, called a random forest. We are not going to get into the 
+details of the models - if you want to learn more, see the references listed in 
+the [Additional resources](#Additional-resources) section below.
 
-Running the two models
+We will do all of our work in an R script, so start by creating a new script 
+(File > New File > R Script) and saving it as "ml-lesson.R". At the top of the 
+script, start with a few lines of information for the next human to read the 
+script. We begin these lines with the comment character, `#`, so R will know to 
+ignore these lines. 
 
+```{r script-header}
+# Machine learning on Taylor Swift songs
+# Jeff Oliver
+# jcoliver@arizona.edu
+# 2024-02-27
+```
 
-Vanilla linear regression
-Regression trees
+As mentioned above, we will be using two R packages that are not part of the R 
+core program. We used the `install.packages()` command to install those 
+packages, but to use them we need to load them into memory. That is, even 
+though the dplyr and randomForest packages are installed on our machines, we 
+need to explicitly tell R that we would like to use them. In order to do this, 
+we use the `library()` command:
+
+```{r load-libraries, echo = FALSE}
+suppressPackageStartupMessages(library(randomForest))
+suppressPackageStartupMessages(library(dplyr))
+```
+
+```{r load-libraries-print, eval = FALSE}
+library(randomForest)
+library(dplyr)
+```
+
+We also need to load the data into memory. We will use the data stored in the 
+file that we downloaded earlier in the lesson (see the 
+[Example data](#Example-data) section, above). We will read the data into 
+memory with the `read_csv()` function and look at the first few rows with the 
+`head()` function:
+
+```{r read-data}
+# Read in data
+swift_data <- read.csv(file = "data/swift-data.csv")
+# Show first six rows of data
+head(swift_data)
+```
+
+Looking at these data, we see the first column is `r colnames(swift_data)[1]`, 
+which is the highest position the song achieved on the charts. This is the 
+value we want to build an algorithm to predict. The rest of the columns are the 
+song characteristics we will use to predict the highest chart position of the 
+song. So we begin by building our two models, one using linear regression and 
+one using a random forest.
+
+```{r first-models}
+# Run a linear model with all predictors
+linear_model <- lm(peak_position ~ ., data = swift_data)
+
+# Run a random forest model with all predictors
+rf_model <- randomForest(peak_position ~ ., data = swift_data)
+```
+
+In both models, we are using the song data we downloaded, as indicated by 
+`data = swift_data`. But the first part of each model, the `peak_position ~ .` 
+part, looks weird. In this case, we are telling R to build a model where the 
+response, or dependent, variable is in the `peak_position` column and all the 
+remaining columns are to be used as predictor, or independent, variables. We 
+are using the shortcut of the dot, `.`, which is effectively the same as saying 
+"everything else". That is, we are telling R to build a model with 
+`peak_position` as the response, and everything else in the data as predictor 
+variables. Now that we have built the models, we need to compare them to see 
+which one works better at predicting the chart position of a song.
 
 ***
 
-## [TOPIC TWO]
+## This is me trying
 
+To compare the two models, we need a way to measure how well the models' 
+predictions for the song position match the actual (observed) position. We have 
+the second part (the actual position each song reached), but we still need to 
+calculate the predicted position for each model. We can do this in R with the 
+`predict()` function:
+
+```{r first-prediction}
+# Predict song's peak position based on linear model
+linear_prediction <- predict(linear_model, newdata = swift_data)
+
+# Predict song's peak position based on random forest model
+rf_prediction <- predict(rf_model, newdata = swift_data)
+```
+
+We now have predicted values and observed values. The difference between the 
+two values will provide a measure of how well each model works and we will want 
+to pick whichever model does a better job at predicting. To compare the models 
+we will use the root mean squared error, or RMSE. So just what in the heck in a 
+"root mean squared error"? To define this, we will work backwards in the term:
+
++ error: In this case, error is just the difference between the song's 
+predicted highest chart position and the actual highest chart position. We have 
+data and predictions for `r nrow(swift_data)` songs, so we will calculate 
+`r nrow(swift_data)` error values;
++ squared: We then take each error value and square it. This ensures all values 
+are positive;
++ mean: Next we calculate the _average_ value of these squared errors. This 
+gives us a single value for each model;
++ root: Finally, we take the square root of that mean value, which effectively 
+transforms the average into a number that we can interpret as "how far off does 
+the model predict the song to appear on the chart."
+
+If you are more into equations, the RMSE is calculated as:
+
+$$
+RMSE = \sqrt{ \dfrac{ \sum{ (y_i - \hat{y_i})^2 } } n }
+$$
+
+where $n$ is the number of observations, $y_i$ is the observed chart position 
+of the $i^{th}$song, and $\hat{y_i}$ is the predicted chart position of the 
+$i^{th}$song.
+
+Of course, we do not need to do this by hand, we can do it all in R! Here we 
+will do it in two lines of code: one to calculate the square errors and one to 
+calculate the square root of the mean value.
+
+
+Now that we have build the models, we need to see how 
 Comparing the two models via RMSE (no training/testing split)
+
+Section title possibilities:
+
+Epiphany
+Look What You Made Me Do
+This is me trying
+This is what you came for
+This is why we can't have nice things
+This is really happening
+This one's different
 
 ***
 
