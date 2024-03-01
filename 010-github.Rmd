@@ -58,6 +58,8 @@ executable. If it says something like "/usr/bin/git" or "C:/Program Files/Git/"
 then you already have Git installed. Yay! If instead it says "(Not Found)" in 
 the Git executable field, then you will need to install Git before proceeding.
 
+![The Global Options dialog demonstrating that the Git program is installed](images/git-installed.png){ width=50% }  
+
 (Another way you can do this is to use the command line to check for Git. On 
 Windows, you can run `which git` in your command prompt; on Mac OS or Linux, 
 you can run `git --version`)
