@@ -133,7 +133,7 @@ $$
 
 ***
 
-```{r dev-block}
+```{r dev-block, eval = FALSE, echo = FALSE}
 # Place for experimentation; replace later
 # Merging Taylor Swift data
 
@@ -447,30 +447,195 @@ where $n$ is the number of observations, $y_i$ is the observed chart position
 of the $i^{th}$song, and $\hat{y_i}$ is the predicted chart position of the 
 $i^{th}$song.
 
-Of course, we do not need to do this by hand, we can do it all in R! Here we 
-will do it in two lines of code: one to calculate the square errors and one to 
-calculate the square root of the mean value.
+For now, we do not need to worry too much about this math. We need only 
+remember that if a model has a really small RMSE, it means it does a good job 
+at making predictions. If a model has a really big RMSE, it means it does a 
+poor job at making predictions. These values are relative; we can only decide 
+what counts as "small" and counts as "big" when we compare two or more models 
+to one another.
 
+Of course, we do not need to do these calculations by hand, we can do it all in 
+R! Here we will do it in two lines of code: one to calculate the square errors 
+and one to calculate the square root of the mean value.
 
-Now that we have build the models, we need to see how 
-Comparing the two models via RMSE (no training/testing split)
+```{r rmse}
+# Calculate squared errors for linear model
+linear_sqerr <- (swift_data$peak_position - linear_prediction)^2
+
+# Calculate rmse for linear model
+linear_rmse <- sqrt(mean(linear_sqerr))
+
+# Calculate squared errors for random forest model
+rf_sqerr <- (swift_data$peak_position - rf_prediction)^2
+
+# Calculate rmse for random forest model
+rf_rmse <- sqrt(mean(rf_sqerr))
+```
+
+```{r store-rmse, echo = FALSE}
+# Store for later comparison in lesson
+linear_rmse_orig <- linear_rmse
+rf_rmse_orig <- rf_rmse
+```
+
+We can print the values to the console by running lines of code that just have 
+the names of our two RMSE variables, starting with the linear model:
+
+```{r print-linear-rmse}
+linear_rmse
+```
+
+Then the random forest model:
+
+```{r print-rf-rmse}
+rf_rmse
+```
+
+So, on average, the linear model is off by about `r round(linear_rmse, digits = 0)` 
+spots on the chart, while the random forest model predictions are only `r round(rf_rmse, digits = 0)` 
+spots different from the actual chart position for that song. Hey, that random 
+forest model does a lot better. We are done, right?
+
+***
+
+## This is why we can't have nice things
+
+Consider, for a moment, and analogy with taking a test. Let us say there are 
+two people taking a test. One person went to class and studied from their 
+notes, while another person did not go to class or take notes, but got ahold of 
+the actual test with the answers and memorized those answers. But the teacher 
+ended up giving the students a test with _different_ questions and answers than 
+the one the second student memorized. Which person would likely score higher? 
+The person who memorized the test would have done great if they had the 
+original test, but could not generalize their memorized answers into a new, 
+slightly different situation. This happens in machine learning, too. Some 
+models are able to effectively "memorize" the answers for a given set of data, 
+but when given a _new_ dataset, have a difficult time making good predictions.
+For this reason, machine learning is always a two-step process: first, we use 
+a subset of our data to train the model (really, the "learning" part of machine
+learning) and second, we use the remaining data to test the model. It is the 
+second part, the testing phase, where we can really gauge how well our model 
+will perform on new datasets.
+
+### Training and testing split
+
+For our purposes, we will use an 80:20 split, where we use 80% of our data for 
+training the models and 20% of the data for testing the models. We will 
+randomly assign each song into one of five "bins", reserve one bin of data for 
+testing, and use the remaining four bins for estimating the models. We start 
+with a vector of integers, from 1 to 5, randomly assigned.
+
+```{r train-test-folds}
+# Create fold vector
+fold <- rep_len(x = 1:5, length.out = nrow(swift_data))
+```
+
+We then use filtering to put any observations _not_ in bin #1 into our training
+dataset and only observations that _are_ in bin #1 into our testing dataset.
+
+```{r train-test-split}
+# One test/train
+training <- swift_data %>%
+  filter(fold != 1)
+testing <- swift_data %>%
+  filter(fold == 1)
+```
+
+Now that we have those data separated, we will:
+
+1. Estimate both models using only the **training** data.
+2. Make predictions for both models, using only the **testing** data.
+3. Compare the predictions to actual values to see how well each model 
+performs, based on RMSE values.
+
+We can start by just outlining these steps with comments:
+
+```{r one-split-comments}
+# Estimate model with training data
+
+# Make predictions on testing data
+
+# Calculate rmse values
+```
+
+Then we fill in the first step (model estimation) for our two models. Note this 
+code looks a lot like what we ran earlier, the only change we made is that we 
+are now passing `training` to the `data` argument, instead of `swift_data`:
+
+```{r one-split-estimation}
+# Estimate model with training data
+linear_model <- lm(peak_position ~ ., data = training)
+rf_model <- randomForest(peak_position ~ ., data = training)
+```
+
+Next we make predictions, switching out `swift_data` for `testing`:
+
+```{r one-split-testing}
+# Make predictions on testing data
+linear_prediction <- predict(linear_model, newdata = testing)
+rf_prediction <- predict(rf_model, newdata = testing)
+```
+
+And in step 3, we calculate the RMSE values to evaluate model performance, also 
+replacing `swift_data` with `testing`:
+
+```{r one-split-evaluation}
+# Calculate rmse values
+linear_sqerr <- (testing$peak_position - linear_prediction)^2
+linear_rmse <- sqrt(mean(linear_sqerr))
+
+rf_sqerr <- (testing$peak_position - rf_prediction)^2
+rf_rmse <- sqrt(mean(rf_sqerr))
+```
+
+We can compare the performance of each model by printing the RMSE values to the 
+console:
+
+```{r print-linear-rmse-1}
+linear_rmse
+```
+
+```{r print-rf-rmse-2}
+rf_rmse
+```
+
+So how did the models do? Our original RMSE for the linear model was 
+`r round(linear_rmse_orig, digits = 3)`, so the model did a _little_ worse 
+(because the RMSE got bigger). The first time we ran the random forest model, 
+the RMSE was only `r round(rf_rmse_orig, digits = 3)` which is much lower than 
+the RMSE on testing data. This means the random forest model did quite a bit 
+worse when we asked it to make predictions based on data it had never seen 
+before. The random forest model memorized answers from the test.
+
+***
+## This is what you came for
+
++ Explain why we do this for all folds (idiosyncracies in training/testing split)
++ Do the loop iterations (or comment the process)
++ Calculate mean
++ Do boxplot
+
+```{r boxplot-vectors, eval = FALSE, echo = FALSE}
+# Example of a boxplot with two vectors
+boxplot(x = iris$Sepal.Length[iris$Species == "setosa"], 
+        iris$Sepal.Length[iris$Species == "virginica"], 
+        names = c("setosa", "virginica"))
+
+```
 
 Section title possibilities:
 
 Epiphany
 Look What You Made Me Do
-This is me trying
-This is what you came for
-This is why we can't have nice things
+~This is me trying~
+~This is what you came for~
+~This is why we can't have nice things~
 This is really happening
 This one's different
 
-***
+## [TOPIC FIVE]
 
-## [TOPIC THREE]
-
-Training & testing split, a little bit why, mostly how
-Comparing the two models via RMSE means
+Looping over each fold.
 
 ***
 
