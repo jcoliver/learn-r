@@ -534,7 +534,7 @@ We then use filtering to put any observations _not_ in bin #1 into our training
 dataset and only observations that _are_ in bin #1 into our testing dataset.
 
 ```{r train-test-split}
-# One test/train
+# Split data into training and testing sets
 training <- swift_data %>%
   filter(fold != 1)
 testing <- swift_data %>%
@@ -608,20 +608,225 @@ worse when we asked it to make predictions based on data it had never seen
 before. The random forest model memorized answers from the test.
 
 ***
+
 ## This is what you came for
 
-+ Explain why we do this for all folds (idiosyncracies in training/testing split)
-+ Do the loop iterations (or comment the process)
-+ Calculate mean
-+ Do boxplot
+There is one more thing for us to do in evaluating these two models. So far, we
+split the data into two groups, the training data and the testing data. We put 
+20% of our data into that testing pile, but really we would like to give _each_ 
+data point an opportunity to be part of the testing dataset. So given our 80/20 
+split, that means we actually want to do the training/testing process four more
+times, where each time we use a different 20% of the data as the testing data. 
+We already have the bins setup, but now instead of just using bin #1 as the 
+training data, we will cycle through each of the five bins in turn as the 
+testing data. 
 
-```{r boxplot-vectors, eval = FALSE, echo = FALSE}
-# Example of a boxplot with two vectors
-boxplot(x = iris$Sepal.Length[iris$Species == "setosa"], 
-        iris$Sepal.Length[iris$Species == "virginica"], 
-        names = c("setosa", "virginica"))
+We will use a `for` loop, which allows us to do things multiple times. Here we 
+want to run through this process once for each of the five bins we created. We 
+start with a loop that will run five times, with the variable `i` taking on the 
+values 1-5. We start by creating the loop with a little reality check to make 
+sure our variable `i` is being assigned correctly:
 
+```{r five-folds-loop}
+for (i in 1:5) {
+  # Early reality check
+  print(i)
+}
 ```
+
+Now we can add the comments for each step of the training and testing process, 
+as we did above, plus the starting step of splitting data into training and 
+testing sets (we can delete the reality check):
+
+```{r five-folds-comments}
+for (i in 1:5) {
+  # Split data into training/testing
+  
+  # Estimate model with training data
+
+  # Make predictions on testing data
+
+  # Calculate rmse values
+}
+```
+
+We first fill in the part for splitting the data. It looks similar to the code 
+above, but now instead of reserving data from the 1^st^ bin as testing data, we 
+reserve data from the _i^th^_ bin. Remember that the `i` variable takes values 
+from 1 through 5, increasing by one each time through the loop.
+
+```{r five-folds-split}
+for (i in 1:5) {
+  # Split data into training/testing
+  training <- swift_data %>%
+    filter(fold != i)
+  testing <- swift_data %>%
+    filter(fold == i)
+  
+  # Estimate model with training data
+
+  # Make predictions on testing data
+
+  # Calculate rmse values
+}
+```
+
+Next we train each model with the training data.
+
+```{r five-folds-train}
+for (i in 1:5) {
+  # Split data into training/testing
+  training <- swift_data %>%
+    filter(fold != i)
+  testing <- swift_data %>%
+    filter(fold == i)
+  
+  # Estimate model with training data
+  linear_model <- lm(peak_position ~ ., data = training)
+  rf_model <- randomForest(peak_position ~ ., data = training)
+  
+  # Make predictions on testing data
+
+  # Calculate rmse values
+}
+```
+
+And make predictions from each model with the reserved testing data.
+
+```{r five-folds-test}
+for (i in 1:5) {
+  # Split data into training/testing
+  training <- swift_data %>%
+    filter(fold != i)
+  testing <- swift_data %>%
+    filter(fold == i)
+  
+  # Estimate model with training data
+  linear_model <- lm(peak_position ~ ., data = training)
+  rf_model <- randomForest(peak_position ~ ., data = training)
+  
+  # Make predictions on testing data
+  linear_prediction <- predict(linear_model, newdata = testing)
+  rf_prediction <- predict(rf_model, newdata = testing)
+  
+  # Calculate rmse values
+}
+```
+
+And finally calculate the model performance by measuring how different 
+predicted values were from actual values.
+
+```{r five-folds-rmse}
+for (i in 1:5) {
+  # Split data into training/testing
+  training <- swift_data %>%
+    filter(fold != i)
+  testing <- swift_data %>%
+    filter(fold == i)
+  
+  # Estimate model with training data
+  linear_model <- lm(peak_position ~ ., data = training)
+  rf_model <- randomForest(peak_position ~ ., data = training)
+  
+  # Make predictions on testing data
+  linear_prediction <- predict(linear_model, newdata = testing)
+  rf_prediction <- predict(rf_model, newdata = testing)
+  
+  # Calculate rmse values
+  linear_sqerr <- (testing$peak_position - linear_prediction)^2
+  linear_rmse <- sqrt(mean(linear_sqerr))
+  
+  rf_sqerr <- (testing$peak_position - rf_prediction)^2
+  rf_rmse <- sqrt(mean(rf_sqerr))
+}
+```
+
+We can look at the scores for each of these five iterations by typing the names 
+of our RMSE variables into the console.
+
+```{r print-one-linear}
+linear_rmse
+```
+
+```{r print-one-rf}
+rf_rmse
+```
+
+Uh oh. There is only one value in each variable, but we ran through this 
+process five times. What gives? The problem is that the two variables that hold
+our RMSE values, `linear_rmse` and `rf_rmse`, are over-written each time the 
+loop executes. This means we only have values for the _last_ time through the 
+loop. We need to make sure to store the outcomes each time through the loop. To 
+do this, we will add a pair of results variables that are updated as the loop
+executes. We will actually use the same names as before, but now we make sure 
+there are five slots in each variable. We add these variables _before_ our loop
+statement:
+
+```{r five-folds-results, eval = FALSE}
+linear_rmse <- numeric(5)
+rf_rmse <- numeric(5)
+for (i in 1:5) {
+  ...
+```
+
+And we update the assigment of those variables inside our loop, so we replace 
+`linear_rmse` with `linear_rmse[i]` and `rf_rmse` with `rf_rmse[i]`:
+
+```{r five-folds-rmse-2}
+linear_rmse <- numeric(5)
+rf_rmse <- numeric(5)
+for (i in 1:5) {
+  # Split data into training/testing
+  training <- swift_data %>%
+    filter(fold != i)
+  testing <- swift_data %>%
+    filter(fold == i)
+  
+  # Estimate model with training data
+  linear_model <- lm(peak_position ~ ., data = training)
+  rf_model <- randomForest(peak_position ~ ., data = training)
+  
+  # Make predictions on testing data
+  linear_prediction <- predict(linear_model, newdata = testing)
+  rf_prediction <- predict(rf_model, newdata = testing)
+  
+  # Calculate rmse values
+  linear_sqerr <- (testing$peak_position - linear_prediction)^2
+  linear_rmse[i] <- sqrt(mean(linear_sqerr))
+  
+  rf_sqerr <- (testing$peak_position - rf_prediction)^2
+  rf_rmse[i] <- sqrt(mean(rf_sqerr))
+}
+```
+
+Now when we run the loop and print out values by typing in the name of the 
+variables into the console:
+
+```{r print-five-linear}
+linear_rmse
+```
+
+```{r print-five-rf}
+rf_rmse
+```
+
+To decide which model is preferred, we can compare the mean RMSE values of the 
+models:
+
+```{r compare-rmse}
+mean(linear_rmse)
+mean(rf_rmse)
+```
+
+We can also visualize these results with a boxplot, to show variation among 
+the five training/testing splits:
+
+```{r rmse-boxplot}
+boxplot(x = linear_rmse, rf_rmse,
+        names = c("Linear Model", "Random Forest"),
+        ylab = "RMSE")
+```
+
 
 Section title possibilities:
 
