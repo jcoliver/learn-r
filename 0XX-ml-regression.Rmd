@@ -763,13 +763,13 @@ there are five slots in each variable. We add these variables _before_ our loop
 statement:
 
 ```{r five-folds-results, eval = FALSE}
-linear_rmse <- numeric(5)
-rf_rmse <- numeric(5)
+linear_rmse <- numeric(5)  # variable to store five linear RMSE values
+rf_rmse <- numeric(5) # variable to store five random forest RMSE values
 for (i in 1:5) {
   ...
 ```
 
-And we update the assigment of those variables inside our loop, so we replace 
+And we update the assignment of those variables inside our loop, so we replace 
 `linear_rmse` with `linear_rmse[i]` and `rf_rmse` with `rf_rmse[i]`:
 
 ```{r five-folds-rmse-2}
@@ -827,24 +827,28 @@ boxplot(x = linear_rmse, rf_rmse,
         ylab = "RMSE")
 ```
 
+Whew! So, where does that leave us?
+
+***
+
+## This is really happening
+
++ build full model and use it to predict which track to release
+
+
+***
+
+## [TOPIC FIVE]
 
 Section title possibilities:
 
 Epiphany
-Look What You Made Me Do
+~Look What You Made Me Do~
 ~This is me trying~
 ~This is what you came for~
 ~This is why we can't have nice things~
 This is really happening
 This one's different
-
-## [TOPIC FIVE]
-
-Looping over each fold.
-
-***
-
-## [TOPIC FOUR]
 
 Next steps
 
@@ -854,7 +858,9 @@ Next steps
 
 ***
 
-## Bonus Track: Data Wrangling
+## Bonus Track: Look What You Made Me Do
+
+### Data Wrangling
 
 The data we used for this lesson did not come in the form that we used them. 
 That is, there were several steps that needed to happen _before_ we started 
@@ -1035,6 +1041,42 @@ model_data <- combined %>%
 write.csv(file = "data/swift-data.csv",
           x = model_data,
           row.names = FALSE)
+```
+
+### Data creation
+
+At the end of the lesson, we applied our machine learning model to a dozen new, 
+unreleased Taylor Swift songs. While I appreciate your confidence that I would 
+have access to such prized material, it is not, alas, the case. These "new 
+album" songs were created based on the original dataset, in an attempt to 
+simulate the types of songs that Taylor Swift is known for performing. Below 
+is the code for the creation of those data.
+
+```{r new-data-creation, eval = FALSE}
+# Load dplyr library
+library(dplyr)
+
+# Read in song data (in case it is not already loaded)
+swift_data <- read.csv(file = "data/swift-data.csv")
+
+# Create a data frame with 12 rows of data, to hold "new album"
+new_album <- data.frame()
+
+# Drop the peak_position column, because we will not actually have that in our 
+# new dataset; we also change the song mode to a factor data type
+song_data <- swift_data %>%
+  select(-peak_position) %>%
+  mutate(mode_name = as.factor(mode_name)) # convert one text column to factor
+
+# Create distributions of each song characteristic
+
+
+# Sample from those distributions of each characteristic, repeating the process
+# for a total of 12 times
+
+# Store the data in a single data frame
+
+# Write the data to a csv file
 ```
 
 ***
