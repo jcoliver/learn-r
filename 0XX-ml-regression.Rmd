@@ -1059,24 +1059,48 @@ library(dplyr)
 # Read in song data (in case it is not already loaded)
 swift_data <- read.csv(file = "data/swift-data.csv")
 
-# Create a data frame with 12 rows of data, to hold "new album"
-new_album <- data.frame()
-
 # Drop the peak_position column, because we will not actually have that in our 
 # new dataset; we also change the song mode to a factor data type
 song_data <- swift_data %>%
-  select(-peak_position) %>%
-  mutate(mode_name = as.factor(mode_name)) # convert one text column to factor
+  select(-peak_position)
 
-# Create distributions of each song characteristic
-
+# Create a data frame to hold 12 songs for the "new album"
+new_album <- song_data[1:12, ]
+# Erase the data that exists - we will replace it
+new_album[,] <- NA
 
 # Sample from those distributions of each characteristic, repeating the process
 # for a total of 12 times
+for (i in 1:12) {
+  # There are much more elegant ways of doing this, but here we use a for loop to 
+  # sample each song variable
+  
+  # Loop over each column to create a randomly sampled value for this track
+  for (j in 1:ncol(song_data)) {
+    new_album[i, j] <- sample(x = song_data[, j],
+                              size = 1)
+  }
+}
 
-# Store the data in a single data frame
+# Just for fun, I had ChatGPT come up with a dozen song titles
+track_names<- c("Echoes of Eternity",
+                "Midnight Serenade",
+                "Whispers in the Wind",
+                "City Lights and Country Skies",
+                "Diamonds in the Dust",
+                "Golden Memories",
+                "Infinite Horizons",
+                "Heartstrings and Harmonies",
+                "Stars Align",
+                "Fireside Chats",
+                "Rivers of Reverie",
+                "Celestial Symphony")
 
+new_album$track_name <- track_names
 # Write the data to a csv file
+write.csv(x = new_album,
+          file = "data/swift-new.csv",
+          row.names = FALSE)
 ```
 
 ***
