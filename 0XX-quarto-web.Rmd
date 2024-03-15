@@ -56,6 +56,8 @@ on the Git and GitHub lesson page for instructions and download links.
 
 ## Setting up the project
 
+### Starting from GitHub
+
 Now that you have all the software installed, we will start by setting up the 
 folder on GitHub that will host all our files for the webpage. When we work 
 with GitHub, each project will have a separate folder. These folders are called
@@ -84,9 +86,40 @@ yourself) will be able to see the website if the repository is Private. Leave
 the rest of the settings as their default values and press the green "Create 
 repository" button near the bottom of the page.
 
-+ New RStudio project
-  + From existing GitHub repo?
-    + Can do this from the console as long as Quarto is installed?
+### Creating the project in RStudio
+
+The next step will be to setup a project on RStudio and to connect that project 
+to the GitHub repository we just created. To start a new project, we open the 
+new project dialog through the File menu (File > New Project...). In the first 
+dialog, select the third option, "Version Control":
+
+![Creating a new project from version control](images/version-control-project.png){ width=50% }
+
+In the next dialog, select the **Git** option:
+
+![Version control options for new projects](images/git-project.png){ width=50% }
+
+Finally, in the dialog that opens, you need only fill in information for the 
+Repository URL. You can copy the URL to the clipboard by navigating to your 
+GitHub repository website, clicking the green "code" button:
+
+![](images/github-code-button.png){ width=50% }
+
+This should open a dialog with the URL (it will start with "https" and end with 
+".git"). Copy the URL by clicking the clipboard icon.
+
+![](images/github-code-clipboard.png){ width=50% }
+
+Return to RStudio and paste into the Repository URL field:
+
+![](images/git-project-details.png){ width=50% }
+
+Click "Create Project", RStudio will build the connection to your GitHub 
+repository, and open this new project.
+
+### Starting the Quarto project
+
++ Can do this from the console as long as Quarto is installed?
 + Add name and intro sentence
 + Send to GitHub
 
