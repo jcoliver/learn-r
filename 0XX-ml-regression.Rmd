@@ -133,197 +133,6 @@ $$
 
 ***
 
-```{r dev-block, eval = FALSE, echo = FALSE}
-# Place for experimentation; replace later
-# Merging Taylor Swift data
-
-library(dplyr)
-library(randomForest)
-
-# Chart data for Beyonce (& TS) available at 
-# https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-09-29
-# How do we get song characteristics? Might look at how it was done for TS:
-# https://github.com/wjakethompson/taylor
-
-# Song characteristics
-# https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-10-17/taylor_all_songs.csv
-# Billboard performance
-# https://github.com/scharfsteina/BigDataFinalProject/blob/main/data/billboard.csv
-
-
-## TOPIC FIVE (data wrangling)
-
-songs <- read.csv(file = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_all_songs.csv")
-scores <- read.csv(file = "https://raw.githubusercontent.com/scharfsteina/BigDataFinalProject/main/data/billboard.csv")
-colnames(scores)[1] <- "id"
-
-# songs <- read.csv(file = "~/Desktop/taylor_all_songs.csv")
-# scores <- read.csv(file = "~/Desktop/billboard.csv")
-
-songs$track_name <- tolower(songs$track_name)
-
-combined <- scores %>%
-  left_join(songs, by = join_by(song == track_name))
-
-# We want to predict peak_position
-# Predictors (aka "features")
-# danceability energy loudness speechiness acousticness instrumentalness liveness valence tempo explicit mode_name
-
-model_data <- combined %>%
-  select(peak_position, danceability, energy, loudness, speechiness, 
-         acousticness, instrumentalness, liveness, valence, tempo, explicit, 
-         mode_name) %>% 
-  na.omit()
-
-# Run a linear model with all predictors
-linear_model <- lm(peak_position ~ ., data = model_data)
-
-# Run a glm with all predictors and poisson model
-gl_model <- glm(peak_position ~ ., data = model_data, family = "poisson")
-
-# Run a random forest model with all predictors
-rf_model <- randomForest(peak_position ~ ., data = model_data)
-
-## TOPIC TWO
-
-# Comparing model performance
-
-# Predict song's peak position based on linear model
-linear_prediction <- predict(linear_model, newdata = model_data)
-
-# Predict song's peak position based on glm
-glm_prediction <- predict(gl_model, newdata = model_data, type = "response")
-
-# Predict song's peak position based on random forest model
-rf_prediction <- predict(rf_model, newdata = model_data)
-
-# Calculate RMSE for each model: square root of the mean squared error
-linear_mse <- mean((model_data$peak_position - linear_prediction)^2)
-linear_rmse <- sqrt(linear_mse)
-
-glm_mse <- mean((model_data$peak_position - glm_prediction)^2)
-glm_rmse <- sqrt(glm_mse)
-
-rf_mse <- mean((model_data$peak_position - rf_prediction)^2)
-rf_rmse <- sqrt(rf_mse)
-
-cat("Linear model RMSE: ", linear_rmse, "\n")
-cat("GLM RMSE: ", glm_rmse)
-cat("Random forest RMSE: ", rf_rmse)
-
-## TOPIC THREE
-
-# Splitting data into testing and training
-
-# Create fold vector
-fold <- rep_len(x = 1:5, length.out = nrow(model_data))
-
-# One test/train
-training <- model_data %>%
-  filter(fold != 1)
-testing <- model_data %>%
-  filter(fold == 1)
-
-# Use training data only to build & evaluate model
-
-# Run a linear model with all predictors
-linear_model <- lm(peak_position ~ ., data = training)
-
-# Run a glm with all predictors and poisson model
-gl_model <- glm(peak_position ~ ., data = training, family = "poisson")
-
-# Run a random forest model with all predictors
-rf_model <- randomForest(peak_position ~ ., data = training)
-
-# Predict song's peak position based on linear model for TESTING data
-linear_prediction <- predict(linear_model, newdata = testing)
-
-# Predict song's peak position based on glm for TESTING data
-glm_prediction <- predict(gl_model, newdata = testing, type = "response")
-
-# Predict song's peak position based on random forest model for TESTING data
-rf_prediction <- predict(rf_model, newdata = testing)
-
-# Calculate RMSE for each model: square root of the mean squared error
-linear_mse <- mean((testing$peak_position - linear_prediction)^2)
-linear_rmse <- sqrt(linear_mse)
-
-glm_mse <- mean((testing$peak_position - glm_prediction)^2)
-glm_rmse <- sqrt(glm_mse)
-
-rf_mse <- mean((testing$peak_position - rf_prediction)^2)
-rf_rmse <- sqrt(rf_mse)
-
-cat("Linear model RMSE: ", linear_rmse, "\n")
-cat("GLM RMSE: ", glm_rmse, "\n")
-cat("Random forest RMSE: ", rf_rmse)
-
-# Note both got worse, but RF got considerably worse (almost double RMSE)
-
-# Now need to do this for each of the folds
-# Data frame to hold results
-ml_results <- data.frame(fold = 1:5,
-                         linear_rmse = NA,
-                         glm_rmse = NA,
-                         rf_rmse = NA)
-for (f in 1:5) {
-  # One test/train
-  training <- model_data %>%
-    filter(fold != f)
-  testing <- model_data %>%
-    filter(fold == f)
-  
-  # Use training data only to build & evaluate model
-  
-  # Run a linear model with all predictors
-  linear_model <- lm(peak_position ~ ., data = training)
-  
-  # Run a glm with all predictors and poisson model
-  gl_model <- glm(peak_position ~ ., data = training, family = "poisson")
-  
-  # Run a random forest model with all predictors
-  rf_model <- randomForest(peak_position ~ ., data = training)
-  
-  # Predict song's peak position based on linear model for TESTING data
-  linear_prediction <- predict(linear_model, newdata = testing)
-  
-  # Predict song's peak position based on glm for TESTING data
-  glm_prediction <- predict(gl_model, newdata = testing, type = "response")
-  
-  # Predict song's peak position based on random forest model for TESTING data
-  rf_prediction <- predict(rf_model, newdata = testing)
-  
-  # Calculate RMSE for each model: square root of the mean squared error
-  linear_mse <- mean((testing$peak_position - linear_prediction)^2)
-  linear_rmse <- sqrt(linear_mse)
-
-  glm_mse <- mean((testing$peak_position - glm_prediction)^2)
-  glm_rmse <- sqrt(glm_mse)
-  
-  rf_mse <- mean((testing$peak_position - rf_prediction)^2)
-  rf_rmse <- sqrt(rf_mse)
-  
-  ml_results$linear_rmse[f] <- linear_rmse
-  ml_results$glm_rmse[f] <- glm_rmse
-  ml_results$rf_rmse[f] <- rf_rmse
-}
-
-ml_results
-
-# Calculate means for each
-linear_mean <- mean(ml_results$linear_rmse)
-glm_mean <- mean(ml_results$glm_rmse)
-rf_mean <- mean(ml_results$rf_rmse)
-
-cat("Linear model mean RMSE: ", linear_mean, "\n")
-cat("GLM mean RMSE: ", glm_mean, "\n")
-cat("Random forest mean RMSE: ", rf_mean, "\n")
-
-# Make a plot?
-
-
-```
-
 ## Building our first machines
 
 We are going to start by creating two different model. One is a common model 
@@ -833,8 +642,70 @@ Whew! So, where does that leave us?
 
 ## This is really happening
 
-+ build full model and use it to predict which track to release
+At this point, we see that the random forest model does a better job than the 
+linear regression model at predicting billboard song position. That is, the 
+predicted values of the random forest model are closer to actual values of a 
+song's billboard position than are those values predicted by the linear 
+regression model. Returning to the original goal, we would like to use this 
+machine learning algorithm to decide which song from Taylor Swift's next album 
+is predicted to do the best on the billboard charts. _That_ song is the one to 
+release as the first single. In order to use our model, we will go ahead and
+re-estimate the model using the full dataset. This way we use all the 
+information we have at our disposal to build the best-informed model. Note that 
+even though the random forest model was guilty of over-fitting (it memorized 
+the test answers, remember?), it still did a better job. So we will make a new 
+model, `full_model` that we can use later:
 
+```{r full-model}
+full_model <- randomForest(peak_position ~ ., data = swift_data)
+```
+
+The next thing to do is to download data for this next album (you can find 
+details about where these songs come from in the 
+[Data creation](#data-creation) section, below). Download the song data from 
+[BITLY LINK](BITLY LINK) and [learn-rlink](learn-rlink) (the former just 
+re-directs to the latter) and save it in the "data" folder we created at the 
+start of the lesson. Save the file as "swift-new.csv" (it should be named 
+this when you download it, but it is always good to double-check). We then load
+the data in with `read.csv()`:
+
+```{r load-new-album}
+new_album <- read.csv(file = "data/swift-new.csv")
+```
+
+Looking at the first few rows of data, we see it has the same song quality 
+measurements that we used for building our models:
+
+```{r head-new-album}
+head(new_album)
+```
+
+What these data do not have is a billboard position, because they haven't been 
+released yet. So we will now do the prediction step again, using that 
+`full_model` we just estimated. Note that the first column has the track name, 
+which is not part of the model (although it could be), so we exclude that 
+column when making predictions by using the negation symbol:
+
+```{r predict-new-album}
+new_predict <- predict(full_model, newdata = new_album[, -1])
+```
+
+When we look at the predicted values, we see how our model predicted for each 
+of the songs:
+
+```{r print-new-predict}
+new_predict
+```
+
+```{r best-predict, echo = FALSE}
+best_position <- which(new_predict == min(new_predict))
+```
+
+From these results, we see that track `r best_position` is predicted to do the 
+best on the charts. That is, our model is predicting the song 
+"`r new_album$track_name[best_position]`" will go up to position 
+`r round(new_predict[best_position], digits = 0)` (rounding to the nearest 
+integer).
 
 ***
 
@@ -1056,6 +927,10 @@ is the code for the creation of those data.
 # Load dplyr library
 library(dplyr)
 
+# We are doing some random sampling, so to ensure consistency among results, we 
+# set the random number seed
+set.seed(20240322)
+
 # Read in song data (in case it is not already loaded)
 swift_data <- read.csv(file = "data/swift-data.csv")
 
@@ -1096,7 +971,8 @@ track_names<- c("Echoes of Eternity",
                 "Rivers of Reverie",
                 "Celestial Symphony")
 
-new_album$track_name <- track_names
+new_album <- cbind(track_names, new_album)
+
 # Write the data to a csv file
 write.csv(x = new_album,
           file = "data/swift-new.csv",
