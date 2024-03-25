@@ -709,23 +709,45 @@ integer).
 
 ***
 
-## [TOPIC FIVE]
+### Would've, Could've, Should've
+
+The work we did in this lesson is just the beginning. There are plenty of 
+additional considerations for creating machine learning algorithms. A couple of 
+things to consider are:
+
+1. **Which variables do we use?** We had various song characteristics 
+available, so we used those as our variables. There may be additional 
+information we could include (month of release? author of the song?) to build 
+models that are better at making predictions. This process, also known as 
+"feature selection", attempts to strike a balance between having enough 
+information to be useful in predictions and not having to use a lot of 
+resources to collect data that provide little to no model improvements.
+2. **Which models to use?** We only used two models, a linear regression model 
+and a random forest model. Both of which could use additional refinements, such 
+as accommodating the fact that the billboard positions are count data, rather 
+than continuous data. To accomplish this, we could use Poisson models for both 
+regression and random forest models. Additionally, there are other types of 
+models, both regression (e.g. lasso models) and tree-based (e.g. boosted 
+regression trees) to consider. The book by Gareth et al. is an excellent 
+resource for learning about these models and how to apply them in R. See the
+[Additional resources](#additional-resources) section below for links and more
+details.
 
 Section title possibilities:
+
+Dear Reader
+Eyes Open
+Is It Over Now?
+Today Was a Fairytale
+~Would've, Could've, Should've~
 
 Epiphany
 ~Look What You Made Me Do~
 ~This is me trying~
 ~This is what you came for~
 ~This is why we can't have nice things~
-This is really happening
+~This is really happening~
 This one's different
-
-Next steps
-
-1. Variable (feature) selection
-2. Poisson regression instead of vanilla linear regression
-3. Poisson model for random forest
 
 ***
 
