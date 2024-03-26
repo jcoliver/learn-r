@@ -733,22 +733,6 @@ resource for learning about these models and how to apply them in R. See the
 [Additional resources](#additional-resources) section below for links and more
 details.
 
-Section title possibilities:
-
-Dear Reader
-Eyes Open
-Is It Over Now?
-Today Was a Fairytale
-~Would've, Could've, Should've~
-
-Epiphany
-~Look What You Made Me Do~
-~This is me trying~
-~This is what you came for~
-~This is why we can't have nice things~
-~This is really happening~
-This one's different
-
 ***
 
 ## Bonus Track: Look What You Made Me Do
@@ -1009,7 +993,9 @@ write.csv(x = new_album,
 by Gareth James and colleagues. This book provides an accessible introduction 
 to several machine learning approaches, including regression and classification
 techniques, along with _a lot_ of worked examples and R code.
-+ [resource two](url-two)
++ An introduction to the concept of 
+[neural networks](https://www.youtube.com/watch?v=aircAruvnKk). This video 
+does a good job breaking down how neural networks work to make predictions.
 + A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
 
 ***
