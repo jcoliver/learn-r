@@ -100,7 +100,8 @@ Note that I went ahead and joined these two datasets together. If you want to
 learn more about that process, see the [Bonus Track](#Bonus-Track-Data-Wrangling)
 section at the end of this lesson.
 
-The data are available at [BITLY LINK](BITLY LINK) and [learn-rlink](learn-rlink) 
+The data are available at [BITLY LINK](BITLY LINK) and
+[https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/swift-data.csv](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/swift-data.csv) 
 (the former just re-directs to the latter). Use a web browser to navigate to 
 one of those URLs and download the file as a plain text or CSV file (on some 
 systems, you can save as an Excel CSV, which is fine, too). Make sure after you 
@@ -663,11 +664,12 @@ full_model <- randomForest(peak_position ~ ., data = swift_data)
 The next thing to do is to download data for this next album (you can find 
 details about where these songs come from in the 
 [Data creation](#data-creation) section, below). Download the song data from 
-[BITLY LINK](BITLY LINK) and [learn-rlink](learn-rlink) (the former just 
-re-directs to the latter) and save it in the "data" folder we created at the 
-start of the lesson. Save the file as "swift-new.csv" (it should be named 
-this when you download it, but it is always good to double-check). We then load
-the data in with `read.csv()`:
+[BITLY LINK](BITLY LINK) and
+[https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/swift-new.csv](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/swift-new.csv) 
+(the former just re-directs to the latter) and save it in the "data" folder we
+created at the start of the lesson. Save the file as "swift-new.csv" (it should 
+be named this when you download it, but it is always good to double-check). We 
+then load the data in with `read.csv()`:
 
 ```{r load-new-album}
 new_album <- read.csv(file = "data/swift-new.csv")
