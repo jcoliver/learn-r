@@ -97,10 +97,12 @@ did a bunch of neat analyses and you can check them out on the
 [Project Webpage](https://medium.com/@aimiwen33/exploring-taylor-swifts-music-2bce11a7aab2).
 
 Note that I went ahead and joined these two datasets together. If you want to 
-learn more about that process, see the [Bonus Track](#Bonus-Track-Data-Wrangling)
+learn more about that process, see the [Bonus Track](#bonus-track-look-what-you-made-me-do)
 section at the end of this lesson.
 
-The data are available at [BITLY LINK](BITLY LINK) and
+The data are available in a single file at 
+[https://bit.ly/swift-data](https://bit.ly/swift-data) 
+and
 [https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/swift-data.csv](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/swift-data.csv) 
 (the former just re-directs to the latter). Use a web browser to navigate to 
 one of those URLs and download the file as a plain text or CSV file (on some 
@@ -132,15 +134,26 @@ $$
 \hat{Y} = \hat{\beta}_0 + \hat{\beta}_1 X_1 
 $$
 
+_Aside_: Briefly, what we are doing is known as "supervised" machine learning, 
+as opposed to "unsupervised" machine learning. The big difference between the 
+two is that in supervised learning, we have data where we have both the $X$ 
+values and the $Y$ values. In unsupervised learning, we only have the $X$s. 
+Additionally, we are using machine learning to predict a number; specifically, 
+the billboard position of a song. This type of machine learning is known as 
+regression. This is in contrast to classification machine learning, where we 
+try to predict which categories data points belong to. Check out the 
+[Additional resources](#additional-resources) section below for links to more 
+information.
+
 ***
 
 ## Building our first machines
 
-We are going to start by creating two different model. One is a common model 
+We are going to start by creating two different models. One is a common model 
 used in inferential statistics: the linear regression model. The second is a 
 tree-based model, called a random forest. We are not going to get into the 
 details of the models - if you want to learn more, see the references listed in 
-the [Additional resources](#Additional-resources) section below.
+the [Additional resources](#additional-resources) section below.
 
 We will do all of our work in an R script, so start by creating a new script 
 (File > New File > R Script) and saving it as "ml-lesson.R". At the top of the 
@@ -174,7 +187,7 @@ library(dplyr)
 
 We also need to load the data into memory. We will use the data stored in the 
 file that we downloaded earlier in the lesson (see the 
-[Example data](#Example-data) section, above). We will read the data into 
+[Example data](#example-data) section, above). We will read the data into 
 memory with the `read_csv()` function and look at the first few rows with the 
 `head()` function:
 
@@ -310,7 +323,7 @@ forest model does a lot better. We are done, right?
 
 ## This is why we can't have nice things
 
-Consider, for a moment, and analogy with taking a test. Let us say there are 
+Consider, for a moment, an analogy with taking a test. Let us say there are 
 two people taking a test. One person went to class and studied from their 
 notes, while another person did not go to class or take notes, but got ahold of 
 the actual test with the answers and memorized those answers. But the teacher 
@@ -664,7 +677,7 @@ full_model <- randomForest(peak_position ~ ., data = swift_data)
 The next thing to do is to download data for this next album (you can find 
 details about where these songs come from in the 
 [Data creation](#data-creation) section, below). Download the song data from 
-[BITLY LINK](BITLY LINK) and
+[https://bit.ly/swift-new](https://bit.ly/swift-new) and
 [https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/swift-new.csv](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/swift-new.csv) 
 (the former just re-directs to the latter) and save it in the "data" folder we
 created at the start of the lesson. Save the file as "swift-new.csv" (it should 
@@ -686,17 +699,37 @@ What these data do not have is a billboard position, because they haven't been
 released yet. So we will now do the prediction step again, using that 
 `full_model` we just estimated. Note that the first column has the track name, 
 which is not part of the model (although it could be), so we exclude that 
-column when making predictions by using the negation symbol:
+column when making predictions by using the negation symbol. That is, for the 
+`newdata` argument, we pass `new_album[, -1]`, which tells R to skip the first 
+column:
 
 ```{r predict-new-album}
 new_predict <- predict(full_model, newdata = new_album[, -1])
 ```
 
+We want to take these position predictions and see which songs they correspond 
+to, so we create a new data frame to show how each song is predicted to do on 
+the charts.
+
+```{r combine-predict-title}
+song_predict <- data.frame(track_num = 1:12,
+                           peak_position = new_predict,
+                           track_name = new_album$track_names)
+```
+
+In the above code, we are creating a data frame with three columns:
+
+1. `track_num`: The track number, created with a vector of integers 1-12.
+2. `peak_position`: The predicted best position of each song; these are the 
+values we predicted with our machine learning model.
+3. `track_name`: The name of each song from the new album; we are effectively 
+just copying the column of the same name from the `new_album` data frame.
+
 When we look at the predicted values, we see how our model predicted for each 
 of the songs:
 
 ```{r print-new-predict}
-new_predict
+song_predict
 ```
 
 ```{r best-predict, echo = FALSE}
@@ -752,10 +785,11 @@ using the data in the models. These steps were:
 5. Removing any rows that are missing data
 
 The section below illustrates these four steps. Note the cleaned data are all 
-available (**TODO**: add a link to data), so you do not need to run the code below in order to do the machine 
-learning parts of the lesson. But for those who are curious, the code below 
-highlights that most machine learning applications require substantial curation 
-of data sources before any models are built.
+available at [https://bit.ly/swift-data](https://bit.ly/swift-data), so you do 
+not need to run the code below in order to do the machine learning parts of the 
+lesson. But for those who are curious, the code below highlights that most 
+machine learning applications require substantial curation of data sources 
+before any models are built.
 
 Just in case you haven't already loaded the dplyr library, we do so now.
 ```{r prep-libraries, eval = FALSE}
@@ -877,9 +911,9 @@ scores$song[1:10]
 ```
 
 You can also check for any additional differences between the datasets by using 
-base R's `setdiff()` function or dplyr's version of `setdiff()`. For now we 
-will skip this step, the set operations are useful for comparing things before 
-merges and joins.
+base R's `setdiff()` function or dplyr's version of `setdiff()`. We are not 
+going to in more details on this point, but know that the set operations are 
+useful for comparing things before merges and joins.
 
 We are now ready to join the song data with the scores data. We can do this 
 with functions from dplyr, including the pipe, `%>%` and the `left_join()` 
@@ -954,14 +988,20 @@ new_album[,] <- NA
 
 # Sample from those distributions of each characteristic, repeating the process
 # for a total of 12 times
+# The exception is for the 5th song, which we are blatantly copying song 
+# characteristics for a song that we know will do well in our model
 for (i in 1:12) {
   # There are much more elegant ways of doing this, but here we use a for loop to 
   # sample each song variable
-  
+  if (i == 5) {
+    # Pulling out song #9 in our original data
+    new_album[i, ] <- song_data[9, ]
+  } else {
   # Loop over each column to create a randomly sampled value for this track
-  for (j in 1:ncol(song_data)) {
-    new_album[i, j] <- sample(x = song_data[, j],
-                              size = 1)
+    for (j in 1:ncol(song_data)) {
+      new_album[i, j] <- sample(x = song_data[, j],
+                                size = 1)
+    }
   }
 }
 
@@ -998,7 +1038,8 @@ techniques, along with _a lot_ of worked examples and R code.
 + An introduction to the concept of 
 [neural networks](https://www.youtube.com/watch?v=aircAruvnKk). This video 
 does a good job breaking down how neural networks work to make predictions.
-+ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
++ A [PDF version](https://jcoliver.github.io/learn-r/018-ml-regression.pdf) of 
+this lesson.
 
 ***
 
