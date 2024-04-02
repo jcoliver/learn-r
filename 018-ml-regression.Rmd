@@ -165,7 +165,7 @@ ignore these lines.
 # Machine learning on Taylor Swift songs
 # Jeff Oliver
 # jcoliver@arizona.edu
-# 2024-02-27
+# 2024-04-02
 ```
 
 As mentioned above, we will be using two R packages that are not part of the R 
@@ -741,6 +741,79 @@ best on the charts. That is, our model is predicting the song
 "`r new_album$track_name[best_position]`" will go up to position 
 `r round(new_predict[best_position], digits = 0)` (rounding to the nearest 
 integer).
+
+So there we are. We created a machine learning model and predicted the peak 
+position for each song on Taylor Swift's next, yet-to-be-released album. We 
+used this to then identify the predicted best performing song to release as a 
+single. Our final script for this process would be:
+
+```{r final-script, eval = FALSE}
+# Machine learning on Taylor Swift songs
+# Jeff Oliver
+# jcoliver@arizona.edu
+# 2024-04-02
+
+# Load libraries
+library(randomForest)
+library(dplyr)
+
+# Read in data for Taylor Swift songs and peak chart position
+swift_data <- read.csv(file = "data/swift-data.csv")
+
+# Create fold vector
+fold <- rep_len(x = 1:5, length.out = nrow(swift_data))
+
+# Create variables to hold rmse values for each testing/training split
+linear_rmse <- numeric(5)
+rf_rmse <- numeric(5)
+
+# Run training and testing step for each of five 80/20 splits
+for (i in 1:5) {
+  # Split data into training/testing
+  training <- swift_data %>%
+    filter(fold != i)
+  testing <- swift_data %>%
+    filter(fold == i)
+  
+  # Estimate model with training data
+  linear_model <- lm(peak_position ~ ., data = training)
+  rf_model <- randomForest(peak_position ~ ., data = training)
+  
+  # Make predictions on testing data
+  linear_prediction <- predict(linear_model, newdata = testing)
+  rf_prediction <- predict(rf_model, newdata = testing)
+  
+  # Calculate rmse values
+  linear_sqerr <- (testing$peak_position - linear_prediction)^2
+  linear_rmse[i] <- sqrt(mean(linear_sqerr))
+  
+  rf_sqerr <- (testing$peak_position - rf_prediction)^2
+  rf_rmse[i] <- sqrt(mean(rf_sqerr))
+}
+
+# Boxplot comparing performance of linear model to random forest model
+boxplot(x = linear_rmse, rf_rmse,
+        names = c("Linear Model", "Random Forest"),
+        ylab = "RMSE")
+
+# Estimate random forest model again, this time using all data
+full_model <- randomForest(peak_position ~ ., data = swift_data)
+
+# Load song data for new album
+new_album <- read.csv(file = "data/swift-new.csv")
+
+# Predict chart position for each of the songs on the new album, skipping the 
+# first column (track name)
+new_predict <- predict(full_model, newdata = new_album[, -1])
+
+# Data frame holding predictions and track name
+song_predict <- data.frame(track_num = 1:12,
+                           peak_position = new_predict,
+                           track_name = new_album$track_names)
+
+# Print predicted chart positions for new album
+song_predict
+```
 
 ***
 
