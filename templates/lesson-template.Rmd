@@ -12,6 +12,9 @@ urlcolor: blue
 [INTRODUCTORY SENTENCE]
 
 #### Learning objectives
+
+After this lesson, learners should be able to:
+
 1. one
 2. two
 3. three
