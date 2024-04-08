@@ -13,6 +13,7 @@ An introduction to the concept of machine learning, with a worked application
 showing model comparison and evaluation of model performance.
 
 #### Learning objectives
+
 1. Explain the difference between machine learning and inferential statistics
 2. Load tabular data into R
 3. Build a predictive model and evaluate model performance
