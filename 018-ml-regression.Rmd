@@ -71,13 +71,13 @@ us (or anyone else, for that matter) to reproduce any output.
 There are _two_ additional R packages that will need to be installed:
 
 + dplyr
-+ randomforest
++ randomForest
 
 To install these, run:
 
 ```{r install-libraries, eval = FALSE}
 install.packages("dplyr")
-install.packages("randomforest")
+install.packages("randomForest")
 ```
 
 ### Example data
