@@ -1,0 +1,29 @@
+project:
+  type: website
+  output-dir: docs
+  render: 
+    - index.qmd
+    - 000-setup-instructions.qmd
+    - 001-basic-graphing.qmd
+    - 002-intro-stats.qmd
+
+website:
+  title: "learn-r"
+  site-path: "/learn-r/"
+  google-analytics: 
+    tracking-id: "G-EF6ZJH0577"
+    anonymize-ip: true
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - text: "R Lessons"
+        menu: 
+          - 001-basic-graphing.qmd
+          - 002-intro-stats.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
