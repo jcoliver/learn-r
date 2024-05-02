@@ -609,9 +609,3 @@ life expectancy.
 + A [PDF version](https://jcoliver.github.io/learn-r/002-intro-stats.pdf) of this lesson
 + An [Example of Tukey's test](https://www.r-bloggers.com/anova-and-tukeys-test-on-r/) 
 for _post hoc_ pairwise comparisons from ANOVA results.
-
-***
-
-[Back to learn-r main page](index.html)
-
-Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.

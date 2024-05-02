@@ -4,7 +4,7 @@ title: "learn-r"
 
 # Learn R
 
-A collection of lessons for learning the R programming language. Generally 
+A collection of learning resources for the R programming language. Generally 
 designed for the novice, these lessons assume little background knowledge with 
 R or programming in general. The majority of the lessons could be completed 
 with the basic R package, but I highly encourage the use of the RStudio 

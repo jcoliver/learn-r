@@ -600,9 +600,3 @@ is *extremely* useful. A companion lesson for using ggplot2 is available at
 [https://jcoliver.github.io/learn-r/004-intro-ggplot.html](https://jcoliver.github.io/learn-r/004-intro-ggplot.html).
 + A [PDF version](https://jcoliver.github.io/learn-r/001-basic-graphing.pdf) of 
 this lesson
-
-***
-
-[Back to learn-r main page](index.html)
-
-Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.

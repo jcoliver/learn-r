@@ -6,6 +6,7 @@ project:
     - 000-setup-instructions.qmd
     - 001-basic-graphing.qmd
     - 002-intro-stats.qmd
+    - 004-intro-ggplot.qmd
 
 website:
   title: "learn-r"
@@ -21,9 +22,20 @@ website:
         menu: 
           - 001-basic-graphing.qmd
           - 002-intro-stats.qmd
+          - 004-intro-ggplot.qmd
+  page-footer: 
+    left: 
+      - text: Copyright 2024, Jeffrey Oliver
+    center: 
+      - text: CC BY 4.0 Deed
+        href: https://creativecommons.org/licenses/by/4.0/
+    right: 
+      - icon: github
+        href: https://github.com/jcoliver
 
 format:
   html:
-    theme: cosmo
+    theme: flatly
     css: styles.css
     toc: true
+  pdf: default
