@@ -1,5 +1,16 @@
 ---
 title: "learn-r"
+image: images/r-logo.png
+toc: false
+about: 
+  template: trestles
+  image-shape: rounded
+  image-width: 20em
+  image-alt: R Logo
+  image-title: ""
+format: # to suppress pdf link
+  html:
+    toc: false
 ---
 
 # Learn R
