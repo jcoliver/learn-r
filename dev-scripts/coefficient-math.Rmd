@@ -30,6 +30,7 @@ lm(formula = ppengag ~ depsym * sexparents.F * pemergencysupportnaF, data = d)
 
 This model can be mathematically expressed as
 
+
 \begin{equation}
   \begin{aligned}
   ppengag &= \beta_0 + \beta_1 \times depsym + \beta_2 \times sexparents.F + \\
@@ -40,6 +41,7 @@ This model can be mathematically expressed as
    & \beta_7 \times depsym \times sexparents.F \times pemergencysupportnaF
   \end{aligned}
 \end{equation}
+
 
 We can use this formulation of the model with the output of the `summary` 
 command to see the predicted values for each situation. The output of `summary` 
@@ -85,6 +87,7 @@ ppengag = & \beta_0 + \beta_1 \times depsym + \beta_2 \times 0 + \\
   & \beta_7 \times depsym \times 0 \times pemergencysupportnaF
 \end{aligned}
 $$
+
 Which reduces to:
 
 $$
@@ -112,7 +115,9 @@ ppengag = & \beta_0 + \beta_1 \times depsym + \beta_2 \times 1 + \\
   & \beta_7 \times depsym \times 1 \times pemergencysupportnaF
 \end{aligned}
 $$
+
 Which simplifies to:
+
 $$
 \begin{aligned}
 ppengag = & \beta_0 + \beta_1 \times depsym + \beta_2 + \\
@@ -123,6 +128,7 @@ ppengag = & \beta_0 + \beta_1 \times depsym + \beta_2 + \\
   & \beta_7 \times depsym \times pemergencysupportnaF
 \end{aligned}
 $$
+
 And we can group like terms:
 
 $$
@@ -176,6 +182,7 @@ ppengag = & \beta_0 + \beta_1 \times depsym + \\
   & \beta_5 \times depsym \times 0
 \end{aligned}
 $$
+
 Which becomes
 
 $$
@@ -196,6 +203,7 @@ ppengag = & \beta_0 + \beta_1 \times depsym + \\
   & \beta_5 \times depsym \times 1
 \end{aligned}
 $$
+
 Which becomes (grouping like terms):
 
 $$
@@ -219,6 +227,7 @@ ppengag = & \beta_0 + \beta_2 + \\
   & (\beta_5 + \beta_7) \times depsym \times 0
 \end{aligned}
 $$
+
 Reducing to:
 
 $$
@@ -242,6 +251,7 @@ ppengag = & \beta_0 + \beta_2 + \\
   & (\beta_5 + \beta_7) \times depsym \times 1
 \end{aligned}
 $$
+
 Reducing and grouping like terms:
 
 $$
@@ -255,7 +265,6 @@ $$
 
 We now have four equations  that we can use to calculate each of the four 
 different cases.
-
 
 $sexparents.F = Female$ and $pemergencysupportnaF = No$
 
@@ -381,4 +390,3 @@ min_depsym <- lm_coeff[1, 1] + lm_coeff[3, 1] + lm_coeff[4, 1] + lm_coeff[7, 1] 
 ```
 
 ***
-
