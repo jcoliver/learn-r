@@ -1,3 +1,7 @@
+---
+title: Schedule
+---
+
 # Tentative schedule of upcoming workshops
 
 | Day | Month | Workshop                           |
@@ -18,7 +22,7 @@
 | 30  | Jul   | Hybrid open lab                    |
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
-be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
+be in the Data Studios of the [Main Library](https://lib.arizona.edu/study/spaces/data-studio) 
 and running a concurrent Zoom session.
 
 For information on connecting to online sessions, reach out to us on the r 

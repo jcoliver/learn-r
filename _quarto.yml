@@ -3,10 +3,24 @@ project:
   output-dir: docs
   render: 
     - index.qmd
+    - schedule.qmd
     - 000-setup-instructions.qmd
     - 001-basic-graphing.qmd
     - 002-intro-stats.qmd
+    - 003-intro-multivariate.qmd
     - 004-intro-ggplot.qmd
+    - 005-intro-knitr.qmd
+    - 006-heatmaps.qmd
+    - 007-intro-functional-programming.qmd
+    - 008-ggplot-dendrograms-and-heatmaps.qmd
+    - 009-expression-heatmaps.qmd
+    - 010-github.qmd
+    - 011-species-distribution-models.qmd
+    - 012-intro-tidyverse.qmd
+    - 014-intro-summarizing-visualizing.qmd
+    - 016-intro-shiny.qmd
+    - 017-open-street-map.qmd
+    - 018-ml-regression.qmd
 
 website:
   title: "learn-r"
@@ -22,7 +36,22 @@ website:
         menu: 
           - 001-basic-graphing.qmd
           - 002-intro-stats.qmd
+          - 003-intro-multivariate.qmd
           - 004-intro-ggplot.qmd
+          - 005-intro-knitr.qmd
+          - 006-heatmaps.qmd
+          - 007-intro-functional-programming.qmd
+          - 008-ggplot-dendrograms-and-heatmaps.qmd
+          - 009-expression-heatmaps.qmd
+          - 010-github.qmd
+          - 011-species-distribution-models.qmd
+          - 012-intro-tidyverse.qmd
+          - 014-intro-summarizing-visualizing.qmd
+          - 016-intro-shiny.qmd
+          - 017-open-street-map.qmd
+          - 018-ml-regression.qmd
+      - href: schedule.qmd
+        text: Schedule
   page-footer: 
     left: 
       - text: Copyright 2024, Jeffrey Oliver

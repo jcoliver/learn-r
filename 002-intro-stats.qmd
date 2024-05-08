@@ -2,11 +2,6 @@
 title: "Introduction to R Statistics"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output:
-  html_document: default
-  pdf_document:
-    latex_engine: xelatex
-urlcolor: blue
 ---
 
 An introduction to using the R statistics package and the RStudio interface.

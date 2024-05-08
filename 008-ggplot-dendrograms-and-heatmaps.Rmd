@@ -2,7 +2,7 @@
 title: "Clusters and Heatmaps"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: 
+output:
   html_document: default
   pdf_document:
     latex_engine: xelatex

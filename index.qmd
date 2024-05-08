@@ -6,8 +6,8 @@ about:
   template: trestles
   image-shape: rounded
   image-width: 20em
-  image-alt: R Logo
-  image-title: ""
+  # image-alt: R Logo
+  # image-title: ""
 format: # to suppress pdf link
   html:
     toc: false
@@ -20,4 +20,5 @@ designed for the novice, these lessons assume little background knowledge with
 R or programming in general. The majority of the lessons could be completed 
 with the basic R package, but I highly encourage the use of the RStudio 
 development environment, especially for novices. If you are new to R, you can 
-find installation details on the [installation and instruction page](000-setup-instructions.qmd).
+find installation details on the 
+[installation and instruction page](000-setup-instructions.qmd).
