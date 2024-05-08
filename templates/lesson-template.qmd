@@ -2,11 +2,6 @@
 title: "LESSON TITLE"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output:
-  html_document: default
-  pdf_document:
-    latex_engine: xelatex
-urlcolor: blue
 ---
 
 [INTRODUCTORY SENTENCE]
@@ -46,7 +41,3 @@ After this lesson, learners should be able to:
 + A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
 
 ***
-
-<a href="index.html">Back to learn-r main page</a>
-  
-Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.
