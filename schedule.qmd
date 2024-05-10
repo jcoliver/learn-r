@@ -1,5 +1,8 @@
 ---
 title: Schedule
+format: # to suppress pdf link
+  html:
+    toc: false
 ---
 
 # Tentative schedule of upcoming workshops

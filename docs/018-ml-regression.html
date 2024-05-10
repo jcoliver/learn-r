@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jeff Oliver">
-<meta name="dcterms.date" content="2024-05-08">
+<meta name="dcterms.date" content="2024-05-10">
 
 <title>learn-r - Machine learning in R part 1: regression</title>
 <style>
@@ -193,8 +193,8 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
  <span class="dropdown-text">Interactive web apps with Shiny</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./017-open-street-map.qmd" rel="" target="">
- <span class="dropdown-text"></span></a>
+    <a class="dropdown-item" href="./017-open-street-map.html" rel="" target="">
+ <span class="dropdown-text">Mapping with Open Street Maps in R</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./018-ml-regression.html" rel="" target="">
@@ -205,6 +205,10 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
   <li class="nav-item">
     <a class="nav-link" href="./schedule.html" rel="" target="">
  <span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./resources.html" rel="" target="">
+ <span class="menu-text">Additional Resources</span></a>
   </li>  
 </ul>
             <div class="quarto-navbar-tools ms-auto">
@@ -271,7 +275,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 8, 2024</p>
+      <p class="date">May 10, 2024</p>
     </div>
   </div>
   
@@ -448,7 +452,7 @@ RMSE = \sqrt{ \dfrac{ \sum{ (y_i - \hat{y_i})^2 } } n }
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>rf_rmse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 12.32838</code></pre>
+<pre><code>[1] 12.34211</code></pre>
 </div>
 </div>
 <p>So, on average, the linear model is off by about 26 spots on the chart, while the random forest model predictions are only 12 spots different from the actual chart position for that song. Hey, that random forest model does a lot better. We are done, right?</p>
@@ -517,10 +521,10 @@ RMSE = \sqrt{ \dfrac{ \sum{ (y_i - \hat{y_i})^2 } } n }
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>rf_rmse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 28.30615</code></pre>
+<pre><code>[1] 28.47014</code></pre>
 </div>
 </div>
-<p>So how did the models do? Our original RMSE for the linear model was 26.488, so the model did a <em>little</em> worse (because the RMSE got bigger). The first time we ran the random forest model, the RMSE was only 12.328 which is much lower than the RMSE on testing data. This means the random forest model did quite a bit worse when we asked it to make predictions based on data it had never seen before. The random forest model memorized answers from the test.</p>
+<p>So how did the models do? Our original RMSE for the linear model was 26.488, so the model did a <em>little</em> worse (because the RMSE got bigger). The first time we ran the random forest model, the RMSE was only 12.342 which is much lower than the RMSE on testing data. This means the random forest model did quite a bit worse when we asked it to make predictions based on data it had never seen before. The random forest model memorized answers from the test.</p>
 <hr>
 </section>
 </section>
@@ -642,7 +646,7 @@ RMSE = \sqrt{ \dfrac{ \sum{ (y_i - \hat{y_i})^2 } } n }
 <div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>rf_rmse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 31.93924</code></pre>
+<pre><code>[1] 31.94982</code></pre>
 </div>
 </div>
 <p>Uh oh. There is only one value in each variable, but we ran through this process five times. What gives? The problem is that the two variables that hold our RMSE values, <code>linear_rmse</code> and <code>rf_rmse</code>, are over-written each time the loop executes. This means we only have values for the <em>last</em> time through the loop. We need to make sure to store the outcomes each time through the loop. To do this, we will add a pair of results variables that are updated as the loop executes. We will actually use the same names as before, but now we make sure there are five slots in each variable. We add these variables <em>before</em> our loop statement:</p>
@@ -689,7 +693,7 @@ RMSE = \sqrt{ \dfrac{ \sum{ (y_i - \hat{y_i})^2 } } n }
 <div class="cell">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>rf_rmse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 28.48909 29.05300 26.66457 22.01258 31.67786</code></pre>
+<pre><code>[1] 28.74793 29.03036 26.92395 21.94233 31.83738</code></pre>
 </div>
 </div>
 <p>To decide which model is preferred, we can compare the mean RMSE values of the models:</p>
@@ -700,7 +704,7 @@ RMSE = \sqrt{ \dfrac{ \sum{ (y_i - \hat{y_i})^2 } } n }
 </div>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(rf_rmse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 27.57942</code></pre>
+<pre><code>[1] 27.69639</code></pre>
 </div>
 </div>
 <p>We can also visualize these results with a boxplot, to show variation among the five training/testing splits:</p>
@@ -766,21 +770,21 @@ RMSE = \sqrt{ \dfrac{ \sum{ (y_i - \hat{y_i})^2 } } n }
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>song_predict</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   track_num peak_position                    track_name
-1          1      32.74570            Echoes of Eternity
-2          2      35.94647             Midnight Serenade
-3          3      40.16250          Whispers in the Wind
-4          4      41.18893 City Lights and Country Skies
-5          5      14.23170          Diamonds in the Dust
-6          6      30.57707               Golden Memories
-7          7      46.43290             Infinite Horizons
-8          8      30.61990    Heartstrings and Harmonies
-9          9      35.01920                   Stars Align
-10        10      33.85163                Fireside Chats
-11        11      40.75463             Rivers of Reverie
-12        12      42.51180            Celestial Symphony</code></pre>
+1          1      31.82940            Echoes of Eternity
+2          2      36.28577             Midnight Serenade
+3          3      39.82037          Whispers in the Wind
+4          4      40.63477 City Lights and Country Skies
+5          5      12.34133          Diamonds in the Dust
+6          6      29.56027               Golden Memories
+7          7      47.51237             Infinite Horizons
+8          8      30.77433    Heartstrings and Harmonies
+9          9      35.26253                   Stars Align
+10        10      32.40847                Fireside Chats
+11        11      42.19463             Rivers of Reverie
+12        12      40.03043            Celestial Symphony</code></pre>
 </div>
 </div>
-<p>From these results, we see that track 5 is predicted to do the best on the charts. That is, our model is predicting the song “Diamonds in the Dust” will go up to position 14 (rounding to the nearest integer).</p>
+<p>From these results, we see that track 5 is predicted to do the best on the charts. That is, our model is predicting the song “Diamonds in the Dust” will go up to position 12 (rounding to the nearest integer).</p>
 <p>So there we are. We created a machine learning model and predicted the peak position for each song on Taylor Swift’s next, yet-to-be-released album. We used this to then identify the predicted best performing song to release as a single. Our final script for this process would be:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Machine learning on Taylor Swift songs</span></span>

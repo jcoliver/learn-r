@@ -1,5 +1,8 @@
 ---
 title: Setup Instructions
+format: # to suppress pdf link
+  html:
+    toc: false
 ---
 
 You will need to install **two pieces of software on your computer for these 

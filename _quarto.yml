@@ -4,6 +4,7 @@ project:
   render: 
     - index.qmd
     - schedule.qmd
+    - resources.qmd
     - 000-setup-instructions.qmd
     - 001-basic-graphing.qmd
     - 002-intro-stats.qmd
@@ -52,6 +53,8 @@ website:
           - 018-ml-regression.qmd
       - href: schedule.qmd
         text: Schedule
+      - href: resources.qmd
+        text: Additional Resources
   page-footer: 
     left: 
       - text: Copyright 2024, Jeffrey Oliver

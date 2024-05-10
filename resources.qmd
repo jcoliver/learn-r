@@ -1,0 +1,16 @@
+---
+title: "Additional Resources"
+format: # to suppress pdf link
+  html:
+    toc: false
+---
+
+In case you are looking for more ways to learn R, here are a couple more things
+to look at:
+
++ The Carpentries offers a lot of materials for learning R, including:
+  + A thorough lesson on [R programming for reproducible analyses](https://swcarpentry.github.io/r-novice-gapminder)
+  + Data analyses and visualization in [R for ecologists](https://datacarpentry.org/R-ecology-lesson/)
+  + Data analyses and visualization in [R for social scientists](https://datacarpentry.org/r-socialsci/)
+  + Working with [geospatial data in R](https://datacarpentry.org/r-raster-vector-geospatial)
++ IBM Data Scientist Kelsey Gonzalez's [lessons on YouTube](https://www.youtube.com/playlist?list=PL6FsZxVq54ERrlMRNE5aq2qUFH042fbuM)
