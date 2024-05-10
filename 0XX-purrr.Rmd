@@ -1,0 +1,86 @@
+---
+title: "Repeating things with purrr"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+urlcolor: blue
+---
+
+[INTRODUCTORY SENTENCE]
+
+#### Learning objectives
+1. one
+2. two
+3. three
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+***
+
+## Getting started
+
+***
+
+## [TOPIC ONE]
+
+```{r copied-example, eval = FALSE}
+# Define the function, here we are pasting two things together, separated by
+# sep_arg (by default, a pipe)
+myfun <- function(chr_arg = "yz",
+                  num_arg = 0.9,
+                  sep_arg = "|") {
+  cat(chr_arg, ", ", sep_arg, ", ", num_arg, "\n")
+  str_out <- paste(chr_arg, num_arg, sep = sep_arg)
+  return(str_out)
+}
+
+# Check to make sure it works as expected
+myfun()
+
+# Now use it on a pair of lists, replacing default values of chr_arg & num_arg
+# Start by making up date
+chr_list <- list("ab", "cd", "ef")
+num_list <- list(0.1, 0.3, 0.5)
+
+# map2 does myfun over each element in chr_list and num_list
+purrr::map2(chr_list, num_list, myfun)
+
+# Swap order of sep_arg and num_arg in function definition
+mynotfun <- function(chr_arg = "yz",
+                     sep_arg = "|",
+                     num_arg = 0.9) {
+  cat(chr_arg, ", ", sep_arg, ", ", num_arg, "\n")
+  str_out <- paste(chr_arg, num_arg, sep = sep_arg)
+  return(str_out)
+}
+
+# Works fine for default values
+mynotfun()
+
+# Doesn't work on map2
+purrr::map2(chr_list, num_list, mynotfun)
+
+# Recover functionality by explicitly providing value for sep_arg
+purrr::map2(chr_list, num_list, mynotfun, sep_arg = "*")
+```
+
+***
+
+## [TOPIC TWO]
+
+***
+
+## Additional resources
+
++ [resource one](url-one)
++ [resource two](url-two)
++ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.

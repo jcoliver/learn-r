@@ -1,0 +1,173 @@
+---
+title: "learn-r Announcement message"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+```{r setup-options, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+suppressPackageStartupMessages(expr = library(lubridate))
+```
+
+```{r setup-schedule}
+# Only this chunk should be edited
+# See lesson-info.csv for lesson identifiers ('number' column)
+schedule <- data.frame(dates = c("2024-05-07",
+                                 "2024-05-14",
+                                 "2024-05-21",
+                                 "2024-05-28"),
+                       lessons = c(-1, -1, -1, -1))
+
+# Toggle indicating whether or not attendance files should be created
+create.files <- TRUE
+
+# Where attendance files will be placed
+attend_destination <- "./"
+# attend_destination <- "../../learn-r-non-repo/admin/"
+
+```
+
+```{r prepare-data}
+lesson.info <- read.csv(file = "lesson-info.csv", stringsAsFactors = FALSE)
+schedule <- merge(x = schedule, y = lesson.info, 
+                  by.x = "lessons", by.y = "number",
+                  all.y = FALSE)
+schedule$dates <- as.Date(schedule$dates)
+schedule <- schedule[order(schedule$dates), ]
+schedule$day <- format(schedule$dates, "%B %d")
+```
+
+### Announcement for learn-r workshops
+Paste the following message into e-mail:
+
+***
+
+Would you mind forwarding this announcement to researchers and students in your department? Please let me know if you have any questions. Thanks in advance!
+
+\-\-\-\-\-
+
+<!--
+_All sessions will be 9-11 am on Tuesday in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio)_. 
+-->
+_All sessions will be 9-11 am (MST) on Tuesday_. Sessions will be offered in 
+hybrid format: we will be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
+and running a concurrent Zoom session at [https://arizona.zoom.us/j/81985869620](https://arizona.zoom.us/j/81985869620).
+<!--
+_All sessions will be 9-11 am (MST) on Tuesday through Zoom_ at  [https://arizona.zoom.us/j/81985869620](https://arizona.zoom.us/j/81985869620). 
+-->
+To get the most out of these workshops, participants should bring a laptop with 
+[R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html). 
+<!--
+If you miss a session, you can always check out the collaborative blog at
+[https://hackmd.io/@jcoliver/SJVjEsOZw](https://hackmd.io/@jcoliver/SJVjEsOZw), 
+with helpful tips that come out of discussion sessions.
+-->
+
+```{r print-schedule, results = "asis"}
+# Keep track of whether an open lab has been encountered; only print blurb for 
+# first instance
+open.hit <- FALSE
+for (i in 1:nrow(schedule)) {
+  if (open.hit & schedule$lessons[i] == -1) {
+    cat("+ ", schedule$day[i], ": **", schedule$title[i], "**.\n", sep = "")
+  } else if (schedule$lessons[i] == 0) {
+    cat("+ ", schedule$day[i], ": **", schedule$title[i], "**.\n", sep = "")
+  } else {
+    cat("+ ", schedule$day[i], ": **", schedule$title[i], "**: ", schedule$blurb[i], "\n", sep = "")
+    if (schedule$lessons[i] == -1) {
+      open.hit <- TRUE
+    }
+  }
+}
+```
+
+<!--
+**Note**: Drop-in help for R and Python is _always_ available in the Zoom 
+sessions.
+-->
+
+Additional resources:
+
++ A tentative schedule of upcoming sessions is also available at
+[https://jcoliver.github.io/learn-r/schedule](https://jcoliver.github.io/learn-r/schedule)
++ Even more data science events can be found on the Data Science Institute's events calendar at [https://datascience.arizona.edu/calendar](https://datascience.arizona.edu/calendar)
++ Want more help? Sign up for the UA Data Science Slack workspace at
+[https://jcoliver.github.io/uadatascience-slack/](https://jcoliver.github.io/uadatascience-slack/)
++ Stay up to date with R workshops by signing up for the University of Arizona 
+R Users mailing list at
+[https://list.arizona.edu/sympa/subscribe/ruaz](https://list.arizona.edu/sympa/subscribe/ruaz)
++ If you cannot make it to the R session or just want more R, check out former 
+[Data Science Ambassador](http://datascience.arizona.edu/ambassadors) Kelsey 
+Gonzalez's lessons on YouTube at
+[https://www.youtube.com/playlist?list=PL6FsZxVq54ERrlMRNE5aq2qUFH042fbuM](https://www.youtube.com/playlist?list=PL6FsZxVq54ERrlMRNE5aq2qUFH042fbuM).
+
+***
+
+#### Attendance files set up:
+```{r setup-files}
+if (create.files) {
+  # Creating files with only header rows for tracking attendance
+  header.row <- "Last,First,E-mail,College,Department,Position,Attendance"
+  for (i in 1:nrow(schedule)) {
+    if (schedule$lessons[i] != 0) { # Don't set up a file if there is no lesson
+      filename <- paste0(schedule$dates[i], "-main-", schedule$short.name[i], "-attendance.csv")
+      filename <- paste0(attend_destination, filename)
+      if (!file.exists(filename)) {
+        file.create(filename)
+        file.connection <- file(filename)
+        writeLines(text = header.row, con = file.connection)
+        close(file.connection)
+        cat(filename, "\n")
+      }
+    }
+  }
+}
+```
+
+***
+
+<!-- still to do -->
+```{r create-schedule-md, eval = FALSE}
+
+# Write a small data file with schedule information to a temporary file
+# Run script that creates the file schedule.md
+source(file = "create-schedule.R")
+# Delete the temporary schedule file
+
+# See code OUTSIDE of r-block below this chunk.
+
+# TODO: Won't work due to RMarkdown redirection of output
+# sink(file = "schedule-test.md")
+
+# TODO: Doesn't work either
+# https://groups.google.com/forum/#!topic/knitr/TCz9vNLlslY
+{
+  sink("schedule-test.md")
+  cat("cat command", "\n")
+  print("print command\n")
+  sprintf("sprintf command\n")
+  sink()
+}
+
+schedule.file <- file("schedule-test.md")
+out <- capture.output(
+  print("# Tentative schedule of upcoming workshops\n\n"), 
+  print("| Day | Month | Workshop |\n"), 
+  print("|:---:|:-----:|:---------------------------------:|\n"))
+  
+#   for (i in 1:nrow(schedule)) {
+#     cat("| ", day(schedule$dates[i]), 
+#         " | ", as.character(month(schedule$dates[i], label = TRUE, abbr = TRUE)), sep = "")
+#     if (schedule$lessons[i] != 0) {
+#       cat(" | ", schedule$title[i], " |\n", sep = "")
+#     } else {
+#       cat(" | _", schedule$title[i], "_ |\n", sep = "")
+#     }
+#   },
+#   cat("\n\nNote this schedule is generally updated at the end of each month. If you have questions about the schedule, or are interested in learning about a particular topic in R, contact Jeff Oliver at [jcoliver@email.arizona.edu](mailto:jcoliver@email.arizona.edu?subject=R%20workshop%20inquiry).")
+# )
+cat(out, file = schedule.file)
+close(con = schedule.file)
+# sink()  
+```

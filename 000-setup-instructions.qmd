@@ -1,0 +1,41 @@
+---
+title: Setup Instructions
+format: # to suppress pdf link
+  html:
+    toc: false
+---
+
+You will need to install **two pieces of software on your computer for these 
+lessons: [R](#r-instructions) and [RStudio](#rstudio-instructions). 
+Installation for R may vary by your operating system (OS); follow the 
+instructions below for your OS. Some lessons also include a small amount of 
+work in a spreadsheet environment like Microsoft Excel<sup>&reg;</sup> or 
+LibreOffice Calc. If you do not have spreadsheet software, you can download 
+[LibreOffice Calc](https://www.libreoffice.org/discover/calc/) for free.
+
+## R instructions
+
+### Windows
+
+Install R by downloading and running the exe file: 
+[R Windows Installer](http://cran.r-project.org/bin/windows/base/release.htm).
+
+### Mac
+
++ For Mac OSX, release 10.6 and above, install R by downloading and running the 
+pkg file: [Mac OSX package](http://cran.r-project.org/bin/macosx/R-latest.pkg).
++ For earlier releases of Mac OS, see details on installing 
+[older versions of R](https://cran.r-project.org/bin/macosx/) 
+
+### Linux
+
+Download the binary files for your Linux distribution from 
+[CRAN](http://cran.r-project.org/index.html). Alternatively, you can use your 
+package manager to install R. e.g. 
+
++ Debian/Ubuntu, run `sudo apt-get install r-base` 
++ Fedora run `sudo yum install R`
+
+## RStudio instructions
+
+Download and install [RStudio](http://www.rstudio.com/ide/download/desktop).

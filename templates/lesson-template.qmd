@@ -1,0 +1,43 @@
+---
+title: "LESSON TITLE"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+[INTRODUCTORY SENTENCE]
+
+#### Learning objectives
+
+After this lesson, learners should be able to:
+
+1. one
+2. two
+3. three
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+***
+
+## Getting started
+
++ Library installation (if necessary)
++ Project setup
++ Download data (if necessary)
+
+***
+
+## [TOPIC ONE]
+
+***
+
+## [TOPIC TWO]
+
+***
+
+## Additional resources
+
++ [resource one](url-one)
++ [resource two](url-two)
++ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
+
+***

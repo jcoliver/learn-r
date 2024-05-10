@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jeff Oliver">
+<meta name="dcterms.date" content="2024-05-10">
+
+<title>learn-r - Introduction to R Statistics</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-EF6ZJH0577"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">learn-r</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-r-lessons" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">R Lessons</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-r-lessons">    
+        <li>
+    <a class="dropdown-item" href="./001-basic-graphing.html" rel="" target="">
+ <span class="dropdown-text">Introduction to R Graphing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./002-intro-stats.html" rel="" target="">
+ <span class="dropdown-text">Introduction to R Statistics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./003-intro-multivariate.html" rel="" target="">
+ <span class="dropdown-text">Introduction to Multivariate Statistics in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./004-intro-ggplot.html" rel="" target="">
+ <span class="dropdown-text">Introduction to data visualization with ggplot</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./005-intro-knitr.html" rel="" target="">
+ <span class="dropdown-text">Dynamic reports with knitr</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./006-heatmaps.html" rel="" target="">
+ <span class="dropdown-text">Heatmaps in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./007-intro-functional-programming.html" rel="" target="">
+ <span class="dropdown-text">Introduction to Functional Programming</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./008-ggplot-dendrograms-and-heatmaps.html" rel="" target="">
+ <span class="dropdown-text">Clusters and Heatmaps</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./009-expression-heatmaps.html" rel="" target="">
+ <span class="dropdown-text">Heatmaps - the gene expression edition</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./010-github.html" rel="" target="">
+ <span class="dropdown-text">Git and GitHub in RStudio</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./011-species-distribution-models.html" rel="" target="">
+ <span class="dropdown-text">A very brief introduction to species distribution models in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./012-intro-tidyverse.html" rel="" target="">
+ <span class="dropdown-text">Introduction to tidyverse packages</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./014-intro-summarizing-visualizing.html" rel="" target="">
+ <span class="dropdown-text">Introduction to data summarizing and visualization</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./016-intro-shiny.html" rel="" target="">
+ <span class="dropdown-text">Interactive web apps with Shiny</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./017-open-street-map.html" rel="" target="">
+ <span class="dropdown-text">Mapping with Open Street Maps in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./018-ml-regression.html" rel="" target="">
+ <span class="dropdown-text">Machine learning in R part 1: regression</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./schedule.html" rel="" target="">
+ <span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./resources.html" rel="" target="">
+ <span class="menu-text">Additional Resources</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#statistics-in-r" id="toc-statistics-in-r" class="nav-link active" data-scroll-target="#statistics-in-r">Statistics in R</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#data-interrogation" id="toc-data-interrogation" class="nav-link" data-scroll-target="#data-interrogation">Data interrogation</a></li>
+  <li><a href="#students-t" id="toc-students-t" class="nav-link" data-scroll-target="#students-t">Student’s <em>t</em></a></li>
+  <li><a href="#analysis-of-variance-anova" id="toc-analysis-of-variance-anova" class="nav-link" data-scroll-target="#analysis-of-variance-anova">Analysis of Variance (ANOVA)</a></li>
+  <li><a href="#linear-regression" id="toc-linear-regression" class="nav-link" data-scroll-target="#linear-regression">Linear regression</a></li>
+  <li><a href="#solutions-to-challenges" id="toc-solutions-to-challenges" class="nav-link" data-scroll-target="#solutions-to-challenges">Solutions to Challenges</a>
+  <ul class="collapse">
+  <li><a href="#solution-to-challenge-1" id="toc-solution-to-challenge-1" class="nav-link" data-scroll-target="#solution-to-challenge-1">Solution to Challenge 1</a></li>
+  <li><a href="#solution-to-challenge-2" id="toc-solution-to-challenge-2" class="nav-link" data-scroll-target="#solution-to-challenge-2">Solution to Challenge 2</a></li>
+  <li><a href="#solution-to-challenge-3" id="toc-solution-to-challenge-3" class="nav-link" data-scroll-target="#solution-to-challenge-3">Solution to Challenge 3</a></li>
+  </ul></li>
+  <li><a href="#additional-resources" id="toc-additional-resources" class="nav-link" data-scroll-target="#additional-resources">Additional resources</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="002-intro-stats.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Introduction to R Statistics</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jeff Oliver </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 10, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>An introduction to using the R statistics package and the RStudio interface.</p>
+<section id="learning-objectives" class="level4">
+<h4 class="anchored" data-anchor-id="learning-objectives">Learning objectives</h4>
+<ol type="1">
+<li>Read data from files and output results to files</li>
+<li>Extract relevant portions of datasets</li>
+<li>Run standard statistical tests in R, including Student’s <em>t</em>, analysis of variance (ANOVA), and simple linear regression.</li>
+</ol>
+</section>
+<section id="statistics-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="statistics-in-r">Statistics in R</h2>
+<p>R was <em>designed</em> for statistical analyses. This lesson provides an overview of reading data and writing output, as well as running standard statistical tests in R, including t-tests, linear regression, and analysis of variance.</p>
+</section>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<p>First we need to setup our development environment. Open RStudio and create a new project via:</p>
+<ul>
+<li>File &gt; New Project…</li>
+<li>Select ‘New Directory’</li>
+<li>For the Project Type select ‘New Project’</li>
+<li>For Directory name, call it something like “r-graphing” (without the quotes)</li>
+<li>For the subdirectory, select somewhere you will remember (like “My Documents” or “Desktop”)</li>
+</ul>
+<p>We need to create two folders: ‘data’ will store the data we will be analyzing, and ‘output’ will store the results of our analyses.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="at">path =</span> <span class="st">"data"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="at">path =</span> <span class="st">"output"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-interrogation" class="level2">
+<h2 class="anchored" data-anchor-id="data-interrogation">Data interrogation</h2>
+<p>For our first set of analyses, we’ll use a dataset that comes pre-loaded in R. The <code>iris</code> data were collected by botanist Edgar Anderson and used in the early statistical work of R.A. Fisher. Start by looking at the data with the <code>head</code> command:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="at">x =</span> iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+1          5.1         3.5          1.4         0.2  setosa
+2          4.9         3.0          1.4         0.2  setosa
+3          4.7         3.2          1.3         0.2  setosa
+4          4.6         3.1          1.5         0.2  setosa
+5          5.0         3.6          1.4         0.2  setosa
+6          5.4         3.9          1.7         0.4  setosa</code></pre>
+</div>
+</div>
+<p><code>iris</code> is a <code>data.frame</code>, which is probably the most commonly used data structure in R. It is basically a table where each column is a variable and each row has one set of values for each of those variables (much like a single sheet in a program like LibreOffice Calc or Microsoft Excel). In the <code>iris</code> data, there are five columns: <code>Sepal.Length</code>, <code>Sepal.Width</code>, <code>Petal.Length</code>, <code>Petal.Width</code>, and <code>Species.</code> Each row corresponds to the measurements for an individual flower. Note that all the values in a column of a <code>data.frame</code> must be of the same type - if you try to mix numbers and words in the same column, R will “coerce” the data to a single type, which may cause problems for downstream analyses.</p>
+<p>An investigation of our call to the <code>head</code> command illustrates two fundamental concepts in R: variables and functions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="at">x =</span> iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><code>iris</code> is a variable. That is, it is a name we use to refer to some information in our computer’s memory. In this case, the information is a table of flower measurements.</li>
+<li><code>head</code> is the name of the function that prints out the first six rows of a <code>data.frame</code>. Most functions require some form of input; in this example, we provided one piece of input to <code>head</code>: the name of the variable for which we want the first six lines.</li>
+</ul>
+<p>Another great idea when investigating data is to plot it out to see if there are any odd values. Here we use <code>boxplot</code> to show the data for each species.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="at">formula =</span> Petal.Length <span class="sc">~</span> Species, <span class="at">data =</span> iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="002-intro-stats_files/figure-html/boxplot-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><code>boxplot</code> uses the syntax <code>y ~ group</code>, where the reference to the left of the tilde (~) is the value to plot on the y-axis (here we are plotting the values of <code>Petal.Length</code>) and the reference to the right indicates how to group the data (here we group by the value in the <code>Species</code> column of <code>iris</code>). Find out more about the plot by typing <code>?boxplot</code> into the console.</p>
+<p>Also note that R is <em>case sensitive</em>, so if we refer to objects without using the correct case, we will often encounter errors. For example, if I forgot to capitalize <code>Species</code> in the <code>boxplot</code> call, R cannot find <code>species</code> (note the lower-case “s”) and throws an error:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="at">formula =</span> Petal.Length <span class="sc">~</span> species, <span class="at">data =</span> iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in eval(predvars, data, env): object 'species' not found</code></pre>
+</div>
+</div>
+<p>To keep track of what we do, we will switch from running commands directly in the console to writing R scripts that we can execute. These scripts are simple text files with R commands.</p>
+</section>
+<section id="students-t" class="level2">
+<h2 class="anchored" data-anchor-id="students-t">Student’s <em>t</em></h2>
+<p>We are going to start by doing a single comparison, looking at the petal lengths of two species. We use a <em>t</em>-test to ask whether or not the values for two species were likely drawn from two separate populations. Just looking at the data for two species of irises, it looks like the petal lengths are different, but are they <em>significantly</em> different?</p>
+
+<style type="text/css">
+.table {
+    width: 30%;
+}
+</style>
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: center;"><em>I. setosa</em></th>
+<th style="text-align: center;"><em>I. versicolor</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1.4</td>
+<td style="text-align: center;">4.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1.4</td>
+<td style="text-align: center;">4.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">1.3</td>
+<td style="text-align: center;">4.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1.5</td>
+<td style="text-align: center;">4.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">1.4</td>
+<td style="text-align: center;">4.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">…</td>
+<td style="text-align: center;">…</td>
+</tr>
+</tbody>
+</table>
+<p>Start by making a new R script file (File &gt; New File &gt; R Script) and save it as “iris-t-test.R”. We start by adding some key information to the top of the script, using the comment character, <code>#</code>, so R will know to ignore these lines. Commenting your code is critical in understanding why and how you did analyses when you return to the code two years from now.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># T-test on iris petal lengths</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Jeff Oliver</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># jcoliver@email.arizona.edu</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2016-09-09</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare setosa and versicolor</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We’ll start by comparing the data of <em>Iris setosa</em> and <em>Iris versicolor</em>, so we need to create two new data objects, one corresponding to the <em>I. setosa</em> data and one for the <em>I. versicolor</em> data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>setosa <span class="ot">&lt;-</span> iris[iris<span class="sc">$</span>Species <span class="sc">==</span> <span class="st">"setosa"</span>, ]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>versicolor <span class="ot">&lt;-</span> iris[iris<span class="sc">$</span>Species <span class="sc">==</span> <span class="st">"versicolor"</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>OK, a lot happened with those two lines. Let’s take a look:</p>
+<ul>
+<li><code>iris</code> is the <code>data.frame</code> we worked with before.</li>
+<li><code>iris$Species</code> refers to one column in <code>iris</code>, that is, the column with the name of the species (setosa, versicolor, or virginica).</li>
+<li>The square brackets <code>[&lt;position 1&gt;, &lt;position 2&gt;]</code> are used to indicate a subset of the <code>iris</code> data. A <code>data.frame</code> is effectively a two-dimensional structure - it has some number of rows (the first dimension) and some number of columns (the second dimension). We can see how many rows and columns are in a <code>data.frame</code> with the <code>dim</code> command. <code>dim(iris)</code> prints out the number of rows</li>
+</ul>
+<ol start="150" type="1">
+<li>and the number of columns (5):</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 150   5</code></pre>
+</div>
+</div>
+<p>We use the square brackets to essentially give an address for the data we are interested in. We tell R which rows we want in the first position and which columns we want in the second position. If a dimension is left blank, then all rows/columns are returned. For example, this returns all columns for the third row of data in <code>iris</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>iris[<span class="dv">3</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+3          4.7         3.2          1.3         0.2  setosa</code></pre>
+</div>
+</div>
+<p>So the code</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>setosa <span class="ot">&lt;-</span> iris[iris<span class="sc">$</span>Species <span class="sc">==</span> <span class="st">"setosa"</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>will extract all columns (because there is nothing after the comma) in the <code>iris</code> data for those rows where the value in the <code>Species</code> column is “setosa” <em>and</em> assign that information to a variable called <code>setosa</code>.</p>
+<p>Comparing the <code>iris</code> data and the <code>setosa</code> data, we see that there are indeed fewer rows in the <code>setosa</code> data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 150</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(setosa)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 50</code></pre>
+</div>
+</div>
+<p>Now to compare the two species, we call the <code>t.test</code> function in R, passing each set of data to <code>x</code> and <code>y</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare Petal.Length of these two species</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(<span class="at">x =</span> setosa<span class="sc">$</span>Petal.Length, <span class="at">y =</span> versicolor<span class="sc">$</span>Petal.Length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  setosa$Petal.Length and versicolor$Petal.Length
+t = -39.493, df = 62.14, p-value &lt; 2.2e-16
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -2.939618 -2.656382
+sample estimates:
+mean of x mean of y 
+    1.462     4.260 </code></pre>
+</div>
+</div>
+<p>The output of a <em>t</em>-test is a little different than what we will see later in the ANOVA. The results include:</p>
+<ul>
+<li>Test statistic, degrees of freedom, and p-value</li>
+<li>The confidence interval for the difference in means between the two data sets</li>
+<li>The means of each data set</li>
+</ul>
+<p>So we reject the hypothesis that these species have the same petal lengths.</p>
+<p>The final script should be:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># T-test on iris petal lengths</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Jeff Oliver</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># jcoliver@email.arizona.edu</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2016-09-09</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare setosa and versicolor</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset data</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>setosa <span class="ot">&lt;-</span> iris[iris<span class="sc">$</span>Species <span class="sc">==</span> <span class="st">"setosa"</span>, ]</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>versicolor <span class="ot">&lt;-</span> iris[iris<span class="sc">$</span>Species <span class="sc">==</span> <span class="st">"versicolor"</span>, ]</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Run t-test</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(<span class="at">x =</span> setosa<span class="sc">$</span>Petal.Length, <span class="at">y =</span> versicolor<span class="sc">$</span>Petal.Length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<h3 id="challenge-1" class="anchored">Challenge 1</h3>
+<p>Test for significant differences in petal lengths between <em>I. setosa</em> and <em>I. virginica</em> and between <em>I. versicolor</em> and <em>I. virginica</em>.</p>
+</blockquote>
+<p>(<a href="#solution-to-challenge-1">Solution</a>)</p>
+<hr>
+</section>
+<section id="analysis-of-variance-anova" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-of-variance-anova">Analysis of Variance (ANOVA)</h2>
+<p>ANOVA allows us to simultaneously compare multiple groups, to test whether group membership has a significant effect on a variable of interest. Create a new script file called ‘iris-anova.R’ and the header information.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ANOVA on iris data set</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Jeff Oliver</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># jcoliver@email.arizona.edu</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2016-09-09</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The question we will address is: <em>are there differences in petal length among the three species?</em> We start by building an analysis of variance model with the <code>aov</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aov</span>(<span class="at">formula =</span> Petal.Length <span class="sc">~</span> Species, <span class="at">data =</span> iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+   aov(formula = Petal.Length ~ Species, data = iris)
+
+Terms:
+                 Species Residuals
+Sum of Squares  437.1028   27.2226
+Deg. of Freedom        2       147
+
+Residual standard error: 0.4303345
+Estimated effects may be unbalanced</code></pre>
+</div>
+</div>
+<p>In this case, we pass <em>two</em> arguments to the <code>aov</code> function:</p>
+<ol type="1">
+<li>For the <code>formula</code> parameter, we pass <code>Petal.Length ~ Species</code>. This format is used throughout R for describing relationships we are testing. The format is <code>y ~ x</code>, where the response variables (e.g.&nbsp;<code>y</code>) are to the left of the tilde (~) and the predictor variables (e.g.&nbsp;<code>x</code>) are to the right of the tilde. In this example, we are asking if petal length is significantly different among the three species.</li>
+<li>We also need to tell R where to find the <code>Petal.Length</code> and <code>Species</code> data, so we pass the variable name of the <code>iris data.frame</code> to the <code>data</code> parameter.</li>
+</ol>
+<p>But we want to store the model, not just print it to the screen, so we use the assignment operator <code>&lt;-</code> to store the product of the <code>aov</code> function in a variable of our choice:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>petal.length.aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="at">formula =</span> Petal.Length <span class="sc">~</span> Species, <span class="at">data =</span> iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Notice how when we execute this command, nothing printed in the console. This is because we instead sent the output of the <code>aov</code> call to a variable. If you just type the variable name,</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>petal.length.aov</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>you will see the familiar output from the <code>aov</code> function:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+   aov(formula = Petal.Length ~ Species, data = iris)
+
+Terms:
+                 Species Residuals
+Sum of Squares  437.1028   27.2226
+Deg. of Freedom        2       147
+
+Residual standard error: 0.4303345
+Estimated effects may be unbalanced</code></pre>
+</div>
+</div>
+<p>To see the results of the ANOVA, we call the <code>summary</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="at">object =</span> petal.length.aov)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Df Sum Sq Mean Sq F value Pr(&gt;F)    
+Species       2  437.1  218.55    1180 &lt;2e-16 ***
+Residuals   147   27.2    0.19                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>The species <em>do</em> have significantly different petal lengths (P &lt; 0.001). If one wanted to run a <em>post hoc</em> test to assess <em>how</em> the species are different, a Tukey test comparing means would likely be the most appropriate option. A link to an example of how to do this is in the <a href="#additional-resources">Additional resources</a> section at the end of this lesson.</p>
+<p>If we want to save these results to a file, we put the call to <code>summary</code> between a pair of calls to <code>sink</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(<span class="at">file =</span> <span class="st">"output/petal-length-anova.txt"</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="at">object =</span> petal.length.aov)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Our script should look like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ANOVA on iris data set</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Jeff Oliver</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co"># jcoliver@email.arizona.edu</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2016-09-09</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Run ANOVA on petal length</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>petal.length.aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="at">formula =</span> Petal.Length <span class="sc">~</span> Species, <span class="at">data =</span> iris)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Save results to file</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(<span class="at">file =</span> <span class="st">"output/petal-length-anova.txt"</span>)</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="at">object =</span> petal.length.aov)</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<h3 id="challenge-2" class="anchored">Challenge 2</h3>
+<p>Use ANOVA to test for differences in sepal width among the three species. What is the value of the <em>F</em>-statistic?</p>
+</blockquote>
+<p>(<a href="#solution-to-challenge-2">Solution</a>)</p>
+<hr>
+</section>
+<section id="linear-regression" class="level2">
+<h2 class="anchored" data-anchor-id="linear-regression">Linear regression</h2>
+<p>For this final section, we will test for a relationship between life expectancy and per capita <a href="https://en.wikipedia.org/wiki/Gross_domestic_product">gross domestic product</a> (GDP). Start by downloading the data from <a href="https://tinyurl.com/gapminder-five-year-csv">https://tinyurl.com/gapminder-five-year-csv</a> (right-click or Ctrl-click on link and Save As…). Save this to the ‘data’ directory you created in the Setup section. Now create another R script and call it gapminder-reg.R. The file has comma-separated values for 142 countries at twelve different years; the data can be loaded in R with the <code>read.csv</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test relationship between life expectancy and GDP</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Jeff Oliver</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># jcoliver@email.arizona.edu</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2016-07-29</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>all_gapminder <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/gapminder-FiveYearData.csv"</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">stringsAsFactors =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This reads the file into memory and stores the data in a data frame called <code>all_gapminder</code>.</p>
+<p>Recall you can see the first few rows with the <code>head</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(all_gapminder)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      country year      pop continent lifeExp gdpPercap
+1 Afghanistan 1952  8425333      Asia  28.801  779.4453
+2 Afghanistan 1957  9240934      Asia  30.332  820.8530
+3 Afghanistan 1962 10267083      Asia  31.997  853.1007
+4 Afghanistan 1967 11537966      Asia  34.020  836.1971
+5 Afghanistan 1972 13079460      Asia  36.088  739.9811
+6 Afghanistan 1977 14880372      Asia  38.438  786.1134</code></pre>
+</div>
+</div>
+<p>Another useful quality assurance tool is <code>summary</code>, which provides a basic description for each column in the data frame.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(all_gapminder)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        country          year           pop               continent  
+ Afghanistan:  12   Min.   :1952   Min.   :6.001e+04   Africa  :624  
+ Albania    :  12   1st Qu.:1966   1st Qu.:2.794e+06   Americas:300  
+ Algeria    :  12   Median :1980   Median :7.024e+06   Asia    :396  
+ Angola     :  12   Mean   :1980   Mean   :2.960e+07   Europe  :360  
+ Argentina  :  12   3rd Qu.:1993   3rd Qu.:1.959e+07   Oceania : 24  
+ Australia  :  12   Max.   :2007   Max.   :1.319e+09                 
+ (Other)    :1632                                                    
+    lifeExp        gdpPercap       
+ Min.   :23.60   Min.   :   241.2  
+ 1st Qu.:48.20   1st Qu.:  1202.1  
+ Median :60.71   Median :  3531.8  
+ Mean   :59.47   Mean   :  7215.3  
+ 3rd Qu.:70.85   3rd Qu.:  9325.5  
+ Max.   :82.60   Max.   :113523.1  
+                                   </code></pre>
+</div>
+</div>
+<p>For the four numeric columns (<code>year</code>, <code>pop</code>, <code>lifeExp</code>, and <code>gdpPercap</code>), some descriptive statistics are shown. For the <code>country</code> and <code>continent</code> columns the first few values and frequencies of each value are shown (i.e.&nbsp;there are 12 records for Afghanistan and 624 records for Africa).</p>
+<p>For this analysis, we only want the data from 2007, so we start by subsetting those data. This creates a new variable and stores only those rows in the original data frame where the value in the <code>year</code> column is 2007.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset 2007 data</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>gapminder <span class="ot">&lt;-</span> all_gapminder[all_gapminder<span class="sc">$</span>year <span class="sc">==</span> <span class="dv">2007</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As we did for the ANOVA analyses, it is usually a good idea to visually inspect the data when possible. Here we can use the <code>plot</code> function to create a scatterplot of the two columns of interest, <code>lifeExp</code> and <code>gdpPercap</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot to look at data</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> gapminder<span class="sc">$</span>gdpPercap, <span class="at">y =</span> gapminder<span class="sc">$</span>lifeExp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="002-intro-stats_files/figure-html/plot-gapminder-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can see immediately that this is unlikely a linear relationship. For our purposes, we will need to log-transform the GDP data. Create a new column in the <code>gapminder</code> data frame with the log<sub>10</sub>-transformed GDP and plot this transformed data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create log-transformed GDP</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>gapminder<span class="sc">$</span>logGDP <span class="ot">&lt;-</span> <span class="fu">log10</span>(gapminder<span class="sc">$</span>gdpPercap)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot again, with log-transformed GDP on the x-axis</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> gapminder<span class="sc">$</span>logGDP, </span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> gapminder<span class="sc">$</span>lifeExp, </span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"log10(GDP)"</span>, </span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Life Expectancy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="002-intro-stats_files/figure-html/log-transform-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Notice also that we passed two additional arguments to the <code>plot</code> command: <code>xlab</code> and <code>ylab</code>. These are used to label the x- and y-axis, respectively (try the <code>plot</code> function without passing <code>xlab</code> and <code>ylab</code> arguments to see what happens without them).</p>
+<p>Now that the data are properly transformed, we can create the linear model for the predictability of life expectancy based on gross domestic product.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run a linear model</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>lifeExp.v.gdp <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> lifeExp <span class="sc">~</span> logGDP, <span class="at">data =</span> gapminder)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Investigate results of the model</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lifeExp.v.gdp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = lifeExp ~ logGDP, data = gapminder)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-25.947  -2.661   1.215   4.469  13.115 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    4.950      3.858   1.283    0.202    
+logGDP        16.585      1.019  16.283   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 7.122 on 140 degrees of freedom
+Multiple R-squared:  0.6544,    Adjusted R-squared:  0.652 
+F-statistic: 265.2 on 1 and 140 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>For our question, the relationship between life expectancy and GDP, focus on the <em>coefficients</em> section, specifically the line for <em>logGDP</em>:</p>
+<blockquote class="blockquote">
+<p><code>## logGDP        16.585      1.019  16.283   &lt; 2e-16 ***</code></p>
+</blockquote>
+<p>First of all, there <em>is</em> a significant relationship between these two variables (p &lt; 2 x 10<sup>-16</sup>, or, as R reports in the <code>Pr&gt;(|t|)</code> column, p &lt; 2e-16). The <code>Estimate</code> column of the results lists a value of 16.585, which means that for every 10-fold increase in per capita GDP (remember we log<sub>10</sub>-transformed GDP), life expectancy increases by almost 17 years.</p>
+<p>As before, if we want to instead save the results to a file instead of printing them to the screen, we use the <code>sink</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(<span class="at">file =</span> <span class="st">"output/lifeExp-gdp-regression.txt"</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lifeExp.v.gdp)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The final script should be:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test relationship between life expectancy and GDP</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Jeff Oliver</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="co"># jcoliver@email.arizona.edu</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2016-07-29</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Read data from comma-separated values file</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>all_gapminder <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/gapminder-FiveYearData.csv"</span>,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">stringsAsFactors =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset 2007 data</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>gapminder <span class="ot">&lt;-</span> all_gapminder[all_gapminder<span class="sc">$</span>year <span class="sc">==</span> <span class="dv">2007</span>, ]</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot to look at data</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> gapminder<span class="sc">$</span>gdpPercap, <span class="at">y =</span> gapminder<span class="sc">$</span>lifeExp)</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create log-transformed GDP</span></span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>gapminder<span class="sc">$</span>logGDP <span class="ot">&lt;-</span> <span class="fu">log10</span>(gapminder<span class="sc">$</span>gdpPercap)</span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot new variable</span></span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> gapminder<span class="sc">$</span>logGDP, </span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>     <span class="at">y =</span> gapminder<span class="sc">$</span>lifeExp, </span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"log10(GDP)"</span>, </span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Life Expectancy"</span>)</span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Run linear model</span></span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>lifeExp.v.gdp <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> lifeExp <span class="sc">~</span> logGDP, <span class="at">data =</span> gapminder)</span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Save results to file</span></span>
+<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(<span class="at">file =</span> <span class="st">"output/lifeExp-gdp-regression.txt"</span>)</span>
+<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lifeExp.v.gdp)</span>
+<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<h3 id="challenge-3" class="anchored">Challenge 3</h3>
+<p>Test for a relationship between life expectancy and log base 2 of GDP for the 1982 data. How does life expectancy change with a four-fold increase in GDP?</p>
+</blockquote>
+<p>(<a href="#solution-to-challenge-3">Solution</a>)</p>
+<hr>
+</section>
+<section id="solutions-to-challenges" class="level2">
+<h2 class="anchored" data-anchor-id="solutions-to-challenges">Solutions to Challenges</h2>
+<section id="solution-to-challenge-1" class="level3">
+<h3 class="anchored" data-anchor-id="solution-to-challenge-1">Solution to Challenge 1</h3>
+<blockquote class="blockquote">
+<p>Test for significant differences in petal lengths between <em>I. setosa</em> and <em>I. virginica</em> and between <em>I. versicolor</em> and <em>I. virginica</em>.</p>
+</blockquote>
+<section id="first-comparison-i.-setosa-vs.-i.-virginica" class="level4">
+<h4 class="anchored" data-anchor-id="first-comparison-i.-setosa-vs.-i.-virginica">First comparison: <em>I. setosa</em> vs.&nbsp;<em>I. virginica</em></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset setosa data</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>setosa <span class="ot">&lt;-</span> iris[iris<span class="sc">$</span>Species <span class="sc">==</span> <span class="st">"setosa"</span>, ]</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset virginica data</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>virginica <span class="ot">&lt;-</span> iris[iris<span class="sc">$</span>Species <span class="sc">==</span> <span class="st">"virginica"</span>, ]</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run t-test</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(<span class="at">x =</span> setosa<span class="sc">$</span>Petal.Length, <span class="at">y =</span> virginica<span class="sc">$</span>Petal.Length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  setosa$Petal.Length and virginica$Petal.Length
+t = -49.986, df = 58.609, p-value &lt; 2.2e-16
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -4.253749 -3.926251
+sample estimates:
+mean of x mean of y 
+    1.462     5.552 </code></pre>
+</div>
+</div>
+<p><em>I. setosa</em> and <em>I. virginica</em> have significantly different petal lengths.</p>
+<hr>
+</section>
+<section id="second-comparison-i.-versicolor-and-i.-virginica" class="level4">
+<h4 class="anchored" data-anchor-id="second-comparison-i.-versicolor-and-i.-virginica">Second comparison: <em>I. versicolor</em> and <em>I. virginica</em></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset versicolor data</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>versicolor <span class="ot">&lt;-</span> iris[iris<span class="sc">$</span>Species <span class="sc">==</span> <span class="st">"versicolor"</span>, ]</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset virginica data</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>virginica <span class="ot">&lt;-</span> iris[iris<span class="sc">$</span>Species <span class="sc">==</span> <span class="st">"virginica"</span>, ]</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run t-test</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(<span class="at">x =</span> versicolor<span class="sc">$</span>Petal.Length, <span class="at">y =</span> virginica<span class="sc">$</span>Petal.Length)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  versicolor$Petal.Length and virginica$Petal.Length
+t = -12.604, df = 95.57, p-value &lt; 2.2e-16
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -1.49549 -1.08851
+sample estimates:
+mean of x mean of y 
+    4.260     5.552 </code></pre>
+</div>
+</div>
+<p><em>I. versicolor</em> and <em>I. virginica</em> also have different significantly different petal lengths.</p>
+<hr>
+</section>
+</section>
+<section id="solution-to-challenge-2" class="level3">
+<h3 class="anchored" data-anchor-id="solution-to-challenge-2">Solution to Challenge 2</h3>
+<blockquote class="blockquote">
+<p>Use ANOVA to test for differences in sepal width among the three species. What is the value of the <em>F</em>-statistic?</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>sepal.width.aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="at">formula =</span> Sepal.Width <span class="sc">~</span> Species, <span class="at">data =</span> iris)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="at">object =</span> sepal.width.aov)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Df Sum Sq Mean Sq F value Pr(&gt;F)    
+Species       2  11.35   5.672   49.16 &lt;2e-16 ***
+Residuals   147  16.96   0.115                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>The <em>F</em>-statistic = 49.16, and the p-value is quite small, so there are significant sepal width differences among species.</p>
+<hr>
+</section>
+<section id="solution-to-challenge-3" class="level3">
+<h3 class="anchored" data-anchor-id="solution-to-challenge-3">Solution to Challenge 3</h3>
+<blockquote class="blockquote">
+<p>Test for a relationship between life expectancy and log base 2 of GDP for the 1982 data. How does life expectancy change with a four-fold increase in GDP?</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read data from comma-separated values file</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>gapminder <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/gapminder-FiveYearData.csv"</span>,</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">stringsAsFactors =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset 1982 data</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>gapminder<span class="fl">.1982</span> <span class="ot">&lt;-</span> gapminder[gapminder<span class="sc">$</span>year <span class="sc">==</span> <span class="dv">1982</span>, ]</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create log2-transformed GDP</span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>gapminder<span class="fl">.1982</span><span class="sc">$</span>log2GDP <span class="ot">&lt;-</span> <span class="fu">log2</span>(gapminder<span class="fl">.1982</span><span class="sc">$</span>gdpPercap)</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Run linear model</span></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>lifeExp.v.gdp <span class="ot">&lt;-</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> log2GDP, <span class="at">data =</span> gapminder<span class="fl">.1982</span>)</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lifeExp.v.gdp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = lifeExp ~ log2GDP, data = gapminder.1982)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-18.7709  -2.8743   0.4812   3.6039  14.6986 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  -0.6505     3.3463  -0.194    0.846    
+log2GDP       5.1942     0.2766  18.780   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.762 on 140 degrees of freedom
+Multiple R-squared:  0.7158,    Adjusted R-squared:  0.7138 
+F-statistic: 352.7 on 1 and 140 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>The line to focus on is the <code>log2GPD</code> line in the <code>coefficients</code> section:</p>
+<blockquote class="blockquote">
+<p><code>## log2GDP        5.1942      0.2766  18.780   &lt;2e-16 ***</code></p>
+</blockquote>
+<p>The coefficient for log<sub>2</sub> GDP in the model is positive, with increases in GDP correlating with increased life expectancy. The estimated coefficient for the relationship is 5.19. Remember that we log<sub>2</sub>-tranformed the GDP data, so this coefficient indicates the change in life expectancy for every two-fold increase in per capita GDP. For a four-fold increase in GDP, we multiply this coefficient by two (because four is two two-fold changes) to conclude that a four-fold increase in GDP results in an increase of 10.39 years in life expectancy.</p>
+<hr>
+</section>
+</section>
+<section id="additional-resources" class="level2">
+<h2 class="anchored" data-anchor-id="additional-resources">Additional resources</h2>
+<ul>
+<li>Early work by R.A. Fisher: <a href="https://dx.doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x">doi: 10.1111%2Fj.1469-1809.1936.tb02137.x</a></li>
+<li>A <a href="https://jcoliver.github.io/learn-r/002-intro-stats.pdf">PDF version</a> of this lesson</li>
+<li>An <a href="https://www.r-bloggers.com/anova-and-tukeys-test-on-r/">Example of Tukey’s test</a> for <em>post hoc</em> pairwise comparisons from ANOVA results.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+ Copyright 2024, Jeffrey Oliver
+  </li>  
+</ul>
+    </div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0 Deed</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/jcoliver">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

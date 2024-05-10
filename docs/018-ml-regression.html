@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jeff Oliver">
+<meta name="dcterms.date" content="2024-05-10">
+
+<title>learn-r - Machine learning in R part 1: regression</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-EF6ZJH0577"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
+</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">learn-r</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-r-lessons" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">R Lessons</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-r-lessons">    
+        <li>
+    <a class="dropdown-item" href="./001-basic-graphing.html" rel="" target="">
+ <span class="dropdown-text">Introduction to R Graphing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./002-intro-stats.html" rel="" target="">
+ <span class="dropdown-text">Introduction to R Statistics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./003-intro-multivariate.html" rel="" target="">
+ <span class="dropdown-text">Introduction to Multivariate Statistics in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./004-intro-ggplot.html" rel="" target="">
+ <span class="dropdown-text">Introduction to data visualization with ggplot</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./005-intro-knitr.html" rel="" target="">
+ <span class="dropdown-text">Dynamic reports with knitr</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./006-heatmaps.html" rel="" target="">
+ <span class="dropdown-text">Heatmaps in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./007-intro-functional-programming.html" rel="" target="">
+ <span class="dropdown-text">Introduction to Functional Programming</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./008-ggplot-dendrograms-and-heatmaps.html" rel="" target="">
+ <span class="dropdown-text">Clusters and Heatmaps</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./009-expression-heatmaps.html" rel="" target="">
+ <span class="dropdown-text">Heatmaps - the gene expression edition</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./010-github.html" rel="" target="">
+ <span class="dropdown-text">Git and GitHub in RStudio</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./011-species-distribution-models.html" rel="" target="">
+ <span class="dropdown-text">A very brief introduction to species distribution models in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./012-intro-tidyverse.html" rel="" target="">
+ <span class="dropdown-text">Introduction to tidyverse packages</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./014-intro-summarizing-visualizing.html" rel="" target="">
+ <span class="dropdown-text">Introduction to data summarizing and visualization</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./016-intro-shiny.html" rel="" target="">
+ <span class="dropdown-text">Interactive web apps with Shiny</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./017-open-street-map.html" rel="" target="">
+ <span class="dropdown-text">Mapping with Open Street Maps in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./018-ml-regression.html" rel="" target="">
+ <span class="dropdown-text">Machine learning in R part 1: regression</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./schedule.html" rel="" target="">
+ <span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./resources.html" rel="" target="">
+ <span class="menu-text">Additional Resources</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link active" data-scroll-target="#getting-started">Getting started</a>
+  <ul class="collapse">
+  <li><a href="#workspace-organization" id="toc-workspace-organization" class="nav-link" data-scroll-target="#workspace-organization">Workspace organization</a></li>
+  <li><a href="#install-additional-r-packages" id="toc-install-additional-r-packages" class="nav-link" data-scroll-target="#install-additional-r-packages">Install additional R packages</a></li>
+  <li><a href="#example-data" id="toc-example-data" class="nav-link" data-scroll-target="#example-data">Example data</a></li>
+  </ul></li>
+  <li><a href="#machine-learning-in-a-nutshell" id="toc-machine-learning-in-a-nutshell" class="nav-link" data-scroll-target="#machine-learning-in-a-nutshell">Machine learning in a nutshell</a></li>
+  <li><a href="#building-our-first-machines" id="toc-building-our-first-machines" class="nav-link" data-scroll-target="#building-our-first-machines">Building our first machines</a></li>
+  <li><a href="#this-is-me-trying" id="toc-this-is-me-trying" class="nav-link" data-scroll-target="#this-is-me-trying">This is me trying</a></li>
+  <li><a href="#this-is-why-we-cant-have-nice-things" id="toc-this-is-why-we-cant-have-nice-things" class="nav-link" data-scroll-target="#this-is-why-we-cant-have-nice-things">This is why we can’t have nice things</a>
+  <ul class="collapse">
+  <li><a href="#training-and-testing-split" id="toc-training-and-testing-split" class="nav-link" data-scroll-target="#training-and-testing-split">Training and testing split</a></li>
+  </ul></li>
+  <li><a href="#this-is-what-you-came-for" id="toc-this-is-what-you-came-for" class="nav-link" data-scroll-target="#this-is-what-you-came-for">This is what you came for</a></li>
+  <li><a href="#this-is-really-happening" id="toc-this-is-really-happening" class="nav-link" data-scroll-target="#this-is-really-happening">This is really happening</a>
+  <ul class="collapse">
+  <li><a href="#wouldve-couldve-shouldve" id="toc-wouldve-couldve-shouldve" class="nav-link" data-scroll-target="#wouldve-couldve-shouldve">Would’ve, Could’ve, Should’ve</a></li>
+  </ul></li>
+  <li><a href="#bonus-track-look-what-you-made-me-do" id="toc-bonus-track-look-what-you-made-me-do" class="nav-link" data-scroll-target="#bonus-track-look-what-you-made-me-do">Bonus Track: Look What You Made Me Do</a>
+  <ul class="collapse">
+  <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">Data Wrangling</a></li>
+  <li><a href="#data-creation" id="toc-data-creation" class="nav-link" data-scroll-target="#data-creation">Data creation</a></li>
+  </ul></li>
+  <li><a href="#additional-resources" id="toc-additional-resources" class="nav-link" data-scroll-target="#additional-resources">Additional resources</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="018-ml-regression.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Machine learning in R part 1: regression</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jeff Oliver </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 10, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>An introduction to the concept of machine learning, with a worked application showing model comparison and evaluation of model performance.</p>
+<section id="learning-objectives" class="level4">
+<h4 class="anchored" data-anchor-id="learning-objectives">Learning objectives</h4>
+<ol type="1">
+<li>Explain the difference between machine learning and inferential statistics</li>
+<li>Load tabular data into R</li>
+<li>Build a predictive model and evaluate model performance</li>
+<li>Split data into training and testing sets</li>
+<li>Apply iteration to model evaluation and model selection</li>
+</ol>
+<p>Machine learning has been all the rage, but there remains a lot of mystery about what machine learning really <em>is</em>. In this workshop, we will work through an example of how we use machine learning to make predictions and how to assess how good those predictions really are. The material is designed for people who have little to no experience with machine learning.</p>
+</section>
+<section id="the-setting" class="level4">
+<h4 class="anchored" data-anchor-id="the-setting">The setting</h4>
+<p>So. Taylor Swift. Music phenom. The obvious focus of our machine learning lesson. Let us imagine we are in Taylor’s position of releasing a new album. Before we release the album, we want to start it off by dropping a single. Not just any single, but one that will race up the charts to build the anticipation for the album. This leads to our goal: build a machine learning algorithm, based on Taylor Swift’s released songs, that will predict the billboard position of a new song so Taylor can choose the first single from the album to release.</p>
+<hr>
+</section>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting started</h2>
+<section id="workspace-organization" class="level3">
+<h3 class="anchored" data-anchor-id="workspace-organization">Workspace organization</h3>
+<p>First we need to setup our development environment. Open RStudio and create a new project via:</p>
+<ul>
+<li>File &gt; New Project…</li>
+<li>Select ‘New Directory’</li>
+<li>For the Project Type select ‘New Project’</li>
+<li>For Directory name, call it something like “ml-regression” (without the quotes)</li>
+<li>For the subdirectory, select somewhere you will remember (like “My Documents” or “Desktop”)</li>
+</ul>
+<p>We need to create two folders: ‘data’ will store the data we will be analyzing, and ‘output’ will store the results of our analyses. In the RStudio console:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="at">path =</span> <span class="st">"data"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="at">path =</span> <span class="st">"output"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>It is good practice to keep input (i.e.&nbsp;the data) and output separate. Furthermore, any work that ends up in the <strong>output</strong> folder should be completely disposable. That is, the combination of data and the code we write should allow us (or anyone else, for that matter) to reproduce any output.</p>
+</section>
+<section id="install-additional-r-packages" class="level3">
+<h3 class="anchored" data-anchor-id="install-additional-r-packages">Install additional R packages</h3>
+<p>There are <em>two</em> additional R packages that will need to be installed:</p>
+<ul>
+<li>dplyr</li>
+<li>randomForest</li>
+</ul>
+<p>To install these, run:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"randomForest"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="example-data" class="level3">
+<h3 class="anchored" data-anchor-id="example-data">Example data</h3>
+<p>The data we are using comes from two sources:</p>
+<ol type="1">
+<li><p>We have a variety of song characteristics from W. Jake Thompson, who assembled the data from Genius and the Spotify API. These data were initially retrieved from the Tidy Tuesday website for <a href="https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-10-17">October 17, 2023</a>. The song characteristics include measurements of loudness, tempo, and acousticness.</p></li>
+<li><p>We also have the highest position for Taylor Swift’s released songs. These come from a <a href="https://github.com/scharfsteina/BigDataFinalProject">GitHub project</a> by Ava Scharfstein and Aimi Wen. The authors used Python webscraping tools to retrieve Billboard chart positions for a majority of Taylor Swift songs. They did a bunch of neat analyses and you can check them out on the <a href="https://medium.com/@aimiwen33/exploring-taylor-swifts-music-2bce11a7aab2">Project Webpage</a>.</p></li>
+</ol>
+<p>Note that I went ahead and joined these two datasets together. If you want to learn more about that process, see the <a href="#bonus-track-look-what-you-made-me-do">Bonus Track</a> section at the end of this lesson.</p>
+<p>The data are available in a single file at <a href="https://bit.ly/swift-data">https://bit.ly/swift-data</a> and <a href="https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/swift-data.csv">https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/swift-data.csv</a> (the former just re-directs to the latter). Use a web browser to navigate to one of those URLs and download the file as a plain text or CSV file (on some systems, you can save as an Excel CSV, which is fine, too). Make sure after you download the file that you move it into the “data” folder you created at the beginning of this lesson.</p>
+<hr>
+</section>
+</section>
+<section id="machine-learning-in-a-nutshell" class="level2">
+<h2 class="anchored" data-anchor-id="machine-learning-in-a-nutshell">Machine learning in a nutshell</h2>
+<p>In this lesson, we are going to run through an relatively minimal example of machine learning. The term “machine learning” gets thrown around a lot, often with little explanation, so we will start with a <em>very</em> brief explanation. The big difference between “traditional” statistics and machine learning is the goal of each approach (aside: the modifier “traditional” is in no way meant to imply a lesser status or utility of statistics - I just could not come up with a better term). That is, the statistics we learned in class are generally focused on making inferences about how the world works, i.e.&nbsp;how does <span class="math inline">\(X\)</span> affect <span class="math inline">\(Y\)</span>? In contrast, machine learning is less concerned with the details of how <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are related, but rather focused on using <span class="math inline">\(X\)</span> to make accurate predictions of <span class="math inline">\(Y\)</span>. If we consider this in a linear regression framework, statistics cares about getting accurate values for the beta hats (<span class="math inline">\(\hat{\beta}\)</span>) on the right-hand side of the equation, while machine learning cares about being able to make accurate predictions for the Y hats (<span class="math inline">\(\hat{Y}\)</span>) on the left-hand side of the equation:</p>
+<p><span class="math display">\[
+\hat{Y} = \hat{\beta}_0 + \hat{\beta}_1 X_1
+\]</span></p>
+<p><em>Aside</em>: Briefly, what we are doing is known as “supervised” machine learning, as opposed to “unsupervised” machine learning. The big difference between the two is that in supervised learning, we have data where we have both the <span class="math inline">\(X\)</span> values and the <span class="math inline">\(Y\)</span> values. In unsupervised learning, we only have the <span class="math inline">\(X\)</span>s. Additionally, we are using machine learning to predict a number; specifically, the billboard position of a song. This type of machine learning is known as regression. This is in contrast to classification machine learning, where we try to predict which categories data points belong to. Check out the <a href="#additional-resources">Additional resources</a> section below for links to more information.</p>
+<hr>
+</section>
+<section id="building-our-first-machines" class="level2">
+<h2 class="anchored" data-anchor-id="building-our-first-machines">Building our first machines</h2>
+<p>We are going to start by creating two different models. One is a common model used in inferential statistics: the linear regression model. The second is a tree-based model, called a random forest. We are not going to get into the details of the models - if you want to learn more, see the references listed in the <a href="#additional-resources">Additional resources</a> section below.</p>
+<p>We will do all of our work in an R script, so start by creating a new script (File &gt; New File &gt; R Script) and saving it as “ml-lesson.R”. At the top of the script, start with a few lines of information for the next human to read the script. We begin these lines with the comment character, <code>#</code>, so R will know to ignore these lines.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Machine learning on Taylor Swift songs</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Jeff Oliver</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># jcoliver@arizona.edu</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2024-04-02</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As mentioned above, we will be using two R packages that are not part of the R core program. We used the <code>install.packages()</code> command to install those packages, but to use them we need to load them into memory. That is, even though the dplyr and randomForest packages are installed on our machines, we need to explicitly tell R that we would like to use them. In order to do this, we use the <code>library()</code> command:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We also need to load the data into memory. We will use the data stored in the file that we downloaded earlier in the lesson (see the <a href="#example-data">Example data</a> section, above). We will read the data into memory with the <code>read_csv()</code> function and look at the first few rows with the <code>head()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in data</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>swift_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/swift-data.csv"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Show first six rows of data</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(swift_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  peak_position danceability energy loudness speechiness acousticness
+1             1        0.647  0.800   -5.384      0.1650      0.06470
+2            13        0.621  0.417   -6.941      0.0231      0.28800
+3            16        0.668  0.672   -4.931      0.0303      0.11100
+4             1        0.760  0.703   -5.412      0.0540      0.10300
+5             2        0.622  0.469   -6.798      0.0363      0.00454
+6            12        0.750  0.404  -10.178      0.0682      0.21600
+  instrumentalness liveness valence   tempo explicit mode_name
+1         0.00e+00   0.3340  0.9420 160.078    FALSE     major
+2         0.00e+00   0.1190  0.2890  99.953    FALSE     major
+3         0.00e+00   0.3290  0.5390  89.011    FALSE     major
+4         0.00e+00   0.0913  0.5700  95.997    FALSE     major
+5         2.25e-06   0.0398  0.6790  77.019    FALSE     minor
+6         3.57e-04   0.0911  0.0499  95.045    FALSE     minor</code></pre>
+</div>
+</div>
+<p>Looking at these data, we see the first column is peak_position, which is the highest position the song achieved on the charts. This is the value we want to build an algorithm to predict. The rest of the columns are the song characteristics we will use to predict the highest chart position of the song. So we begin by building our two models, one using linear regression and one using a random forest.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run a linear model with all predictors</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>linear_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> swift_data)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run a random forest model with all predictors</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> swift_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In both models, we are using the song data we downloaded, as indicated by <code>data = swift_data</code>. But the first part of each model, the <code>peak_position ~ .</code> part, looks weird. In this case, we are telling R to build a model where the response, or dependent, variable is in the <code>peak_position</code> column and all the remaining columns are to be used as predictor, or independent, variables. We are using the shortcut of the dot, <code>.</code>, which is effectively the same as saying “everything else”. That is, we are telling R to build a model with <code>peak_position</code> as the response, and everything else in the data as predictor variables. Now that we have built the models, we need to compare them to see which one works better at predicting the chart position of a song.</p>
+<hr>
+</section>
+<section id="this-is-me-trying" class="level2">
+<h2 class="anchored" data-anchor-id="this-is-me-trying">This is me trying</h2>
+<p>To compare the two models, we need a way to measure how well the models’ predictions for the song position match the actual (observed) position. We have the second part (the actual position each song reached), but we still need to calculate the predicted position for each model. We can do this in R with the <code>predict()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict song's peak position based on linear model</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>linear_prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(linear_model, <span class="at">newdata =</span> swift_data)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict song's peak position based on random forest model</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>rf_prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_model, <span class="at">newdata =</span> swift_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We now have predicted values and observed values. The difference between the two values will provide a measure of how well each model works and we will want to pick whichever model does a better job at predicting. To compare the models we will use the root mean squared error, or RMSE. So just what in the heck in a “root mean squared error”? To define this, we will work backwards in the term:</p>
+<ul>
+<li>error: In this case, error is just the difference between the song’s predicted highest chart position and the actual highest chart position. We have data and predictions for 157 songs, so we will calculate 157 error values;</li>
+<li>squared: We then take each error value and square it. This ensures all values are positive;</li>
+<li>mean: Next we calculate the <em>average</em> value of these squared errors. This gives us a single value for each model;</li>
+<li>root: Finally, we take the square root of that mean value, which effectively transforms the average into a number that we can interpret as “how far off does the model predict the song to appear on the chart.”</li>
+</ul>
+<p>If you are more into equations, the RMSE is calculated as:</p>
+<p><span class="math display">\[
+RMSE = \sqrt{ \dfrac{ \sum{ (y_i - \hat{y_i})^2 } } n }
+\]</span></p>
+<p>where <span class="math inline">\(n\)</span> is the number of observations, <span class="math inline">\(y_i\)</span> is the observed chart position of the <span class="math inline">\(i^{th}\)</span>song, and <span class="math inline">\(\hat{y_i}\)</span> is the predicted chart position of the <span class="math inline">\(i^{th}\)</span>song.</p>
+<p>For now, we do not need to worry too much about this math. We need only remember that if a model has a really small RMSE, it means it does a good job at making predictions. If a model has a really big RMSE, it means it does a poor job at making predictions. These values are relative; we can only decide what counts as “small” and counts as “big” when we compare two or more models to one another.</p>
+<p>Of course, we do not need to do these calculations by hand, we can do it all in R! Here we will do it in two lines of code: one to calculate the square errors and one to calculate the square root of the mean value.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate squared errors for linear model</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>linear_sqerr <span class="ot">&lt;-</span> (swift_data<span class="sc">$</span>peak_position <span class="sc">-</span> linear_prediction)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate rmse for linear model</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>linear_rmse <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(linear_sqerr))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate squared errors for random forest model</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>rf_sqerr <span class="ot">&lt;-</span> (swift_data<span class="sc">$</span>peak_position <span class="sc">-</span> rf_prediction)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate rmse for random forest model</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>rf_rmse <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(rf_sqerr))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can print the values to the console by running lines of code that just have the names of our two RMSE variables, starting with the linear model:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>linear_rmse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 26.48797</code></pre>
+</div>
+</div>
+<p>Then the random forest model:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>rf_rmse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12.34211</code></pre>
+</div>
+</div>
+<p>So, on average, the linear model is off by about 26 spots on the chart, while the random forest model predictions are only 12 spots different from the actual chart position for that song. Hey, that random forest model does a lot better. We are done, right?</p>
+<hr>
+</section>
+<section id="this-is-why-we-cant-have-nice-things" class="level2">
+<h2 class="anchored" data-anchor-id="this-is-why-we-cant-have-nice-things">This is why we can’t have nice things</h2>
+<p>Consider, for a moment, an analogy with taking a test. Let us say there are two people taking a test. One person went to class and studied from their notes, while another person did not go to class or take notes, but got ahold of the actual test with the answers and memorized those answers. But the teacher ended up giving the students a test with <em>different</em> questions and answers than the one the second student memorized. Which person would likely score higher? The person who memorized the test would have done great if they had the original test, but could not generalize their memorized answers into a new, slightly different situation. This happens in machine learning, too. Some models are able to effectively “memorize” the answers for a given set of data, but when given a <em>new</em> dataset, have a difficult time making good predictions. For this reason, machine learning is always a two-step process: first, we use a subset of our data to train the model (really, the “learning” part of machine learning) and second, we use the remaining data to test the model. It is the second part, the testing phase, where we can really gauge how well our model will perform on new datasets.</p>
+<section id="training-and-testing-split" class="level3">
+<h3 class="anchored" data-anchor-id="training-and-testing-split">Training and testing split</h3>
+<p>For our purposes, we will use an 80:20 split, where we use 80% of our data for training the models and 20% of the data for testing the models. We will randomly assign each song into one of five “bins”, reserve one bin of data for testing, and use the remaining four bins for estimating the models. We start with a vector of integers, from 1 to 5, randomly assigned.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create fold vector</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>fold <span class="ot">&lt;-</span> <span class="fu">rep_len</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">length.out =</span> <span class="fu">nrow</span>(swift_data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We then use filtering to put any observations <em>not</em> in bin #1 into our training dataset and only observations that <em>are</em> in bin #1 into our testing dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split data into training and testing sets</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>training <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fold <span class="sc">!=</span> <span class="dv">1</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>testing <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fold <span class="sc">==</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now that we have those data separated, we will:</p>
+<ol type="1">
+<li>Estimate both models using only the <strong>training</strong> data.</li>
+<li>Make predictions for both models, using only the <strong>testing</strong> data.</li>
+<li>Compare the predictions to actual values to see how well each model performs, based on RMSE values.</li>
+</ol>
+<p>We can start by just outlining these steps with comments:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate model with training data</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions on testing data</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate rmse values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then we fill in the first step (model estimation) for our two models. Note this code looks a lot like what we ran earlier, the only change we made is that we are now passing <code>training</code> to the <code>data</code> argument, instead of <code>swift_data</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate model with training data</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>linear_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> training)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> training)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next we make predictions, switching out <code>swift_data</code> for <code>testing</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions on testing data</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>linear_prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(linear_model, <span class="at">newdata =</span> testing)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>rf_prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_model, <span class="at">newdata =</span> testing)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And in step 3, we calculate the RMSE values to evaluate model performance, also replacing <code>swift_data</code> with <code>testing</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate rmse values</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>linear_sqerr <span class="ot">&lt;-</span> (testing<span class="sc">$</span>peak_position <span class="sc">-</span> linear_prediction)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>linear_rmse <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(linear_sqerr))</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>rf_sqerr <span class="ot">&lt;-</span> (testing<span class="sc">$</span>peak_position <span class="sc">-</span> rf_prediction)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>rf_rmse <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(rf_sqerr))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can compare the performance of each model by printing the RMSE values to the console:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>linear_rmse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 31.21477</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>rf_rmse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 28.47014</code></pre>
+</div>
+</div>
+<p>So how did the models do? Our original RMSE for the linear model was 26.488, so the model did a <em>little</em> worse (because the RMSE got bigger). The first time we ran the random forest model, the RMSE was only 12.342 which is much lower than the RMSE on testing data. This means the random forest model did quite a bit worse when we asked it to make predictions based on data it had never seen before. The random forest model memorized answers from the test.</p>
+<hr>
+</section>
+</section>
+<section id="this-is-what-you-came-for" class="level2">
+<h2 class="anchored" data-anchor-id="this-is-what-you-came-for">This is what you came for</h2>
+<p>There is one more thing for us to do in evaluating these two models. So far, we split the data into two groups, the training data and the testing data. We put 20% of our data into that testing pile, but really we would like to give <em>each</em> data point an opportunity to be part of the testing dataset. So given our 80/20 split, that means we actually want to do the training/testing process four more times, where each time we use a different 20% of the data as the testing data. We already have the bins setup, but now instead of just using bin #1 as the training data, we will cycle through each of the five bins in turn as the testing data.</p>
+<p>We will use a <code>for</code> loop, which allows us to do things multiple times. Here we want to run through this process once for each of the five bins we created. We start with a loop that will run five times, with the variable <code>i</code> taking on the values 1-5. We start by creating the loop with a little reality check to make sure our variable <code>i</code> is being assigned correctly:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Early reality check</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(i)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1
+[1] 2
+[1] 3
+[1] 4
+[1] 5</code></pre>
+</div>
+</div>
+<p>Now we can add the comments for each step of the training and testing process, as we did above, plus the starting step of splitting data into training and testing sets (we can delete the reality check):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Split data into training/testing</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimate model with training data</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make predictions on testing data</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate rmse values</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We first fill in the part for splitting the data. It looks similar to the code above, but now instead of reserving data from the 1<sup>st</sup> bin as testing data, we reserve data from the <em>i<sup>th</sup></em> bin. Remember that the <code>i</code> variable takes values from 1 through 5, increasing by one each time through the loop.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Split data into training/testing</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  training <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fold <span class="sc">!=</span> i)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  testing <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fold <span class="sc">==</span> i)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimate model with training data</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make predictions on testing data</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate rmse values</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next we train each model with the training data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Split data into training/testing</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  training <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fold <span class="sc">!=</span> i)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  testing <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fold <span class="sc">==</span> i)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimate model with training data</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  linear_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> training)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> training)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make predictions on testing data</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate rmse values</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And make predictions from each model with the reserved testing data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Split data into training/testing</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  training <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fold <span class="sc">!=</span> i)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  testing <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fold <span class="sc">==</span> i)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimate model with training data</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  linear_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> training)</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> training)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make predictions on testing data</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  linear_prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(linear_model, <span class="at">newdata =</span> testing)</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  rf_prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_model, <span class="at">newdata =</span> testing)</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate rmse values</span></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And finally calculate the model performance by measuring how different predicted values were from actual values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Split data into training/testing</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  training <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fold <span class="sc">!=</span> i)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  testing <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fold <span class="sc">==</span> i)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimate model with training data</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  linear_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> training)</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> training)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make predictions on testing data</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  linear_prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(linear_model, <span class="at">newdata =</span> testing)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  rf_prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_model, <span class="at">newdata =</span> testing)</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate rmse values</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>  linear_sqerr <span class="ot">&lt;-</span> (testing<span class="sc">$</span>peak_position <span class="sc">-</span> linear_prediction)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>  linear_rmse <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(linear_sqerr))</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>  rf_sqerr <span class="ot">&lt;-</span> (testing<span class="sc">$</span>peak_position <span class="sc">-</span> rf_prediction)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>  rf_rmse <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(rf_sqerr))</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can look at the scores for each of these five iterations by typing the names of our RMSE variables into the console.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>linear_rmse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 29.9492</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>rf_rmse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 31.94982</code></pre>
+</div>
+</div>
+<p>Uh oh. There is only one value in each variable, but we ran through this process five times. What gives? The problem is that the two variables that hold our RMSE values, <code>linear_rmse</code> and <code>rf_rmse</code>, are over-written each time the loop executes. This means we only have values for the <em>last</em> time through the loop. We need to make sure to store the outcomes each time through the loop. To do this, we will add a pair of results variables that are updated as the loop executes. We will actually use the same names as before, but now we make sure there are five slots in each variable. We add these variables <em>before</em> our loop statement:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>linear_rmse <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">5</span>)  <span class="co"># variable to store five linear RMSE values</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>rf_rmse <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">5</span>) <span class="co"># variable to store five random forest RMSE values</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And we update the assignment of those variables inside our loop, so we replace <code>linear_rmse</code> with <code>linear_rmse[i]</code> and <code>rf_rmse</code> with <code>rf_rmse[i]</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>linear_rmse <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">5</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>rf_rmse <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">5</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Split data into training/testing</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  training <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fold <span class="sc">!=</span> i)</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  testing <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fold <span class="sc">==</span> i)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimate model with training data</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  linear_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> training)</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> training)</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make predictions on testing data</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>  linear_prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(linear_model, <span class="at">newdata =</span> testing)</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>  rf_prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_model, <span class="at">newdata =</span> testing)</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate rmse values</span></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>  linear_sqerr <span class="ot">&lt;-</span> (testing<span class="sc">$</span>peak_position <span class="sc">-</span> linear_prediction)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>  linear_rmse[i] <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(linear_sqerr))</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>  rf_sqerr <span class="ot">&lt;-</span> (testing<span class="sc">$</span>peak_position <span class="sc">-</span> rf_prediction)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>  rf_rmse[i] <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(rf_sqerr))</span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now when we run the loop and print out values by typing in the name of the variables into the console:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>linear_rmse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 31.21477 29.97781 28.27053 25.46199 29.94920</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>rf_rmse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 28.74793 29.03036 26.92395 21.94233 31.83738</code></pre>
+</div>
+</div>
+<p>To decide which model is preferred, we can compare the mean RMSE values of the models:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(linear_rmse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 28.97486</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(rf_rmse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 27.69639</code></pre>
+</div>
+</div>
+<p>We can also visualize these results with a boxplot, to show variation among the five training/testing splits:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="at">x =</span> linear_rmse, rf_rmse,</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"Linear Model"</span>, <span class="st">"Random Forest"</span>),</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"RMSE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="018-ml-regression_files/figure-html/rmse-boxplot-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Whew! So, where does that leave us?</p>
+<hr>
+</section>
+<section id="this-is-really-happening" class="level2">
+<h2 class="anchored" data-anchor-id="this-is-really-happening">This is really happening</h2>
+<p>At this point, we see that the random forest model does a better job than the linear regression model at predicting billboard song position. That is, the predicted values of the random forest model are closer to actual values of a song’s billboard position than are those values predicted by the linear regression model. Returning to the original goal, we would like to use this machine learning algorithm to decide which song from Taylor Swift’s next album is predicted to do the best on the billboard charts. <em>That</em> song is the one to release as the first single. In order to use our model, we will go ahead and re-estimate the model using the full dataset. This way we use all the information we have at our disposal to build the best-informed model. Note that even though the random forest model was guilty of over-fitting (it memorized the test answers, remember?), it still did a better job. So we will make a new model, <code>full_model</code> that we can use later:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>full_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> swift_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The next thing to do is to download data for this next album (you can find details about where these songs come from in the <a href="#data-creation">Data creation</a> section, below). Download the song data from <a href="https://bit.ly/swift-new">https://bit.ly/swift-new</a> and <a href="https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/swift-new.csv">https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/swift-new.csv</a> (the former just re-directs to the latter) and save it in the “data” folder we created at the start of the lesson. Save the file as “swift-new.csv” (it should be named this when you download it, but it is always good to double-check). We then load the data in with <code>read.csv()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>new_album <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/swift-new.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Looking at the first few rows of data, we see it has the same song quality measurements that we used for building our models:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(new_album)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    track_names danceability energy loudness speechiness
+1            Echoes of Eternity        0.687  0.265   -8.193      0.1350
+2             Midnight Serenade        0.483  0.703   -9.016      0.0363
+3          Whispers in the Wind        0.553  0.480   -6.561      0.0366
+4 City Lights and Country Skies        0.605  0.377   -6.471      0.0363
+5          Diamonds in the Dust        0.734  0.442   -8.432      0.0557
+6               Golden Memories        0.559  0.790  -11.128      0.2450
+  acousticness instrumentalness liveness valence   tempo explicit mode_name
+1     0.074000         0.00e+00   0.0972  0.5110 130.045    FALSE     major
+2     0.000197         0.00e+00   0.2070  0.2810 104.007    FALSE     minor
+3     0.660000         0.00e+00   0.1670  0.3370 167.977    FALSE     major
+4     0.855000         0.00e+00   0.1060  0.3510 119.386    FALSE     major
+5     0.059400         1.63e-05   0.2130  0.0973 117.967    FALSE     major
+6     0.072800         9.48e-06   0.3510  0.1950 122.079    FALSE     major</code></pre>
+</div>
+</div>
+<p>What these data do not have is a billboard position, because they haven’t been released yet. So we will now do the prediction step again, using that <code>full_model</code> we just estimated. Note that the first column has the track name, which is not part of the model (although it could be), so we exclude that column when making predictions by using the negation symbol. That is, for the <code>newdata</code> argument, we pass <code>new_album[, -1]</code>, which tells R to skip the first column:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>new_predict <span class="ot">&lt;-</span> <span class="fu">predict</span>(full_model, <span class="at">newdata =</span> new_album[, <span class="sc">-</span><span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We want to take these position predictions and see which songs they correspond to, so we create a new data frame to show how each song is predicted to do on the charts.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>song_predict <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">track_num =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>,</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">peak_position =</span> new_predict,</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">track_name =</span> new_album<span class="sc">$</span>track_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In the above code, we are creating a data frame with three columns:</p>
+<ol type="1">
+<li><code>track_num</code>: The track number, created with a vector of integers 1-12.</li>
+<li><code>peak_position</code>: The predicted best position of each song; these are the values we predicted with our machine learning model.</li>
+<li><code>track_name</code>: The name of each song from the new album; we are effectively just copying the column of the same name from the <code>new_album</code> data frame.</li>
+</ol>
+<p>When we look at the predicted values, we see how our model predicted for each of the songs:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>song_predict</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   track_num peak_position                    track_name
+1          1      31.82940            Echoes of Eternity
+2          2      36.28577             Midnight Serenade
+3          3      39.82037          Whispers in the Wind
+4          4      40.63477 City Lights and Country Skies
+5          5      12.34133          Diamonds in the Dust
+6          6      29.56027               Golden Memories
+7          7      47.51237             Infinite Horizons
+8          8      30.77433    Heartstrings and Harmonies
+9          9      35.26253                   Stars Align
+10        10      32.40847                Fireside Chats
+11        11      42.19463             Rivers of Reverie
+12        12      40.03043            Celestial Symphony</code></pre>
+</div>
+</div>
+<p>From these results, we see that track 5 is predicted to do the best on the charts. That is, our model is predicting the song “Diamonds in the Dust” will go up to position 12 (rounding to the nearest integer).</p>
+<p>So there we are. We created a machine learning model and predicted the peak position for each song on Taylor Swift’s next, yet-to-be-released album. We used this to then identify the predicted best performing song to release as a single. Our final script for this process would be:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Machine learning on Taylor Swift songs</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Jeff Oliver</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="co"># jcoliver@arizona.edu</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2024-04-02</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Load libraries</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in data for Taylor Swift songs and peak chart position</span></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>swift_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/swift-data.csv"</span>)</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Create fold vector</span></span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>fold <span class="ot">&lt;-</span> <span class="fu">rep_len</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">length.out =</span> <span class="fu">nrow</span>(swift_data))</span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create variables to hold rmse values for each testing/training split</span></span>
+<span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a>linear_rmse <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">5</span>)</span>
+<span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a>rf_rmse <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">5</span>)</span>
+<span id="cb54-19"><a href="#cb54-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-20"><a href="#cb54-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Run training and testing step for each of five 80/20 splits</span></span>
+<span id="cb54-21"><a href="#cb54-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb54-22"><a href="#cb54-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Split data into training/testing</span></span>
+<span id="cb54-23"><a href="#cb54-23" aria-hidden="true" tabindex="-1"></a>  training <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb54-24"><a href="#cb54-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fold <span class="sc">!=</span> i)</span>
+<span id="cb54-25"><a href="#cb54-25" aria-hidden="true" tabindex="-1"></a>  testing <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb54-26"><a href="#cb54-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(fold <span class="sc">==</span> i)</span>
+<span id="cb54-27"><a href="#cb54-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb54-28"><a href="#cb54-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Estimate model with training data</span></span>
+<span id="cb54-29"><a href="#cb54-29" aria-hidden="true" tabindex="-1"></a>  linear_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> training)</span>
+<span id="cb54-30"><a href="#cb54-30" aria-hidden="true" tabindex="-1"></a>  rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> training)</span>
+<span id="cb54-31"><a href="#cb54-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb54-32"><a href="#cb54-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make predictions on testing data</span></span>
+<span id="cb54-33"><a href="#cb54-33" aria-hidden="true" tabindex="-1"></a>  linear_prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(linear_model, <span class="at">newdata =</span> testing)</span>
+<span id="cb54-34"><a href="#cb54-34" aria-hidden="true" tabindex="-1"></a>  rf_prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_model, <span class="at">newdata =</span> testing)</span>
+<span id="cb54-35"><a href="#cb54-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb54-36"><a href="#cb54-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate rmse values</span></span>
+<span id="cb54-37"><a href="#cb54-37" aria-hidden="true" tabindex="-1"></a>  linear_sqerr <span class="ot">&lt;-</span> (testing<span class="sc">$</span>peak_position <span class="sc">-</span> linear_prediction)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb54-38"><a href="#cb54-38" aria-hidden="true" tabindex="-1"></a>  linear_rmse[i] <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(linear_sqerr))</span>
+<span id="cb54-39"><a href="#cb54-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb54-40"><a href="#cb54-40" aria-hidden="true" tabindex="-1"></a>  rf_sqerr <span class="ot">&lt;-</span> (testing<span class="sc">$</span>peak_position <span class="sc">-</span> rf_prediction)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb54-41"><a href="#cb54-41" aria-hidden="true" tabindex="-1"></a>  rf_rmse[i] <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(rf_sqerr))</span>
+<span id="cb54-42"><a href="#cb54-42" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb54-43"><a href="#cb54-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-44"><a href="#cb54-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Boxplot comparing performance of linear model to random forest model</span></span>
+<span id="cb54-45"><a href="#cb54-45" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="at">x =</span> linear_rmse, rf_rmse,</span>
+<span id="cb54-46"><a href="#cb54-46" aria-hidden="true" tabindex="-1"></a>        <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"Linear Model"</span>, <span class="st">"Random Forest"</span>),</span>
+<span id="cb54-47"><a href="#cb54-47" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"RMSE"</span>)</span>
+<span id="cb54-48"><a href="#cb54-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-49"><a href="#cb54-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate random forest model again, this time using all data</span></span>
+<span id="cb54-50"><a href="#cb54-50" aria-hidden="true" tabindex="-1"></a>full_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(peak_position <span class="sc">~</span> ., <span class="at">data =</span> swift_data)</span>
+<span id="cb54-51"><a href="#cb54-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-52"><a href="#cb54-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Load song data for new album</span></span>
+<span id="cb54-53"><a href="#cb54-53" aria-hidden="true" tabindex="-1"></a>new_album <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/swift-new.csv"</span>)</span>
+<span id="cb54-54"><a href="#cb54-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-55"><a href="#cb54-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict chart position for each of the songs on the new album, skipping the </span></span>
+<span id="cb54-56"><a href="#cb54-56" aria-hidden="true" tabindex="-1"></a><span class="co"># first column (track name)</span></span>
+<span id="cb54-57"><a href="#cb54-57" aria-hidden="true" tabindex="-1"></a>new_predict <span class="ot">&lt;-</span> <span class="fu">predict</span>(full_model, <span class="at">newdata =</span> new_album[, <span class="sc">-</span><span class="dv">1</span>])</span>
+<span id="cb54-58"><a href="#cb54-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-59"><a href="#cb54-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame holding predictions and track name</span></span>
+<span id="cb54-60"><a href="#cb54-60" aria-hidden="true" tabindex="-1"></a>song_predict <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">track_num =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>,</span>
+<span id="cb54-61"><a href="#cb54-61" aria-hidden="true" tabindex="-1"></a>                           <span class="at">peak_position =</span> new_predict,</span>
+<span id="cb54-62"><a href="#cb54-62" aria-hidden="true" tabindex="-1"></a>                           <span class="at">track_name =</span> new_album<span class="sc">$</span>track_names)</span>
+<span id="cb54-63"><a href="#cb54-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-64"><a href="#cb54-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Print predicted chart positions for new album</span></span>
+<span id="cb54-65"><a href="#cb54-65" aria-hidden="true" tabindex="-1"></a>song_predict</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<section id="wouldve-couldve-shouldve" class="level3">
+<h3 class="anchored" data-anchor-id="wouldve-couldve-shouldve">Would’ve, Could’ve, Should’ve</h3>
+<p>The work we did in this lesson is just the beginning. There are plenty of additional considerations for creating machine learning algorithms. A couple of things to consider are:</p>
+<ol type="1">
+<li><strong>Which variables do we use?</strong> We had various song characteristics available, so we used those as our variables. There may be additional information we could include (month of release? author of the song?) to build models that are better at making predictions. This process, also known as “feature selection”, attempts to strike a balance between having enough information to be useful in predictions and not having to use a lot of resources to collect data that provide little to no model improvements.</li>
+<li><strong>Which models to use?</strong> We only used two models, a linear regression model and a random forest model. Both of which could use additional refinements, such as accommodating the fact that the billboard positions are count data, rather than continuous data. To accomplish this, we could use Poisson models for both regression and random forest models. Additionally, there are other types of models, both regression (e.g.&nbsp;lasso models) and tree-based (e.g.&nbsp;boosted regression trees) to consider. The book by Gareth et al.&nbsp;is an excellent resource for learning about these models and how to apply them in R. See the <a href="#additional-resources">Additional resources</a> section below for links and more details.</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="bonus-track-look-what-you-made-me-do" class="level2">
+<h2 class="anchored" data-anchor-id="bonus-track-look-what-you-made-me-do">Bonus Track: Look What You Made Me Do</h2>
+<section id="data-wrangling" class="level3">
+<h3 class="anchored" data-anchor-id="data-wrangling">Data Wrangling</h3>
+<p>The data we used for this lesson did not come in the form that we used them. That is, there were several steps that needed to happen <em>before</em> we started using the data in the models. These steps were:</p>
+<ol type="1">
+<li>Downloading the original song data</li>
+<li>Downloading the original score data for each song</li>
+<li>Combining the two above data sources</li>
+<li>Removing unnecessary columns from data</li>
+<li>Removing any rows that are missing data</li>
+</ol>
+<p>The section below illustrates these four steps. Note the cleaned data are all available at <a href="https://bit.ly/swift-data">https://bit.ly/swift-data</a>, so you do not need to run the code below in order to do the machine learning parts of the lesson. But for those who are curious, the code below highlights that most machine learning applications require substantial curation of data sources before any models are built.</p>
+<p>Just in case you haven’t already loaded the dplyr library, we do so now.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Location of song data on Tidy Tuesday site 2023-10-17</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>song_url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_all_songs.csv"</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Location of Billboard chart data</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>scores_url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/scharfsteina/BigDataFinalProject/main/data/billboard.csv"</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Download both datasets</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>songs <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> song_url)</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>scores <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> scores_url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can look at the column names for both datasets as a reality check. We will need to join the data sets together, so they will need to have one column with the same information. The column <em>names</em> do not necessarily have to match, but the data do. The <code>songs</code> data has the following columns:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(songs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "album_name"          "ep"                  "album_release"      
+ [4] "track_number"        "track_name"          "artist"             
+ [7] "featuring"           "bonus_track"         "promotional_release"
+[10] "single_release"      "track_release"       "danceability"       
+[13] "energy"              "key"                 "loudness"           
+[16] "mode"                "speechiness"         "acousticness"       
+[19] "instrumentalness"    "liveness"            "valence"            
+[22] "tempo"               "time_signature"      "duration_ms"        
+[25] "explicit"            "key_name"            "mode_name"          
+[28] "key_mode"            "lyrics"             </code></pre>
+</div>
+</div>
+<p>Since we are doing an analysis on the level of the song (remember, we want to predict an individual song’s highest spot on the Billboard chart), the fifth column, track_name, looks like the one we will use to join it with the <code>scores</code> data. Speaking of the <code>scores</code> data, it has the following columns:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "X"              "song"           "debut_date"     "peak_position" 
+[5] "peak_date"      "weeks_on_chart"</code></pre>
+</div>
+</div>
+<p>There are two things of note:</p>
+<ol type="1">
+<li>There is no <code>track_name</code> column in the <code>scores</code> data, but there is a <code>song</code> column.</li>
+<li>The first column is just called <code>X</code>, which is not very informative.</li>
+</ol>
+<p>Let us look at the first six rows of the <code>scores</code> data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  X                     song debut_date peak_position peak_date weeks_on_chart
+1 0             shake it off   09.06.14             1  09.06.14             50
+2 1   teardrops on my guitar   03.24.07            13  03.01.08             48
+3 2                 our song   10.13.07            16  01.19.08             36
+4 3              blank space   11.15.14             1  11.29.14             36
+5 4 i knew you were trouble.   10.27.12             2  01.12.13             36
+6 5                 delicate   03.24.18            12  07.28.18             35</code></pre>
+</div>
+</div>
+<p>So the <code>song</code> column looks like it has the information wee need to join with the <code>songs</code> data. The <code>X</code> column just looks like an identifier, so we can rename the column with a more informative name.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename first column of scores data from "X" to "id"</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(scores)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">"id"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Before we join the data together it is worthwhile glancing at the values in the <code>track_name</code> column of the <code>songs</code> data. Here we will just look at the first ten values:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>songs<span class="sc">$</span>track_name[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Tim McGraw"                 "Picture To Burn"           
+ [3] "Teardrops On My Guitar"     "A Place In This World"     
+ [5] "Cold As You"                "The Outside"               
+ [7] "Tied Together With A Smile" "Stay Beautiful"            
+ [9] "Should've Said No"          "Mary's Song (Oh My My My)" </code></pre>
+</div>
+</div>
+<p>And compare that to the first ten songs in the <code>scores</code> data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>scores<span class="sc">$</span>song[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "shake it off"               "teardrops on my guitar"    
+ [3] "our song"                   "blank space"               
+ [5] "i knew you were trouble."   "delicate"                  
+ [7] "style"                      "bad blood"                 
+ [9] "i don't wanna live forever" "mine"                      </code></pre>
+</div>
+</div>
+<p>Now the song names in the two datasets are in different orders, but that is not a concern, because we will use functions in R that know how to line the rows up correctly. However, note that the song names in the <code>songs</code> data have capital letters (it uses title case), while song names in the <code>scores</code> data are all lower case letters. If we leave the data like this, R will not be able to join the data together the right way. That is, if we tried to join the datasets together as is, R would think that “Shake It Off” and “shake it off” are different songs. <em>We</em> know that these are the same song, but we need to change the data so R also sees them as the same song. The easiest way to do this is to change <em>all</em> the letters in song names to lower case. It looks like the song names in the <code>scores</code> data are already lower case, but we can do the transformation on both datasets, just to be sure.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Change song names to lower case</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>songs<span class="sc">$</span>track_name <span class="ot">&lt;-</span> <span class="fu">tolower</span>(songs<span class="sc">$</span>track_name)</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>scores<span class="sc">$</span>song <span class="ot">&lt;-</span> <span class="fu">tolower</span>(scores<span class="sc">$</span>song)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>One final check and we can see that both datasets now have song names that are all lower case letters:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>songs<span class="sc">$</span>track_name[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "tim mcgraw"                 "picture to burn"           
+ [3] "teardrops on my guitar"     "a place in this world"     
+ [5] "cold as you"                "the outside"               
+ [7] "tied together with a smile" "stay beautiful"            
+ [9] "should've said no"          "mary's song (oh my my my)" </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>scores<span class="sc">$</span>song[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "shake it off"               "teardrops on my guitar"    
+ [3] "our song"                   "blank space"               
+ [5] "i knew you were trouble."   "delicate"                  
+ [7] "style"                      "bad blood"                 
+ [9] "i don't wanna live forever" "mine"                      </code></pre>
+</div>
+</div>
+<p>We’re almost there. For some reason, the song “I Knew You Were Trouble” includes a period in the <code>scores</code> dataset, but does not in the <code>songs</code> dataset. We need to make sure these song names match <em>exactly</em> or R will consider them different songs. For this case, we will just replace the version in the <code>scores</code> dataset so that it does not include a period.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>scores<span class="sc">$</span>song <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="at">pattern =</span> <span class="st">"i knew you were trouble."</span>,</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">replacement =</span> <span class="st">"i knew you were trouble"</span>,</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">x =</span> scores<span class="sc">$</span>song,</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fixed =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And looking at the first few songs in the <code>scores</code> dataset, we see that one song has been updated:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>scores<span class="sc">$</span>song[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "shake it off"               "teardrops on my guitar"    
+ [3] "our song"                   "blank space"               
+ [5] "i knew you were trouble"    "delicate"                  
+ [7] "style"                      "bad blood"                 
+ [9] "i don't wanna live forever" "mine"                      </code></pre>
+</div>
+</div>
+<p>You can also check for any additional differences between the datasets by using base R’s <code>setdiff()</code> function or dplyr’s version of <code>setdiff()</code>. We are not going to in more details on this point, but know that the set operations are useful for comparing things before merges and joins.</p>
+<p>We are now ready to join the song data with the scores data. We can do this with functions from dplyr, including the pipe, <code>%&gt;%</code> and the <code>left_join()</code> function. We can join the datasets by telling the <code>left_join()</code> functions which columns to use when merging the datasets:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>combined <span class="ot">&lt;-</span> <span class="fu">left_join</span>(scores, songs, <span class="at">by =</span> <span class="fu">join_by</span>(song <span class="sc">==</span> track_name))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here we are telling R to add rows together from the “left” dataset (<code>scores</code> in our case) to the “right” dataset (<code>songs</code>). We tell it to use the “song” column of the “left” dataset to find the corresponding row in the “track_name” column of the “right” dataset. The distinction of “left” and “right” really just relies on where they appear in the <code>inner_join()</code> function: <code>scores</code> is on the left, <code>songs</code> is on the right.</p>
+<p>These data now have all the columns from <code>songs</code> and all the columns from <code>scores</code> (a total of 168 columns). For the purposes of this lesson, we only need (1) the highest position on the charts the song achieved (that is, the thing we are trying to predict) and (2) song characteristics (the things we use to make predictions, AKA features), such as how loud and how danceable a song is (aren’t they <em>all</em> danceable?). So the last steps are to select only those columns of interest, drop any remaining rows that are missing data, and write the data to a CSV file.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We want to predict peak_position</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Predictors (aka "features"):</span></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a><span class="co"># danceability energy loudness speechiness acousticness instrumentalness </span></span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a><span class="co"># liveness valence tempo explicit mode_name</span></span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>model_data <span class="ot">&lt;-</span> combined <span class="sc">%&gt;%</span></span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(peak_position, danceability, energy, loudness, speechiness, </span>
+<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a>         acousticness, instrumentalness, liveness, valence, tempo, explicit, </span>
+<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>         mode_name) <span class="sc">%&gt;%</span> </span>
+<span id="cb77-9"><a href="#cb77-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>() <span class="co"># Drop any rows missing data</span></span>
+<span id="cb77-10"><a href="#cb77-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb77-11"><a href="#cb77-11" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(<span class="at">file =</span> <span class="st">"data/swift-data.csv"</span>,</span>
+<span id="cb77-12"><a href="#cb77-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">x =</span> model_data,</span>
+<span id="cb77-13"><a href="#cb77-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-creation" class="level3">
+<h3 class="anchored" data-anchor-id="data-creation">Data creation</h3>
+<p>At the end of the lesson, we applied our machine learning model to a dozen new, unreleased Taylor Swift songs. While I appreciate your confidence that I would have access to such prized material, it is not, alas, the case. These “new album” songs were created based on the original dataset, in an attempt to simulate the types of songs that Taylor Swift is known for performing. Below is the code for the creation of those data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load dplyr library</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a><span class="co"># We are doing some random sampling, so to ensure consistency among results, we </span></span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a><span class="co"># set the random number seed</span></span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20240322</span>)</span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in song data (in case it is not already loaded)</span></span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>swift_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/swift-data.csv"</span>)</span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop the peak_position column, because we will not actually have that in our </span></span>
+<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a><span class="co"># new dataset; we also change the song mode to a factor data type</span></span>
+<span id="cb78-13"><a href="#cb78-13" aria-hidden="true" tabindex="-1"></a>song_data <span class="ot">&lt;-</span> swift_data <span class="sc">%&gt;%</span></span>
+<span id="cb78-14"><a href="#cb78-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>peak_position)</span>
+<span id="cb78-15"><a href="#cb78-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-16"><a href="#cb78-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame to hold 12 songs for the "new album"</span></span>
+<span id="cb78-17"><a href="#cb78-17" aria-hidden="true" tabindex="-1"></a>new_album <span class="ot">&lt;-</span> song_data[<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, ]</span>
+<span id="cb78-18"><a href="#cb78-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Erase the data that exists - we will replace it</span></span>
+<span id="cb78-19"><a href="#cb78-19" aria-hidden="true" tabindex="-1"></a>new_album[,] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb78-20"><a href="#cb78-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-21"><a href="#cb78-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample from those distributions of each characteristic, repeating the process</span></span>
+<span id="cb78-22"><a href="#cb78-22" aria-hidden="true" tabindex="-1"></a><span class="co"># for a total of 12 times</span></span>
+<span id="cb78-23"><a href="#cb78-23" aria-hidden="true" tabindex="-1"></a><span class="co"># The exception is for the 5th song, which we are blatantly copying song </span></span>
+<span id="cb78-24"><a href="#cb78-24" aria-hidden="true" tabindex="-1"></a><span class="co"># characteristics for a song that we know will do well in our model</span></span>
+<span id="cb78-25"><a href="#cb78-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>) {</span>
+<span id="cb78-26"><a href="#cb78-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># There are much more elegant ways of doing this, but here we use a for loop to </span></span>
+<span id="cb78-27"><a href="#cb78-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># sample each song variable</span></span>
+<span id="cb78-28"><a href="#cb78-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (i <span class="sc">==</span> <span class="dv">5</span>) {</span>
+<span id="cb78-29"><a href="#cb78-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Pulling out song #9 in our original data</span></span>
+<span id="cb78-30"><a href="#cb78-30" aria-hidden="true" tabindex="-1"></a>    new_album[i, ] <span class="ot">&lt;-</span> song_data[<span class="dv">9</span>, ]</span>
+<span id="cb78-31"><a href="#cb78-31" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb78-32"><a href="#cb78-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Loop over each column to create a randomly sampled value for this track</span></span>
+<span id="cb78-33"><a href="#cb78-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(song_data)) {</span>
+<span id="cb78-34"><a href="#cb78-34" aria-hidden="true" tabindex="-1"></a>      new_album[i, j] <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="at">x =</span> song_data[, j],</span>
+<span id="cb78-35"><a href="#cb78-35" aria-hidden="true" tabindex="-1"></a>                                <span class="at">size =</span> <span class="dv">1</span>)</span>
+<span id="cb78-36"><a href="#cb78-36" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb78-37"><a href="#cb78-37" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb78-38"><a href="#cb78-38" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb78-39"><a href="#cb78-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-40"><a href="#cb78-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Just for fun, I had ChatGPT come up with a dozen song titles</span></span>
+<span id="cb78-41"><a href="#cb78-41" aria-hidden="true" tabindex="-1"></a>track_names<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Echoes of Eternity"</span>,</span>
+<span id="cb78-42"><a href="#cb78-42" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Midnight Serenade"</span>,</span>
+<span id="cb78-43"><a href="#cb78-43" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Whispers in the Wind"</span>,</span>
+<span id="cb78-44"><a href="#cb78-44" aria-hidden="true" tabindex="-1"></a>                <span class="st">"City Lights and Country Skies"</span>,</span>
+<span id="cb78-45"><a href="#cb78-45" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Diamonds in the Dust"</span>,</span>
+<span id="cb78-46"><a href="#cb78-46" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Golden Memories"</span>,</span>
+<span id="cb78-47"><a href="#cb78-47" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Infinite Horizons"</span>,</span>
+<span id="cb78-48"><a href="#cb78-48" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Heartstrings and Harmonies"</span>,</span>
+<span id="cb78-49"><a href="#cb78-49" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Stars Align"</span>,</span>
+<span id="cb78-50"><a href="#cb78-50" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Fireside Chats"</span>,</span>
+<span id="cb78-51"><a href="#cb78-51" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Rivers of Reverie"</span>,</span>
+<span id="cb78-52"><a href="#cb78-52" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Celestial Symphony"</span>)</span>
+<span id="cb78-53"><a href="#cb78-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-54"><a href="#cb78-54" aria-hidden="true" tabindex="-1"></a>new_album <span class="ot">&lt;-</span> <span class="fu">cbind</span>(track_names, new_album)</span>
+<span id="cb78-55"><a href="#cb78-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-56"><a href="#cb78-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Write the data to a csv file</span></span>
+<span id="cb78-57"><a href="#cb78-57" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(<span class="at">x =</span> new_album,</span>
+<span id="cb78-58"><a href="#cb78-58" aria-hidden="true" tabindex="-1"></a>          <span class="at">file =</span> <span class="st">"data/swift-new.csv"</span>,</span>
+<span id="cb78-59"><a href="#cb78-59" aria-hidden="true" tabindex="-1"></a>          <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+</section>
+<section id="additional-resources" class="level2">
+<h2 class="anchored" data-anchor-id="additional-resources">Additional resources</h2>
+<ul>
+<li>An extremely useful resource is <a href="https://arizona-primo.hosted.exlibrisgroup.com/permalink/f/evot53/01UA_ALMA51605092790003843">An Introduction to Statistical Learning with Applications in R</a>, by Gareth James and colleagues. This book provides an accessible introduction to several machine learning approaches, including regression and classification techniques, along with <em>a lot</em> of worked examples and R code.</li>
+<li>An introduction to the concept of <a href="https://www.youtube.com/watch?v=aircAruvnKk">neural networks</a>. This video does a good job breaking down how neural networks work to make predictions.</li>
+<li>A <a href="https://jcoliver.github.io/learn-r/018-ml-regression.pdf">PDF version</a> of this lesson.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+ Copyright 2024, Jeffrey Oliver
+  </li>  
+</ul>
+    </div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0 Deed</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/jcoliver">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

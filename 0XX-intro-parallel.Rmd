@@ -1,0 +1,164 @@
+---
+title: "Parallel processing in R"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+urlcolor: blue
+---
+
+[INTRODUCTORY SENTENCE]
+
+#### Learning objectives
+
+1. Install packages for parallel processing in R
+2. Write code to automate repetitive tasks
+3. Translate iterative `for` loop code into parallel processing
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+***
+
+## Getting started
+
+<making a new project>
+
+***
+
+## Repeating ourselves
+
+<Something for each row in a data frame>
+Do leave-one-out linear regression
+
+```{r}
+# Run linear regression on iris data, using leave-one-out error estimation, 
+# in this example, we use Petal.Length to predict Sepal.Length
+
+# Vector to hold error values
+errors <- numeric(nrow(iris))
+
+##### for loop
+# The for loop iterative approach
+for (i in 1:nrow(iris)) {
+  # Estimate the model, leaving out the ith row of data
+  one_model <- lm(Sepal.Length ~ Petal.Length, data = iris[-i, ])
+  # Use the model to predict value for that ith row of data
+  predicted_fit <- predict(one_model, newdata = iris[i, ])
+  # Calculate difference between observed and predicted value
+  errors[i] <- iris$Sepal.Length[i] - predicted_fit[1]
+}
+# Calculate mean squared errors
+mse <- mean(errors^2)
+
+##### lapply
+# The lapply vectorized approach. Start by creating a function to do the work; 
+# The one argument to lm_mse (x) will be the row number (x); ignore, for the 
+# moment, the bad practice of referring to things inside the function that are 
+# not passed to or created inside the function (the iris data frame and columns
+# therein).
+lm_mse <- function(x) {
+  # Estimate the model, leaving out the ith row of data
+  one_model <- lm(Sepal.Length ~ Petal.Length, data = iris[-x, ])
+  # Use the model to predict value for that ith row of data
+  predicted_fit <- predict(one_model, newdata = iris[x, ])
+  # Calculate difference between observed and predicted value
+  error <- iris$Sepal.Length[x] - predicted_fit[1]
+  # Send back the error value
+  return(error)
+}
+# Now use that function with lapply to do the work without a for loop
+mse_list <- lapply(X = 1:nrow(iris),
+                   FUN = lm_mse)
+# lapply returns a list, so we need to convert to a vector before squaring
+mse <- mean(unlist(mse_list)^2)
+
+##### parallel processing
+library(parallel)
+
+# Use two fewer cores than there are available
+n <- detectCores() - 2
+
+# Setup the cluster
+clust <- makeCluster(n)
+# Use the function we defined above with parLapply
+mse_list <- parLapply(cl = clust,
+                      X = 1:nrow(iris),
+                      fun = lm_mse)
+# Stop the cluster
+stopCluster(cl = clust)
+# parLapply also returns a list
+mse <- mean(unlist(mse_list)^2)
+
+# Same as above, but keeping track of times
+system.time({
+  clust <- makeCluster(n)
+  a <- parLapply(cl = clust,
+                 X = 1:nrow(iris),
+                 fun = function(x) {
+                   m <- lm(Sepal.Length ~ Petal.Length, data = iris[-x, ])
+                   p <- predict(m, newdata = iris[x, ])
+                   e <- iris$Sepal.Length[x] - p[1]
+                   return(e)
+                 })
+  stopCluster(cl = clust)
+})
+
+mean(unlist(a)^2)
+
+
+```
+
+***
+
+## Make it functional
+
+<convert the stuff from the for loop into a function>
+
+***
+
+## "Embarrasingly parallizable"
+
+```{r}
+# Takes about a second
+system.time(
+  for (i in 1:300) {
+    x <- rnorm(n = 10000)
+    y <- x + rnorm(n = length(x), sd = 0.1)
+    l <- lm(y ~ x)
+    s <- summary(l)
+  }
+)
+
+library(parallel)
+
+n <- detectCores() - 2
+clust <- makeCluster(n)
+system.time({
+  a <- parLapply(cl = clust,
+                 X = rnorm(n = 10000),
+                 fun = function(x) {
+                   y <- x + rnorm(n = length(x), sd = 0.1)
+                   l <- lm(y ~ x)
+                   s <- summary(l)
+                 })
+})
+stopCluster(cl = clust)
+
+```
+
+***
+
+## Additional resources
+
++ [Overview](https://dept.stat.lsa.umich.edu/~jerrick/courses/stat701/notes/parallel.html#using-sockets-with-parlapply) of parallel processing in R, with comparsions of 
+different approaches
++ Examples of parallel processing with [parallel, doParallel, and foreach packages](https://www.r-bloggers.com/2018/09/simple-parallel-processing-in-r/)
++ A [PDF version](https://jcoliver.github.io/learn-r/017-intro-parallel.pdf) of this lesson
+
+***
+
+<a href="index.html">Back to learn-r main page</a>
+  
+Questions?  e-mail me at <a href="mailto:jcoliver@arizona.edu">jcoliver@arizona.edu</a>.
