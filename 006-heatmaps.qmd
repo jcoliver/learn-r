@@ -15,22 +15,17 @@ some data wrangling to easily format the data needed for the plot.
 
 ## Heatmaps & data wrangling
 
-<<<<<<< HEAD:006-heatmaps.Rmd
-Heatmaps are a great way of displaying three-dimensional data in only two dimensions. But how can we easily translate tabular data into a format for heatmap plotting? By taking advantage of "data munging" and graphics packages, heatmaps are relatively easy to produce in R. 
-=======
 Heatmaps are a great way of displaying three-dimensional data in only two 
 dimensions. But how can we easily translate tabular data into a format for 
 heatmap plotting? By taking advantage of "data munging" and graphics packages, 
 heatmaps are relatively easy to produce in R. 
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd
 
 ***
 
 ## Getting started
 
-<<<<<<< HEAD:006-heatmaps.Rmd
-Start by creating a new project in RStudio and creating two folders we'll use to organize our efforts. The two folders should be `data` and `output` and will store...data and output.
-=======
+### Workspace organization
+
 First we need to setup our development environment. Open RStudio and create a 
 new project via:
 
@@ -44,7 +39,6 @@ or "Desktop")
 Next create the two folders we'll use to organize our efforts. The two folders 
 should be `data` and `output` and will store...data and output.
 
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd
 ```{r setup-folders, eval = FALSE}
 dir.create("data")
 dir.create("output")
@@ -72,14 +66,10 @@ This downloads the data and saves it in the `data` directory as `mine-data.csv`.
 
 ## Data Wrangling
 
-<<<<<<< HEAD:006-heatmaps.Rmd
-We'll need to start by reading the data into memory then formatting it for use by the ggplot package. We want all our work to be reproducible, so create a script where we can store all the commands we use to create the heatmap. We begin this script with brief information about the purpose of the script:
-=======
 We'll need to start by reading the data into memory then formatting it for use 
 by the ggplot package. We want all our work to be reproducible, so create a 
 script where we can store all the commands we use to create the heatmap. We 
 begin this script with brief information about the purpose of the script:
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd
 
 ```{r script-header, eval = FALSE}
 # Heatmap of mine pit microbe diversity
@@ -152,12 +142,8 @@ install.packages("tidyr")
 library("tidyr")
 ```
 
-<<<<<<< HEAD:006-heatmaps.Rmd
-In fact, we can do this transformation in one line with the `pivot_longer` function:
-=======
 In fact, we can do this transformation in one line with the `pivot_longer` 
 function:
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd
 
 ```{r pivot-longer-01, error = TRUE}
 mine.long <- pivot_longer(data = mine.data, 
@@ -166,16 +152,12 @@ mine.long <- pivot_longer(data = mine.data,
                           values_to = "Abundance")
 ```
 
-<<<<<<< HEAD:006-heatmaps.Rmd
-Uh oh. That error is preventing us from transforming our data to long format. What R is telling us is that we tried to create a column with multiple data types in it, which is a big no-no in R. That is, it attempted to make a single column that had both the data from the "Site" column (which are numbers) with the data from the "Sample.name" column, which is a factor (factors are what R calls categories).
-=======
 Uh oh. That error is preventing us from transforming our data to long format. 
 What R is telling us is that we tried to create a column with multiple data 
 types in it, which is a big no-no in R. That is, it attempted to make a single 
 column that had both the data from the "Site" column (which are numbers) with 
 the data from the "Sample.name" column, which is a factor (factors are what R 
 calls categories).
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd
 
 Consider our original data structure:
 
@@ -183,14 +165,10 @@ Consider our original data structure:
 str(mine.data)
 ```
 
-<<<<<<< HEAD:006-heatmaps.Rmd
-Notice there are columns that don't need to be transformed for our heatmap. Namely, Site, Depth, and Sample.name can all remain as-is. To do this, we instruct `pivot_longer` to ignore the first three columns of the data frame by negating those columns (`-c(1:3`):
-=======
 Notice there are columns that don't need to be transformed for our heatmap. 
 Namely, Site, Depth, and Sample.name can all remain as-is. To do this, we 
 instruct `pivot_longer` to ignore the first three columns of the data frame by 
 negating those columns (`-c(1:3`):
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd
 
 ```{r pivot-longer-02}
 mine.long <- pivot_longer(data = mine.data, 
@@ -292,14 +270,10 @@ plot.object.name
 
 ### Faceting a plot
 
-<<<<<<< HEAD:006-heatmaps.Rmd
-The ggplot package includes a great way to visualize different categories of data. This approach, called "faceting" requires one additional layer to the plotting command called `facet_grid`. With `facet_grid` we indicate which column contains the categories we want to use for the plot:
-=======
 The ggplot package includes a great way to visualize different categories of 
 data. This approach, called "faceting" requires one additional layer to the 
 plotting command called `facet_grid`. With `facet_grid` we indicate which 
 column contains the categories we want to use for the plot:
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd
 
 ```{r facet}
 mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
@@ -327,12 +301,6 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
 mine.heatmap
 ```
 
-<<<<<<< HEAD:006-heatmaps.Rmd
-+ Passing `"free_x"` to the `scales` argument instructs R to allow different x-axis for each of our sub-plots. In this case, the default is for each site to appear in each sub-plot. Specifying `scales = "free_x"` removes any site from a sub-plot where there is no corresponding data. That is, it removes sites 1-S, 2-S, and 3-S from the 3.5 and 25 depth sub-plots, removes 1-M, 2-M, and 3-M from the 0.5 and 25 depth sub-plots, and removes 2-B and 3-B from the 0.5 and 3.5 depth sub-plots.
-+ Passing `"free_x"` to `space` ensures that each column in the plot is the same width. Try it without specifying the `space` argument to see the effect of this behavior.
-
-While we are here, we can also move the boxes labelling each sub-plot (0.5, 3.5, and 25) from the top of the plot to the bottom of the plot with the `switch` argument in the `facet_grid()` function:
-=======
 + Passing `"free_x"` to the `scales` argument instructs R to allow different 
 x-axis for each of our sub-plots. In this case, the default is for each site to 
 appear in each sub-plot. Specifying `scales = "free_x"` removes any site from a 
@@ -347,7 +315,6 @@ this behavior.
 While we are here, we can also move the boxes labelling each sub-plot (0.5, 
 3.5, and 25) from the top of the plot to the bottom of the plot with the 
 `switch` argument in the `facet_grid()` function:
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd
 
 ```{r facet-switch}
 mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
@@ -361,27 +328,19 @@ mine.heatmap
 ```
 
 
-<<<<<<< HEAD:006-heatmaps.Rmd
-That's better. There is still some room for improvement, but we'll get to that later.
-=======
 That's better. There is still some room for improvement, but we'll get to that 
 later.
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd
 
 ### Improving aesthetics
 
 #### Scale
 
-<<<<<<< HEAD:006-heatmaps.Rmd
-First let's deal with a scaling issue. Most values are dark blue, but this is partly caused by the distribution of values - there are a few really high values in the Abundance column. We can transform the data for display by taking the square root of abundance and plotting that. To do this, we need to add another column to our data frame and update our call to ggplot to reference this new column, `Sqrt.abundance`:
-=======
 First let's deal with a scaling issue. Most values are dark blue, but this is 
 partly caused by the distribution of values - there are a few really high 
 values in the Abundance column. We can transform the data for display by taking 
 the square root of abundance and plotting that. To do this, we need to add 
 another column to our data frame and update our call to ggplot to reference 
 this new column, `Sqrt.abundance`:
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd
 
 ```{r sqrt-transform}
 mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
@@ -397,16 +356,12 @@ mine.heatmap
 
 #### Color
 
-<<<<<<< HEAD:006-heatmaps.Rmd
-What if we want to use a different set of colors besides the default? For example, how can we change the shading so low values are light and high values are dark? We change colours with `scale_fill_gradient`. In this case we pass three objects to `scale_fill_gradient`: `name` is a label to use in the legend and `low` and `high` are hex codes for color. In this case, we use white (#FFFFFF) for the low values and a dark blue (#012345) for high values.
-=======
 What if we want to use a different set of colors besides the default? For 
 example, how can we change the shading so low values are light and high values 
 are dark? We change colours with `scale_fill_gradient`. In this case we pass 
 three objects to `scale_fill_gradient`: `name` is a label to use in the legend 
 and `low` and `high` are hex codes for color. In this case, we use white 
 (#FFFFFF) for the low values and a dark blue (#012345) for high values.
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd
 
 ```{r change-color}
 mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
@@ -425,9 +380,6 @@ mine.heatmap
 
 #### Theme elements
 
-<<<<<<< HEAD:006-heatmaps.Rmd
-A number of elements of the plot are controlled through the `theme` function of ggplot. We can use this function to alter axis titles and the placement of the facet titles. Remember the facets? We grouped the graphs based on the depth of the samples. The graph currently shows the depth labels (the boxes with 0.5, 3.5, or 25) between the graph and the sample name. We'd like to swap these positions, so the categories are shown at the very bottom. While we're at it, we should update the x-axis label, too. Setting `strip.placement` to "outside" should accomplish this.
-=======
 A number of elements of the plot are controlled through the `theme` function of 
 ggplot. We can use this function to alter axis titles and the placement of the 
 facet titles. Remember the facets? We grouped the graphs based on the depth of 
@@ -436,7 +388,6 @@ the samples. The graph currently shows the depth labels (the boxes with 0.5,
 positions, so the categories are shown at the very bottom. While we're at it, 
 we should update the x-axis label, too. Setting `strip.placement` to "outside" 
 should accomplish this.
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd
 
 ```{r theme-elements}
 mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
@@ -693,12 +644,3 @@ mine.heatmap
 + A [cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) for ggplot
 + [Documentation](http://ggplot2.tidyverse.org/reference/geom_bin2d.html) for `geom_bin2d`, to create heatmaps for continuous x- and y-axes
 + A [PDF version](https://jcoliver.github.io/learn-r/006-heatmaps.pdf) of this lesson
-<<<<<<< HEAD:006-heatmaps.Rmd
-
-***
-
-<a href="index.html">Back to learn-r main page</a>
-  
-Questions?  e-mail me at <a href="mailto:jcoliver@email.arizona.edu">jcoliver@email.arizona.edu</a>.
-=======
->>>>>>> 240430-quarto-switch:006-heatmaps.qmd

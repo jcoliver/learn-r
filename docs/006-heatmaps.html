@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.4.553">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jeff Oliver">
-<meta name="dcterms.date" content="2024-05-10">
+<meta name="dcterms.date" content="2024-05-14">
 
 <title>learn-r - Heatmaps in R</title>
 <style>
@@ -24,7 +24,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -81,7 +81,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -90,8 +96,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-EF6ZJH0577"></script>
@@ -112,9 +120,9 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">learn-r</span>
     </a>
@@ -126,92 +134,92 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="" target="">
- <span class="menu-text">Home</span></a>
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-r-lessons" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-r-lessons" role="button" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">R Lessons</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-r-lessons">    
         <li>
-    <a class="dropdown-item" href="./001-basic-graphing.html" rel="" target="">
+    <a class="dropdown-item" href="./001-basic-graphing.html">
  <span class="dropdown-text">Introduction to R Graphing</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./002-intro-stats.html" rel="" target="">
+    <a class="dropdown-item" href="./002-intro-stats.html">
  <span class="dropdown-text">Introduction to R Statistics</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./003-intro-multivariate.html" rel="" target="">
+    <a class="dropdown-item" href="./003-intro-multivariate.html">
  <span class="dropdown-text">Introduction to Multivariate Statistics in R</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./004-intro-ggplot.html" rel="" target="">
+    <a class="dropdown-item" href="./004-intro-ggplot.html">
  <span class="dropdown-text">Introduction to data visualization with ggplot</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./005-intro-knitr.html" rel="" target="">
+    <a class="dropdown-item" href="./005-intro-knitr.html">
  <span class="dropdown-text">Dynamic reports with knitr</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./006-heatmaps.html" rel="" target="">
+    <a class="dropdown-item" href="./006-heatmaps.html">
  <span class="dropdown-text">Heatmaps in R</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./007-intro-functional-programming.html" rel="" target="">
+    <a class="dropdown-item" href="./007-intro-functional-programming.html">
  <span class="dropdown-text">Introduction to Functional Programming</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./008-ggplot-dendrograms-and-heatmaps.html" rel="" target="">
+    <a class="dropdown-item" href="./008-ggplot-dendrograms-and-heatmaps.html">
  <span class="dropdown-text">Clusters and Heatmaps</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./009-expression-heatmaps.html" rel="" target="">
+    <a class="dropdown-item" href="./009-expression-heatmaps.html">
  <span class="dropdown-text">Heatmaps - the gene expression edition</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./010-github.html" rel="" target="">
+    <a class="dropdown-item" href="./010-github.html">
  <span class="dropdown-text">Git and GitHub in RStudio</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./011-species-distribution-models.html" rel="" target="">
+    <a class="dropdown-item" href="./011-species-distribution-models.html">
  <span class="dropdown-text">A very brief introduction to species distribution models in R</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./012-intro-tidyverse.html" rel="" target="">
+    <a class="dropdown-item" href="./012-intro-tidyverse.html">
  <span class="dropdown-text">Introduction to tidyverse packages</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./014-intro-summarizing-visualizing.html" rel="" target="">
+    <a class="dropdown-item" href="./014-intro-summarizing-visualizing.html">
  <span class="dropdown-text">Introduction to data summarizing and visualization</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./016-intro-shiny.html" rel="" target="">
+    <a class="dropdown-item" href="./016-intro-shiny.html">
  <span class="dropdown-text">Interactive web apps with Shiny</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./017-open-street-map.html" rel="" target="">
+    <a class="dropdown-item" href="./017-open-street-map.html">
  <span class="dropdown-text">Mapping with Open Street Maps in R</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./018-ml-regression.html" rel="" target="">
+    <a class="dropdown-item" href="./018-ml-regression.html">
  <span class="dropdown-text">Machine learning in R part 1: regression</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="./schedule.html" rel="" target="">
- <span class="menu-text">Schedule</span></a>
+    <a class="nav-link" href="./schedule.html"> 
+<span class="menu-text">Schedule</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./resources.html" rel="" target="">
- <span class="menu-text">Additional Resources</span></a>
+    <a class="nav-link" href="./resources.html"> 
+<span class="menu-text">Additional Resources</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -225,7 +233,10 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
    
   <ul>
   <li><a href="#heatmaps-data-wrangling" id="toc-heatmaps-data-wrangling" class="nav-link active" data-scroll-target="#heatmaps-data-wrangling">Heatmaps &amp; data wrangling</a></li>
-  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting started</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting started</a>
+  <ul class="collapse">
+  <li><a href="#workspace-organization" id="toc-workspace-organization" class="nav-link" data-scroll-target="#workspace-organization">Workspace organization</a></li>
+  </ul></li>
   <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">Data Wrangling</a></li>
   <li><a href="#plotting-heatmaps" id="toc-plotting-heatmaps" class="nav-link" data-scroll-target="#plotting-heatmaps">Plotting heatmaps</a>
   <ul class="collapse">
@@ -259,7 +270,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 10, 2024</p>
+      <p class="date">May 14, 2024</p>
     </div>
   </div>
   
@@ -267,7 +278,9 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
+
 
 <p>A worked example of making heatmaps in R with the <code>ggplot</code> package, as well as some data wrangling to easily format the data needed for the plot.</p>
 <section id="learning-objectives" class="level4">
@@ -285,6 +298,8 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 </section>
 <section id="getting-started" class="level2">
 <h2 class="anchored" data-anchor-id="getting-started">Getting started</h2>
+<section id="workspace-organization" class="level3">
+<h3 class="anchored" data-anchor-id="workspace-organization">Workspace organization</h3>
 <p>First we need to setup our development environment. Open RStudio and create a new project via:</p>
 <ul>
 <li>File &gt; New Project…</li>
@@ -305,6 +320,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 </div>
 <p>This downloads the data and saves it in the <code>data</code> directory as <code>mine-data.csv</code>.</p>
 <hr>
+</section>
 </section>
 <section id="data-wrangling" class="level2">
 <h2 class="anchored" data-anchor-id="data-wrangling">Data Wrangling</h2>
@@ -516,7 +532,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/heatmap-basic-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/heatmap-basic-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Let’s dissect these commands:</p>
@@ -554,7 +574,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/facet-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/facet-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>But this leaves a bit to be desired. We only want columns displayed for which there are data, so we have to add some additional information in our <code>facet_grid</code> call:</p>
@@ -568,7 +592,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/facet-free-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/facet-free-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <ul>
@@ -586,7 +614,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/facet-switch-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/facet-switch-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>That’s better. There is still some room for improvement, but we’ll get to that later.</p>
@@ -607,7 +639,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/sqrt-transform-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/sqrt-transform-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -628,7 +664,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/change-color-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/change-color-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -650,7 +690,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/theme-elements-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/theme-elements-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -673,7 +717,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/plot-title-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/plot-title-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>But by default the title is left-aligned. To center-justify the title, we add another argument, <code>plot.title</code> to the <code>theme</code> call:</p>
@@ -694,7 +742,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/plot-title-align-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/plot-title-align-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -745,7 +797,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/y-axis-order-rev-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/y-axis-order-rev-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>And to adjust the y-axis and change the depth boxes, we add two more arguments to the <code>theme</code> command:</p>
@@ -769,7 +825,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/theme-changes-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/theme-changes-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Finally, there are many default themes in ggplot that affect background colors, grid lines, and fonts. You can see examples of them in use at <a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">https://ggplot2.tidyverse.org/reference/ggtheme.html</a>. One relatively simple theme is <code>theme_bw</code>, and we can apply it by adding the function to our ggplot object:</p>
@@ -794,7 +854,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/theme-bw-01-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/theme-bw-01-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Most notably, the different depth plots all have a black border around them. But if we take a closer look, a number of our changes have been undone! The shading of the boxes indicating Depth is darker, the labels for the samples are back at the bottom, and the y-axis title (“Class”) has returned.</p>
@@ -821,7 +885,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>mine.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="006-heatmaps_files/figure-html/theme-bw-02-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="006-heatmaps_files/figure-html/theme-bw-02-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Our final script for this heatmap is then:</p>
@@ -969,10 +1037,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -982,8 +1067,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -995,7 +1089,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1039,6 +1256,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1064,6 +1282,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1136,7 +1380,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-center">
       <ul class="footer-items list-unstyled">
     <li class="nav-item">
-    <a class="nav-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0 Deed</a>
+    <a class="nav-link" href="https://creativecommons.org/licenses/by/4.0/">
+<p>CC BY 4.0 Deed</p>
+</a>
   </li>  
 </ul>
     </div>
@@ -1152,6 +1398,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+
 
 
 
