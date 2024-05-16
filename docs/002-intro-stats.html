@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jeff Oliver">
-<meta name="dcterms.date" content="2024-05-14">
+<meta name="dcterms.date" content="2024-05-16">
 
 <title>learn-r - Introduction to R Statistics</title>
 <style>
@@ -199,7 +199,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 14, 2024</p>
+      <p class="date">May 16, 2024</p>
     </div>
   </div>
   
@@ -460,11 +460,11 @@ Estimated effects may be unbalanced</code></pre>
 </ol>
 <p>But we want to store the model, not just print it to the screen, so we use the assignment operator <code>&lt;-</code> to store the product of the <code>aov</code> function in a variable of our choice:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>petal.length.aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="at">formula =</span> Petal.Length <span class="sc">~</span> Species, <span class="at">data =</span> iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>petal_length_aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="at">formula =</span> Petal.Length <span class="sc">~</span> Species, <span class="at">data =</span> iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Notice how when we execute this command, nothing printed in the console. This is because we instead sent the output of the <code>aov</code> call to a variable. If you just type the variable name,</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>petal.length.aov</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>petal_length_aov</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>you will see the familiar output from the <code>aov</code> function:</p>
 <div class="cell">
@@ -483,7 +483,7 @@ Estimated effects may be unbalanced</code></pre>
 </div>
 <p>To see the results of the ANOVA, we call the <code>summary</code> function:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="at">object =</span> petal.length.aov)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="at">object =</span> petal_length_aov)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             Df Sum Sq Mean Sq F value Pr(&gt;F)    
 Species       2  437.1  218.55    1180 &lt;2e-16 ***
@@ -496,7 +496,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p>If we want to save these results to a file, we put the call to <code>summary</code> between a pair of calls to <code>sink</code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(<span class="at">file =</span> <span class="st">"output/petal-length-anova.txt"</span>)</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="at">object =</span> petal.length.aov)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="at">object =</span> petal_length_aov)</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Our script should look like this:</p>
@@ -507,11 +507,11 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2016-09-09</span></span>
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Run ANOVA on petal length</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>petal.length.aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="at">formula =</span> Petal.Length <span class="sc">~</span> Species, <span class="at">data =</span> iris)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>petal_length_aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="at">formula =</span> Petal.Length <span class="sc">~</span> Species, <span class="at">data =</span> iris)</span>
 <span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Save results to file</span></span>
 <span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(<span class="at">file =</span> <span class="st">"output/petal-length-anova.txt"</span>)</span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="at">object =</span> petal.length.aov)</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="at">object =</span> petal_length_aov)</span>
 <span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <blockquote class="blockquote">
@@ -609,10 +609,10 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p>Now that the data are properly transformed, we can create the linear model for the predictability of life expectancy based on gross domestic product.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run a linear model</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>lifeExp.v.gdp <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> lifeExp <span class="sc">~</span> logGDP, <span class="at">data =</span> gapminder)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>lifeExp_v_gdp <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> lifeExp <span class="sc">~</span> logGDP, <span class="at">data =</span> gapminder)</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Investigate results of the model</span></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lifeExp.v.gdp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lifeExp_v_gdp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -642,7 +642,7 @@ F-statistic: 265.2 on 1 and 140 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>As before, if we want to instead save the results to a file instead of printing them to the screen, we use the <code>sink</code> function.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(<span class="at">file =</span> <span class="st">"output/lifeExp-gdp-regression.txt"</span>)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lifeExp.v.gdp)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lifeExp_v_gdp)</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The final script should be:</p>
@@ -672,11 +672,11 @@ F-statistic: 265.2 on 1 and 140 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Life Expectancy"</span>)</span>
 <span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Run linear model</span></span>
-<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>lifeExp.v.gdp <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> lifeExp <span class="sc">~</span> logGDP, <span class="at">data =</span> gapminder)</span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>lifeExp_v_gdp <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> lifeExp <span class="sc">~</span> logGDP, <span class="at">data =</span> gapminder)</span>
 <span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Save results to file</span></span>
 <span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>(<span class="at">file =</span> <span class="st">"output/lifeExp-gdp-regression.txt"</span>)</span>
-<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lifeExp.v.gdp)</span>
+<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lifeExp_v_gdp)</span>
 <span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a><span class="fu">sink</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <blockquote class="blockquote">
@@ -752,8 +752,8 @@ mean of x mean of y
 <p>Use ANOVA to test for differences in sepal width among the three species. What is the value of the <em>F</em>-statistic?</p>
 </blockquote>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>sepal.width.aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="at">formula =</span> Sepal.Width <span class="sc">~</span> Species, <span class="at">data =</span> iris)</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="at">object =</span> sepal.width.aov)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>sepal_width_aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="at">formula =</span> Sepal.Width <span class="sc">~</span> Species, <span class="at">data =</span> iris)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="at">object =</span> sepal_width_aov)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             Df Sum Sq Mean Sq F value Pr(&gt;F)    
 Species       2  11.35   5.672   49.16 &lt;2e-16 ***
@@ -776,18 +776,18 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">stringsAsFactors =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset 1982 data</span></span>
-<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>gapminder<span class="fl">.1982</span> <span class="ot">&lt;-</span> gapminder[gapminder<span class="sc">$</span>year <span class="sc">==</span> <span class="dv">1982</span>, ]</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>gapminder_1982 <span class="ot">&lt;-</span> gapminder[gapminder<span class="sc">$</span>year <span class="sc">==</span> <span class="dv">1982</span>, ]</span>
 <span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create log2-transformed GDP</span></span>
-<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>gapminder<span class="fl">.1982</span><span class="sc">$</span>log2GDP <span class="ot">&lt;-</span> <span class="fu">log2</span>(gapminder<span class="fl">.1982</span><span class="sc">$</span>gdpPercap)</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>gapminder_1982<span class="sc">$</span>log2GDP <span class="ot">&lt;-</span> <span class="fu">log2</span>(gapminder_1982<span class="sc">$</span>gdpPercap)</span>
 <span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Run linear model</span></span>
-<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>lifeExp.v.gdp <span class="ot">&lt;-</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> log2GDP, <span class="at">data =</span> gapminder<span class="fl">.1982</span>)</span>
-<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lifeExp.v.gdp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>lifeExp_v_gdp <span class="ot">&lt;-</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> log2GDP, <span class="at">data =</span> gapminder_1982)</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lifeExp_v_gdp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-lm(formula = lifeExp ~ log2GDP, data = gapminder.1982)
+lm(formula = lifeExp ~ log2GDP, data = gapminder_1982)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
