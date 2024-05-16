@@ -142,20 +142,15 @@ header. To format lower headers, we add pound signs:
 Which are rendered as:
 
 > # header 1
-## header 2
-### header 3
-#### header 4
+> ## header 2
+> ### header 3
+> #### header 4
 
 We can also add hyperlinks to our document, using this syntax: 
 `[text we want to link](url address)`. So to create a link to the University of 
 Arizona homepage, we write `[University of Arizona](http://www.arizona.edu)`. 
 When we run Knit, this is displayed in our document as [University of Arizona](http://www.arizona.edu).
 
-<<<<<<< HEAD:005-intro-knitr.Rmd
-Images are also supported, whether they are local files or images on the web. The syntax is almost identical to that for hyperlinks, but in the case of images, we prefix the statement with an exclamation point (!): `![Caption for image](filename)`
-
-Here I use an image that I downloaded from [Wikimedia](https://commons.wikimedia.org) into the folder "images" and include a caption:
-=======
 Images are also supported, whether they are local files or images on the web. 
 The syntax is almost identical to that for hyperlinks, but in the case of 
 images, we prefix the statement with an exclamation point (!): `![Caption for image](filename)`
@@ -164,19 +159,15 @@ Here I use an image that I downloaded from
 [Wikimedia](https://commons.wikimedia.org) into the folder "images" and include 
 a caption:
 
->>>>>>> 240430-quarto-switch:005-intro-knitr.qmd
 ```
 ![The white rhinoceros (_Ceratotherium simum_) (photo by Rob
 Hooft)](images/640px-Rhinoceros_male_2003.jpg)
 ```
 
 > ![The white rhinoceros (_Ceratotherium simum_) (photo by Rob Hooft)](images/640px-Rhinoceros_male_2003.jpg)
-<<<<<<< HEAD:005-intro-knitr.Rmd
-=======
 
 Subscripts and superscripts are also supported by wrapping the font in tildes 
 (~) and carets (^), respectively:
->>>>>>> 240430-quarto-switch:005-intro-knitr.qmd
 
 ```
 Subscript: log~10~
@@ -528,12 +519,8 @@ output: pdf_document
 + [knitr documentation](https://yihui.name/knitr/)
 + [R Markdown documentation](http://rmarkdown.rstudio.com/)
 + An awesome [cookbook of R Markdown solutions](https://holtzy.github.io/Pimp-my-rmd/)
-<<<<<<< HEAD:005-intro-knitr.Rmd
-+ Creating [Word templates](http://rmarkdown.rstudio.com/articles_docx.html) to apply to knitr documents
-=======
 + Creating [Word templates](http://rmarkdown.rstudio.com/articles_docx.html) to 
 apply to knitr documents
->>>>>>> 240430-quarto-switch:005-intro-knitr.qmd
 + A handy [cheatsheet for R Markdown syntax](http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
 + Guide to writing [bibliography sections](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html) in R Markdown documents
 + Software Carpentry's [knitr lesson](http://swcarpentry.github.io/r-novice-gapminder/15-knitr-markdown/)

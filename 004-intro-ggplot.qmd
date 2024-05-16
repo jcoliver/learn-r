@@ -4,10 +4,6 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
-```{r set-fig-size, include = FALSE}
-knitr::opts_chunk$set(fig.height = 4)
-```
-
 An introduction to using the `ggplot` package in R to produce 
 publication-quality graphics.
 

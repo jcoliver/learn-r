@@ -4,6 +4,18 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
+```{r library-check, echo = FALSE, results = "hide"}
+#| output: false
+
+libs <- c("shiny", "palmerpenguins")
+libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
+if (length(libs_missing) > 0) {
+  for (l in libs_missing) {
+    install.packages(l)
+  }
+}
+```
+
 The Shiny package for R provides a way to transform your R code into 
 interactive applications accessible through a web browser. This lesson provides 
 a hands-on example of how you can use Shiny to create intuitive graphical user 

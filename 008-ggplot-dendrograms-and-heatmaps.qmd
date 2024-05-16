@@ -4,6 +4,16 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
+```{r library-check, echo = FALSE, results = "hide"}
+libs <- c("ggdendro")
+libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
+if (length(libs_missing) > 0) {
+  for (l in libs_missing) {
+    install.packages(l)
+  }
+}
+```
+
 Want to combine the visualization of quantitative data with clustering 
 algorithms? Unsatisfied with the options provided by the base R packages? In 
 this hands-on workshop, we'll use the `ggendro` package for R to make

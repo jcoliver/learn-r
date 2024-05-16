@@ -4,6 +4,18 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
+```{r library-check, echo = FALSE, results = "hide"}
+#| output: false
+
+libs <- c("geodata", "predicts", "terra")
+libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
+if (length(libs_missing) > 0) {
+  for (l in libs_missing) {
+    install.packages(l)
+  }
+}
+```
+
 Predicting suitable habitats of species from latitude and longitude coordinates 
 has become increasingly easier with a suite of R packages. This introductory 
 tutorial will show you how to turn your coordinate data into a range map.

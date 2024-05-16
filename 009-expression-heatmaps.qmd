@@ -83,12 +83,7 @@ library("ggplot2")
 ```
 
 And then we read the data into memory:
-<<<<<<< HEAD:009-expression-heatmaps.Rmd
-```{r}
-=======
-
 ```{r read-data}
->>>>>>> 240430-quarto-switch:009-expression-heatmaps.qmd
 exp.data <- read.csv(file = "data/GSE68849-expression.csv", 
                      stringsAsFactors = FALSE)
 ```
@@ -149,29 +144,16 @@ like this:
 options(scipen = 0)
 ```
 
-<<<<<<< HEAD:009-expression-heatmaps.Rmd
-Thankfully, there is a function in the `tidyr` package called `pivot_longer` that is designed for creating this type of "tidy"" data. 
-
-```{r pivot-longer-01, error = TRUE}
-=======
 Thankfully, there is a function in the `tidyr` package called `pivot_longer` 
 that is designed for creating this type of "tidy"" data. 
 
 ```{r pivot-longer-1, error = TRUE}
->>>>>>> 240430-quarto-switch:009-expression-heatmaps.qmd
 exp.long <- pivot_longer(data = exp.data,
                          cols = everything(),
                          names_to = "gene",
                          values_to = "expression")
 ```
 
-<<<<<<< HEAD:009-expression-heatmaps.Rmd
-Uh oh. That error is preventing us from transforming our data to long format. What R is telling us is that we tried to create a column with multiple data types in it, which is a big no-no in R. That is, it attempted to make a single column that had both the data from the "subject" column (which are text) with the data from the "IFNA5" column (which are numbers).
-
-We will need to tell `pivot_longer` to ignore the "subject" column in our original data frame during the transformation. By ignoring that column, R will carry the values over into our new data frame. We ignore columns by adding their names, preceded by a negation symbol("-"), to the `pivot_longer` call (we're going to ignore the treatment column, too, to make sure it ends up in our `exp.long` data frame):
-
-```{r}
-=======
 Uh oh. That error is preventing us from transforming our data to long format. 
 What R is telling us is that we tried to create a column with multiple data 
 types in it, which is a big no-no in R. That is, it attempted to make a single 
@@ -186,7 +168,6 @@ their names, preceded by a negation symbol("-"), to the `pivot_longer` call
 our `exp.long` data frame):
 
 ```{r pivot-longer-2}
->>>>>>> 240430-quarto-switch:009-expression-heatmaps.qmd
 exp.long <- pivot_longer(data = exp.data, 
                          cols = -c(subject, treatment),
                          names_to = "gene", 

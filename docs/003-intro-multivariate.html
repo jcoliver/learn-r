@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.4.553">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jeff Oliver">
-<meta name="dcterms.date" content="2024-05-10">
+<meta name="dcterms.date" content="2024-05-14">
 
 <title>learn-r - Introduction to Multivariate Statistics in R</title>
 <style>
@@ -24,7 +24,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -81,7 +81,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -90,8 +96,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-EF6ZJH0577"></script>
@@ -112,9 +120,9 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">learn-r</span>
     </a>
@@ -126,92 +134,21 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="" target="">
- <span class="menu-text">Home</span></a>
-  </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-r-lessons" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
- <span class="menu-text">R Lessons</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-r-lessons">    
-        <li>
-    <a class="dropdown-item" href="./001-basic-graphing.html" rel="" target="">
- <span class="dropdown-text">Introduction to R Graphing</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./002-intro-stats.html" rel="" target="">
- <span class="dropdown-text">Introduction to R Statistics</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./003-intro-multivariate.html" rel="" target="">
- <span class="dropdown-text">Introduction to Multivariate Statistics in R</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./004-intro-ggplot.html" rel="" target="">
- <span class="dropdown-text">Introduction to data visualization with ggplot</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./005-intro-knitr.html" rel="" target="">
- <span class="dropdown-text">Dynamic reports with knitr</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./006-heatmaps.html" rel="" target="">
- <span class="dropdown-text">Heatmaps in R</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./007-intro-functional-programming.html" rel="" target="">
- <span class="dropdown-text">Introduction to Functional Programming</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./008-ggplot-dendrograms-and-heatmaps.html" rel="" target="">
- <span class="dropdown-text">Clusters and Heatmaps</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./009-expression-heatmaps.html" rel="" target="">
- <span class="dropdown-text">Heatmaps - the gene expression edition</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./010-github.html" rel="" target="">
- <span class="dropdown-text">Git and GitHub in RStudio</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./011-species-distribution-models.html" rel="" target="">
- <span class="dropdown-text">A very brief introduction to species distribution models in R</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./012-intro-tidyverse.html" rel="" target="">
- <span class="dropdown-text">Introduction to tidyverse packages</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./014-intro-summarizing-visualizing.html" rel="" target="">
- <span class="dropdown-text">Introduction to data summarizing and visualization</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./016-intro-shiny.html" rel="" target="">
- <span class="dropdown-text">Interactive web apps with Shiny</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./017-open-street-map.html" rel="" target="">
- <span class="dropdown-text">Mapping with Open Street Maps in R</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="./018-ml-regression.html" rel="" target="">
- <span class="dropdown-text">Machine learning in R part 1: regression</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="./schedule.html" rel="" target="">
- <span class="menu-text">Schedule</span></a>
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./resources.html" rel="" target="">
- <span class="menu-text">Additional Resources</span></a>
+    <a class="nav-link" href="./schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./resources.html"> 
+<span class="menu-text">Additional Resources</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -280,7 +217,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 10, 2024</p>
+      <p class="date">May 14, 2024</p>
     </div>
   </div>
   
@@ -288,7 +225,9 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
+
 
 <p>An introduction to using the R statistics package and the RStudio interface for multivariate statistics.</p>
 <section id="learning-objectives" class="level4">
@@ -326,7 +265,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/otter-mandible.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">(A) Skull morphology of <em>Lutra lutra</em>. (B) Six mandible measurements used in this lesson: m1 = mandible ramus width, m2 = mandible ramus height, m3 = moment arm temporalis, m4 = outlever at carnassal, m5 = moment arm masseter, m6 = jaw length. Adapted from <a href="https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png">https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png</a>.</figcaption>
+<figcaption>(A) Skull morphology of <em>Lutra lutra</em>. (B) Six mandible measurements used in this lesson: m1 = mandible ramus width, m2 = mandible ramus height, m3 = moment arm temporalis, m4 = outlever at carnassal, m5 = moment arm masseter, m6 = jaw length. Adapted from <a href="https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png">https://commons.wikimedia.org/wiki/File:MSU_V2P1b_-_Lutra_lutra_skull.png</a>.</figcaption>
 </figure>
 </div>
 </section>
@@ -410,7 +349,11 @@ m6 0.4149336 -0.43976047 -0.15340120  0.46868237 -0.1825671  0.5982600</code></p
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">biplot</span>(<span class="at">x =</span> pca_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="003-intro-multivariate_files/figure-html/pca-biplot-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="003-intro-multivariate_files/figure-html/pca-biplot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>But that figure really leaves much to be desired, and gets messier with larger sample sizes and more variables. If you want to find out more about how that figure is produced, look at the documentation for <code>biplot</code> (<code>?biplot</code>).</p>
@@ -421,7 +364,11 @@ m6 0.4149336 -0.43976047 -0.15340120  0.46868237 -0.1825671  0.5982600</code></p
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"PC 1"</span>,</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"PC 2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="003-intro-multivariate_files/figure-html/pca-plot-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="003-intro-multivariate_files/figure-html/pca-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Well, maybe that plot isn’t so useful either. It does help a bit if we color the points by species, though. We start by creating a small vector which only contains the species names; we’ll use this for the legend and for assigning colors:</p>
@@ -462,7 +409,11 @@ Levels: A. cinerea E. lutris L. canadensis P. brasiliensis</code></pre>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> legend_cols, </span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="003-intro-multivariate_files/figure-html/pca-color-plot-1-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="003-intro-multivariate_files/figure-html/pca-color-plot-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -482,7 +433,11 @@ Levels: A. cinerea E. lutris L. canadensis P. brasiliensis</code></pre>
 <span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="at">formula =</span> m5 <span class="sc">~</span> species, <span class="at">data =</span> otter, <span class="at">xlab =</span> <span class="cn">NA</span>)</span>
 <span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="at">formula =</span> m6 <span class="sc">~</span> species, <span class="at">data =</span> otter, <span class="at">xlab =</span> <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="003-intro-multivariate_files/figure-html/pca-mfrow-plot-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="003-intro-multivariate_files/figure-html/pca-mfrow-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore graphing defaults</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="at">las =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -491,7 +446,11 @@ Levels: A. cinerea E. lutris L. canadensis P. brasiliensis</code></pre>
 <p>Remember that second principal component, PC2, on the y-axis of our scatterplot:</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="003-intro-multivariate_files/figure-html/pca-color-plot-2-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="003-intro-multivariate_files/figure-html/pca-color-plot-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>And the loadings for the first two components are:</p>
@@ -529,7 +488,11 @@ m6 0.4149336 -0.43976047</code></pre>
 <span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> pt_cols)</span>
 <span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> two_species, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> legend_cols, <span class="at">cex =</span> <span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="003-intro-multivariate_files/figure-html/two-species-plot-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="003-intro-multivariate_files/figure-html/two-species-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Considering the scores of PC2, <em>P. brasilensis</em> had low values, while <em>E. lutris</em> had high values. If we consider the loadings for just m5 and m6 on PC2 (0.567 and -0.44, respectively), the plot above shows what we expect: specimens with high values of PC2 (i.e.&nbsp;those of <em>E. lutris</em>), should have relatively low values of m5 and high values of m6; this contrasts with specimens with low values of PC2 (i.e.&nbsp;those of <em>P. brasilensis</em>), which are characterized by high values of m5 and low values of m6. The second principal component is thus describing variation in <em>relative</em>, not absolute, sizes of these four different measurements.</p>
@@ -649,7 +612,11 @@ m6 0.4149336 -0.43976047</code></pre>
 <span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> legend_cols, </span>
 <span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">pch =</span> <span class="dv">19</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="003-intro-multivariate_files/figure-html/dfa-plot-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="003-intro-multivariate_files/figure-html/dfa-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -791,7 +758,11 @@ a priori          A. cinerea E. lutris L. canadensis P. brasiliensis
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(posteriors,</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Posterior Probability"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="003-intro-multivariate_files/figure-html/barplot-1-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="003-intro-multivariate_files/figure-html/barplot-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Hmmm…that’s a lot of gray. Let’s start by eliminating space between bars and getting rid of the borders:</p>
@@ -801,7 +772,11 @@ a priori          A. cinerea E. lutris L. canadensis P. brasiliensis
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">space =</span> <span class="dv">0</span>,</span>
 <span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">border =</span> <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="003-intro-multivariate_files/figure-html/barplot-2-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="003-intro-multivariate_files/figure-html/barplot-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>And now we can add some color, making an adjustment to the x-axis (via <code>xlim</code>) so the legend shows up <em>outside</em> the plot area:</p>
@@ -816,7 +791,11 @@ a priori          A. cinerea E. lutris L. canadensis P. brasiliensis
 <span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> legend_cols,</span>
 <span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">levels</span>(otter<span class="sc">$</span>species))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="003-intro-multivariate_files/figure-html/barplot-3-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="003-intro-multivariate_files/figure-html/barplot-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>The legend still overlaps the plot, so we’ll need to pass some additional parameters to the legend maker.</p>
@@ -832,7 +811,11 @@ a priori          A. cinerea E. lutris L. canadensis P. brasiliensis
 <span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">levels</span>(otter<span class="sc">$</span>species),</span>
 <span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">args.legend =</span> <span class="fu">list</span>(<span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">x =</span> <span class="fu">ncol</span>(posteriors) <span class="sc">+</span> <span class="dv">55</span>, <span class="at">y =</span> <span class="fl">0.6</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="003-intro-multivariate_files/figure-html/barplot-4-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="003-intro-multivariate_files/figure-html/barplot-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>The last thing we want is to show the <em>a priori</em> assignments of the samples. This requires some creativity on our part. The code below assumes that the original data being fed into the <code>lda</code> function were already sorted by species. Two new vectors, <code>tick_pos</code> and <code>label_pos</code>, are used to add the <em>a priori</em> identification information to the x-axis.</p>
@@ -884,7 +867,11 @@ a priori          A. cinerea E. lutris L. canadensis P. brasiliensis
 <span id="cb51-40"><a href="#cb51-40" aria-hidden="true" tabindex="-1"></a>     <span class="at">tick =</span> <span class="cn">FALSE</span>, </span>
 <span id="cb51-41"><a href="#cb51-41" aria-hidden="true" tabindex="-1"></a>     <span class="fu">par</span>(<span class="at">las =</span> <span class="dv">2</span>, <span class="at">cex =</span> <span class="fl">0.8</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="003-intro-multivariate_files/figure-html/barplot-5-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="003-intro-multivariate_files/figure-html/barplot-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore graphics defaults</span></span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> mar_default)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1085,10 +1072,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1098,8 +1102,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1111,7 +1124,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1155,6 +1291,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1180,6 +1317,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1252,7 +1415,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-center">
       <ul class="footer-items list-unstyled">
     <li class="nav-item">
-    <a class="nav-link" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0 Deed</a>
+    <a class="nav-link" href="https://creativecommons.org/licenses/by/4.0/">
+<p>CC BY 4.0 Deed</p>
+</a>
   </li>  
 </ul>
     </div>
@@ -1268,6 +1433,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+
 
 
 
