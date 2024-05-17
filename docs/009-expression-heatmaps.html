@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jeff Oliver">
-<meta name="dcterms.date" content="2024-05-14">
+<meta name="dcterms.date" content="2024-05-16">
 
 <title>learn-r - Heatmaps - the gene expression edition</title>
 <style>
@@ -191,7 +191,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 14, 2024</p>
+      <p class="date">May 16, 2024</p>
     </div>
   </div>
   
@@ -254,12 +254,12 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 </div>
 <p>And then we read the data into memory:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>exp.data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/GSE68849-expression.csv"</span>, </span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>exp_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/GSE68849-expression.csv"</span>, </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Take a quick look at the data with the <code>str</code> command:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(exp.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(exp_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   10 obs. of  12 variables:
  $ subject  : chr  "GSM1684095" "GSM1684096" "GSM1684097" "GSM1684098" ...
@@ -374,7 +374,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 </table>
 <p>Thankfully, there is a function in the <code>tidyr</code> package called <code>pivot_longer</code> that is designed for creating this type of “tidy”” data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>exp.long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(<span class="at">data =</span> exp.data,</span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>exp_long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(<span class="at">data =</span> exp_data,</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">names_to =</span> <span class="st">"gene"</span>,</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">values_to =</span> <span class="st">"expression"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -384,13 +384,13 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 </div>
 </div>
 <p>Uh oh. That error is preventing us from transforming our data to long format. What R is telling us is that we tried to create a column with multiple data types in it, which is a big no-no in R. That is, it attempted to make a single column that had both the data from the “subject” column (which are text) with the data from the “IFNA5” column (which are numbers).</p>
-<p>We will need to tell <code>pivot_longer</code> to ignore the “subject” column in our original data frame during the transformation. By ignoring that column, R will carry the values over into our new data frame. We ignore columns by adding their names, preceded by a negation symbol(“-”), to the <code>pivot_longer</code> call (we’re going to ignore the treatment column, too, to make sure it ends up in our <code>exp.long</code> data frame):</p>
+<p>We will need to tell <code>pivot_longer</code> to ignore the “subject” column in our original data frame during the transformation. By ignoring that column, R will carry the values over into our new data frame. We ignore columns by adding their names, preceded by a negation symbol(“-”), to the <code>pivot_longer</code> call (we’re going to ignore the treatment column, too, to make sure it ends up in our <code>exp_long</code> data frame):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>exp.long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(<span class="at">data =</span> exp.data, </span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>exp_long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(<span class="at">data =</span> exp_data, </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(subject, treatment),</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">names_to =</span> <span class="st">"gene"</span>, </span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">values_to =</span> <span class="st">"expression"</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(exp.long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(exp_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 4
   subject    treatment gene   expression
@@ -415,11 +415,11 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in the data</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>exp.data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/GSE68849-expression.csv"</span>, </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>exp_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/GSE68849-expression.csv"</span>, </span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform to "long" format</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>exp.long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(<span class="at">data =</span> exp.data, </span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>exp_long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(<span class="at">data =</span> exp_data, </span>
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                         <span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(subject, treatment),</span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>                         <span class="at">names_to =</span> <span class="st">"gene"</span>, </span>
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>                         <span class="at">values_to =</span> <span class="st">"expression"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -428,12 +428,12 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 </section>
 <section id="visualize-the-data" class="level2">
 <h2 class="anchored" data-anchor-id="visualize-the-data">Visualize the data!</h2>
-<p>For this plot, we are going to first create the heatmap object with the <code>ggplot</code> function, then print the plot. We create the object by assigning the output of the <code>ggplot</code> call to the variable <code>exp.heatmap</code>, then entering the name of this object to print it to the screen.</p>
+<p>For this plot, we are going to first create the heatmap object with the <code>ggplot</code> function, then print the plot. We create the object by assigning the output of the <code>ggplot</code> call to the variable <code>exp_heatmap</code>, then entering the name of this object to print it to the screen.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> exp.long, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> subject,</span>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>exp_heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> exp_long, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> subject,</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">y =</span> gene,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">fill =</span> expression))</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>exp.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>exp_heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -444,12 +444,12 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 </div>
 <p><em>What happened?</em> Our plot doesn’t show any data!? Here is where functionality of ggplot is evident. The way it works is by effectively drawing layer upon layer of graphics. So we have established the plot, we told R what to put on the X and Y axes, but we need to add one more bit of information to tell ggplot <em>how</em> to display data in the plot area. For a heat map, we use <code>geom_tile()</code>, literally adding this to the ggplot object with a plus sign (+):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> exp.long, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> subject,</span>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>exp_heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> exp_long, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> subject,</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">y =</span> gene,</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">fill =</span> expression)) <span class="sc">+</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>()</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>exp.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>exp_heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -467,14 +467,14 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 </ol>
 <p>To better visualize the variation of lower expression values, we can create a new column in our data frame with the log<sub>10</sub> expression values and use that for the heatmap shading:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>exp.long<span class="sc">$</span>log.expression <span class="ot">&lt;-</span> <span class="fu">log</span>(exp.long<span class="sc">$</span>expression)</span>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>exp_long<span class="sc">$</span>log.expression <span class="ot">&lt;-</span> <span class="fu">log</span>(exp_long<span class="sc">$</span>expression)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> exp.long, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> subject,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>exp_heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> exp_long, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> subject,</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">y =</span> gene,</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">fill =</span> log.expression)) <span class="sc">+</span></span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>()</span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>exp.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>exp_heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -486,7 +486,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <p>Note we also had to update the value we pass to the <code>fill</code> parameter in the <code>aes</code> call of <code>ggplot</code>.</p>
 <p>For the axes clean up, we’ll use a nicer label for the x-axis title, rotate the values of the x-axis labels, and omit the title of the y-axis entirely:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> exp.long, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> subject,</span>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>exp_heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> exp_long, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> subject,</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">y =</span> gene,</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">fill =</span> log.expression)) <span class="sc">+</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
@@ -494,7 +494,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_blank</span>(), <span class="co"># Remove the y-axis title</span></span>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>)) <span class="co"># Rotate the x-axis labels</span></span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>exp.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>exp_heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -505,7 +505,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 </div>
 <p>To separate out the control cells from flu cells, we use the <code>facet_grid</code> layer of ggplot:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> exp.long, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> subject,</span>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>exp_heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> exp_long, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> subject,</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">y =</span> gene,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">fill =</span> log.expression)) <span class="sc">+</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
@@ -515,7 +515,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>))</span>
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>exp.heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>exp_heatmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -526,7 +526,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 </div>
 <p>And the last thing is to save the image to a file. We can do this in a variety of ways, but the <code>ggsave</code> function will work fine in this case:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">"output/expression-heatmap.pdf"</span>, <span class="at">plot =</span> exp.heatmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">"output/expression-heatmap.pdf"</span>, <span class="at">plot =</span> exp_heatmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Our final script for this heatmap is then:</p>
 <div class="cell">
@@ -538,17 +538,17 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"tidyr"</span>)</span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>exp.data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/GSE68849-expression.csv"</span>, </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>exp_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/GSE68849-expression.csv"</span>, </span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>exp.long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(<span class="at">data =</span> exp.data, </span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>exp_long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(<span class="at">data =</span> exp_data, </span>
 <span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>                         <span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(subject, treatment),</span>
 <span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>                         <span class="at">names_to =</span> <span class="st">"gene"</span>, </span>
 <span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>                         <span class="at">values_to =</span> <span class="st">"expression"</span>)</span>
 <span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>exp.long<span class="sc">$</span>log.expression <span class="ot">&lt;-</span> <span class="fu">log</span>(exp.long<span class="sc">$</span>expression)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>exp_long<span class="sc">$</span>log.expression <span class="ot">&lt;-</span> <span class="fu">log</span>(exp_long<span class="sc">$</span>expression)</span>
 <span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>exp.heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> exp.long, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> subject,</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>exp_heatmap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> exp_long, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> subject,</span>
 <span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">y =</span> gene,</span>
 <span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">fill =</span> log.expression)) <span class="sc">+</span></span>
 <span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
@@ -557,7 +557,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>))</span>
 <span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">"output/expression-heatmap.pdf"</span>, <span class="at">plot =</span> exp.heatmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">"output/expression-heatmap.pdf"</span>, <span class="at">plot =</span> exp_heatmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
 </section>

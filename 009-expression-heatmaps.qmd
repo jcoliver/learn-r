@@ -4,6 +4,18 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
+```{r library-check, echo = FALSE, results = "hide"}
+#| output: false
+
+libs <- c("ggplot2", "tidyr")
+libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
+if (length(libs_missing) > 0) {
+  for (l in libs_missing) {
+    install.packages(l)
+  }
+}
+```
+
 An application of heatmap visualization to investigate differential gene 
 expression.
 
@@ -84,20 +96,20 @@ library("ggplot2")
 
 And then we read the data into memory:
 ```{r read-data}
-exp.data <- read.csv(file = "data/GSE68849-expression.csv", 
+exp_data <- read.csv(file = "data/GSE68849-expression.csv", 
                      stringsAsFactors = FALSE)
 ```
 
 Take a quick look at the data with the `str` command:
 
 ```{r str-data}
-str(exp.data)
+str(exp_data)
 ```
 
-The data frame has `r nrow(exp.data)` rows (or subjects) and `r ncol(exp.data)` 
+The data frame has `r nrow(exp_data)` rows (or subjects) and `r ncol(exp_data)` 
 columns (or variables). The first two columns have information about the 
-observation (`r colnames(exp.data)[1:2]`), and the remaining columns have 
-measurements for the expression of `r ncol(exp.data) - 2` genes.
+observation (`r colnames(exp_data)[1:2]`), and the remaining columns have 
+measurements for the expression of `r ncol(exp_data) - 2` genes.
 
 We ultimately want a heatmap where the different subjects are shown along the 
 x-axis, the genes are shown along the y-axis, and the shading of the cell 
@@ -121,10 +133,10 @@ data are in our data frame, but we need to take a table that looks like this:
 options(scipen = 999)
 ```
 
-| `r colnames(exp.data)[1]` | `r colnames(exp.data)[2]` | `r colnames(exp.data)[3]` | `r colnames(exp.data)[4]` | `r colnames(exp.data)[5]` |
+| `r colnames(exp_data)[1]` | `r colnames(exp_data)[2]` | `r colnames(exp_data)[3]` | `r colnames(exp_data)[4]` | `r colnames(exp_data)[5]` |
 |:-------------------|:-------------------|:------------------------------|:------------------------------------|:------------------------------------|
-| `r exp.data[1, 1]` | `r exp.data[1, 2]` |  `r round(exp.data[1, 3], 3)` | `r round(exp.data[1, 4], 3)` | `r round(exp.data[1, 5], 3)` |
-| `r exp.data[2, 1]` | `r exp.data[2, 2]` |  `r round(exp.data[2, 3], 3)` | `r round(exp.data[2, 4], 3)` | `r round(exp.data[1, 5], 3)` |
+| `r exp_data[1, 1]` | `r exp_data[1, 2]` |  `r round(exp_data[1, 3], 3)` | `r round(exp_data[1, 4], 3)` | `r round(exp_data[1, 5], 3)` |
+| `r exp_data[2, 1]` | `r exp_data[2, 2]` |  `r round(exp_data[2, 3], 3)` | `r round(exp_data[2, 4], 3)` | `r round(exp_data[1, 5], 3)` |
 | ...                | ...                | ...                           | ...                                 |                                     |
 
 And transform it to one with a column for the gene and a column for expression, 
@@ -132,12 +144,12 @@ like this:
 
 | subject             | gene                      | expression |
 |:--------------------|:--------------------------|:----------|
-|  `r exp.data[1, 1]` | `r colnames(exp.data)[3]` |  `r round(exp.data[1, 3], 3)` |
-|  `r exp.data[1, 1]` | `r colnames(exp.data)[4]` |  `r round(exp.data[1, 4], 3)` |
-|  `r exp.data[1, 1]` | `r colnames(exp.data)[5]` |  `r round(exp.data[1, 5], 3)` |
-|  `r exp.data[2, 1]` | `r colnames(exp.data)[3]` |  `r round(exp.data[2, 3], 3)` |
-|  `r exp.data[2, 1]` | `r colnames(exp.data)[4]` |  `r round(exp.data[2, 4], 3)` |
-|  `r exp.data[2, 1]` | `r colnames(exp.data)[5]` |  `r round(exp.data[2, 5], 3)` |
+|  `r exp_data[1, 1]` | `r colnames(exp_data)[3]` |  `r round(exp_data[1, 3], 3)` |
+|  `r exp_data[1, 1]` | `r colnames(exp_data)[4]` |  `r round(exp_data[1, 4], 3)` |
+|  `r exp_data[1, 1]` | `r colnames(exp_data)[5]` |  `r round(exp_data[1, 5], 3)` |
+|  `r exp_data[2, 1]` | `r colnames(exp_data)[3]` |  `r round(exp_data[2, 3], 3)` |
+|  `r exp_data[2, 1]` | `r colnames(exp_data)[4]` |  `r round(exp_data[2, 4], 3)` |
+|  `r exp_data[2, 1]` | `r colnames(exp_data)[5]` |  `r round(exp_data[2, 5], 3)` |
 | ...                 | ...            | ...       |
 
 ```{r reset-scipen, echo = FALSE}
@@ -148,7 +160,7 @@ Thankfully, there is a function in the `tidyr` package called `pivot_longer`
 that is designed for creating this type of "tidy"" data. 
 
 ```{r pivot-longer-1, error = TRUE}
-exp.long <- pivot_longer(data = exp.data,
+exp_long <- pivot_longer(data = exp_data,
                          cols = everything(),
                          names_to = "gene",
                          values_to = "expression")
@@ -165,14 +177,14 @@ original data frame during the transformation. By ignoring that column, R will
 carry the values over into our new data frame. We ignore columns by adding 
 their names, preceded by a negation symbol("-"), to the `pivot_longer` call 
 (we're going to ignore the treatment column, too, to make sure it ends up in 
-our `exp.long` data frame):
+our `exp_long` data frame):
 
 ```{r pivot-longer-2}
-exp.long <- pivot_longer(data = exp.data, 
+exp_long <- pivot_longer(data = exp_data, 
                          cols = -c(subject, treatment),
                          names_to = "gene", 
                          values_to = "expression")
-head(exp.long)
+head(exp_long)
 ```
 
 Aha! Much better. 
@@ -190,11 +202,11 @@ library("tidyr")
 library("ggplot2")
 
 # Read in the data
-exp.data <- read.csv(file = "data/GSE68849-expression.csv", 
+exp_data <- read.csv(file = "data/GSE68849-expression.csv", 
                      stringsAsFactors = FALSE)
 
 # Transform to "long" format
-exp.long <- pivot_longer(data = exp.data, 
+exp_long <- pivot_longer(data = exp_data, 
                          cols = -c(subject, treatment),
                          names_to = "gene", 
                          values_to = "expression")
@@ -206,14 +218,14 @@ exp.long <- pivot_longer(data = exp.data,
 
 For this plot, we are going to first create the heatmap object with the 
 `ggplot` function, then print the plot. We create the object by assigning the 
-output of the `ggplot` call to the variable `exp.heatmap`, then entering the 
+output of the `ggplot` call to the variable `exp_heatmap`, then entering the 
 name of this object to print it to the screen.
 
 ```{r heatmap-blank}
-exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+exp_heatmap <- ggplot(data = exp_long, mapping = aes(x = subject,
                                                      y = gene,
                                                      fill = expression))
-exp.heatmap
+exp_heatmap
 ```
 
 _What happened?_ Our plot doesn't show any data!? Here is where functionality 
@@ -224,12 +236,12 @@ _how_ to display data in the plot area. For a heat map, we use `geom_tile()`,
 literally adding this to the ggplot object with a plus sign (+):
 
 ```{r heatmap-tile}
-exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+exp_heatmap <- ggplot(data = exp_long, mapping = aes(x = subject,
                                                      y = gene,
                                                      fill = expression)) +
   geom_tile()
 
-exp.heatmap
+exp_heatmap
 ```
 
 OK, that's a good start. But we need to fix a few things:
@@ -247,14 +259,14 @@ new column in our data frame with the log~10~ expression values and use that
 for the heatmap shading:
 
 ```{r log-transform}
-exp.long$log.expression <- log(exp.long$expression)
+exp_long$log.expression <- log(exp_long$expression)
 
-exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+exp_heatmap <- ggplot(data = exp_long, mapping = aes(x = subject,
                                                      y = gene,
                                                      fill = log.expression)) +
   geom_tile()
 
-exp.heatmap
+exp_heatmap
 ```
 
 Note we also had to update the value we pass to the `fill` parameter in the 
@@ -264,7 +276,7 @@ For the axes clean up, we'll use a nicer label for the x-axis title, rotate the
 values of the x-axis labels, and omit the title of the y-axis entirely:
 
 ```{r rotate-labels}
-exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+exp_heatmap <- ggplot(data = exp_long, mapping = aes(x = subject,
                                                      y = gene,
                                                      fill = log.expression)) +
   geom_tile() +
@@ -272,14 +284,14 @@ exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
   theme(axis.title.y = element_blank(), # Remove the y-axis title
         axis.text.x = element_text(angle = 45, vjust = 0.5)) # Rotate the x-axis labels
 
-exp.heatmap
+exp_heatmap
 ```
 
 To separate out the control cells from flu cells, we use the `facet_grid` layer 
 of ggplot:
 
 ```{r facet}
-exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+exp_heatmap <- ggplot(data = exp_long, mapping = aes(x = subject,
                                                      y = gene,
                                                      fill = log.expression)) +
   geom_tile() +
@@ -289,14 +301,14 @@ exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
   theme(axis.title.y = element_blank(),
         axis.text.x = element_text(angle = 45, vjust = 0.5))
 
-exp.heatmap
+exp_heatmap
 ```
 
 And the last thing is to save the image to a file. We can do this in a variety 
 of ways, but the `ggsave` function will work fine in this case:
 
 ```{r export-pdf, eval = FALSE}
-ggsave(filename = "output/expression-heatmap.pdf", plot = exp.heatmap)
+ggsave(filename = "output/expression-heatmap.pdf", plot = exp_heatmap)
 ```
 
 Our final script for this heatmap is then:
@@ -310,17 +322,17 @@ Our final script for this heatmap is then:
 library("tidyr")
 library("ggplot2")
 
-exp.data <- read.csv(file = "data/GSE68849-expression.csv", 
+exp_data <- read.csv(file = "data/GSE68849-expression.csv", 
                      stringsAsFactors = FALSE)
 
-exp.long <- pivot_longer(data = exp.data, 
+exp_long <- pivot_longer(data = exp_data, 
                          cols = -c(subject, treatment),
                          names_to = "gene", 
                          values_to = "expression")
 
-exp.long$log.expression <- log(exp.long$expression)
+exp_long$log.expression <- log(exp_long$expression)
 
-exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
+exp_heatmap <- ggplot(data = exp_long, mapping = aes(x = subject,
                                                      y = gene,
                                                      fill = log.expression)) +
   geom_tile() +
@@ -329,7 +341,7 @@ exp.heatmap <- ggplot(data = exp.long, mapping = aes(x = subject,
   theme(axis.title.y = element_blank(),
         axis.text.x = element_text(angle = 45, vjust = 0.5))
 
-ggsave(filename = "output/expression-heatmap.pdf", plot = exp.heatmap)
+ggsave(filename = "output/expression-heatmap.pdf", plot = exp_heatmap)
 ```
 
 ***
