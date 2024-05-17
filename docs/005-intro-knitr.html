@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jeff Oliver">
-<meta name="dcterms.date" content="2024-05-14">
+<meta name="dcterms.date" content="2024-05-16">
 
 <title>learn-r - Dynamic reports with knitr</title>
 <style>
@@ -221,7 +221,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 14, 2024</p>
+      <p class="date">May 16, 2024</p>
     </div>
   </div>
   
@@ -415,7 +415,7 @@ plot(x = iris$Petal.Length,
 ````
 ## Results
 
-```ban
+```aal
 plot(x = iris$Petal.Length, 
     y = iris$Petal.Width,
     xlab = "Petal length (cm)",
@@ -444,9 +444,9 @@ plot(x = iris$Petal.Length,
 <p>We can also do analyses, and reference the output with in-line code. For this example, let’s find the correlation coefficient (r<sup>2</sup>) for the relationship between petal width and petal length. We can then reference this in the text of our report.</p>
 <p>The R code for a linear model is:</p>
 <pre><code>```{r echo = FALSE}
-iris.model &lt;- lm(Petal.Width ~ Petal.Length, data = iris)
-iris.model.summary &lt;- summary(iris.model)
-r.squared &lt;- iris.model.summary$r.squared
+iris_model &lt;- lm(Petal.Width ~ Petal.Length, data = iris)
+iris_model_summary &lt;- summary(iris_model)
+r_squared &lt;- iris_model_summary$r.squared
 ```</code></pre>
 <p>Note for this purpose, we added the qualifier <code>echo = FALSE</code> which tells knitr <em>not</em> to include the actual code in the output. Even though the code runs, and because this code produces no output, we won’t really see any changes to our document. Save and Knit the document to see this for yourself.</p>
 <p>You can also control code chunks in a number of other ways:</p>
@@ -455,13 +455,13 @@ r.squared &lt;- iris.model.summary$r.squared
 <li><code>results = "hide"</code> to suppress any results from being included in output</li>
 <li><code>warning = FALSE</code> and <code>message = FALSE</code> to suppress warnings and messages, respectively, from being shown</li>
 </ul>
-<p>Even though we set <code>echo = FALSE</code>, the code is still executed and we can reference products of that code through in-line code chunks. In this case, we want to reference the value stored in our <code>r.squared</code> variable in our document text. We use in-line code to do so. In-line code is wrapped in single backticks (`) and we skip the braces, as opposed to triple backticks and braces we used for separate code blocks. So we add this to our Results section:</p>
-<pre><code>Petal width and petal length were highly correlated (r^2^ = `r r.squared`).</code></pre>
+<p>Even though we set <code>echo = FALSE</code>, the code is still executed and we can reference products of that code through in-line code chunks. In this case, we want to reference the value stored in our <code>r_squared</code> variable in our document text. We use in-line code to do so. In-line code is wrapped in single backticks (`) and we skip the braces, as opposed to triple backticks and braces we used for separate code blocks. So we add this to our Results section:</p>
+<pre><code>Petal width and petal length were highly correlated (r^2^ = `r r_squared`).</code></pre>
 <blockquote class="blockquote">
 <p>Petal width and petal length were highly correlated (r<sup>2</sup> = 0.9271098).</p>
 </blockquote>
 <p>Hmmm…maybe we don’t need r<sup>2</sup> to seven digits, so update the code to only include two digits (using R’s <code>round()</code> function):</p>
-<pre><code>Petal width and petal length were highly correlated (r^2^ = `r round(r.squared, 2)`).</code></pre>
+<pre><code>Petal width and petal length were highly correlated (r^2^ = `r round(r_squared, 2)`).</code></pre>
 <blockquote class="blockquote">
 <p>Petal width and petal length were highly correlated (r<sup>2</sup> = 0.93).</p>
 </blockquote>
@@ -505,12 +505,12 @@ linear regression to test for relationships.</code></pre>
     ```
 
     ```{r echo = FALSE}
-    iris.model &lt;- lm(Petal.Width ~ Petal.Length, data = iris)
-    iris.model.summary &lt;- summary(iris.model)
-    r.squared &lt;- iris.model.summary$r.squared
+    iris_model &lt;- lm(Petal.Width ~ Petal.Length, data = iris)
+    iris_model_summary &lt;- summary(iris_model)
+    r_squared &lt;- iris_model_summary$r_squared
     ```
     
-    Petal width and petal length were highly correlated (r^2^ = `r round(r.squared, 2)`).
+    Petal width and petal length were highly correlated (r^2^ = `r round(r_squared, 2)`).
 </code></pre>
 <hr>
 <p>Which produces the following, albeit short, report:</p>

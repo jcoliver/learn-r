@@ -4,6 +4,18 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
+```{r library-check, echo = FALSE, results = "hide"}
+#| output: false
+
+libs <- c("knitr")
+libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
+if (length(libs_missing) > 0) {
+  for (l in libs_missing) {
+    install.packages(l)
+  }
+}
+```
+
 An introduction to using the `knitr` package in R to produce reproducible, 
 dynamic reports.
 
@@ -315,15 +327,15 @@ our report.
 The R code for a linear model is:
 
 ```{r lm, echo = FALSE}
-iris.model <- lm(Petal.Width ~ Petal.Length, data = iris)
-iris.model.summary <- summary(iris.model)
-r.squared <- iris.model.summary$r.squared
+iris_model <- lm(Petal.Width ~ Petal.Length, data = iris)
+iris_model_summary <- summary(iris_model)
+r_squared <- iris_model_summary$r.squared
 ```
 
     ```{r echo = FALSE}`r ''`
-    iris.model <- lm(Petal.Width ~ Petal.Length, data = iris)
-    iris.model.summary <- summary(iris.model)
-    r.squared <- iris.model.summary$r.squared
+    iris_model <- lm(Petal.Width ~ Petal.Length, data = iris)
+    iris_model_summary <- summary(iris_model)
+    r_squared <- iris_model_summary$r.squared
     ```
 
 Note for this purpose, we added the qualifier `echo = FALSE` which tells knitr 
@@ -340,25 +352,25 @@ respectively, from being shown
 
 Even though we set `echo = FALSE`, the code is still executed and we can 
 reference products of that code through in-line code chunks. In this case, we 
-want to reference the value stored in our `r.squared` variable in our document 
+want to reference the value stored in our `r_squared` variable in our document 
 text. We use in-line code to do so. In-line code is wrapped in single backticks 
 (`) and we skip the braces, as opposed to triple backticks and braces we used 
 for separate code blocks. So we add this to our Results section:
 
 ```
-Petal width and petal length were highly correlated (r^2^ = `r '\x60r r.squared\x60'`).
+Petal width and petal length were highly correlated (r^2^ = `r '\x60r r_squared\x60'`).
 ```
 
-> Petal width and petal length were highly correlated (r^2^ = `r r.squared`).  
+> Petal width and petal length were highly correlated (r^2^ = `r r_squared`).  
 
 Hmmm...maybe we don't need r^2^ to seven digits, so update the code to only 
 include two digits (using R's `round()` function):
 
 ```
-Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(r.squared, 2)\x60'`).
+Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(r_squared, 2)\x60'`).
 ```
 
-> Petal width and petal length were highly correlated (r^2^ = `r round(r.squared, 2)`).  
+> Petal width and petal length were highly correlated (r^2^ = `r round(r_squared, 2)`).  
 
 Let's add one more thing to this report. Since these data were were collected 
 by the botanist Edgar Anderson, let's provide a link to the Wikipedia page with 
@@ -416,12 +428,12 @@ Our R Markdown file should look like this:
     ```
 
     ```{r echo = FALSE}`r ''`
-    iris.model <- lm(Petal.Width ~ Petal.Length, data = iris)
-    iris.model.summary <- summary(iris.model)
-    r.squared <- iris.model.summary$r.squared
+    iris_model <- lm(Petal.Width ~ Petal.Length, data = iris)
+    iris_model_summary <- summary(iris_model)
+    r_squared <- iris_model_summary$r_squared
     ```
     
-    Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(r.squared, 2)\x60'`).
+    Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(r_squared, 2)\x60'`).
 
 ````
   
@@ -450,12 +462,12 @@ plot(x = iris$Petal.Length,
 > ```
 > 
 > ```{r echo = FALSE}
->iris.model <- lm(Petal.Width ~ Petal.Length, data = iris)
->iris.model.summary <- summary(iris.model)
->r.squared <- iris.model.summary$r.squared
+>iris_model <- lm(Petal.Width ~ Petal.Length, data = iris)
+>iris_model_summary <- summary(iris_model)
+>r_squared <- iris_model_summary$r.squared
 > ```
 >
-> Petal width and petal length were highly correlated (r^2^ = `r round(r.squared, 2)`).
+> Petal width and petal length were highly correlated (r^2^ = `r round(r_squared, 2)`).
 
 There is a lot more one can do with R Markdown. Check out the 
 [additional resources](#additional-resources) listed below for more 
