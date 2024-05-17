@@ -4,14 +4,26 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
-A worked example of making heatmaps in R with the `ggplot` package, as well as 
+```{r library-check, echo = FALSE, results = "hide"}
+#| output: false
+
+libs <- c("tidyr", "ggplot2")
+libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
+if (length(libs_missing) > 0) {
+  for (l in libs_missing) {
+    install.packages(l)
+  }
+}
+```
+
+A worked example of making heatmaps in R with the `ggplot2` package, as well as 
 some data wrangling to easily format the data needed for the plot.
 
 #### Learning objectives
 
 1. Manipulate data into a 'tidy' format
 2. Visualize data in a heatmap
-3. Become familiar with `ggplot` syntax for customizing plots
+3. Become familiar with `ggplot2` syntax for customizing plots
 
 ## Heatmaps & data wrangling
 
@@ -81,19 +93,19 @@ begin this script with brief information about the purpose of the script:
 Now we read those abundance data into memory:
 
 ```{r read-data}
-mine.data <- read.csv(file = "data/mine-data.csv")
+mine_data <- read.csv(file = "data/mine-data.csv")
 ```
 
 Take a quick look at the structure of the data, using the `str` command:
 
 ```{r data-structure}
-str(mine.data)
+str(mine_data)
 ```
 
-The data frame has `r nrow(mine.data)` rows ("obs.") and `r ncol(mine.data)` 
+The data frame has `r nrow(mine_data)` rows ("obs.") and `r ncol(mine_data)` 
 columns ("variables"). The first three columns have information about the 
-observation (`r colnames(mine.data)[1:3]`), and the remaining columns have the 
-abundance for each of `r ncol(mine.data) - 3` classes of bacteria.
+observation (`r colnames(mine_data)[1:3]`), and the remaining columns have the 
+abundance for each of `r ncol(mine_data) - 3` classes of bacteria.
 
 We ultimately want a heatmap where the different sites are shown along the 
 x-axis, the classes of bacteria are shown along the y-axis, and the shading of 
@@ -146,7 +158,7 @@ In fact, we can do this transformation in one line with the `pivot_longer`
 function:
 
 ```{r pivot-longer-01, error = TRUE}
-mine.long <- pivot_longer(data = mine.data, 
+mine_long <- pivot_longer(data = mine_data, 
                           cols = everything(),
                           names_to = "Class", 
                           values_to = "Abundance")
@@ -162,7 +174,7 @@ calls categories).
 Consider our original data structure:
 
 ```{r structure-long}
-str(mine.data)
+str(mine_data)
 ```
 
 Notice there are columns that don't need to be transformed for our heatmap. 
@@ -171,18 +183,18 @@ instruct `pivot_longer` to ignore the first three columns of the data frame by
 negating those columns (`-c(1:3`):
 
 ```{r pivot-longer-02}
-mine.long <- pivot_longer(data = mine.data, 
+mine_long <- pivot_longer(data = mine_data, 
                           cols = -c(1:3), 
                           names_to = "Class", 
                           values_to = "Abundance")
-head(mine.long)
+head(mine_long)
 ```
 
 Another approach, to accomplish the same thing, especially if the columns to 
 ignore are not adjacent, is to explicitly name the columns to ignore:
 
 ```{r pivot-longer-03, eval = FALSE}
-mine.long <- pivot_longer(data = mine.data, 
+mine_long <- pivot_longer(data = mine_data, 
                     cols = -c(Site, Depth, Sample.name), 
                     names_to = "Class", 
                     values_to = "Abundance")
@@ -201,8 +213,8 @@ with heatmap tools:
 library("tidyr")
 
 # Read data and format for heatmap
-mine.data <- read.csv(file = "data/mine-data.csv")
-mine.long <- pivot_longer(data = mine.data, 
+mine_data <- read.csv(file = "data/mine-data.csv")
+mine_long <- pivot_longer(data = mine_data, 
                     cols = -c(1:3), 
                     names_to = "Class", 
                     values_to = "Abundance")
@@ -228,17 +240,17 @@ library("ggplot2")
 
 For this plot, we are going to first create the heatmap object with the 
 `ggplot` function, then print the plot. We create the object by assigning the 
-output of the `ggplot` call to the variable `mine.heatmap`, then entering the 
+output of the `ggplot` call to the variable `mine_heatmap`, then entering the 
 name of this object to print it to the screen.
 
 ```{r heatmap-basic}
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Abundance)) +
   geom_tile() +
   xlab(label = "Sample")
 
-mine.heatmap
+mine_heatmap
 ```
 
 Let's dissect these commands:
@@ -259,13 +271,13 @@ details are appended with plus signs:
 
 ```{r ggplot-syntax, eval = FALSE}
 # Create plot object
-plot.object.name <- ggplot(data, mapping) +
-  layer.one() +
-  layer.two() +
-  layer.three()
+plot_object_name <- ggplot(data, mapping) +
+  layer_one() +
+  layer_two() +
+  layer_three()
 
 # Draw plot
-plot.object.name
+plot_object_name
 ```
 
 ### Faceting a plot
@@ -276,14 +288,14 @@ plotting command called `facet_grid`. With `facet_grid` we indicate which
 column contains the categories we want to use for the plot:
 
 ```{r facet}
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Abundance)) +
   geom_tile() +
   xlab(label = "Sample") +
   facet_grid(~ Depth)
 
-mine.heatmap
+mine_heatmap
 ```
 
 But this leaves a bit to be desired. We only want columns displayed for which 
@@ -291,14 +303,14 @@ there are data, so we have to add some additional information in our
 `facet_grid` call:
 
 ```{r facet-free}
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Abundance)) +
   geom_tile() +
   xlab(label = "Sample") +
   facet_grid(~ Depth, scales = "free_x", space = "free_x")
 
-mine.heatmap
+mine_heatmap
 ```
 
 + Passing `"free_x"` to the `scales` argument instructs R to allow different 
@@ -317,16 +329,15 @@ While we are here, we can also move the boxes labelling each sub-plot (0.5,
 `switch` argument in the `facet_grid()` function:
 
 ```{r facet-switch}
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Abundance)) +
   geom_tile() +
   xlab(label = "Sample") +
   facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x")
 
-mine.heatmap
+mine_heatmap
 ```
-
 
 That's better. There is still some room for improvement, but we'll get to that 
 later.
@@ -343,15 +354,15 @@ another column to our data frame and update our call to ggplot to reference
 this new column, `Sqrt.abundance`:
 
 ```{r sqrt-transform}
-mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_long$Sqrt.abundance <- sqrt(mine_long$Abundance)
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
   xlab(label = "Sample") +
   facet_grid(~ Depth, switch = "x", scales = "free_x", space = "free_x")
 
-mine.heatmap
+mine_heatmap
 ```
 
 #### Color
@@ -364,8 +375,8 @@ and `low` and `high` are hex codes for color. In this case, we use white
 (#FFFFFF) for the low values and a dark blue (#012345) for high values.
 
 ```{r change-color}
-mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_long$Sqrt.abundance <- sqrt(mine_long$Abundance)
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
@@ -375,7 +386,7 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                       low = "#FFFFFF",
                       high = "#012345")
 
-mine.heatmap
+mine_heatmap
 ```
 
 #### Theme elements
@@ -390,8 +401,8 @@ we should update the x-axis label, too. Setting `strip.placement` to "outside"
 should accomplish this.
 
 ```{r theme-elements}
-mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_long$Sqrt.abundance <- sqrt(mine_long$Abundance)
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
@@ -402,7 +413,7 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
                       high = "#012345") +
   theme(strip.placement = "outside")
 
-mine.heatmap
+mine_heatmap
 ```
 
 #### Plot title
@@ -410,8 +421,8 @@ mine.heatmap
 Plot titles can be added with `ggtitle`:
 
 ```{r plot-title}
-mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_long$Sqrt.abundance <- sqrt(mine_long$Abundance)
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
@@ -423,15 +434,15 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
   theme(strip.placement = "outside") +
   ggtitle(label = "Microbe Class Abundance")
 
-mine.heatmap
+mine_heatmap
 ```
 
 But by default the title is left-aligned. To center-justify the title, we add 
 another argument, `plot.title` to the `theme` call:
 
 ```{r plot-title-align}
-mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_long$Sqrt.abundance <- sqrt(mine_long$Abundance)
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
@@ -444,7 +455,7 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
         plot.title = element_text(hjust = 0.5)) +
   ggtitle(label = "Microbe Class Abundance")
 
-mine.heatmap
+mine_heatmap
 ```
 
 #### Miscellaneous Debris
@@ -463,25 +474,25 @@ of the levels for the factor. Since we are using values in the `Class` column,
 take a look at the default order if the column is treated as a factor:
 
 ```{r y-axis-levels}
-levels(as.factor(mine.long$Class))
+levels(as.factor(mine_long$Class))
 ```
 
-Since `r head(levels(as.factor(mine.long$Class)), n = 1)` is the first level, 
-it appears at the bottom of the y-axis; the last level is `r tail(levels(as.factor(mine.long$Class)), n = 1)` 
+Since `r head(levels(as.factor(mine_long$Class)), n = 1)` is the first level, 
+it appears at the bottom of the y-axis; the last level is `r tail(levels(as.factor(mine_long$Class)), n = 1)` 
 and appears at the top of the plot. To reverse this order, we use 
 `scale_y_discrete` and pass the factor levels in reverse. What? Take another 
 look at the output of the `levels` command. If we wanted to reverse this 
 output, we can use the `rev` function:
 
 ```{r y-axis-levels-rev}
-rev(levels(as.factor(mine.long$Class)))
+rev(levels(as.factor(mine_long$Class)))
 ```
 
 Now we use the same command in `scale_y_discrete` for the `limits` argument:
 
 ```{r y-axis-order-rev}
-mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_long$Sqrt.abundance <- sqrt(mine_long$Abundance)
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
@@ -493,17 +504,17 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
   theme(strip.placement = "outside",
         plot.title = element_text(hjust = 0.5)) +
   ggtitle(label = "Microbe Class Abundance") +
-  scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
+  scale_y_discrete(limits = rev(levels(as.factor(mine_long$Class))))
 
-mine.heatmap
+mine_heatmap
 ```
 
 And to adjust the y-axis and change the depth boxes, we add two more arguments 
 to the `theme` command:
 
 ```{r theme-changes}
-mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_long$Sqrt.abundance <- sqrt(mine_long$Abundance)
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
@@ -517,9 +528,9 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
         axis.title.y = element_blank(), # Remove y-axis title
         strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) +
   ggtitle(label = "Microbe Class Abundance") +
-  scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
+  scale_y_discrete(limits = rev(levels(as.factor(mine_long$Class))))
 
-mine.heatmap
+mine_heatmap
 ```
 
 Finally, there are many default themes in ggplot that affect background colors, 
@@ -529,8 +540,8 @@ One relatively simple theme is `theme_bw`, and we can apply it by adding the
 function to our ggplot object:
 
 ```{r theme-bw-01}
-mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_long$Sqrt.abundance <- sqrt(mine_long$Abundance)
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
@@ -544,10 +555,10 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
         axis.title.y = element_blank(),
         strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) +
   ggtitle(label = "Microbe Class Abundance") +
-  scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class)))) +
+  scale_y_discrete(limits = rev(levels(as.factor(mine_long$Class)))) +
   theme_bw() # Use the black and white theme
 
-mine.heatmap
+mine_heatmap
 ```
 
 Most notably, the different depth plots all have a black border around them. 
@@ -564,8 +575,8 @@ effectively throw out all those changes we made. In order for our changes to
 stay in place, we will need to call `theme_bw` _before_ our call to `theme`:
 
 ```{r theme-bw-02}
-mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_long$Sqrt.abundance <- sqrt(mine_long$Abundance)
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
@@ -580,9 +591,9 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
         axis.title.y = element_blank(),
         strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) +
   ggtitle(label = "Microbe Class Abundance") +
-  scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
+  scale_y_discrete(limits = rev(levels(as.factor(mine_long$Class))))
 
-mine.heatmap
+mine_heatmap
 ```
   
 Our final script for this heatmap is then:
@@ -593,24 +604,22 @@ Our final script for this heatmap is then:
 # jcoliver@email.arizona.edu
 # 2017-06-05
 
-rm(list = ls())
-
 # Load dependancies
 library("tidyr")
 library("ggplot2")
 
 # Read data and format for heatmap
-mine.data <- read.csv(file = "data/mine-data.csv")
-mine.long <- pivot_wider(data = mine.data,
+mine_data <- read.csv(file = "data/mine-data.csv")
+mine_long <- pivot_wider(data = mine_data,
                          cols = -c(1:3),
                          names_to = "Class",
                          values_to = "Abundance")
 
 # Transform abundance data for better visualization
-mine.long$Sqrt.abundance <- sqrt(mine.long$Abundance)
+mine_long$Sqrt.abundance <- sqrt(mine_long$Abundance)
 
 # Plot abundance
-mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
+mine_heatmap <- ggplot(data = mine_long, mapping = aes(x = Sample.name,
                                                        y = Class,
                                                        fill = Sqrt.abundance)) +
   geom_tile() +
@@ -628,9 +637,9 @@ mine.heatmap <- ggplot(data = mine.long, mapping = aes(x = Sample.name,
         axis.title.y = element_blank(), # Remove y-axis title
         strip.background = element_rect(fill = "#EEEEEE", color = "#FFFFFF")) +
   ggtitle(label = "Microbe Class Abundance") +
-  scale_y_discrete(limits = rev(levels(as.factor(mine.long$Class))))
+  scale_y_discrete(limits = rev(levels(as.factor(mine_long$Class))))
 
-mine.heatmap
+mine_heatmap
 ```
 
 ***
