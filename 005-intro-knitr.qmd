@@ -372,6 +372,31 @@ Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(r_sq
 
 > Petal width and petal length were highly correlated (r^2^ = `r round(r_squared, 2)`).  
 
+We can also include tables in our report, either by creating them manually or 
+by using the `kable()` function of knitr. In this lesson, I will just show the 
+manual creation, and leave it to you to look into the `kable()` function later
+(see #Additional-resources below for a link to learn more about `kable()`).
+
+We use pipes (`|`) and minus signs (`-`) to create tables; we generally start 
+with a header row, followed by a separator row of minus signs, then add rows of 
+data:
+
+    | Column 1   | Column 2   |
+    |------------|------------|
+    | Row 1 data | Row 1 data |
+    | Row 2 data | Row 1 data |
+    | Row 3 data | Row 1 data |
+
+Which will show up in your report as:
+
+| Column 1   | Column 2   |
+|------------|------------|
+| Row 1 data | Row 1 data |
+| Row 2 data | Row 1 data |
+| Row 3 data | Row 1 data |
+
+***
+
 Let's add one more thing to this report. Since these data were were collected 
 by the botanist Edgar Anderson, let's provide a link to the Wikipedia page with 
 information about the data set. So go back to the Materials & Methods section 
@@ -531,6 +556,7 @@ output: pdf_document
 + [knitr documentation](https://yihui.name/knitr/)
 + [R Markdown documentation](http://rmarkdown.rstudio.com/)
 + An awesome [cookbook of R Markdown solutions](https://holtzy.github.io/Pimp-my-rmd/)
++ The [documentation for the `knitr()` function](https://bookdown.org/yihui/rmarkdown-cookbook/kable.html)
 + Creating [Word templates](http://rmarkdown.rstudio.com/articles_docx.html) to 
 apply to knitr documents
 + A handy [cheatsheet for R Markdown syntax](http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
