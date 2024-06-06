@@ -7,5 +7,6 @@ data/wc2-5
 data/cmip5
 data/cmip6-MPI-ESM-HR.tif
 data/wc2.1_2.5m
+data/gadm
 keys/
 /.quarto/
