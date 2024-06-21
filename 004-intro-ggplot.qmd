@@ -56,7 +56,7 @@ least, to include:
 4. The date, preferably in ISO format YYYY-MM-DD
 
 ```{r script-header}
-# Plot gapminder data
+# Scatterplot of gapminder data
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-02-23
@@ -83,7 +83,7 @@ standard convention in scripts to comment out the `install.packages` command
 once it has been run on the machine, so our script now looks like:
 
 ```{r load-library}
-# Plot gapminder data
+# Scatterplot of gapminder data
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-02-23
@@ -118,11 +118,12 @@ lifeExp_plot <- ggplot(data = gapminder,
   ylab("Life Expectancy")
 
 # Draw plot
-print(lifeExp_plot)  
+lifeExp_plot
 ```
 
 We do so by first reading in the data we downloaded, then creating a `ggplot` 
-object, and finally calling `print` on that object:
+object, and finally printing the plot by running the line of code with just the 
+name of the variable in which our plot is stored:
 
 ```{r scatterplot-blank}
 # Load data
@@ -134,7 +135,7 @@ lifeExp_plot <- ggplot(data = gapminder,
                        mapping = aes(x = gdpPercap, y = lifeExp))
 
 # Draw plot
-print(lifeExp_plot)  
+lifeExp_plot
 ```
 
 _What happened?_ There are no points!? Here is where functionality of ggplot is 
@@ -151,7 +152,7 @@ lifeExp_plot <- ggplot(data = gapminder,
   geom_point()
 
 # Draw plot
-print(lifeExp_plot)  
+lifeExp_plot
 ```
 
 It is a little difficult to see how the points are distributed, as most are 
@@ -186,7 +187,7 @@ lifeExp_plot <- ggplot(data = gapminder,
   scale_x_log10()
 
 # Draw plot
-print(lifeExp_plot)  
+lifeExp_plot
 ```
 
 At this point, we want to change the colors of the points in two ways: (1) we 
@@ -207,7 +208,7 @@ lifeExp_plot <- ggplot(data = gapminder,
                                 "darkblue", "violet"))
 
 # Draw plot
-print(lifeExp_plot)  
+lifeExp_plot
 ```
 
 Finally, we should make those axis labels a little nicer.
@@ -226,7 +227,7 @@ lifeExp_plot <- ggplot(data = gapminder,
   ylab("Life Expectancy")
 
 # Draw plot
-print(lifeExp_plot)
+lifeExp_plot
 ```
 
 And if we want to save the plot to a file, we call `ggsave`, passing a filename 
@@ -251,7 +252,7 @@ ggsave(filename = "output/gdp-lifeExp-plot.tiff", plot = lifeExp_plot)
 Our final script for this scatterplot is then:
 
 ```{r scatterplot-script, eval = FALSE}
-# Plot gapminder data
+# Scatterplot of gapminder data
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-02-23
@@ -276,7 +277,7 @@ lifeExp_plot <- ggplot(data = gapminder,
   ylab("Life Expectancy")
 
 # Draw plot
-print(lifeExp_plot)  
+lifeExp_plot
 
 # Save plot to png file
 ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp_plot)
@@ -314,7 +315,7 @@ gdp_plot <- ggplot(data = gapminder,
   geom_violin()
 
 # Print plot
-print(gdp_plot)
+gdp_plot
 ```
 
 A good start, but we can see we need to clean some things up. We'll start by 
@@ -332,7 +333,7 @@ gdp_plot <- ggplot(data = gapminder,
   theme_bw()
 
 # Print plot
-print(gdp_plot)
+gdp_plot
 ```
 
 One of the issues we have in the plot is not obvious just by looking at it. If 
@@ -361,7 +362,7 @@ gdp_plot <- ggplot(data = gapminder,
   facet_wrap(~ year)
 
 # Print plot
-print(gdp_plot)
+gdp_plot
 ```
 
 One of the first things you might notice is that the X-axis is way to crowded 
@@ -385,7 +386,7 @@ gdp_plot <- ggplot(data = gapminder,
         axis.title.x = element_blank())
 
 # Print plot
-print(gdp_plot)
+gdp_plot
 ```
 
 Okay, the x-axis is cleaned up, but where are the colors? If we look at our 
@@ -411,7 +412,7 @@ gdp_plot <- ggplot(data = gapminder,
         axis.title.x = element_blank())
 
 # Print plot
-print(gdp_plot)
+gdp_plot
 ```
 
 Colors! But what's that funny violet shape on the right-hand side of each plot? 
@@ -440,7 +441,7 @@ gdp_plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ],
         axis.title.x = element_blank())
 
 # Print plot
-print(gdp_plot)
+gdp_plot
 ```
 
 Success!
@@ -475,7 +476,7 @@ gdp_plot <- ggplot(data = gapminder[gapminder$continent != "Oceania", ],
         axis.title.x = element_blank())
 
 # Print plot
-print(gdp_plot)
+gdp_plot
 ```
 
 ***
