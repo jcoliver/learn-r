@@ -158,8 +158,8 @@ name of the species (setosa, versicolor, or virginica).
 subset of the `iris` data. A `data.frame` is effectively a two-dimensional 
 structure - it has some number of rows (the first dimension) and some number of 
 columns (the second dimension). We can see how many rows and columns are in a 
-`data.frame` with the `dim` command. `dim(iris)` prints out the number of rows 
-(`r nrow(iris)`) and the number of columns (`r ncol(iris)`): 
+`data.frame` with the `dim` command. `dim(iris)` prints out the number of rows (`r nrow(iris)`) 
+and the number of columns (`r ncol(iris)`): 
 
 ```{r iris-dimensions}
 dim(iris)
