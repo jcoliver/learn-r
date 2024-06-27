@@ -60,7 +60,8 @@ iris %>%
          values_to = "measurement") %>%
   group_by(Species, trait) %>%
   summarize(trait_mean = mean(measurement),
-            trait_se = sd(measurement/sqrt(n()))) %>%
+            trait_se = sd(measurement/sqrt(n())), 
+            .groups = "keep") %>%
   ggplot(mapping = aes(x = Species, y = trait_mean)) +
   geom_point() +
   geom_errorbar(mapping = aes(ymin = trait_mean - trait_se,
@@ -223,7 +224,8 @@ iris %>%
          values_to = "measurement") %>%
   group_by(Species, trait) %>%
   summarize(trait_mean = mean(measurement),
-            trait_se = sd(measurement/sqrt(n()))) %>%
+            trait_se = sd(measurement/sqrt(n())),
+            .groups = "keep") %>%
   ggplot(mapping = aes(x = Species, y = trait_mean)) +
   geom_point() +
   geom_errorbar(mapping = aes(ymin = trait_mean - trait_se,
@@ -385,7 +387,18 @@ iris_means <- iris %>%
 We'll want to update this, inserting the `pivot_longer` function and updating 
 the values used for calculating the mean and standard deviation:
 
-```{r by-species-stats}
+```{r by-species-stats-eval, echo = FALSE}
+iris_means <- iris %>%
+  pivot_longer(cols = -Species, 
+               names_to = "trait", 
+               values_to = "measurement") %>%
+  group_by(Species, trait) %>%
+  summarize(trait_mean = mean(measurement),
+            trait_se = sd(measurement)/sqrt(n()),
+            .groups = "keep")
+```
+
+```{r by-species-stats-echo, eval = FALSE}
 iris_means <- iris %>%
   pivot_longer(cols = -Species, 
                names_to = "trait", 
@@ -394,6 +407,7 @@ iris_means <- iris %>%
   summarize(trait_mean = mean(measurement),
             trait_se = sd(measurement)/sqrt(n()))
 ```
+
 Note the insertion of `pivot_longer` and the changes to `group_by` and 
 `summarize`:
 
@@ -401,6 +415,15 @@ Note the insertion of `pivot_longer` and the changes to `group_by` and
 grouping, based on each trait
 + `summarize`: We replace `SL_mean` with `trait_mean` and `SL_se` with 
 `trait_se`
+
+_Aside_: You might see a warning that looks like
+
+> \`summarise()\` has grouped output by 'Species'. You can override using the
+\`.groups\` argument.
+
+This is just telling us that the data are still considered to be grouped. For 
+our purposes, this will not affect anything downstream, so we won't worry about 
+it.
 
 Our data frame now has a row for each species and each trait:
 
