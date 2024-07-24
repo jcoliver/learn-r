@@ -9,20 +9,29 @@ format: # to suppress pdf link
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 30  | Apr   | Hybrid open lab                    |
-| 07  | May   | Hybrid open lab                    |
-| 14  | May   | Hybrid open lab                    |
-| 21  | May   | Hybrid open lab                    |
-| 28  | May   | Hybrid open lab                    |
-| 04  | Jun   | Hybrid open lab                    |
-| 11  | Jun   | Hybrid open lab                    |
-| 18  | Jun   | Hybrid open lab                    |
-| 24  | Jun   | Hybrid open lab                    |
-| 02  | Jul   | Hybrid open lab                    |
-| 09  | Jul   | Hybrid open lab                    |
-| 16  | Jul   | Hybrid open lab                    |
-| 23  | Jul   | Hybrid open lab                    |
 | 30  | Jul   | Hybrid open lab                    |
+| 06  | Aug   | Hybrid open lab                    |
+| 13  | Aug   | Hybrid open lab                    |
+| 20  | Aug   | Hybrid open lab                    |
+| 27  | Aug   | Hybrid open lab                    |
+| 03  | Sep   | Hybrid open lab                    |
+| 10  | Sep   | Introduction to data visualization with ggplot |
+| 17  | Sep   | Hybrid open lab                    |
+| 24  | Sep   | Introduction to R statistics       |
+| 01  | Oct   | Hybrid open lab                    |
+| 08  | Oct   | Data science: more fun, less pain with tidyverse |
+| 15  | Oct   | Hybrid open lab                    |
+| 22  | Oct   | Git and GitHub with RStudio        |
+| 29  | Oct   | Hybrid open lab                    |
+| 05  | Nov   | Machine learning in R part 1: regression |
+| 12  | Nov   | Hybrid open lab                    |
+| 19  | Nov   | Interactive web apps with Shiny    |
+| 26  | Nov   | Hybrid open lab                    |
+| 03  | Dec   | Introduction to geospatial data in R |
+| 10  | Dec   | Hybrid open lab                    |
+| 17  | Dec   | Hybrid open lab                    |
+| 24  | Dec   | _No lab this day_                  |
+| 31  | Dec   | _Happy New Year (no lab this day)_ |
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://lib.arizona.edu/study/spaces/data-studio) 
