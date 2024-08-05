@@ -1,31 +1,23 @@
 ---
-title: "LESSON TITLE"
+title: "Intro to Geospatial data in R"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
-[INTRODUCTORY SENTENCE]
+```{r library-check, echo = FALSE, results = "hide"}
+#| output: false
 
-General idea:
+libs <- c("terra")
+libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
+if (length(libs_missing) > 0) {
+  for (l in libs_missing) {
+    install.packages(l)
+  }
+}
+```
 
-Load some data: temperature and precipitation
-Look at the temperature (via console & `plot()`)
-Crop to southwest & recolor (YlOrBr is good for temperature)
-> plot(temp_son, col = rev(hcl.colors(50, palette = "YlOrBr")))
-
-
-Rough extent for Sonoran desert: -116, -110, 28, 35
-Do data transformation (like converting C to F)
-
-Categorize areas as desert with prec_raster < 250 (general definition) and 
-then convert to polygons with terra::as.polygons
-
-Add this to plot to outline desert areas
-
-Get some point or **shape** data (points: Tucson, PHX, Hermosillo)
-Hermosillo: 29.016, -110.926
-Phoenix: 33.453, -111.947
-Tucson: 32.233, -110.953
+An introduction to working with two types of geospatial data in R, with 
+examples of displaying data on maps.
 
 #### Learning objectives
 
@@ -38,7 +30,10 @@ After this lesson, learners should be able to:
 5. Change spatial projection of geospatial data
 6. Add points to raster data visualization
 
-## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+Geospatial data are data that have some connection to specific places or areas 
+on Earth. In this lesson we will look at common geospatial data types and how 
+we can work with them in R. We will really be scratching the surface today and 
+you can find links to more resources at the end of the lesson.
 
 ***
 
@@ -71,34 +66,57 @@ us (or anyone else, for that matter) to reproduce any output.
 
 ### Install additional R packages
 
-**TODO** Update this section
+To work with geospatial data in R, we usually need to install one or more 
+additional packages. The two most popular packages for geospatial data are 
+[terra](https://rspatial.org/pkg/) and [sf](https://r-spatial.github.io/sf/). 
+In this lesson, we will only be working with terra, and you can find links for 
+more information on terra and on sf at the bottom of the lesson. In order to 
+use the terra package, we must first install the package with 
+`install.packages()`:
 
-There are _two_ additional R packages that will need to be installed:
+```{r terra-install, eval = FALSE}
+install.packages("terra")
+```
 
-+ dplyr
-+ randomforest
+And we load it into memory with the `library()` command:
 
-To install these, run:
+```{r terra-load, echo = FALSE}
+suppressPackageStartupMessages(library(terra))
+```
 
-```{r install-libraries, eval = FALSE}
-install.packages("dplyr")
-install.packages("randomforest")
+```{r terra-load-print, eval = FALSE}
+library(terra)
 ```
 
 ### Example data
 
-***
 
-## [TOPIC ONE]
 
 ***
 
-## [TOPIC TWO]
+## Geospatial raster data
+
+***
+
+## Geospatial vector data
 
 ***
 
 ## Additional resources
 
-+ [resource one](url-one)
-+ [resource two](url-two)
-+ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
++ A really nice [guide to using terra in R](https://rspatial.org/).
++ A cheat-sheet of sorts for 
+[terra functions](https://rspatial.github.io/terra/reference/terra-package.html).
++ The [sf package](https://r-spatial.github.io/sf/) is another way to work with 
+geospatial data in R. It offers a lot of functionality and works well (most of 
+the time) with terra objects.
++ The [OpenStreetMap](https://www.openstreetmap.org) (OSM) project also has an 
+R package, [osmdata](https://docs.ropensci.org/osmdata/), that allows you to 
+download and use data available from OSM.
++ To really impress your friends, the [tidyterra](https://dieghernan.github.io/tidyterra/)
+package offers functions for using terra objects (SpatRasters, SpatVectors, 
+etc.) with the ggplot2 package.
++ For a more in-depth look at geospatial applications in R, check out the Data 
+Carpentry lesson introducing 
+[raster & vector data in R](https://datacarpentry.org/r-raster-vector-geospatial/).
++ A [PDF version](https://jcoliver.github.io/learn-r/019-intro-geo.pdf) of this lesson
