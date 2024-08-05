@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.553">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jeff Oliver">
-<meta name="dcterms.date" content="2024-05-16">
+<meta name="dcterms.date" content="2024-08-05">
 
 <title>learn-r - Introduction to data summarizing and visualization</title>
 <style>
@@ -248,7 +248,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 16, 2024</p>
+      <p class="date">August 5, 2024</p>
     </div>
   </div>
   
@@ -400,7 +400,7 @@ Variable \enspace Name \leftarrow Function \enspace Name (Function \enspace Argu
 <p>Rarely are data “ready to go” when they are read into R. The data we are using are going to require two adjustments: removal of rows with missing data and a selection of only a portion of the data.</p>
 <section id="missing-data" class="level3">
 <h3 class="anchored" data-anchor-id="missing-data">Missing data</h3>
-<p>To remove rows that have missing data, we use the <code>na.omit</code> function. Before we do, though, look at the “Environment” tab of your workspacek. There should be a row for <code>plant_data</code> that indicates the size of our data set. In this case, it should show “291 obs. of 9 variables”, indicating we have 291 rows of data, with 9 columns. Now let’s drop those rows with missing data, putting this command in the script file, not the R console:</p>
+<p>To remove rows that have missing data, we use the <code>na.omit</code> function. Before we do, though, look at the “Environment” tab of your workspace. There should be a row for <code>plant_data</code> that indicates the size of our data set. In this case, it should show “291 obs. of 9 variables”, indicating we have 291 rows of data, with 9 columns. Now let’s drop those rows with missing data, putting this command in the script file, not the R console:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>plant_data <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(plant_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>

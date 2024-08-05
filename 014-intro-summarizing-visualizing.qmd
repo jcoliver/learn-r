@@ -188,7 +188,7 @@ selection of only a portion of the data.
 ### Missing data
 
 To remove rows that have missing data, we use the `na.omit` function. Before we 
-do, though, look at the "Environment" tab of your workspacek. There should be a 
+do, though, look at the "Environment" tab of your workspace. There should be a 
 row for `plant_data` that indicates the size of our data set. In this case, it
 should show "`r dim(plant_data)[1]` obs. of `r dim(plant_data)[2]` variables",
 indicating we have 291 rows of data, with 9 columns. Now let's drop those rows 
