@@ -6,6 +6,8 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 
 # TODO: Make bit.ly links for data
 
+# TODO: Provide answers to questions...somewhere
+
 ```{r library-check, echo = FALSE, results = "hide"}
 #| output: false
 
@@ -397,6 +399,197 @@ plot(temp_sw, col = temp_cols)
 ***
 
 ## Geospatial vector data
+
+Now we will switch to vector data, which are all based on coordinates. These 
+data commonly come as points (a single pair of coordinates), lines (multiple 
+pairs of coordinates), or polygons (multiple pairs of coordinates that define a 
+geographical area).
+
+### Adding Points
+
+Let us create a data frame with some city coordinates that we can add to the 
+map.
+
+```{r city-data-frame}
+cities <- data.frame(city = c("Tucson", "Hermosillo", "Carson City"),
+                     lat = c(32.23, 29.02, 39.18),
+                     lon = c(-110.95, -110.93, -119.77))
+cities
+```
+
+To make these data easier to work with our raster object, we are going to 
+transform it to a spatial vector, or SpatVector in terra-speak. While we are at 
+it, we will tell it to use the same coordinate reference system as the 
+temperature data we already loaded in.
+
+```{r cities-vector}
+cities_vect <- vect(cities, crs = crs(temp_sw))
+```
+
+Looking at the SpatVector object, it doesn't really look very different.
+
+```{r print-cities-vector}
+cities_vect
+```
+
+Now we can make our map and add those points to the map. Make sure to use 
+`add = TRUE` in our second call to `plot()` so it adds the points to the 
+already existing map.
+
+```{r add-cities-points}
+plot(temp_sw, col = temp_cols)
+plot(cities_vect, add = TRUE)
+```
+
+Finally, because we stored the names of the cities in our data frame, we can 
+also add those.
+
+```{r add-cities-names}
+plot(temp_sw, col = temp_cols)
+plot(cities_vect, add = TRUE)
+text(cities_vect, labels = "city", pos = 4)
+```
+
+### Adding Areas (aka Polygons)
+
+What if we want to add areas, not just points, to our map? Here is where we get 
+into the realm of polygons. We can do things like add polygons from shapefiles 
+that we download or export from a program like ArcGIS. For this lesson, though, 
+we are going to make a polygon on the fly and add that to our map.
+
+Going back to our original goal of a map highlighting desert biomes, we will 
+define a desert as an area that receives less than 250 millimeters of 
+precipitation per year (_Aside_: this definition only goes so far; for example, 
+the city of Tucson does not, technically, get counted as being a desert because 
+it receives an average of 300 mm of precipitation per year. You can read more 
+about [defining deserts on Wikipedia](https://en.wikipedia.org/wiki/Desert#Defining_characteristics)).
+
+So we start by loading in a file with global precipitation data:
+
+```{r read-precipitation-data}
+prec <- rast("data/global-precipitation.tif")
+prec
+```
+
+Then cropping those data to the North American southwest (that we defined 
+above).
+
+```{r crop-precipitaton-data}
+prec_sw <- crop(prec, southwest_ext)
+prec_sw
+```
+
+And it is usually good to do a reality check and plot the data, too:
+
+```{r plot-precipitation-data}
+plot(prec_sw)
+```
+
+Cool. Map looks good and the ranges of precipitation seem reasonable, too. Now 
+we need to use this information to identify those areas considered deserts. We 
+will use this categorization to draw an outline of desert biomes on our 
+temperature map. As we talked about before, we will use the precipitation-based 
+definition of a desert, where any spot that received less than 250 mm in annual 
+precipitation is categorized as a desert. We start by defining our cutoff and 
+then creating a new raster based on values in the precipitation raster.
+
+```{r define-desert}
+desert_max <- 250
+prec_desert <- prec_sw < desert_max
+prec_desert
+```
+
+Looking at the raster metadata, we see the big difference is the min and max 
+values - they aren't numbers anymore, but are now logicals (`FALSE` and 
+`TRUE`). This is because what we stored in the `prec_desert` object was the 
+output of a comparison. That is, for each cell in our southwest precipitation 
+raster, `prec_sw`, we asked if the value in that cell was less than 250 mm. The 
+answer is either `TRUE` or `FALSE`, so that is what is stored in the resulting 
+output raster, `prec_desert`. We can also see this when we plot the output:
+
+```{r plot-desert-logical}
+plot(prec_desert)
+```
+
+The areas that are lighting up in yellow are those "desert" biomes. For now, we 
+are going to ignore the limitations of our precipitation-based definition (i.e. 
+the southern portion of the Central Valley of California is not generally 
+considered a desert).
+
+To add this to our map, though, we do not want a logical raster, rather, we 
+want a polygon, in order to draw a border around the deserts. We start by 
+changing all the `FALSE` values to missing (`NA`) - if we did not do this, R 
+would make _two_ polygons from the data, one for desert areas and one for "not 
+desert" areas. We then use the `as.polygons()` function to do the 
+transformation and plot the polygon alone as a reality check.
+
+```{r desert-to-polygon}
+# Change all FALSE values to missing data
+prec_desert[!prec_desert] <- NA
+# Convert remaining non-missing values to a polygon (vector data)
+desert_poly <- as.polygons(prec_desert)
+# Plot polygons (reality check)
+plot(desert_poly)
+```
+
+Looking good! Now we can plot our temperature map again and add the polygon to 
+the map. Feel free to experiment with arguments to change the colors and 
+transparency of the desert polygon (hint: look at the documentation for the 
+`polys()` function via `?polys` for details on how to do this).
+
+```{r add-desert}
+# Plot base temperature map
+plot(temp_sw, col = temp_cols)
+# Add desert polygon
+polys(x = desert_poly)
+```
+
+Finally, because we are being pedantic, let us make the plot again, this time 
+adding a title explaining what the colors mean ("00B0" is Unicode for the 
+degree symbol).
+
+```{r add-title}
+plot(temp_sw, col = temp_cols, 
+     main = "Mean Annual Temperature (\u00B0C)")
+polys(x = desert_poly)
+```
+
+And if you are inclined, you can output this map by wrapping all the plotting 
+commands within a call to one of the graphics device functions (e.g. `png()`, 
+`pdf()`) and then turning off this graphical redirect with `dev.off()`.
+
+```{r save-plot, eval = FALSE}
+png(filename = "sw-desert-heat.png")
+plot(temp_sw, col = temp_cols, 
+     main = "Mean Annual Temperature (\u00B0C)")
+polys(x = desert_poly)
+dev.off()
+```
+
+***
+
+## Glossary
+
+These are the functions we used in this lesson; use the `?` in R to find more 
+details (e.g. `?rast`). The following are from the terra package:
+
++ `as.polygons`: Convert a raster object into a polygon (shape) object.
++ `crop`: Crop the geographic extent of a raster.
++ `ext`: Create a SpatExtent (spatial extent) object.
++ `plot`: Um, plot?
++ `polys`: Add polygons to an existing plot.
++ `project`: Change the projection of a geospatial object.
++ `rast`: Read in a raster file (`rast()` does more than this, too, but this is 
+what we used it for here).
++ `text`: Add text to an existing plot.
+
+And we used a few from base R, too:
+
++ `dev.off`: Stop writing to a graphics output file.
++ `hcl.colors`: Create a vector of color values based on a palette.
++ `png`: Start writing to a PNG graphics file.
++ `rainbow`: Create a vector of unicorn-vomit colors.
++ `rev`: Reverse the order of values in a vector.
 
 ***
 

@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jeff Oliver">
+<meta name="dcterms.date" content="2024-08-12">
+
+<title>learn-r - Intro to Geospatial data in R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-EF6ZJH0577"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
+</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">learn-r</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./resources.html"> 
+<span class="menu-text">Additional Resources</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#todo-make-bit.ly-links-for-data" id="toc-todo-make-bit.ly-links-for-data" class="nav-link active" data-scroll-target="#todo-make-bit.ly-links-for-data">TODO: Make bit.ly links for data</a></li>
+  <li><a href="#todo-provide-answers-to-questionssomewhere" id="toc-todo-provide-answers-to-questionssomewhere" class="nav-link" data-scroll-target="#todo-provide-answers-to-questionssomewhere">TODO: Provide answers to questions…somewhere</a>
+  <ul class="collapse">
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting started</a>
+  <ul class="collapse">
+  <li><a href="#workspace-organization" id="toc-workspace-organization" class="nav-link" data-scroll-target="#workspace-organization">Workspace organization</a></li>
+  <li><a href="#install-additional-r-packages" id="toc-install-additional-r-packages" class="nav-link" data-scroll-target="#install-additional-r-packages">Install additional R packages</a></li>
+  <li><a href="#some-terms" id="toc-some-terms" class="nav-link" data-scroll-target="#some-terms">Some Terms</a></li>
+  <li><a href="#todays-destination" id="toc-todays-destination" class="nav-link" data-scroll-target="#todays-destination">Today’s Destination</a></li>
+  <li><a href="#climate-data" id="toc-climate-data" class="nav-link" data-scroll-target="#climate-data">Climate data</a></li>
+  </ul></li>
+  <li><a href="#geospatial-raster-data" id="toc-geospatial-raster-data" class="nav-link" data-scroll-target="#geospatial-raster-data">Geospatial raster data</a>
+  <ul class="collapse">
+  <li><a href="#reading-and-visualizing-raster-data" id="toc-reading-and-visualizing-raster-data" class="nav-link" data-scroll-target="#reading-and-visualizing-raster-data">Reading and Visualizing Raster Data</a></li>
+  <li><a href="#aside-plot-actually-means-a-lot-of-different-things." id="toc-aside-plot-actually-means-a-lot-of-different-things." class="nav-link" data-scroll-target="#aside-plot-actually-means-a-lot-of-different-things.">Aside: <code>plot()</code> actually means a lot of different things.</a></li>
+  <li><a href="#cropping-data" id="toc-cropping-data" class="nav-link" data-scroll-target="#cropping-data">Cropping data</a></li>
+  <li><a href="#modifying-data" id="toc-modifying-data" class="nav-link" data-scroll-target="#modifying-data">Modifying data</a></li>
+  <li><a href="#aside-the-world-is-not-flat-so-why-is-my-map" id="toc-aside-the-world-is-not-flat-so-why-is-my-map" class="nav-link" data-scroll-target="#aside-the-world-is-not-flat-so-why-is-my-map">Aside: The world is not flat, so why is my map?</a></li>
+  <li><a href="#colors-on-maps" id="toc-colors-on-maps" class="nav-link" data-scroll-target="#colors-on-maps">Colors on maps</a></li>
+  </ul></li>
+  <li><a href="#geospatial-vector-data" id="toc-geospatial-vector-data" class="nav-link" data-scroll-target="#geospatial-vector-data">Geospatial vector data</a>
+  <ul class="collapse">
+  <li><a href="#adding-points" id="toc-adding-points" class="nav-link" data-scroll-target="#adding-points">Adding Points</a></li>
+  <li><a href="#adding-areas-aka-polygons" id="toc-adding-areas-aka-polygons" class="nav-link" data-scroll-target="#adding-areas-aka-polygons">Adding Areas (aka Polygons)</a></li>
+  </ul></li>
+  <li><a href="#glossary" id="toc-glossary" class="nav-link" data-scroll-target="#glossary">Glossary</a></li>
+  <li><a href="#additional-resources" id="toc-additional-resources" class="nav-link" data-scroll-target="#additional-resources">Additional resources</a></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="019-intro-geo.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Intro to Geospatial data in R</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jeff Oliver </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 12, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="todo-make-bit.ly-links-for-data" class="level1">
+<h1>TODO: Make bit.ly links for data</h1>
+</section>
+<section id="todo-provide-answers-to-questionssomewhere" class="level1">
+<h1>TODO: Provide answers to questions…somewhere</h1>
+<p>An introduction to working with two types of geospatial data in R, with examples of displaying data on maps.</p>
+<section id="learning-objectives" class="level4">
+<h4 class="anchored" data-anchor-id="learning-objectives">Learning objectives</h4>
+<p>After this lesson, learners should be able to:</p>
+<ol type="1">
+<li>Install packages for geospatial data visualization and analysis</li>
+<li>Explain the difference between raster and shape data</li>
+<li>Load geospatial raster data into memory</li>
+<li>Visualize raster data</li>
+<li>Change spatial projection of geospatial data</li>
+<li>Add points to raster data visualization</li>
+</ol>
+<p>Geospatial data are data that have some connection to specific places or areas on Earth. In this lesson we will look at common geospatial data types and how we can work with them in R. We will really be scratching the surface today and you can find links to more resources at the end of the lesson.</p>
+<hr>
+</section>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting started</h2>
+<section id="workspace-organization" class="level3">
+<h3 class="anchored" data-anchor-id="workspace-organization">Workspace organization</h3>
+<p>First we need to setup our development environment. Open RStudio and create a new project via:</p>
+<ul>
+<li>File &gt; New Project…</li>
+<li>Select ‘New Directory’</li>
+<li>For the Project Type select ‘New Project’</li>
+<li>For Directory name, call it something like “intro-geo” (without the quotes)</li>
+<li>For the subdirectory, select somewhere you will remember (like “My Documents” or “Desktop”)</li>
+</ul>
+<p>We need to create two folders: ‘data’ will store the data we will be analyzing, and ‘output’ will store the results of our analyses. In the RStudio console:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="at">path =</span> <span class="st">"data"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="at">path =</span> <span class="st">"output"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>It is good practice to keep input (i.e.&nbsp;the data) and output separate. Furthermore, any work that ends up in the <strong>output</strong> folder should be completely disposable. That is, the combination of data and the code we write should allow us (or anyone else, for that matter) to reproduce any output.</p>
+</section>
+<section id="install-additional-r-packages" class="level3">
+<h3 class="anchored" data-anchor-id="install-additional-r-packages">Install additional R packages</h3>
+<p>To work with geospatial data in R, we usually need to install one or more additional packages. The two most popular packages for geospatial data are <a href="https://rspatial.org/pkg/">terra</a> and <a href="https://r-spatial.github.io/sf/">sf</a>. In this lesson, we will only be working with terra, and you can find links for more information on terra and on sf at the bottom of the lesson. In order to use the terra package, we must first install the package with <code>install.packages()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"terra"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And we load it into memory with the <code>library()</code> command:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="some-terms" class="level3">
+<h3 class="anchored" data-anchor-id="some-terms">Some Terms</h3>
+<p>Geospatial data generally come in one of two types: raster data or vector data.</p>
+<ul>
+<li><strong>Raster</strong> data are gridded data. They generally look like images and have a fixed resolution. This means that as you zoom in on raster data, you eventually start seeing the grids. Like when you zoom in on a photograph and it becomes “pixelated” - we will see an example of this later. Raster data are usually quantitative measurements of some sort, such as temperature, precipitation, and reflectance in certain light wavelengths.</li>
+<li><strong>Vector</strong>, or shape, data are defined by specific coordinates on the Earth’s surface and do not, technically, have a fixed resolution. This means that as you zoom in on Vector data, it never becomes “pixelated”. Vector data usually take the form of points (a single pair of coordinates), lines (two or more coordinate pairs connected in a sequence), or polygons (three or more coordinate pairs connected in a closed sequence). Note: I apologize at this point for any confusion between the definition of geospatial vector data and the vector data structure in R. They are not the same thing, even though they probably have similar roots.</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/zoom-raster.png" class="img-fluid figure-img"></p>
+<figcaption>Raster data have a fixed resolution and become “pixelated” when magnifyings</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/zoom-vector.png" class="img-fluid figure-img"></p>
+<figcaption>Vector data do not lose resolution when magnifying</figcaption>
+</figure>
+</div>
+</section>
+<section id="todays-destination" class="level3">
+<h3 class="anchored" data-anchor-id="todays-destination">Today’s Destination</h3>
+<p>Today we will work with both raster and vector data, loading it into R, doing some exploratory visualization, and modifying the data. Ultimately, we are going to create a map of temperature data of southwestern North America, highlighting those areas that are desert biomes. At the end, we should have a map that looks like:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/sw-desert-heat.png" class="img-fluid figure-img"></p>
+<figcaption>Mean annual temperature of southwestern North America</figcaption>
+</figure>
+</div>
+</section>
+<section id="climate-data" class="level3">
+<h3 class="anchored" data-anchor-id="climate-data">Climate data</h3>
+<p>Today we will be working with climate data, specifically mean temperatures and annual precipitation. All the data we will use in this lesson come from the <a href="https://www.worldclim.org/data/worldclim21.html">WorldClim</a> site. If you want the gritty details, we are using a pair of the standard “bioclim” variables: bio1 (annual mean temperature) and bio12 (annual precipitation) at 2.5 minute resolution. We need to download these two files:</p>
+<ul>
+<li>temperature: <a href="https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/global-temperature.tif">https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/global-temperature.tif</a></li>
+<li>precipitation: <a href="https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/global-precipitation.tif">https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/global-precipitation.tif</a></li>
+</ul>
+<p>Place both the files in the “data” folder in the project you created at the start of the lesson.</p>
+<hr>
+</section>
+</section>
+<section id="geospatial-raster-data" class="level2">
+<h2 class="anchored" data-anchor-id="geospatial-raster-data">Geospatial raster data</h2>
+<section id="reading-and-visualizing-raster-data" class="level3">
+<h3 class="anchored" data-anchor-id="reading-and-visualizing-raster-data">Reading and Visualizing Raster Data</h3>
+<p>To read raster data into R, we use the <code>rast()</code> function from the terra library.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">"data/global-temperature.tif"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If you see an error that says something like:</p>
+<pre><code>Error in rast("global_temperature.tif") : could not find function "rast"</code></pre>
+<p>it probably means you need to load the terra library with <code>library(terra)</code> <em>before</em> you try to load the file with the <code>rast()</code> function.</p>
+<p>With raster data, they will all (ideally) contain metadata - we can see those metadata by running a line of code with the name of the variable that that we read the raster into:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>temp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 4320, 8640, 1  (nrow, ncol, nlyr)
+resolution  : 0.04166667, 0.04166667  (x, y)
+extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source      : global-temperature.tif 
+name        : global-temperature 
+min value   :          -54.75917 
+max value   :           31.16667 </code></pre>
+</div>
+</div>
+<p>So there is a lot packed into the output. For our reality check, we will just note that the data are global (see the values in the “extent” field) and the range of values for mean annual temperature seem right (see the “min value” and “max value” fields).</p>
+<p>But come on! We are here for maps. Let us see a map! We can plot the actual data stored in the raster with the <code>plot()</code> command.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/plot-global-temperature-data-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="aside-plot-actually-means-a-lot-of-different-things." class="level3">
+<h3 class="anchored" data-anchor-id="aside-plot-actually-means-a-lot-of-different-things.">Aside: <code>plot()</code> actually means a lot of different things.</h3>
+<p>A quick note that when we call <code>plot()</code>, R will take a look at what information we passed to the function, then decide which <em>version</em> of the <code>plot()</code> function to use. We will not go into additional detail here, but consider looking at the documentation for the base R version of <code>plot()</code> (via <code>?plot</code>) and comparing that with the version that comes with the terra package (via <code>?terra::plot</code>).</p>
+</section>
+<section id="cropping-data" class="level3">
+<h3 class="anchored" data-anchor-id="cropping-data">Cropping data</h3>
+<p>Rarely do we need a map of the entire globe. Rather, we often want to focus on parts of the globe. In this lesson we are going to focus on southwestern North America, so we need to crop our raster data to that region. In order to do this we first define what is called a geographic extent. This is basically a fancy way of drawing a line around the area we are interested in. In our case, we need to define the geographic limits of what we are calling the southwest; i.e. the easternmost, westernmost, southernmost, and northernmost points.</p>
+<blockquote class="blockquote">
+<p>Question: how would you find the latitude and longitude values to define this extent?</p>
+</blockquote>
+<p>For this lesson, we can get away with using whole degree values; we will use decimal degrees later in the lesson. When defining an area with four values (easternmost, westernmost, etc.), we need to be sure to get them in the right order. Often (but <em>not</em> always), they are in the following order:</p>
+<ol type="1">
+<li>xmin = westernmost</li>
+<li>xmax = easternmost</li>
+<li>ymin = southernmost</li>
+<li>ymax = northernmost</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lower right: 21, -98</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Upper left: 46, -126</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>southwest_ext <span class="ot">&lt;-</span> <span class="fu">ext</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">126</span>, <span class="sc">-</span><span class="dv">98</span>, <span class="dv">21</span>, <span class="dv">46</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You will also note that we used negative values for those western hemisphere longitudes (-126, -98). The same goes for values in the southern hemisphere.</p>
+<blockquote class="blockquote">
+<p>Question: Why would we use negative values instead of the letters W and S for western longitudes and southern latitudes, respectively?</p>
+</blockquote>
+<p>We can do a reality check and print out the value by running the name of the extent.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>southwest_ext</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>SpatExtent : -126, -98, 21, 46 (xmin, xmax, ymin, ymax)</code></pre>
+</div>
+</div>
+<p>Finally, we can make a new map, with only those values in the area we defined by our geographic extent with the <code>crop()</code> function from terra.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>temp_sw <span class="ot">&lt;-</span> <span class="fu">crop</span>(temp, southwest_ext)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can then compare the objects of our original raster:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>temp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 4320, 8640, 1  (nrow, ncol, nlyr)
+resolution  : 0.04166667, 0.04166667  (x, y)
+extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source      : global-temperature.tif 
+name        : global-temperature 
+min value   :          -54.75917 
+max value   :           31.16667 </code></pre>
+</div>
+</div>
+<p>to the cropped raster:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>temp_sw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 600, 672, 1  (nrow, ncol, nlyr)
+resolution  : 0.04166667, 0.04166667  (x, y)
+extent      : -126, -98, 21, 46  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source(s)   : memory
+varname     : global-temperature 
+name        : global-temperature 
+min value   :          -4.245667 
+max value   :          27.129499 </code></pre>
+</div>
+</div>
+<p>Just about all the data changed, with the exception of the value in the <code>coord. ref.</code> field. We will talk more about that field later.</p>
+<p>Let us look at the map of our cropped data, again with the <code>plot()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp_sw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/plot-cropped-temp-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="modifying-data" class="level3">
+<h3 class="anchored" data-anchor-id="modifying-data">Modifying data</h3>
+<p>The <em>really</em> nice thing about modern geospatial package in R is that we can do operations on every cell of the data. For example maybe we want to convert our temperature values from Celsius to Fahrenheit.</p>
+<blockquote class="blockquote">
+<p>Question: For our cropped data, how many calculations would this conversion require?</p>
+</blockquote>
+<p>A reminder of the formula for converting Celsius to Fahrenheit:</p>
+<p><span class="math display">\[
+F = (C \times \frac{9}{5}) + 32
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># (C * 9/5) + 32 = F</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>temp_sw_f <span class="ot">&lt;-</span> (temp_sw <span class="sc">*</span> <span class="dv">9</span><span class="sc">/</span><span class="dv">5</span>) <span class="sc">+</span> <span class="dv">32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And plotting the data, the image looks the pretty much the same, but note the scale is different:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp_sw_f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/plot-fahrenheit-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="aside-the-world-is-not-flat-so-why-is-my-map" class="level3">
+<h3 class="anchored" data-anchor-id="aside-the-world-is-not-flat-so-why-is-my-map">Aside: The world is not flat, so why is my map?</h3>
+<blockquote class="blockquote">
+<p>Question: What are some differences between the map we see on our screen and reality?</p>
+</blockquote>
+<p>The process of taking the three-dimensional shape of the Earth and presenting it in a two-dimensional format (i.e.&nbsp;a map) is called projection and there are several ways of doing this. And when I say several, I actually mean infinite. From the <a href="https://en.wikipedia.org/wiki/List_of_map_projections">Wikipedia page on map projections</a>: “Because there is no limit to the number of possible map projections, there can be no comprehensive list.” However, there are common ones that you should probably stick to.</p>
+<p>When working in R, the coordinate reference system describes how the three- dimensional data are transformed into two-dimensional space.</p>
+<p>Let us look once more at our cropped temperature raster metadata.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>temp_sw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 600, 672, 1  (nrow, ncol, nlyr)
+resolution  : 0.04166667, 0.04166667  (x, y)
+extent      : -126, -98, 21, 46  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source(s)   : memory
+varname     : global-temperature 
+name        : global-temperature 
+min value   :          -4.245667 
+max value   :          27.129499 </code></pre>
+</div>
+</div>
+<p>Specifically, we see the value in the coord. ref. field is</p>
+<p><code>lon/lat WGS 84 (EPSG:4326)</code></p>
+<p>Without going into too much detail, this tells us it uses the World Geodetic System 84 reference system with latitude and longitude. This is a pretty good one to use as long as your maps aren’t super close to the poles. <em>All</em> projections from three-dimensional space to two-dimensional space result in some distortions, and this one really stretches out area near the poles. You can see this in action by plotting your original map:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/show-pole-distortion-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Look at Antarctica! It’s huge!</p>
+<p>We can change the way our map looks by re-projecting the raster. That is, we make a new object in R that uses a different coordinate reference system. You might have noticed in the coord. ref. field that there was the extra bit of text in parentheses: “(EPSG:4326)”. Thankfully there is a set of unique identifiers for all the different coordinate reference systems and we can use those identifiers to re-project our data. These identifiers all start with the letters “epsg” and end with a series of four to five numbers.</p>
+<p>As an example, we can re-project our southwest temperature data to a projection that does not distort the area quite as much. We do this with the terra function <code>project()</code> and then plot the result:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>temp_sw_reproject <span class="ot">&lt;-</span> <span class="fu">project</span>(temp_sw, <span class="st">"epsg:5070"</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp_sw_reproject)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/reproject-temp-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>Question: What is the name of the coordinate system that EPSG 5070 refers to?</p>
+</blockquote>
+</section>
+<section id="colors-on-maps" class="level3">
+<h3 class="anchored" data-anchor-id="colors-on-maps">Colors on maps</h3>
+<p>So, we have a map, but these colors make me think of elevation, not temperature, so how can we change this? Let’s start by looking at the documentation one of the functions for creating color palettes, called <code>rainbow()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Brings up R documentation for some color palettes</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>?rainbow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This actually brings up documentation for a bunch of palettes, but looking at the entry in the <strong>Usage</strong> section for <code>rainbow()</code>, we see that we need to give it a value for the number of colors, <code>n</code>. Let us try passing the rainbow palette to the plot function, giving it fifty colors:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp_sw, <span class="at">col =</span> <span class="fu">rainbow</span>(<span class="at">n =</span> <span class="dv">50</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/rainbow-colors-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Well, the colors changed, but I would not say for the better. In fact, when I go about making decisions about colors, my go-to resource is ColorBrewer at <a href="https://colorbrewer2.org">https://colorbrewer2.org</a>.</p>
+<p>You can click through the options and it will display the different palettes. For our purposes, the Yellow-Orange-Brown palette (“YlOrBr”) should work well. To see the name of the palette, look just to the left of the “EXPORT” tab:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/colorbrewer-palette-name.png" class="img-fluid figure-img"></p>
+<figcaption>Example of palette name in ColorBrewer, YlOrBr</figcaption>
+</figure>
+</div>
+<p>To use these palettes, we replace the <code>rainbow()</code> function with the <code>hcl.colors()</code> function, and indicate which palette we want through the <code>palette</code> argument:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp_sw, <span class="at">col =</span> <span class="fu">hcl.colors</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">palette =</span> <span class="st">"YlOrBr"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/pick-colors-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This is close, but I’d rather reverse the scale, so darker colors indicate hotter temperatures. I am going to create a variable that stores these colors so I do not have to keep writing out the <code>hcl.colors()</code> specification.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>temp_cols <span class="ot">&lt;-</span> <span class="fu">rev</span>(<span class="fu">hcl.colors</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">palette =</span> <span class="st">"YlOrBr"</span>))</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp_sw, <span class="at">col =</span> temp_cols)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/reverse-colors-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>Question: What are the values stored in the <code>temp_cols</code> variable?</p>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="geospatial-vector-data" class="level2">
+<h2 class="anchored" data-anchor-id="geospatial-vector-data">Geospatial vector data</h2>
+<p>Now we will switch to vector data, which are all based on coordinates. These data commonly come as points (a single pair of coordinates), lines (multiple pairs of coordinates), or polygons (multiple pairs of coordinates that define a geographical area).</p>
+<section id="adding-points" class="level3">
+<h3 class="anchored" data-anchor-id="adding-points">Adding Points</h3>
+<p>Let us create a data frame with some city coordinates that we can add to the map.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>cities <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">city =</span> <span class="fu">c</span>(<span class="st">"Tucson"</span>, <span class="st">"Hermosillo"</span>, <span class="st">"Carson City"</span>),</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">lat =</span> <span class="fu">c</span>(<span class="fl">32.23</span>, <span class="fl">29.02</span>, <span class="fl">39.18</span>),</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">lon =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">110.95</span>, <span class="sc">-</span><span class="fl">110.93</span>, <span class="sc">-</span><span class="fl">119.77</span>))</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>cities</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         city   lat     lon
+1      Tucson 32.23 -110.95
+2  Hermosillo 29.02 -110.93
+3 Carson City 39.18 -119.77</code></pre>
+</div>
+</div>
+<p>To make these data easier to work with our raster object, we are going to transform it to a spatial vector, or SpatVector in terra-speak. While we are at it, we will tell it to use the same coordinate reference system as the temperature data we already loaded in.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>cities_vect <span class="ot">&lt;-</span> <span class="fu">vect</span>(cities, <span class="at">crs =</span> <span class="fu">crs</span>(temp_sw))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Looking at the SpatVector object, it doesn’t really look very different.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>cities_vect</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> class       : SpatVector 
+ geometry    : points 
+ dimensions  : 3, 1  (geometries, attributes)
+ extent      : -119.77, -110.93, 29.02, 39.18  (xmin, xmax, ymin, ymax)
+ coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+ names       :        city
+ type        :       &lt;chr&gt;
+ values      :      Tucson
+                Hermosillo
+               Carson City</code></pre>
+</div>
+</div>
+<p>Now we can make our map and add those points to the map. Make sure to use <code>add = TRUE</code> in our second call to <code>plot()</code> so it adds the points to the already existing map.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp_sw, <span class="at">col =</span> temp_cols)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cities_vect, <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/add-cities-points-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Finally, because we stored the names of the cities in our data frame, we can also add those.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp_sw, <span class="at">col =</span> temp_cols)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cities_vect, <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(cities_vect, <span class="at">labels =</span> <span class="st">"city"</span>, <span class="at">pos =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/add-cities-names-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="adding-areas-aka-polygons" class="level3">
+<h3 class="anchored" data-anchor-id="adding-areas-aka-polygons">Adding Areas (aka Polygons)</h3>
+<p>What if we want to add areas, not just points, to our map? Here is where we get into the realm of polygons. We can do things like add polygons from shapefiles that we download or export from a program like ArcGIS. For this lesson, though, we are going to make a polygon on the fly and add that to our map.</p>
+<p>Going back to our original goal of a map highlighting desert biomes, we will define a desert as an area that receives less than 250 millimeters of precipitation per year (<em>Aside</em>: this definition only goes so far; for example, the city of Tucson does not, technically, get counted as being a desert because it receives an average of 300 mm of precipitation per year. You can read more about <a href="https://en.wikipedia.org/wiki/Desert#Defining_characteristics">defining deserts on Wikipedia</a>).</p>
+<p>So we start by loading in a file with global precipitation data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>prec <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">"data/global-precipitation.tif"</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>prec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 4320, 8640, 1  (nrow, ncol, nlyr)
+resolution  : 0.04166667, 0.04166667  (x, y)
+extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source      : global-precipitation.tif 
+name        : global-precipitation 
+min value   :                    0 
+max value   :                11246 </code></pre>
+</div>
+</div>
+<p>Then cropping those data to the North American southwest (that we defined above).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>prec_sw <span class="ot">&lt;-</span> <span class="fu">crop</span>(prec, southwest_ext)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>prec_sw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 600, 672, 1  (nrow, ncol, nlyr)
+resolution  : 0.04166667, 0.04166667  (x, y)
+extent      : -126, -98, 21, 46  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source(s)   : memory
+varname     : global-precipitation 
+name        : global-precipitation 
+min value   :                   45 
+max value   :                 3184 </code></pre>
+</div>
+</div>
+<p>And it is usually good to do a reality check and plot the data, too:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(prec_sw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/plot-precipitation-data-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Cool. Map looks good and the ranges of precipitation seem reasonable, too. Now we need to use this information to identify those areas considered deserts. We will use this categorization to draw an outline of desert biomes on our temperature map. As we talked about before, we will use the precipitation-based definition of a desert, where any spot that received less than 250 mm in annual precipitation is categorized as a desert. We start by defining our cutoff and then creating a new raster based on values in the precipitation raster.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>desert_max <span class="ot">&lt;-</span> <span class="dv">250</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>prec_desert <span class="ot">&lt;-</span> prec_sw <span class="sc">&lt;</span> desert_max</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>prec_desert</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 600, 672, 1  (nrow, ncol, nlyr)
+resolution  : 0.04166667, 0.04166667  (x, y)
+extent      : -126, -98, 21, 46  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+source(s)   : memory
+varname     : global-precipitation 
+name        : global-precipitation 
+min value   :                FALSE 
+max value   :                 TRUE </code></pre>
+</div>
+</div>
+<p>Looking at the raster metadata, we see the big difference is the min and max values - they aren’t numbers anymore, but are now logicals (<code>FALSE</code> and <code>TRUE</code>). This is because what we stored in the <code>prec_desert</code> object was the output of a comparison. That is, for each cell in our southwest precipitation raster, <code>prec_sw</code>, we asked if the value in that cell was less than 250 mm. The answer is either <code>TRUE</code> or <code>FALSE</code>, so that is what is stored in the resulting output raster, <code>prec_desert</code>. We can also see this when we plot the output:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(prec_desert)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/plot-desert-logical-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The areas that are lighting up in yellow are those “desert” biomes. For now, we are going to ignore the limitations of our precipitation-based definition (i.e.&nbsp; the southern portion of the Central Valley of California is not generally considered a desert).</p>
+<p>To add this to our map, though, we do not want a logical raster, rather, we want a polygon, in order to draw a border around the deserts. We start by changing all the <code>FALSE</code> values to missing (<code>NA</code>) - if we did not do this, R would make <em>two</em> polygons from the data, one for desert areas and one for “not desert” areas. We then use the <code>as.polygons()</code> function to do the transformation and plot the polygon alone as a reality check.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Change all FALSE values to missing data</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>prec_desert[<span class="sc">!</span>prec_desert] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert remaining non-missing values to a polygon (vector data)</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>desert_poly <span class="ot">&lt;-</span> <span class="fu">as.polygons</span>(prec_desert)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot polygons (reality check)</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(desert_poly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/desert-to-polygon-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Looking good! Now we can plot our temperature map again and add the polygon to the map. Feel free to experiment with arguments to change the colors and transparency of the desert polygon (hint: look at the documentation for the <code>polys()</code> function via <code>?polys</code> for details on how to do this).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot base temperature map</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp_sw, <span class="at">col =</span> temp_cols)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Add desert polygon</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="fu">polys</span>(<span class="at">x =</span> desert_poly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/add-desert-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Finally, because we are being pedantic, let us make the plot again, this time adding a title explaining what the colors mean (“00B0” is Unicode for the degree symbol).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp_sw, <span class="at">col =</span> temp_cols, </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Mean Annual Temperature (\u00B0C)"</span>)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">polys</span>(<span class="at">x =</span> desert_poly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="019-intro-geo_files/figure-html/add-title-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>And if you are inclined, you can output this map by wrapping all the plotting commands within a call to one of the graphics device functions (e.g.&nbsp;<code>png()</code>, <code>pdf()</code>) and then turning off this graphical redirect with <code>dev.off()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="at">filename =</span> <span class="st">"sw-desert-heat.png"</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(temp_sw, <span class="at">col =</span> temp_cols, </span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Mean Annual Temperature (\u00B0C)"</span>)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="fu">polys</span>(<span class="at">x =</span> desert_poly)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+</section>
+<section id="glossary" class="level2">
+<h2 class="anchored" data-anchor-id="glossary">Glossary</h2>
+<p>These are the functions we used in this lesson; use the <code>?</code> in R to find more details (e.g.&nbsp;<code>?rast</code>). The following are from the terra package:</p>
+<ul>
+<li><code>as.polygons</code>: Convert a raster object into a polygon (shape) object.</li>
+<li><code>crop</code>: Crop the geographic extent of a raster.</li>
+<li><code>ext</code>: Create a SpatExtent (spatial extent) object.</li>
+<li><code>plot</code>: Um, plot?</li>
+<li><code>polys</code>: Add polygons to an existing plot.</li>
+<li><code>project</code>: Change the projection of a geospatial object.</li>
+<li><code>rast</code>: Read in a raster file (<code>rast()</code> does more than this, too, but this is what we used it for here).</li>
+<li><code>text</code>: Add text to an existing plot.</li>
+</ul>
+<p>And we used a few from base R, too:</p>
+<ul>
+<li><code>dev.off</code>: Stop writing to a graphics output file.</li>
+<li><code>hcl.colors</code>: Create a vector of color values based on a palette.</li>
+<li><code>png</code>: Start writing to a PNG graphics file.</li>
+<li><code>rainbow</code>: Create a vector of unicorn-vomit colors.</li>
+<li><code>rev</code>: Reverse the order of values in a vector.</li>
+</ul>
+<hr>
+</section>
+<section id="additional-resources" class="level2">
+<h2 class="anchored" data-anchor-id="additional-resources">Additional resources</h2>
+<ul>
+<li>A really nice <a href="https://rspatial.org/">guide to using terra in R</a>.</li>
+<li>A cheat-sheet of sorts for <a href="https://rspatial.github.io/terra/reference/terra-package.html">terra functions</a>.</li>
+<li>The <a href="https://r-spatial.github.io/sf/">sf package</a> is another way to work with geospatial data in R. It offers a lot of functionality and works well (most of the time) with terra objects.</li>
+<li>The <a href="https://www.openstreetmap.org">OpenStreetMap</a> (OSM) project also has an R package, <a href="https://docs.ropensci.org/osmdata/">osmdata</a>, that allows you to download and use data available from OSM.</li>
+<li>To really impress your friends, the <a href="https://dieghernan.github.io/tidyterra/">tidyterra</a> package offers functions for using terra objects (SpatRasters, SpatVectors, etc.) with the ggplot2 package.</li>
+<li>For a more in-depth look at geospatial applications in R, check out the Data Carpentry lesson introducing <a href="https://datacarpentry.org/r-raster-vector-geospatial/">raster &amp; vector data in R</a>.</li>
+<li>A <a href="https://jcoliver.github.io/learn-r/019-intro-geo.pdf">PDF version</a> of this lesson</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+ Copyright 2024, Jeffrey Oliver
+  </li>  
+</ul>
+    </div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="https://creativecommons.org/licenses/by/4.0/">
+<p>CC BY 4.0 Deed</p>
+</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/jcoliver">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
