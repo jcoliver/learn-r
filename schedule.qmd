@@ -9,10 +9,6 @@ format: # to suppress pdf link
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 30  | Jul   | Hybrid open lab                    |
-| 06  | Aug   | Hybrid open lab                    |
-| 13  | Aug   | Hybrid open lab                    |
-| 20  | Aug   | Hybrid open lab                    |
 | 27  | Aug   | Hybrid open lab                    |
 | 03  | Sep   | Hybrid open lab                    |
 | 10  | Sep   | Introduction to data visualization with ggplot |
@@ -20,7 +16,7 @@ format: # to suppress pdf link
 | 24  | Sep   | Introduction to R statistics       |
 | 01  | Oct   | Hybrid open lab                    |
 | 08  | Oct   | Data science: more fun, less pain with tidyverse |
-| 15  | Oct   | Hybrid open lab                    |
+| 15  | Oct   | Python Takeover: **Reading Python for Beginners** |
 | 22  | Oct   | Git and GitHub with RStudio        |
 | 29  | Oct   | Hybrid open lab                    |
 | 05  | Nov   | Machine learning in R part 1: regression |
