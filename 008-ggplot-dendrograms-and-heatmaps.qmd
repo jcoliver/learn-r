@@ -5,7 +5,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
 ```{r library-check, echo = FALSE, results = "hide"}
-libs <- c("ggdendro")
+libs <- c("ggdendro", "ggplot2", "grid", "tidyr")
 libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
 if (length(libs_missing) > 0) {
   for (l in libs_missing) {

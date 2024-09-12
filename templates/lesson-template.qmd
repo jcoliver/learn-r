@@ -4,6 +4,23 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
+## TODO: Update library check
+
+Add any libraries that are used to the `libs` vector.
+If lesson is base R only, remove this chunk entirely.
+
+```{r library-check, echo = FALSE, results = "hide"}
+#| output: false
+
+libs <- c("randomForest", "dplyr")
+libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
+if (length(libs_missing) > 0) {
+  for (l in libs_missing) {
+    install.packages(l)
+  }
+}
+```
+
 [INTRODUCTORY SENTENCE]
 
 #### Learning objectives
