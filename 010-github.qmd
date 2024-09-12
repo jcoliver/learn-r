@@ -331,12 +331,12 @@ e-mail address, and current date):
 # 2021-03-23
 
 # Simulate predictor variable
-x <- rnorm(n = 100)
+predictor <- rnorm(n = 100)
 # Simulate response variable with some noise
-y <- 2 * x + rnorm(n = 100, sd = 0.2)
+response <- 2 * predictor + rnorm(n = 100, sd = 0.2)
 
 # Plot the data
-plot(x = x, y = y)
+plot(x = predictor, y = response)
 ```
 
 Save this file as "simulate-plot-data.R".
