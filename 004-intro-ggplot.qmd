@@ -168,7 +168,7 @@ lifeExp_plot <- ggplot(data = gapminder,
   scale_x_log10()
 
 # Draw plot
-print(lifeExp_plot)  
+lifeExp_plot  
 ```
 
 One thing of interest is to include additional information in the plot, such as 
@@ -293,15 +293,14 @@ ggsave(filename = "output/gdp-lifeExp-plot.png", plot = lifeExp_plot)
 # jcoliver@email.arizona.edu
 # 2017-02-23
 
-rm(list = ls())
-
 #install.packages("ggplot2")
 library("ggplot2")
 ```
 
-Now with this call to `rm`, we have cleared out all our variables from memory, 
-so we have to load the `gapminder` data again. To create a violin plot, we use 
-the same approach as for a boxplot, but instead of `geom_point`, we use 
+In the spirit of reproducibility, we would like this script to be able to run 
+and _not_ depend on variables being loaded from other scripts. So, we want to 
+start by loading the those gapminder data. To create a violin plot, we use the 
+same approach as for a boxplot, but instead of `geom_point`, we use 
 `geom_violin`:
 
 ```{r violin-plot, fig.height = 3}
@@ -453,8 +452,6 @@ Our final script for this violin plot is then:
 # Jeff Oliver
 # jcoliver@email.arizona.edu
 # 2017-02-23
-
-rm(list = ls())
 
 #install.packages("ggplot2")
 library("ggplot2")
