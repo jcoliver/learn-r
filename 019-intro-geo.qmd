@@ -4,8 +4,6 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
-# TODO: Make bit.ly links for data
-
 # TODO: Provide answers to questions...somewhere
 
 ```{r library-check, echo = FALSE, results = "hide"}
@@ -135,8 +133,10 @@ the gritty details, we are using a pair of the standard "bioclim" variables:
 bio1 (annual mean temperature) and bio12 (annual precipitation) at 2.5 minute 
 resolution. We need to download these two files:
 
-+ temperature: [https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/global-temperature.tif](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/global-temperature.tif)
-+ precipitation: [https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/global-precipitation.tif](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/global-precipitation.tif)
++ temperature: [https://bit.ly/r-global-temp](https://bit.ly/r-global-temp) 
+(which redirects to [https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/global-temperature.tif](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/global-temperature.tif))
++ precipitation: [https://bit.ly/r-global-prec](https://bit.ly/r-global-prec)
+(which redirects to [https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/global-precipitation.tif](https://raw.githubusercontent.com/jcoliver/learn-r/gh-pages/data/global-precipitation.tif))
 
 Place both the files in the "data" folder in the project you created at the 
 start of the lesson.
@@ -204,6 +204,19 @@ the easternmost, westernmost, southernmost, and northernmost points.
 > Question: how would you find the latitude and longitude values to define this 
 extent?
 
+::: {.callout-tip appearance="true" collapse="true"}
+#### Answer
+
+There are likely multiple ways to find the boundaries, but I used Google Maps. 
+On a Google Map showing the geographic area you are interested in, use the 
+mouse to right-click / Ctrl-click on one of the corners. A dialog should appear
+that shows the latitude and longitude for the point where you clicked. If you 
+then click on those coordinates, it will copy them to the clipboard. You can 
+then paste them into your code where appropriate. Just be sure to remember that
+the first number is latitude (generally considered the y-axis in geospatial 
+data) and the second number is longitued (the x-axis in geospatial data).
+:::
+
 For this lesson, we can get away with using whole degree values; we will use 
 decimal degrees later in the lesson. When defining an area with four values 
 (easternmost, westernmost, etc.), we need to be sure to get them in the right 
@@ -223,8 +236,8 @@ southwest_ext <- ext(c(-126, -98, 21, 46))
 You will also note that we used negative values for those western hemisphere 
 longitudes (-126, -98). The same goes for values in the southern hemisphere.
 
-> Question: Why would we use negative values instead of the letters W and S for 
-western longitudes and southern latitudes, respectively?
+> Question 2: Why would we use negative values instead of the letters W and S 
+for western longitudes and southern latitudes, respectively?
 
 We can do a reality check and print out the value by running the name of the 
 extent.
@@ -267,7 +280,7 @@ The _really_ nice thing about modern geospatial package in R is that we can do
 operations on every cell of the data. For example maybe we want to convert our 
 temperature values from Celsius to Fahrenheit.
 
-> Question: For our cropped data, how many calculations would this conversion 
+> Question 3: For our cropped data, how many calculations would this conversion 
 require?
 
 A reminder of the formula for converting Celsius to Fahrenheit:
@@ -290,8 +303,8 @@ plot(temp_sw_f)
 
 ### Aside: The world is not flat, so why is my map?
 
-> Question: What are some differences between the map we see on our screen and 
-reality?
+> Question 4: What are some differences between the map we see on our screen 
+and reality?
 
 The process of taking the three-dimensional shape of the Earth and presenting 
 it in a two-dimensional format (i.e. a map) is called projection and there are 
@@ -344,7 +357,8 @@ temp_sw_reproject <- project(temp_sw, "epsg:5070")
 plot(temp_sw_reproject)
 ```
 
-> Question: What is the name of the coordinate system that EPSG 5070 refers to?
+> Question 5: What is the name of the coordinate system that EPSG 5070 refers 
+to?
 
 ### Colors on maps
 
@@ -394,7 +408,7 @@ temp_cols <- rev(hcl.colors(n = 50, palette = "YlOrBr"))
 plot(temp_sw, col = temp_cols)
 ```
 
-> Question: What are the values stored in the `temp_cols` variable?
+> Question 6: What are the values stored in the `temp_cols` variable?
 
 ***
 
