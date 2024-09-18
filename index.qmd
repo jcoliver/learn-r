@@ -45,3 +45,4 @@ installation details on the
 - [Interactive dashboards with Shiny](016-intro-shiny.qmd)
 - [Mapping with Open Street Maps in R](017-open-street-map.qmd)
 - [Machine learning in R part 1: regression](018-ml-regression.qmd)
+- [Intro to Geospatial data in R](019-intro-geo.qmd)
