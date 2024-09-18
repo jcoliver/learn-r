@@ -4,8 +4,6 @@ author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
-# TODO: Provide answers to questions...somewhere
-
 ```{r library-check, echo = FALSE, results = "hide"}
 #| output: false
 
@@ -236,8 +234,20 @@ southwest_ext <- ext(c(-126, -98, 21, 46))
 You will also note that we used negative values for those western hemisphere 
 longitudes (-126, -98). The same goes for values in the southern hemisphere.
 
-> Question 2: Why would we use negative values instead of the letters W and S 
+> Question: Why would we use negative values instead of the letters W and S 
 for western longitudes and southern latitudes, respectively?
+
+::: {.callout-tip appearance="true" collapse="true"}
+#### Answer
+
+R requires data to be a single type, either numbers or text. If we use the 
+W and S (and by extension E and N) designations, such as 126W and 98S, R will 
+treat these data as text, not numeric values. This will make our life harder 
+when we try to use the data in R. By using _only_ things that R recognizes as 
+numbers (for example, -126 and -98), we make it easy for R to use those values 
+in geospatial applications (like making maps).
+:::
+
 
 We can do a reality check and print out the value by running the name of the 
 extent.
@@ -280,8 +290,31 @@ The _really_ nice thing about modern geospatial package in R is that we can do
 operations on every cell of the data. For example maybe we want to convert our 
 temperature values from Celsius to Fahrenheit.
 
-> Question 3: For our cropped data, how many calculations would this conversion 
+> Question: For our cropped data, how many calculations would this conversion 
 require?
+
+::: {.callout-tip appearance="true" collapse="true"}
+#### Answer
+
+This calculation needs to happen for every cell in our data. Every. Single. 
+Cell. How many cells to we have? Recall that we can print out information about 
+our temperature data by running a line of code that contains the name of the 
+variable where our temperature data are stored:
+
+```{r answer-num-calculations}
+temp_sw
+```
+
+And in the `dimensions` field, we see there are `r nrow(temp_sw)` rows and  
+`r ncol(temp_sw)` columns. The total number of cells is then the product of 
+these two values: `r nrow(temp_sw)` $\times$ `r ncol(temp_sw)` = 
+`r format(nrow(temp_sw) * ncol(temp_sw), big.mark = ",")`. So, that means 
+converting our data from Celsius to Fahrenheit requires 
+`r format(nrow(temp_sw) * ncol(temp_sw), big.mark = ",")` calculations. 
+Thankfully, R geospatial packages know that when we to perform mathematical 
+operations on a geospatial data object (like our `temp_sw` object), it knows to 
+do the operations separately for each cell.
+:::
 
 A reminder of the formula for converting Celsius to Fahrenheit:
 
@@ -303,8 +336,19 @@ plot(temp_sw_f)
 
 ### Aside: The world is not flat, so why is my map?
 
-> Question 4: What are some differences between the map we see on our screen 
+> Question: What are some differences between the map we see on our screen 
 and reality?
+
+::: {.callout-tip appearance="true" collapse="true"}
+#### Answer
+
+Look at Antarctica! It's huge and not in a shape we immediately recognize 
+as Antarctica. The sizes of land masses can only really be compared across 
+similar latitudes - the closer one gets to the poles, the greater the 
+distortion that arises when when forcing a three-dimensional shape (i.e. the 
+sphere of the Earth) into a two-dimensional space (i.e. the map on our 
+screens).
+:::
 
 The process of taking the three-dimensional shape of the Earth and presenting 
 it in a two-dimensional format (i.e. a map) is called projection and there are 
@@ -357,8 +401,17 @@ temp_sw_reproject <- project(temp_sw, "epsg:5070")
 plot(temp_sw_reproject)
 ```
 
-> Question 5: What is the name of the coordinate system that EPSG 5070 refers 
+> Question: What is the name of the coordinate system that EPSG 5070 refers 
 to?
+
+::: {.callout-tip appearance="true" collapse="true"}
+#### Answer
+
+Using your handy-dandy search engine of choice, you can search for "EPSG 5070" 
+and see it is the [Conus Albers projection](https://en.wikipedia.org/wiki/Albers_projection) 
+of North America.
+:::
+
 
 ### Colors on maps
 
@@ -408,7 +461,28 @@ temp_cols <- rev(hcl.colors(n = 50, palette = "YlOrBr"))
 plot(temp_sw, col = temp_cols)
 ```
 
-> Question 6: What are the values stored in the `temp_cols` variable?
+> Question: What are the values stored in the `temp_cols` variable?
+
+::: {.callout-tip appearance="true" collapse="true"}
+#### Answer
+
+You can look at the first six values stored in the `temp_cols` variable with 
+the `head()` command:
+
+```{r answer-colors}
+head(temp_cols)
+```
+
+These are color values based on the hexadecimal coloring system. Briefly, 
+colors are indicated by a value in three channels: red, green, and blue. 
+Following the pound sign (`#`), the first two characters indicate how much red 
+is in the color, the second two characters indicate how much green is in the 
+color, and the final two characters indicate how much blue is in the color 
+(i.e. `#RRGGBB`). Those characters use a base-16 system, so numbers 0-9 
+indicate those values, but letters A-F indicate values 10-15. For example, 
+`"#0000FF"` represents pure blue, while `"#FF00FF"` is an equal mix of red and 
+blue (also known as magenta).
+:::
 
 ***
 
