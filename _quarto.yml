@@ -22,6 +22,7 @@ project:
     - 016-intro-shiny.qmd
     - 017-open-street-map.qmd
     - 018-ml-regression.qmd
+    - 019-intro-geo.qmd
 
 website:
   title: "learn-r"
