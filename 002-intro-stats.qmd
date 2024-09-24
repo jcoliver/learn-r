@@ -27,7 +27,7 @@ new project via:
 + File > New Project...
 + Select 'New Directory'
 + For the Project Type select 'New Project'
-+ For Directory name, call it something like "r-graphing" (without the quotes)
++ For Directory name, call it something like "r-stats" (without the quotes)
 + For the subdirectory, select somewhere you will remember (like "My Documents" 
 or "Desktop")
 
