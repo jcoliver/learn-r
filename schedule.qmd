@@ -9,8 +9,6 @@ format: # to suppress pdf link
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 27  | Aug   | Hybrid open lab                    |
-| 03  | Sep   | Hybrid open lab                    |
 | 10  | Sep   | Introduction to data visualization with ggplot |
 | 17  | Sep   | Hybrid open lab                    |
 | 24  | Sep   | Introduction to R statistics       |
@@ -21,7 +19,7 @@ format: # to suppress pdf link
 | 29  | Oct   | Hybrid open lab                    |
 | 05  | Nov   | Machine learning in R part 1: regression |
 | 12  | Nov   | Hybrid open lab                    |
-| 19  | Nov   | Interactive web apps with Shiny    |
+| 19  | Nov   | Hybrid open lab                    |
 | 26  | Nov   | Hybrid open lab                    |
 | 03  | Dec   | Introduction to geospatial data in R |
 | 10  | Dec   | Hybrid open lab                    |
