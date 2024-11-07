@@ -705,14 +705,10 @@ head(new_album)
 
 What these data do not have is a billboard position, because they haven't been 
 released yet. So we will now do the prediction step again, using that 
-`full_model` we just estimated. Note that the first column has the track name, 
-which is not part of the model (although it could be), so we exclude that 
-column when making predictions by using the negation symbol. That is, for the 
-`newdata` argument, we pass `new_album[, -1]`, which tells R to skip the first 
-column:
+`full_model` we just estimated with the data for the new album:
 
 ```{r predict-new-album}
-new_predict <- predict(full_model, newdata = new_album[, -1])
+new_predict <- predict(full_model, newdata = new_album)
 ```
 
 We want to take these position predictions and see which songs they correspond 
@@ -810,9 +806,8 @@ full_model <- randomForest(peak_position ~ ., data = swift_data)
 # Load song data for new album
 new_album <- read.csv(file = "data/swift-new.csv")
 
-# Predict chart position for each of the songs on the new album, skipping the 
-# first column (track name)
-new_predict <- predict(full_model, newdata = new_album[, -1])
+# Predict chart position for each of the songs on the new album
+new_predict <- predict(full_model, newdata = new_album)
 
 # Data frame holding predictions and track name
 song_predict <- data.frame(track_num = 1:12,
