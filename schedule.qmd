@@ -21,8 +21,8 @@ format: # to suppress pdf link
 | 12  | Nov   | Hybrid open lab                    |
 | 19  | Nov   | Hybrid open lab                    |
 | 26  | Nov   | Hybrid open lab                    |
-| 03  | Dec   | Introduction to geospatial data in R |
-| 10  | Dec   | Hybrid open lab                    |
+| 03  | Dec   | Hybrid open lab                    |
+| 10  | Dec   | Introduction to geospatial data in R |
 | 17  | Dec   | Hybrid open lab                    |
 | 24  | Dec   | _No lab this day_                  |
 | 31  | Dec   | _Happy New Year (no lab this day)_ |
