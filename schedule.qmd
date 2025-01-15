@@ -9,23 +9,12 @@ format: # to suppress pdf link
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 10  | Sep   | Introduction to data visualization with ggplot |
-| 17  | Sep   | Hybrid open lab                    |
-| 24  | Sep   | Introduction to R statistics       |
-| 01  | Oct   | Hybrid open lab                    |
-| 08  | Oct   | Data science: more fun, less pain with tidyverse |
-| 15  | Oct   | Python Takeover: **Reading Python for Beginners** |
-| 22  | Oct   | Git and GitHub with RStudio        |
-| 29  | Oct   | Hybrid open lab                    |
-| 05  | Nov   | Machine learning in R part 1: regression |
-| 12  | Nov   | Hybrid open lab                    |
-| 19  | Nov   | Hybrid open lab                    |
-| 26  | Nov   | Hybrid open lab                    |
-| 03  | Dec   | Introduction to geospatial data in R |
-| 10  | Dec   | Hybrid open lab                    |
-| 17  | Dec   | Hybrid open lab                    |
-| 24  | Dec   | _No lab this day_                  |
-| 31  | Dec   | _Happy New Year (no lab this day)_ |
+| 21  | Jan   | Hybrid open lab                    |
+| 28  | Jan   | Hybrid open lab                    |
+| 04  | Feb   | Hybrid open lab                    |
+| 11  | Feb   | Hybrid open lab                    |
+| 18  | Feb   | Hybrid open lab                    |
+| 25  | Feb   | Hybrid open lab                    |
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://lib.arizona.edu/study/spaces/data-studio) 

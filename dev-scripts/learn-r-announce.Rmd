@@ -13,15 +13,12 @@ suppressPackageStartupMessages(expr = library(lubridate))
 ```{r setup-schedule}
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2024-12-03",
-                                 "2024-12-10",
-                                 "2024-12-17",
-                                 "2024-12-24",
-                                 "2024-12-31"),
-                       lessons = c(16, -1, -1, 0, 0))
+schedule <- data.frame(dates = c("2025-01-21",
+                                 "2025-01-28"),
+                       lessons = c(-1, -1))
 
 # Toggle indicating whether or not attendance files should be created
-create.files <- TRUE
+create.files <- FALSE
 
 # Where attendance files will be placed
 attend_destination <- "./"
@@ -52,8 +49,10 @@ _All sessions will be 9-11 am (MST) on Tuesday_. Sessions will be offered in
 hybrid format: we will be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
 and running a concurrent Zoom session at [https://arizona.zoom.us/j/83039033012](https://arizona.zoom.us/j/83039033012).
 
+<!--
 To get the most out of these workshops, participants should bring a laptop with 
 [R and RStudio installed](https://jcoliver.github.io/learn-r/000-setup-instructions.html). 
+-->
 
 ```{r print-schedule, results = "asis"}
 # Keep track of whether an open lab has been encountered; only print blurb for 
@@ -85,7 +84,7 @@ Additional resources:
 + Even more data science events can be found on the Data Science Institute's events calendar at [https://datascience.arizona.edu/calendar](https://datascience.arizona.edu/calendar)
 + Want more help? Sign up for the UA Data Science Slack workspace at
 [https://jcoliver.github.io/uadatascience-slack/](https://jcoliver.github.io/uadatascience-slack/)
-+ Stay up to date with R workshops by signing up for the University of Arizona 
++ Stay up to date with the schedule by signing up for the University of Arizona 
 R Users mailing list at
 [https://list.arizona.edu/sympa/subscribe/ruaz](https://list.arizona.edu/sympa/subscribe/ruaz)
 + If you cannot make it to the R session or just want more R, check out former 
