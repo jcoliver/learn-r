@@ -14,7 +14,7 @@ format: # to suppress pdf link
 | 04  | Feb   | Hybrid open lab                    |
 | 11  | Feb   | Hybrid open lab                    |
 | 18  | Feb   | Hybrid open lab                    |
-| 25  | Feb   | Hybrid open lab                    |
+| 25  | Feb   | Introduction to Python for beginners (_in person only_) |
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://lib.arizona.edu/study/spaces/data-studio) 
