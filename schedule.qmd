@@ -9,10 +9,11 @@ format: # to suppress pdf link
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 04  | Mar   | Hybrid open lab                    |
-| 11  | Mar   | _No lab this day_ (Spring Break)   |
-| 18  | Mar   | Hybrid open lab                    |
-| 25  | Mar   | Hybrid open lab                    |
+| 01  | Apr   | Hybrid open lab                    |
+| 08  | Apr   | Hybrid open lab                    |
+| 15  | Apr   | Hybrid open lab                    |
+| 22  | Apr   | Hybrid open lab                    |
+| 29  | Apr   | Hybrid open lab                    |
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://lib.arizona.edu/study/spaces/data-studio) 
