@@ -11,7 +11,7 @@
     "href": "schedule.html",
     "title": "Schedule",
     "section": "",
-    "text": "Tentative schedule of upcoming workshops\n\n\n\nDay\nMonth\nWorkshop\n\n\n\n\n01\nApr\nHybrid open lab\n\n\n08\nApr\nHybrid open lab\n\n\n15\nApr\nHybrid open lab\n\n\n22\nApr\nHybrid open lab\n\n\n29\nApr\nHybrid open lab\n\n\n\nAll sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will be in the Data Studios of the Main Library and running a concurrent Zoom session.\nFor information on connecting to online sessions, reach out to us on the r channel of the UA Data Science Slack workspace or contact Jeff Oliver.\nTo get the most out of these workshops, participants should bring a laptop with R and RStudio installed.\nIf you have questions about the schedule, or are interested in learning about a particular topic in R, contact Jeff Oliver at jcoliver@arizona.edu."
+    "text": "Day\nMonth\nWorkshop\n\n\n\n\n06\nMay\nHybrid open lab\n\n\n13\nMay\nHybrid open lab\n\n\n20\nMay\nHybrid open lab\n\n\n27\nMay\nHybrid open lab\n\n\n03\nJun\nHybrid open lab\n\n\n10\nJun\nHybrid open lab\n\n\n17\nJun\nHybrid open lab\n\n\n24\nJun\nHybrid open lab\n\n\n01\nJul\nHybrid open lab\n\n\n08\nJul\nHybrid open lab\n\n\n15\nJul\nHybrid open lab\n\n\n22\nJul\nHybrid open lab\n\n\n29\nJul\nHybrid open lab\n\n\n05\nAug\nHybrid open lab\n\n\n12\nAug\nHybrid open lab\n\n\n19\nAug\nHybrid open lab\n\n\n26\nAug\nHybrid open lab\n\n\n\nAll sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will be in the Data Studios of the Main Library and running a concurrent Zoom session.\nFor information on connecting to online sessions, reach out to us on the r channel of the UA Data Science Slack workspace or contact Jeff Oliver.\nTo get the most out of these workshops, participants should bring a laptop with R and RStudio installed.\nIf you have questions about the schedule, or are interested in learning about a particular topic in R, contact Jeff Oliver at jcoliver@arizona.edu."
   },
   {
     "objectID": "resources.html",
@@ -929,5 +929,12 @@
     "title": "Intro to Geospatial data in R",
     "section": "Glossary",
     "text": "Glossary\nThese are the functions we used in this lesson; use the ? in R to find more details (e.g. ?rast). The following are from the terra package:\n\nas.polygons: Convert a raster object into a polygon (shape) object.\ncrop: Crop the geographic extent of a raster.\next: Create a SpatExtent (spatial extent) object.\nplot: Um, plot?\npolys: Add polygons to an existing plot.\nproject: Change the projection of a geospatial object.\nrast: Read in a raster file (rast() does more than this, too, but this is what we used it for here).\ntext: Add text to an existing plot.\n\nAnd we used a few from base R, too:\n\ndev.off: Stop writing to a graphics output file.\nhcl.colors: Create a vector of color values based on a palette.\npng: Start writing to a PNG graphics file.\nrainbow: Create a vector of unicorn-vomit colors.\nrev: Reverse the order of values in a vector."
+  },
+  {
+    "objectID": "schedule.html#tentative-schedule-of-upcoming-sessions",
+    "href": "schedule.html#tentative-schedule-of-upcoming-sessions",
+    "title": "Schedule",
+    "section": "",
+    "text": "Day\nMonth\nWorkshop\n\n\n\n\n06\nMay\nHybrid open lab\n\n\n13\nMay\nHybrid open lab\n\n\n20\nMay\nHybrid open lab\n\n\n27\nMay\nHybrid open lab\n\n\n03\nJun\nHybrid open lab\n\n\n10\nJun\nHybrid open lab\n\n\n17\nJun\nHybrid open lab\n\n\n24\nJun\nHybrid open lab\n\n\n01\nJul\nHybrid open lab\n\n\n08\nJul\nHybrid open lab\n\n\n15\nJul\nHybrid open lab\n\n\n22\nJul\nHybrid open lab\n\n\n29\nJul\nHybrid open lab\n\n\n05\nAug\nHybrid open lab\n\n\n12\nAug\nHybrid open lab\n\n\n19\nAug\nHybrid open lab\n\n\n26\nAug\nHybrid open lab\n\n\n\nAll sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will be in the Data Studios of the Main Library and running a concurrent Zoom session.\nFor information on connecting to online sessions, reach out to us on the r channel of the UA Data Science Slack workspace or contact Jeff Oliver.\nTo get the most out of these workshops, participants should bring a laptop with R and RStudio installed.\nIf you have questions about the schedule, or are interested in learning about a particular topic in R, contact Jeff Oliver at jcoliver@arizona.edu."
   }
 ]
