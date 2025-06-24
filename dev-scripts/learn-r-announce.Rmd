@@ -13,14 +13,15 @@ suppressPackageStartupMessages(expr = library(lubridate))
 ```{r setup-schedule}
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2025-06-03",
-                                 "2025-06-10",
-                                 "2025-06-17",
-                                 "2025-06-24"),
-                       lessons = c(-1, -1, 0, -1))
+schedule <- data.frame(dates = c("2025-07-01",
+                                 "2025-07-08",
+                                 "2025-07-15",
+                                 "2025-07-22",
+                                 "2025-07-29"),
+                       lessons = c(-1, -1, -1, -1, -1))
 
 # Toggle indicating whether or not attendance files should be created
-create.files <- FALSE
+create.files <- TRUE
 
 # Where attendance files will be placed
 attend_destination <- "./"
