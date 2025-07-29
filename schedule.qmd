@@ -9,23 +9,28 @@ format: # to suppress pdf link
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 06  | May   | Hybrid open lab                    |
-| 13  | May   | Hybrid open lab                    |
-| 20  | May   | Hybrid open lab                    |
-| 27  | May   | Hybrid open lab                    |
-| 03  | Jun   | Hybrid open lab                    |
-| 10  | Jun   | Hybrid open lab                    |
-| 17  | Jun   | *No lab this day*                  |
-| 24  | Jun   | Hybrid open lab                    |
-| 01  | Jul   | Hybrid open lab                    |
-| 08  | Jul   | Hybrid open lab                    |
-| 15  | Jul   | Hybrid open lab                    |
-| 22  | Jul   | Hybrid open lab                    |
-| 29  | Jul   | Hybrid open lab                    |
 | 05  | Aug   | Hybrid open lab                    |
 | 12  | Aug   | Hybrid open lab                    |
 | 19  | Aug   | Hybrid open lab                    |
 | 26  | Aug   | Hybrid open lab                    |
+| 02  | Sep   | Hybrid open lab                    |
+| 09  | Sep   | Introduction to data visualization with ggplot |
+| 16  | Sep   | Hybrid open lab                    |
+| 23  | Sep   | Introduction to common statistics in R |
+| 30  | Sep   | Hybrid open lab                    |
+| 07  | Oct   | Data science: more fun, less pain with tidyverse |
+| 14  | Oct   | Hybrid open lab                    |
+| 21  | Oct   | An Aside: Git and GitHub with RStudio |
+| 28  | Oct   | Hybrid open lab                    |
+| 04  | Nov   | Machine learning in R part 1: regression |
+| 11  | Nov   | Hybrid open lab                    |
+| 18  | Nov   | Creating dashboards in R with Shiny |
+| 25  | Nov   | Hybrid open lab                    |
+| 02  | Dec   | Geospatial data in R |
+| 09  | Dec   | Hybrid open lab                    |
+| 16  | Dec   | Hybrid open lab                    |
+| 23  | Dec   | _No lab this day_                  |
+| 30  | Dec   | _No lab this day_                  |
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://lib.arizona.edu/study/spaces/data-studio) 
