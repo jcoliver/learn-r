@@ -7,7 +7,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 ```{r library-check, echo = FALSE, results = "hide"}
 #| output: false
 
-libs <- c("osmdata", "sf")
+libs <- c("dplyr", "ggplot2", "osmdata", "sf")
 libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
 if (length(libs_missing) > 0) {
   for (l in libs_missing) {
@@ -60,23 +60,26 @@ RStudio:
 ```{r install-packages, eval = FALSE}
 install.packages("osmdata") # For getting and working with OpenStreetMap data
 install.packages("ggplot2") # For data visualization
+install.packages("dplyr")   # For chaining together OpenStreetMap commands
 ```
 
 ***
 
 ## Interrogating OpenStreetMap data
 
-When using packages like osmdata and ggplot2, we have to take one additional 
+When using packages like osmdata and dplyr, we have to take one additional 
 step to actually _use_ them. Whenever we want to use those packages, we need to 
 load them explicitly with the `library()` command:
 
 ```{r load-libraries, eval = FALSE}
 library(osmdata)
+library(dplyr)
 ```
 
 ```{r load-libraries-print, echo = FALSE}
 suppressPackageStartupMessages(library(osmdata))
 suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(dplyr))
 ```
 
 Let's start by looking at what kind of data are available through 
@@ -155,6 +158,7 @@ packages need to be installed.
 
 library(osmdata)
 library(ggplot2)
+library(dplyr)
 ```
 
 Now, to the maps!
