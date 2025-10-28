@@ -9,10 +9,6 @@ format: # to suppress pdf link
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 07  | Oct   | Data science: more fun, less pain with tidyverse |
-| 14  | Oct   | Hybrid open lab                    |
-| 21  | Oct   | An Aside: Git and GitHub with RStudio |
-| 28  | Oct   | Hybrid open lab                    |
 | 04  | Nov   | Machine learning in R part 1: regression |
 | 11  | Nov   | Hybrid open lab                    |
 | 18  | Nov   | Creating dashboards in R with Shiny |
