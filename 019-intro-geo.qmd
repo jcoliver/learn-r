@@ -78,6 +78,18 @@ use the terra package, we must first install the package with
 install.packages("terra")
 ```
 
+If the install does not work, i.e. you see an warning message like:
+
+```
+Warning in install.packages :  
+  installation of package 'terra' had non-zero exit status
+```
+
+you may need to install additional software. The [installation page](https://rspatial.github.io/terra/#installation) 
+for the terra package has additional information. For Linux users, you will 
+probably need to install the libgdal-dev package through the terminal, _then_ 
+install terra with `install.packages()` in R.
+
 And we load it into memory with the `library()` command:
 
 ```{r terra-load, echo = FALSE}
@@ -457,7 +469,7 @@ hotter temperatures. I am going to create a variable that stores these colors
 so I do not have to keep writing out the `hcl.colors()` specification.
 
 ```{r reverse-colors}
-temp_cols <- rev(hcl.colors(n = 50, palette = "YlOrBr"))
+temp_cols <- hcl.colors(n = 50, palette = "YlOrBr", rev = TRUE)
 plot(temp_sw, col = temp_cols)
 ```
 
@@ -677,7 +689,6 @@ And we used a few from base R, too:
 + `hcl.colors`: Create a vector of color values based on a palette.
 + `png`: Start writing to a PNG graphics file.
 + `rainbow`: Create a vector of unicorn-vomit colors.
-+ `rev`: Reverse the order of values in a vector.
 
 ***
 
