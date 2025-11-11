@@ -1,18 +1,13 @@
 ---
-title: "LESSON TITLE"
+title: "Dynamic reports with quarto"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
-## TODO: Update library check
-
-Add any libraries that are used to the `libs` vector.
-If lesson is base R only, remove this chunk entirely.
-
 ```{r library-check, echo = FALSE, results = "hide"}
 #| output: false
 
-libs <- c("randomForest", "dplyr")
+libs <- c("quarto")
 libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
 if (length(libs_missing) > 0) {
   for (l in libs_missing) {
@@ -21,19 +16,26 @@ if (length(libs_missing) > 0) {
 }
 ```
 
-[INTRODUCTORY SENTENCE]
+An introduction to using the `quarto` package in R to produce reproducible, 
+dynamic reports. 
+
+# TODO: Add link to knitr lesson?
 
 #### Learning objectives
 
 After this lesson, learners should be able to:
 
-1. one
-2. two
-3. three
+1. Install and use third-party packages for R
+2. Become familar with R Markdown syntax
+3. Write dynamic reports including code and visualizations
 
 ## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
 
 ## Setup
+
+# TODO: Do we need to install quarto first? Probably...
+
+# TODO: Maybe this diverges, given that it is Quarto...
 
 First we need to setup our development environment. Open RStudio and create a 
 new project via:
@@ -62,11 +64,21 @@ dir.create(path = "output")
 
 ***
 
-## [TOPIC ONE]
+## [TOPIC ONE Introduction to markdown syntax]
+
+# TODO: Look at default file and describe parts
+
+# TODO: Render the doc
+
+# TODO: A couple of formatting things?
 
 ***
 
-## [TOPIC TWO]
+## [TOPIC TWO Code chunks]
+
+***
+
+## [TOPIC THREE Template files (doc)]
 
 ***
 
