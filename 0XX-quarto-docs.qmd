@@ -7,7 +7,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 ```{r library-check, echo = FALSE, results = "hide"}
 #| output: false
 
-libs <- c("quarto")
+libs <- c("knitr", "quarto")
 libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
 if (length(libs_missing) > 0) {
   for (l in libs_missing) {
@@ -33,40 +33,32 @@ After this lesson, learners should be able to:
 
 ## Setup
 
-# TODO: Do we need to install quarto first? Probably...
+### Install libraries
 
-# TODO: Maybe this diverges, given that it is Quarto...
+The R program has a bunch of tools that come with the initial installation, but 
+we are going to use some add-ons for this lesson. In R, these "add-ons" are 
+called packages, and we have to install them in order to use them on our 
+machine.
 
-First we need to setup our development environment. Open RStudio and create a 
+# TODO: Install quarto and knitr
+
+### Create a project
+
+Next we need to setup our development environment. Open RStudio and create a 
 new project via:
 
 + File > New Project...
 + Select 'New Directory'
-+ For the Project Type select 'New Project'
-+ For Directory name, call it something like "r-stats" (without the quotes)
++ For the Project Type select 'Quarto Project'
++ For Directory name, call it something like "chapter-1" (without the quotes)
 + For the subdirectory, select somewhere you will remember (like "My Documents" 
 or "Desktop")
-
-We need to create two folders: 'data' will store the data we will be analyzing, 
-and 'output' will store the results of our analyses.
-
-```{r setup, eval = FALSE}
-dir.create(path = "data")
-dir.create(path = "output")
-```
-
-***
-
-## Getting started
-
-+ Library installation (if necessary)
-+ Download data (if necessary)
 
 ***
 
 ## [TOPIC ONE Introduction to markdown syntax]
 
-# TODO: Look at default file and describe parts
+# TODO: Look at default file and describe parts (text + code)
 
 # TODO: Render the doc
 
@@ -76,9 +68,19 @@ dir.create(path = "output")
 
 ## [TOPIC TWO Code chunks]
 
+Make a plot
+
+Run some stats (hiding the output)
+
 ***
 
-## [TOPIC THREE Template files (doc)]
+## [TOPIC THREE Taking code into text]
+
+Stuff like putting r2 values in text
+
+***
+
+## [TOPIC FOUR Template files (doc)]
 
 ***
 
