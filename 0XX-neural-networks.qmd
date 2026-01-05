@@ -1,0 +1,79 @@
+---
+title: "LESSON TITLE"
+author: "Jeff Oliver"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+## TODO: Update library check
+
+Add any libraries that are used to the `libs` vector.
+If lesson is base R only, remove this chunk entirely.
+
+```{r library-check, echo = FALSE, results = "hide"}
+#| output: false
+
+libs <- c("randomForest", "dplyr")
+libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
+if (length(libs_missing) > 0) {
+  for (l in libs_missing) {
+    install.packages(l)
+  }
+}
+```
+
+[INTRODUCTORY SENTENCE]
+
+#### Learning objectives
+
+After this lesson, learners should be able to:
+
+1. one
+2. two
+3. three
+
+## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+## Setup
+
+First we need to setup our development environment. Open RStudio and create a 
+new project via:
+
++ File > New Project...
++ Select 'New Directory'
++ For the Project Type select 'New Project'
++ For Directory name, call it something like "r-stats" (without the quotes)
++ For the subdirectory, select somewhere you will remember (like "My Documents" 
+or "Desktop")
+
+We need to create two folders: 'data' will store the data we will be analyzing, 
+and 'output' will store the results of our analyses.
+
+```{r setup, eval = FALSE}
+dir.create(path = "data")
+dir.create(path = "output")
+```
+
+***
+
+## Getting started
+
++ Library installation (if necessary)
++ Download data (if necessary)
+
+***
+
+## [TOPIC ONE]
+
+***
+
+## [TOPIC TWO]
+
+***
+
+## Additional resources
+
++ [resource one](url-one)
++ [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/index.html)
++ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
+
+***

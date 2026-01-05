@@ -9,12 +9,6 @@ format: # to suppress pdf link
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 25  | Nov   | Hybrid open lab                    |
-| 02  | Dec   | Geospatial data in R               |
-| 09  | Dec   | Hybrid open lab                    |
-| 16  | Dec   | Hybrid open lab                    |
-| 23  | Dec   | _No lab this day_                  |
-| 30  | Dec   | _No lab this day_                  |
 | 06  | Jan   | _No lab this day_                  |
 | 13  | Jan   | _No lab this day_                  |
 | 20  | Jan   | Hybrid open lab                    |
