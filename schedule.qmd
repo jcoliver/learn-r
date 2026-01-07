@@ -9,7 +9,6 @@ format: # to suppress pdf link
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 06  | Jan   | _No lab this day_                  |
 | 13  | Jan   | _No lab this day_                  |
 | 20  | Jan   | Hybrid open lab                    |
 | 27  | Jan   | Hybrid open lab                    |
