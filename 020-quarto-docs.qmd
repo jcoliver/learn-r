@@ -114,7 +114,7 @@ Finally, we see a small bit of R code in a gray rectangle:
 
 This is what is known as a code 'chunk', as it contains R code we want to run. 
 There are a couple things to note about this chunk. First, it starts and ends 
-with three backticks ("`"). The backtick key usually lives in the top left part 
+with three backticks ("\`"). The backtick key usually lives in the top left part 
 of your keyboard, above the Tab key. *All* code chunks will start and end with 
 three backticks. Second, we are specifying that the code chunk is written in 
 the R programming language by adding a lower-case "r" inside of curly braces 
@@ -193,6 +193,39 @@ look like this:
 ![I think we'll need a little more detail...](images/quarto-render-2.png)
 
 ### Formatting fun
+
+To start, we will add a little information in the **Introduction** and 
+**Methods** sections. For the introduction, we will add a sentence about what 
+the document is about. Note that because we are using the scientific name for 
+the flowers, we want to italicize the name. We can make text italic by adding 
+underscores ("_") immediately before and after the text we want italicized (in 
+this case, we add an underscore immediately before and immediately after the 
+word "Iris").
+
+```
+## Introduction
+
+In this report we test for a relationship between different parts of morphology 
+in _Iris_ flowers.
+```
+
+Next we can add information about the data we will be using. In this case it is 
+the `iris` dataset that is built into R. Add this to the Methods section:
+
+```
+## Methods
+
+Analyses are based on built-in data for three _Iris_ species. We used linear 
+regression to test for relationships.
+```
+
+Let us go ahead and save the file, then press the "Render" button to make sure 
+the text was added as we expect. You should now have a report with more 
+information (albeit minimal) in the **Introduction** and **Methods** sections:
+
+![The report is _shaping_ up nicely.](images/quarto-render-3.png)
+
+Note that in both sections, the word "Iris" should be italicized.
 
 ***
 
