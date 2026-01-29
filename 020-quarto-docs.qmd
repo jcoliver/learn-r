@@ -77,7 +77,7 @@ or "Desktop")
 When we create the file, we have an document called chapter-1.qmd open by 
 default. This is what is known as a plain text document, which means it can be 
 opened and edited in any text editor, like NotePad, TextEdit, nano, or for the 
-truely sadistic, vm.
+truly sadistic, vm.
 
 ### Syntax
 
@@ -225,13 +225,46 @@ information (albeit minimal) in the **Introduction** and **Methods** sections:
 
 ![The report is _shaping_ up nicely.](images/quarto-render-3.png)
 
-Note that in both sections, the word "Iris" should be italicized.
+Note that in both sections, the word "Iris" should be italicized. We can also 
+see the difference between normal text and those section headers (Introduction,
+Methods, Results, and Discussion). When we start a line with pound sign(s) 
+("#") in a text block, it will format the text as a header. That is, it uses 
+larger, bold font. If you are familiar with web development, the number of 
+pound signs indicates header level: `#` = H1, `##` = H2, `###` = H3, and so on. 
+Note this is very different behavior when starting a line in R with a pound 
+sign, where `#` indicates a comment.
 
 ***
 
-## [TOPIC TWO Code chunks]
+## Code chunks
 
-Make a plot
+And speaking of R code, we are now going to see the real power of these 
+documents. For the next step, we will write a code chunk to create a plot of 
+some of the data. Recall that we are interested in the measurements of some 
+flower parts in three species of _Iris_. For our purposes, we want to include a 
+plot that has measurements of petal length on the x (horizontal) axis and the 
+measurements of petal width on the y (vertical) axis. To write an R code block, 
+we use triple-backticks (`` ``` ``) and braces ("`{r}`") to indicate the 
+language (R in our case, but other languages such as python and bash can also 
+be supported). Here we add code to indicate the start of the **Results** section, 
+as well as a plot of the two variables:
+
+    ## Results
+    
+    ```{r}`r ''`
+    plot(x = iris$Petal.Length, 
+        y = iris$Petal.Width,
+        xlab = "Petal length (cm)",
+        ylab = "Petal width (cm)")
+    ```
+
+When writing these code blocks, we need to explicitly tell R when to *stop* 
+interpreting the text as R code. We do this with three more backticks 
+(`` ``` ``) after the last line of code.
+
+Once you have that code block written (don't forget the closing backticks!), 
+save the file and press the "Render" button.
+
 
 Run some stats (hiding the output)
 
