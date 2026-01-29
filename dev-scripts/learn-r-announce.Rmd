@@ -13,11 +13,11 @@ suppressPackageStartupMessages(expr = library(lubridate))
 ```{r setup-schedule}
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2025-10-07",
-                                 "2025-10-14",
-                                 "2025-10-21",
-                                 "2025-10-28"),
-                       lessons = c(12, -1, 10, -1))
+schedule <- data.frame(dates = c("2026-02-03",
+                                 "2026-02-10",
+                                 "2026-02-17",
+                                 "2026-02-24"),
+                       lessons = c(4, -1, 17, -1))
 
 # Toggle indicating whether or not attendance files should be created
 create.files <- TRUE
@@ -49,7 +49,7 @@ Would you mind forwarding this announcement to researchers and students in your 
 
 _All sessions will be 9-11 am (MST) on Tuesday_. Sessions will be offered in 
 hybrid format: we will be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
-and running a concurrent Zoom session at [https://arizona.zoom.us/j/83039033012](https://arizona.zoom.us/j/83039033012).
+and running a concurrent Zoom session at [https://arizona.zoom.us/j/89160294963](https://arizona.zoom.us/j/89160294963).
 
 <!--
 To get the most out of these workshops, participants should bring a laptop with 

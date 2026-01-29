@@ -73,7 +73,7 @@ dir.create(path = "output")
 ## Additional resources
 
 + [resource one](url-one)
-+ [resource two](url-two)
++ [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/index.html)
 + A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
 
 ***

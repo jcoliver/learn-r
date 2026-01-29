@@ -179,7 +179,13 @@ remind us of how shiny apps work.
 Since our app will use the ggplot2 and palmerpenguins packages, go ahead and 
 add library calls to those two packages right after the shiny package is loaded.
 
-```{r load-libraries}
+```{r load-libraries-quiet, echo = FALSE}
+suppressPackageStartupMessages(library(shiny))
+suppressPackageStartupMessages(library(palmerpenguins))
+suppressPackageStartupMessages(library(ggplot2))
+```
+
+```{r load-libraries, eval = FALSE}
 library(shiny)
 library(palmerpenguins)
 library(ggplot2)
@@ -510,15 +516,11 @@ mainPanel(
 
 Note we need to have quotes around the reference `"statsTable"`. Now you can 
 save your file and run the app (press Run App in upper right corner of the 
-panel). If you see an error that includes
+panel). If you see an error that includes something like
 
 ```
-36:            plotOutput("distPlot")
-37:            tableOutput
-               ^
-Possible missing comma at:
-37:           tableOutput("statsTable")
-              ^
+Error in sourceUTF8(fullpath, envir = new.env(parent = sharedEnv)) : 
+  Error sourcing /home/jcoliver/Desktop/shiny-test/app.R
 ```
 
 be sure that you have a comma after `plotOutput("distPlot")`. When you run the 
