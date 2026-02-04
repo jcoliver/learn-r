@@ -239,14 +239,18 @@ sign, where `#` indicates a comment.
 ## Code chunks
 
 And speaking of R code, we are now going to see the real power of these 
-documents. For the next step, we will write a code chunk to create a plot of 
-some of the data. Recall that we are interested in the measurements of some 
-flower parts in three species of _Iris_. For our purposes, we want to include a 
-plot that has measurements of petal length on the x (horizontal) axis and the 
-measurements of petal width on the y (vertical) axis. To write an R code block, 
-we use triple-backticks (`` ``` ``) and braces ("`{r}`") to indicate the 
-language (R in our case, but other languages such as python and bash can also 
-be supported). Here we add code to indicate the start of the **Results** section, 
+documents.
+
+### Showing our work
+
+For the next step, we will write a code chunk to create a plot of some of the 
+data. Recall that we are interested in the measurements of some flower parts in
+three species of _Iris_. For our purposes, we want to include a plot that has
+measurements of petal length on the x (horizontal) axis and the measurements of 
+petal width on the y (vertical) axis. To write an R code block, we use
+triple-backticks (`` ``` ``) and braces ("`{r}`") to indicate the language (R 
+in our case, but other languages such as python and bash can also be 
+supported). Here we add code to indicate the start of the **Results** section, 
 as well as a plot of the two variables:
 
     ## Results
@@ -265,14 +269,86 @@ interpreting the text as R code. We do this with three more backticks
 Once you have that code block written (don't forget the closing backticks!), 
 save the file and press the "Render" button.
 
+![The code for plotting and resulting output (a plot!)](images/quarto-render-4.png)
 
-Run some stats (hiding the output)
+### Hiding our work
+
+In some cases, we may want to run some analyses, but keep the code restricted 
+to our source file (the source file is the one we are working in right now). We 
+might do this when the code is not necessary to include in our output, but the 
+results are. In our case, we want to measure the correlation between the two 
+flower measurements, petal length and petal width. We are really interested in 
+showing the *r*^2^ value, but we do not need to show the code we 
+used to find it (remember, the code *will* be in this source file, in case we 
+need to update it). To hide the code of a code chunk, we will pass 
+`echo = FALSE` in the first line of the code chunk, right after we tell it to 
+use R as the programming language. So, after the code chunk that we used to 
+make the plot, we can add another chunk, this one where we hide the source code 
+from the output:
+
+    ```{r, echo = FALSE}`r ''`
+    # Our correlation code goes here
+    ```
+
+To run the correlation, we will use the `cor()` function in R, and assign that 
+value to a variable we will call `r`. We will then take that value and square 
+it to obtain the *r*^2^ value. Update this latest code chunk with:
+
+    ```{r, echo = FALSE}`r ''`
+    # Run correlation
+    r <- cor(iris$Petal.Length, iris$Petal.Width)
+    # Calculate r-squared
+    r_squared <- r * r
+    ```
+
+And rendering the document produces...well, exactly what we had before. That 
+is, we have a plot, but there isn't anything about the correlation in the 
+output.
+
+But this is OK!
 
 ***
 
-## [TOPIC THREE Taking code into text]
+## Inline code
 
-Stuff like putting r2 values in text
+A lot of times, we want to perform some analyses or data wranging (or, more 
+likely, both), and while the underlying code does not need to be included in 
+our report, we do need to show the results. Here is where "inline code" comes 
+in.
+
+We can use a regular text block and make an "inline" call to R, in order to 
+access the value and include it in our report. We use the term "inline" to mean 
+exactly that: in the line of text where we want some result to appear, we add a 
+little bit of R code to retrieve values stored in a variable.
+
+For our purposes, we want to add a little bit of text about the correlation 
+between petal length and petal width and include the *r*^2^ we calculated in 
+the preceding code chunk. So, insert an empty line after the code chunk and add:
+
+```{r, echo = FALSE}
+# Run correlation
+r <- cor(iris$Petal.Length, iris$Petal.Width)
+# Calculate r-squared
+r_squared <- r * r
+```
+
+<!-- Oh. My. God. I hate backticks so much right now. -->
+
+```
+Petal width and petal length were highly correlated (r^2^ = `r '\x60r r_squared\x60'`).
+```
+
+So, what is this doing? First, we are adding some old fashioned regular text 
+(Starting with "Petal width and..."). In the parentheses we have "r\^2\^". 
+Those carats ("^") surrounding the 2 indicate we want the number 2 to show up 
+as a superscript. Following the equals sign, we have a *single* backtick, a 
+lower case "r", a call to the *r*^2^ variable we created in the 
+code chunk above (`r_squared`), and a closing single backtick. With inline 
+calls to R, we can print out values stored in variables. After adding that 
+line, saving the file, and rendering, you should have one more line at the end 
+of your **Results** section:
+
+![Our correlation results (with too many numbers!)](images/quarto-render-5.png)
 
 ***
 
