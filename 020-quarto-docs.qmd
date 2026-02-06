@@ -143,7 +143,20 @@ of the pane with our .qmd file.
 After a moment, a web browser should open, displaying the rendered document. It 
 should look something like:
 
+> # chapter-1
+> 
+> ## Quarto
+> 
+> Quarto enables you to weave together content and executable code into a 
+> finished document. To learn more about Quarto, see <https://quarto.org>.
+> 
+> ```{r}
+> 1 + 1
+> ```
+
+<!--
 ![Output of from rendering the default quarto file](images/quarto-render-1.png)
+-->
 
 Looking at this page, we have:
 
@@ -190,7 +203,22 @@ Discussion):
 Go ahead and save the file, then press the "Render" button. The output should
 look like this:
 
+> # Iris shape analyses
+> 
+> AUTHOR  
+> Jeffrey C. Oliver
+> 
+> ## Introduction
+> 
+> ## Methods
+> 
+> ## Results
+> 
+> ## Discussion
+
+<!--
 ![I think we'll need a little more detail...](images/quarto-render-2.png)
+-->
 
 ### Formatting fun
 
@@ -223,7 +251,26 @@ Let us go ahead and save the file, then press the "Render" button to make sure
 the text was added as we expect. You should now have a report with more 
 information (albeit minimal) in the **Introduction** and **Methods** sections:
 
+> # Iris shape analyses
+> 
+> AUTHOR  
+> Jeffrey C. Oliver
+> 
+> ## Introduction
+> In this report we test for a relationship between different parts of 
+> morphology in _Iris_ flowers.
+> 
+> ## Methods
+> Analyses are based on built-in data for three _Iris_ species. We used linear 
+> regression to test for relationships.
+> 
+> ## Results
+> 
+> ## Discussion
+
+<!--
 ![The report is _shaping_ up nicely.](images/quarto-render-3.png)
+-->
 
 Note that in both sections, the word "Iris" should be italicized. We can also 
 see the difference between normal text and those section headers (Introduction,
@@ -269,7 +316,18 @@ interpreting the text as R code. We do this with three more backticks
 Once you have that code block written (don't forget the closing backticks!), 
 save the file and press the "Render" button.
 
+> ## Results
+> 
+> ```{r}
+>     plot(x = iris$Petal.Length, 
+>          y = iris$Petal.Width,
+>          xlab = "Petal length (cm)",
+>          ylab = "Petal width (cm)")
+> ```
+
+<!--
 ![The code for plotting and resulting output (a plot!)](images/quarto-render-4.png)
+-->
 
 ### Hiding our work
 
@@ -309,7 +367,9 @@ But this is OK!
 
 ***
 
-## Inline code
+## More fun in the text blocks
+
+### Inline code
 
 A lot of times, we want to perform some analyses or data wranging (or, more 
 likely, both), and while the underlying code does not need to be included in 
@@ -348,7 +408,67 @@ calls to R, we can print out values stored in variables. After adding that
 line, saving the file, and rendering, you should have one more line at the end 
 of your **Results** section:
 
+> Petal width and petal length were highly correlated (r^2^ = `r r_squared`).
+
+<!--
 ![Our correlation results (with too many numbers!)](images/quarto-render-5.png)
+-->
+
+The use of inline code is not limited to only reporting values stored in 
+variables; we can also use R functions. For example. the *r*^2^ value shows too 
+many digits (seven digits is excessive!). We can use the `round()` function in 
+the inline call. In this case we will round the *r*^2^ value to two digits. 
+Update the text in the **Results** section to:
+
+```
+Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(r_squared, digits = 2)\x60'`).
+```
+
+Make sure you have both the opening and closing parentheses for the `round()` 
+function, or the document will not render correctly. After updating that line, 
+saving your file, and Rendering, your **Results** section should look like:
+
+> ## Results
+>
+> Petal width and petal length were highly correlated (r^2^ = `r round(r_squared, digits = 2)`).
+
+### Link formatting
+
+Let's add one more thing to this report. Since these data were were collected 
+by the botanist Edgar Anderson, let's provide a link to the Wikipedia page with 
+information about the data set. So go back to the Materials & Methods section 
+and update it with a link:
+
+Change:
+
+```
+## Methods
+
+Analyses are based on built-in data for three _Iris_ species. We used linear 
+regression to test for relationships.
+```
+
+To:
+
+```
+## Methods
+
+Analyses are based on data for three _Iris_ species collected by 
+[Edgar Anderson](https://en.wikipedia.org/wiki/Iris_flower_data_set). We used 
+linear regression to test for relationships.
+```
+
+Save and render, and you should see:
+
+> ## Methods
+> 
+> Analyses are based on data for three _Iris_ species collected by 
+> [Edgar Anderson](https://en.wikipedia.org/wiki/Iris_flower_data_set). We used 
+> linear regression to test for relationships.
+
+### Inserting images
+
+
 
 ***
 
@@ -359,7 +479,7 @@ of your **Results** section:
 ## Additional resources
 
 + [resource one](url-one)
-+ [resource two](url-two)
-+ A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
++ [Information on creating Word template documents](https://quarto.org/docs/output-formats/ms-word-templates.html)
++ A [PDF version](https://jcoliver.github.io/learn-r/020-quarto-docs.pdf) of this lesson
 
 ***
