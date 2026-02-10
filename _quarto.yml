@@ -23,6 +23,7 @@ project:
     - 017-open-street-map.qmd
     - 018-ml-regression.qmd
     - 019-intro-geo.qmd
+    - 020-intro-quarto-qmds
 
 website:
   title: "learn-r"
@@ -40,7 +41,7 @@ website:
         text: Additional Resources
   page-footer: 
     left: 
-      - text: Copyright 2024, Jeffrey Oliver
+      - text: Copyright 2026, Jeffrey Oliver
     center: 
       - text: CC BY 4.0 Deed
         href: https://creativecommons.org/licenses/by/4.0/

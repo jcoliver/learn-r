@@ -10,3 +10,5 @@ data/wc2.1_2.5m
 data/gadm
 keys/
 /.quarto/
+
+**/*.quarto_ipynb

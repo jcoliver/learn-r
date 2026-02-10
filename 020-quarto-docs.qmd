@@ -19,8 +19,6 @@ if (length(libs_missing) > 0) {
 An introduction to using the `quarto` package in R to produce reproducible, 
 dynamic reports. 
 
-# TODO: Add link to knitr lesson?
-
 #### Learning objectives
 
 After this lesson, learners should be able to:
@@ -434,10 +432,12 @@ saving your file, and Rendering, your **Results** section should look like:
 
 ### Link formatting
 
-Let's add one more thing to this report. Since these data were were collected 
-by the botanist Edgar Anderson, let's provide a link to the Wikipedia page with 
-information about the data set. So go back to the Materials & Methods section 
-and update it with a link:
+We can also add a little more information about where these data come from. 
+Since these data were were collected by the botanist Edgar Anderson, let's 
+provide a link to the Wikipedia page with information about the data set. To 
+find the link you can use your favorite search engine and search for "wikipedia
+anderson iris data." Copy the URL of the Wikipedia page to the clipboard and 
+go back to the Materials & Methods section and update it with the link:
 
 Change:
 
@@ -458,6 +458,9 @@ Analyses are based on data for three _Iris_ species collected by
 linear regression to test for relationships.
 ```
 
+The general format for links is a pair of square brackets around the text to 
+appear and a pair of parentheses around the actual url: `[LINK TEXT](URL)`.
+
 Save and render, and you should see:
 
 > ## Methods
@@ -468,17 +471,168 @@ Save and render, and you should see:
 
 ### Inserting images
 
+In some cases, you may want to add images to your report. We can do this with 
+syntax that is very similar to the hyperlink syntax we just used. The only real 
+difference is that we add an exclamation point to the very beginning:
 
+```
+![Text caption for image](path to image)
+```
+
+The `path to image` can be the name and location of a file on your computer, or 
+it could be a URL to an online image. For our purposes, we will use an online 
+image of an *Iris* flower. Once again, open up your favorite web browser and 
+find an image of one of the three *Iris* species (*Iris setosa*, 
+*Iris versicolor*, or *Iris virginica*). I am going to use an image of 
+*Iris virginica* at [https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Iris_virginica_2.jpg/500px-Iris_virginica_2.jpg](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Iris_virginica_2.jpg/500px-Iris_virginica_2.jpg).
+To add this image to my report, I will add a sentence to the **Discussion** and 
+use the image syntax described above.
+
+```
+## Discussion
+
+Additional study of _Iris_ flowers is warranted.
+
+![Image of _I. virginica_ by Eric Hunt](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Iris_virginica_2.jpg/500px-Iris_virginica_2.jpg)
+```
+
+In this case, we use the caption (the text inside the square brackets) to 
+credit the photographer (Eric Hunt) and to indicate the species of _Iris_. Note 
+we can use the same italic text formatting inside the caption (the word "Iris" 
+wrapped in underscores) as we saw before. After saving and rendering, your
+**Discussion** section should now look like:
+
+> ## Discussion
+> 
+> Additional study of _Iris_ flowers is warranted.
+> 
+> ![Image of _I. virginica_ by Eric Hunt](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Iris_virginica_2.jpg/500px-Iris_virginica_2.jpg)
 
 ***
 
-## [TOPIC FOUR Template files (doc)]
+## Output formats
+
+### Docx
+
+The last thing to consider is the file format you want for your report. We have 
+so far been using the default output format of HTML. The other two common 
+output formats are PDFs and Word Docs. We are going to focus on the Word Doc 
+output format, but you can find information about PDF output in the 
+[Additional resources](#Additional_resources) section, below. To switch to Word 
+Doc output, go back to the beginning of your file and add a line indicating our
+desired format
+
+```
+---
+title: "Iris Shape Analyses"
+author: "Jeffrey C. Oliver"
+format: docx                   <--- This is our new line
+---
+```
+
+Once we have that updated, you can save your file and render the document. You 
+should now have another file in your project called "chapter-1.docx". You can 
+open this file with a program like Microsoft Word or LibreOffice Writer.
+
+### Document templates
+
+One thing you will note in the .docx file you created is that it uses the 
+default styles for Title and Header 2 text. If you want to change these styles, 
+you will need to take three steps (we will go into more detail for step two in 
+a moment):
+
+1. Create a new .docx file and save it in this project folder under the name 
+chapter-1-template.docx.
+2. Update the relevant styles in chapter-1-template.docx and save it.
+3. Update the YAML header (the bit of text at the top of our .qmd file with 
+title and author information) with instructions on which file to use as the 
+template (note the two-space indentations are required here):
+
+```
+---
+title: "Iris Shape Analyses"
+author: "Jeffrey C. Oliver"
+format: 
+  docx:
+    reference-doc: chapter-1-template.docx
+---
+```
+
+Let's do this! Start by creating the file as described in step 1, above (i.e. 
+open Microsoft Word or LibreOffice Writer and save the blank document as
+"chapter-1-template.docx"). Be sure to save it in your project folder (your 
+project folder should be named "chapter-1"). With the file still open, add 
+three lines of text to the file:
+
+> Title
+> 
+> Header 2
+> 
+> Text
+
+They should all appear as plain text at this point. First, we will set the 
+Title Style. This is going to determine how the title of our report ("Iris 
+Shape Analyses") is displayed. Go ahead and make the font size larger 
+(highlight the word "Title" and change the font size to 24pt). Next, update the 
+Header 2 style by highlighting the text "Header 2", changing the font size to 
+16pt and making the font bold (usually Ctrl-B will do this). Finally, for the 
+Normal text style, we can just change the font to something other than the 
+default. In my case, I am going to change it to Arial (highlight the text 
+"Normal text" and choose Ariel from the list of fonts).
+
+Now, and this is the real important part, we need to apply those changes to the 
+document's Styles. We will start again with the Title text. Place your cursor 
+in the middle of the word, click the style dropdown menu, hover over Title, and select "Update to match selection".
+
+![Updating a style in Microsoft Word](images/quarto-style-word.png)
+
+![Updating a style in LibreOffice Writer](images/quarto-style-libre.png)
+
+(Note there may be slight differences among operating systems and word 
+processing software).
+
+Now the style you used for your "Title" text will be applied to any documents 
+that use this .docx file as the template file. Go ahead and take the same steps 
+to update the styles for Header 2 and Normal text. Once you finished, save the changes and close this .docx file.
+
+Double check your .qmd file so the header at the top includes a reference to 
+the template document you created.
+
+```
+---
+title: "Iris Shape Analyses"
+author: "Jeffrey C. Oliver"
+format: 
+  docx:
+    reference-doc: chapter-1-template.docx
+---
+```
+
+Save the .qmd file, Render, and then open the chapter-1.docx file. It should 
+have those new styles applied! The last thing to note is that if you want 
+multiple output formats, you can do this by adding more formats to the header. 
+For example, if we want to also create the HTML output we were using before, we 
+can add one more line in the header (again, the two-space indentation is 
+required): 
+
+```
+---
+title: "Iris Shape Analyses"
+author: "Jeffrey C. Oliver"
+format: 
+  html: default              <---- Add this line to create HTML output, too
+  docx:
+    reference-doc: chapter-1-template.docx
+---
+```
 
 ***
 
 ## Additional resources
 
-+ [resource one](url-one)
++ The offical Quarto documentation includes information for creating 
+[PDF-formatted output files](https://quarto.org/docs/output-formats/pdf-basics.html)
++ [An overview of different Quarto output formats](https://quarto.org/docs/output-formats/all-formats.html)
 + [Information on creating Word template documents](https://quarto.org/docs/output-formats/ms-word-templates.html)
 + A [PDF version](https://jcoliver.github.io/learn-r/020-quarto-docs.pdf) of this lesson
 
