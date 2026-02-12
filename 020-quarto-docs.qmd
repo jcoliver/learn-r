@@ -112,7 +112,7 @@ Finally, we see a small bit of R code in a gray rectangle:
 
 This is what is known as a code 'chunk', as it contains R code we want to run. 
 There are a couple things to note about this chunk. First, it starts and ends 
-with three backticks ("\`"). The backtick key usually lives in the top left part 
+with three backticks (" `` ` `` "). The backtick key usually lives in the top left part 
 of your keyboard, above the Tab key. *All* code chunks will start and end with 
 three backticks. Second, we are specifying that the code chunk is written in 
 the R programming language by adding a lower-case "r" inside of curly braces 
@@ -136,7 +136,7 @@ Microsoft Word. For much of this lesson, we will be creating a HTML file as our
 output document. To create the document, press the "Render" button near the top 
 of the pane with our .qmd file.
 
-![The "Render" button creates the output document](images/quarto-render-button.png)
+![The "Render" button creates the output document](images/quarto-render-button.png){ width=30% }
 
 After a moment, a web browser should open, displaying the rendered document. It 
 should look something like:
@@ -151,10 +151,6 @@ should look something like:
 > ```{r}
 > 1 + 1
 > ```
-
-<!--
-![Output of from rendering the default quarto file](images/quarto-render-1.png)
--->
 
 Looking at this page, we have:
 
@@ -214,10 +210,6 @@ look like this:
 > 
 > ## Discussion
 
-<!--
-![I think we'll need a little more detail...](images/quarto-render-2.png)
--->
-
 ### Formatting fun
 
 To start, we will add a little information in the **Introduction** and 
@@ -231,8 +223,8 @@ word "Iris").
 ```
 ## Introduction
 
-In this report we test for a relationship between different parts of morphology 
-in _Iris_ flowers.
+In this report we test for a relationship between different parts 
+of morphology in _Iris_ flowers.
 ```
 
 Next we can add information about the data we will be using. In this case it is 
@@ -241,8 +233,8 @@ the `iris` dataset that is built into R. Add this to the Methods section:
 ```
 ## Methods
 
-Analyses are based on built-in data for three _Iris_ species. We used linear 
-regression to test for relationships.
+Analyses are based on built-in data for three _Iris_ species. We 
+used linear regression to test for relationships.
 ```
 
 Let us go ahead and save the file, then press the "Render" button to make sure 
@@ -265,10 +257,6 @@ information (albeit minimal) in the **Introduction** and **Methods** sections:
 > ## Results
 > 
 > ## Discussion
-
-<!--
-![The report is _shaping_ up nicely.](images/quarto-render-3.png)
--->
 
 Note that in both sections, the word "Iris" should be italicized. We can also 
 see the difference between normal text and those section headers (Introduction,
@@ -322,10 +310,6 @@ save the file and press the "Render" button.
 >          xlab = "Petal length (cm)",
 >          ylab = "Petal width (cm)")
 > ```
-
-<!--
-![The code for plotting and resulting output (a plot!)](images/quarto-render-4.png)
--->
 
 ### Hiding our work
 
@@ -393,7 +377,8 @@ r_squared <- r * r
 <!-- Oh. My. God. I hate backticks so much right now. -->
 
 ```
-Petal width and petal length were highly correlated (r^2^ = `r '\x60r r_squared\x60'`).
+Petal width and petal length were highly correlated 
+(r^2^ = `r '\x60r r_squared\x60'`).
 ```
 
 So, what is this doing? First, we are adding some old fashioned regular text 
@@ -408,10 +393,6 @@ of your **Results** section:
 
 > Petal width and petal length were highly correlated (r^2^ = `r r_squared`).
 
-<!--
-![Our correlation results (with too many numbers!)](images/quarto-render-5.png)
--->
-
 The use of inline code is not limited to only reporting values stored in 
 variables; we can also use R functions. For example. the *r*^2^ value shows too 
 many digits (seven digits is excessive!). We can use the `round()` function in 
@@ -419,7 +400,8 @@ the inline call. In this case we will round the *r*^2^ value to two digits.
 Update the text in the **Results** section to:
 
 ```
-Petal width and petal length were highly correlated (r^2^ = `r '\x60r round(r_squared, digits = 2)\x60'`).
+Petal width and petal length were highly correlated 
+(r^2^ = `r '\x60r round(r_squared, digits = 2)\x60'`).
 ```
 
 Make sure you have both the opening and closing parentheses for the `round()` 
@@ -480,20 +462,21 @@ difference is that we add an exclamation point to the very beginning:
 ```
 
 The `path to image` can be the name and location of a file on your computer, or 
-it could be a URL to an online image. For our purposes, we will use an online 
-image of an *Iris* flower. Once again, open up your favorite web browser and 
-find an image of one of the three *Iris* species (*Iris setosa*, 
-*Iris versicolor*, or *Iris virginica*). I am going to use an image of 
-*Iris virginica* at [https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Iris_virginica_2.jpg/500px-Iris_virginica_2.jpg](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Iris_virginica_2.jpg/500px-Iris_virginica_2.jpg).
-To add this image to my report, I will add a sentence to the **Discussion** and 
-use the image syntax described above.
+it could be a URL to an online image. For our purposes, we will use a 
+downloaded image of an *Iris* flower. We are going to use an image of 
+*I. virginica* by Eric Hunt from Wikimedia commons. You can use the same image 
+(available at [https://bit.ly/iris-virginica](https://bit.ly/iris-virginica)), 
+or download a different image. Be sure to save the image in the project folder 
+(the folder named "chapter-1") and remember what you name the image (I am 
+naming my image file "iris-virginica.jpg"). To add this image to the report, 
+add a sentence to the **Discussion** and use the image syntax described above.
 
 ```
 ## Discussion
 
 Additional study of _Iris_ flowers is warranted.
 
-![Image of _I. virginica_ by Eric Hunt](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Iris_virginica_2.jpg/500px-Iris_virginica_2.jpg)
+![Image of _I. virginica_ by Eric Hunt](iris-virginica.jpg)
 ```
 
 In this case, we use the caption (the text inside the square brackets) to 
@@ -506,7 +489,7 @@ wrapped in underscores) as we saw before. After saving and rendering, your
 > 
 > Additional study of _Iris_ flowers is warranted.
 > 
-> ![Image of _I. virginica_ by Eric Hunt](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Iris_virginica_2.jpg/500px-Iris_virginica_2.jpg)
+> ![Image of _I. virginica_ by Eric Hunt](images/iris-virginica.jpg)
 
 ***
 
@@ -584,16 +567,17 @@ Now, and this is the real important part, we need to apply those changes to the
 document's Styles. We will start again with the Title text. Place your cursor 
 in the middle of the word, click the style dropdown menu, hover over Title, and select "Update to match selection".
 
-![Updating a style in Microsoft Word](images/quarto-style-word.png)
+![Updating a style in Microsoft Word](images/quarto-style-word.png){ width=60% }
 
-![Updating a style in LibreOffice Writer](images/quarto-style-libre.png)
+![Updating a style in LibreOffice Writer](images/quarto-style-libre.png){ width=60% }
 
 (Note there may be slight differences among operating systems and word 
 processing software).
 
 Now the style you used for your "Title" text will be applied to any documents 
 that use this .docx file as the template file. Go ahead and take the same steps 
-to update the styles for Header 2 and Normal text. Once you finished, save the changes and close this .docx file.
+to update the styles for Header 2 and Normal text. Once you finished, save the 
+changes and close this .docx file.
 
 Double check your .qmd file so the header at the top includes a reference to 
 the template document you created.

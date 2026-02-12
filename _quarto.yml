@@ -23,7 +23,7 @@ project:
     - 017-open-street-map.qmd
     - 018-ml-regression.qmd
     - 019-intro-geo.qmd
-    - 020-intro-quarto-qmds
+    - 020-quarto-docs.qmd
 
 website:
   title: "learn-r"

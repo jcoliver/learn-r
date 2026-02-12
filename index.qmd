@@ -34,7 +34,7 @@ installation details on the
 - [Introduction to Multivariate Statistics in R](003-intro-multivariate.qmd)
 - [Next level visualization with ggplot](004-intro-ggplot.qmd)
 - [Dynamic reports with knitr](005-intro-knitr.qmd)
-- [Dynamic reports with Quarto](020-intro-quarto.qmd)
+- [Dynamic reports with Quarto](020-quarto-docs.qmd)
 - [Heatmaps in R (with data wrangling!)](006-heatmaps.qmd)
 - [Writing your own functions in R](007-intro-functional-programming.qmd)
 - [Clusters and heatmaps in ggplot2](008-ggplot-dendrograms-and-heatmaps.qmd)

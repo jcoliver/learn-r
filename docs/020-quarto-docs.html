@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jeff Oliver">
+<meta name="dcterms.date" content="2026-02-12">
+
+<title>Dynamic reports with quarto – learn-r</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-ffa9a6279353761231ec249df0a7fdd3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-EF6ZJH0577"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    </a>
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">learn-r</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./schedule.html"> 
+<span class="menu-text">Schedule</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./resources.html"> 
+<span class="menu-text">Additional Resources</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#literate-programming" id="toc-literate-programming" class="nav-link active" data-scroll-target="#literate-programming">Literate programming</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a>
+  <ul class="collapse">
+  <li><a href="#install-libraries" id="toc-install-libraries" class="nav-link" data-scroll-target="#install-libraries">Install libraries</a></li>
+  <li><a href="#create-a-project" id="toc-create-a-project" class="nav-link" data-scroll-target="#create-a-project">Create a project</a></li>
+  </ul></li>
+  <li><a href="#markdown-syntax-and-rendering" id="toc-markdown-syntax-and-rendering" class="nav-link" data-scroll-target="#markdown-syntax-and-rendering">Markdown syntax and “rendering”</a>
+  <ul class="collapse">
+  <li><a href="#syntax" id="toc-syntax" class="nav-link" data-scroll-target="#syntax">Syntax</a></li>
+  <li><a href="#rendering" id="toc-rendering" class="nav-link" data-scroll-target="#rendering">Rendering</a></li>
+  <li><a href="#changing-stuff-and-seeing-what-happens" id="toc-changing-stuff-and-seeing-what-happens" class="nav-link" data-scroll-target="#changing-stuff-and-seeing-what-happens">Changing stuff and seeing what happens</a></li>
+  <li><a href="#formatting-fun" id="toc-formatting-fun" class="nav-link" data-scroll-target="#formatting-fun">Formatting fun</a></li>
+  </ul></li>
+  <li><a href="#code-chunks" id="toc-code-chunks" class="nav-link" data-scroll-target="#code-chunks">Code chunks</a>
+  <ul class="collapse">
+  <li><a href="#showing-our-work" id="toc-showing-our-work" class="nav-link" data-scroll-target="#showing-our-work">Showing our work</a></li>
+  <li><a href="#hiding-our-work" id="toc-hiding-our-work" class="nav-link" data-scroll-target="#hiding-our-work">Hiding our work</a></li>
+  </ul></li>
+  <li><a href="#more-fun-in-the-text-blocks" id="toc-more-fun-in-the-text-blocks" class="nav-link" data-scroll-target="#more-fun-in-the-text-blocks">More fun in the text blocks</a>
+  <ul class="collapse">
+  <li><a href="#inline-code" id="toc-inline-code" class="nav-link" data-scroll-target="#inline-code">Inline code</a></li>
+  <li><a href="#link-formatting" id="toc-link-formatting" class="nav-link" data-scroll-target="#link-formatting">Link formatting</a></li>
+  <li><a href="#inserting-images" id="toc-inserting-images" class="nav-link" data-scroll-target="#inserting-images">Inserting images</a></li>
+  </ul></li>
+  <li><a href="#output-formats" id="toc-output-formats" class="nav-link" data-scroll-target="#output-formats">Output formats</a>
+  <ul class="collapse">
+  <li><a href="#docx" id="toc-docx" class="nav-link" data-scroll-target="#docx">Docx</a></li>
+  <li><a href="#document-templates" id="toc-document-templates" class="nav-link" data-scroll-target="#document-templates">Document templates</a></li>
+  </ul></li>
+  <li><a href="#additional-resources" id="toc-additional-resources" class="nav-link" data-scroll-target="#additional-resources">Additional resources</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="020-quarto-docs.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Dynamic reports with quarto</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jeff Oliver </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 12, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>An introduction to using the <code>quarto</code> package in R to produce reproducible, dynamic reports.</p>
+<section id="learning-objectives" class="level4">
+<h4 class="anchored" data-anchor-id="learning-objectives">Learning objectives</h4>
+<p>After this lesson, learners should be able to:</p>
+<ol type="1">
+<li>Install and use third-party packages for R</li>
+<li>Explain the difference between code blocks and markdown text</li>
+<li>Apply text formatting for headers and font styles</li>
+<li>Include output from R code in a document</li>
+</ol>
+</section>
+<section id="literate-programming" class="level2">
+<h2 class="anchored" data-anchor-id="literate-programming">Literate programming</h2>
+<p>What if there was a way to include text <em>and</em> all the code we used for our analyses in a single document? What about a report that includes not only data visualization, but the actual code used to produce those visualizations? With literate programming, we write text and code in a single document - this way, we can update reports and manuscripts with new data or corrections with minimal effort.</p>
+</section>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<section id="install-libraries" class="level3">
+<h3 class="anchored" data-anchor-id="install-libraries">Install libraries</h3>
+<p>The R program has a bunch of tools that come with the initial installation, but we are going to use some add-ons for this lesson. In R, these “add-ons” are called packages, and we have to install them in order to use them on our machine. For this workshop, we will install two additional packages: knitr and quarto. For both, we will use the <code>install.packages()</code> function in R. In your Console of RStudio (usually the lower-left pane of RStudio), run:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"knitr"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"quarto"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>At this point it would be useful to shut down RStudio and start it up again. We do this just so RStudio is aware of those two packages we just installed.</p>
+</section>
+<section id="create-a-project" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-project">Create a project</h3>
+<p>Next we need to setup our development environment. Open RStudio and create a new project via:</p>
+<ul>
+<li>File &gt; New Project…</li>
+<li>Select ‘New Directory’</li>
+<li>For the Project Type select ‘Quarto Project’</li>
+<li>For Directory name, call it “chapter-1” (without the quotes)</li>
+<li>For the subdirectory, select somewhere you will remember (like “My Documents” or “Desktop”)</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="markdown-syntax-and-rendering" class="level2">
+<h2 class="anchored" data-anchor-id="markdown-syntax-and-rendering">Markdown syntax and “rendering”</h2>
+<p>When we create the file, we have an document called chapter-1.qmd open by default. This is what is known as a plain text document, which means it can be opened and edited in any text editor, like NotePad, TextEdit, nano, or for the truly sadistic, vm.</p>
+<section id="syntax" class="level3">
+<h3 class="anchored" data-anchor-id="syntax">Syntax</h3>
+<p>There are currently three parts to the file. At the very top is the YAML header:</p>
+<pre><code>---
+title: "chapter-1"
+---</code></pre>
+<p>Not a lot of information here, but this is the section you can use for setting document-level formatting and settings. We will not work too much in this space in this lesson.</p>
+<p>Second, you see some text:</p>
+<pre><code>## Quarto
+
+Quarto enables you to weave together content and executable code into a 
+finished document. To learn more about Quarto see &lt;https://quarto.org&gt;.</code></pre>
+<p>This is what is known as a markdown ‘chunk’, as it is mostly text for human eyes. That is, there is not any real code in this section.</p>
+<p>Finally, we see a small bit of R code in a gray rectangle:</p>
+<pre><code>```{r}
+1+1
+```</code></pre>
+<p>This is what is known as a code ‘chunk’, as it contains R code we want to run. There are a couple things to note about this chunk. First, it starts and ends with three backticks (” <code>`</code> “). The backtick key usually lives in the top left part of your keyboard, above the Tab key. <em>All</em> code chunks will start and end with three backticks. Second, we are specifying that the code chunk is written in the R programming language by adding a lower-case”r” inside of curly braces (“<code>{r}</code>”). That may seem redundant, as we are working in RStudio, but the Quarto system is flexible enough to accommodate other programming languages, too, such as Python or Julia.</p>
+<p>A reminder that everything we see is plain text. There is no special formatting (even though RStudio is helping with some coloring) in this file.</p>
+</section>
+<section id="rendering" class="level3">
+<h3 class="anchored">Rendering</h3>
+<p>This plain text file can be thought of as a set of instructions. Some of the instructions just indicate text to print (like the part starting “Quarto enables you to…”), and other instructions are to run some code and print the output of that code. We can see this in action by “rendering” the document. This tells the computer to take those instructions and make a document. The three most common output formats of these documents are HTML (like a web page), PDF, and DOC a word processing format for programs like LibreOffice and Microsoft Word. For much of this lesson, we will be creating a HTML file as our output document. To create the document, press the “Render” button near the top of the pane with our .qmd file.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/quarto-render-button.png" class="img-fluid figure-img" style="width:30.0%"></p>
+<figcaption>The “Render” button creates the output document</figcaption>
+</figure>
+</div>
+<p>After a moment, a web browser should open, displaying the rendered document. It should look something like:</p>
+<blockquote class="blockquote">
+<h1 id="chapter-1">chapter-1</h1>
+<h2 id="quarto" class="anchored" data-anchor-id="rendering">Quarto</h2>
+<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto, see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
+</blockquote>
+<blockquote class="blockquote">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+</div>
+</blockquote>
+<p>Looking at this page, we have:</p>
+<ol type="1">
+<li>The title of the document, “chapter-1”, which comes from the YAML section;</li>
+<li>The heading “Quarto”. This is that little bit of text on the line that started with two pound signs (“##”);</li>
+<li>The text describing what Quarto does;</li>
+<li>The R code adding 1 + 1 shown in the gray box, and</li>
+<li>The output resulting from our R code (the integer 2, in this case).</li>
+</ol>
+</section>
+<section id="changing-stuff-and-seeing-what-happens" class="level3">
+<h3 class="anchored">Changing stuff and seeing what happens</h3>
+<p>You will note that there is some formatting stuff happening in our final document! The title and the first use of “Quarto” are larger font are probably the most notable. At this point, we are going to edit the document to reflect the structure of our desired output. Remember that we are writing the world’s shortest scientific report, so let us update the title and add section headers.</p>
+<p>Go ahead and update the very top of the file so the YAML header has a more descriptive title (“Iris shape analyses”) and on a new line, add your name as author:</p>
+<pre><code>---
+title: "Iris Shape Analyses"
+author: "Jeffrey C. Oliver"     &lt;- Use YOUR name here, not mine :)
+---</code></pre>
+<p>After the last set of three dashes (<code>---</code>), delete the remaining contents and add the four section headers of our paper (Introduction, Methods, Results, and Discussion):</p>
+<pre><code>## Introduction
+
+## Methods
+
+## Results
+
+## Discussion</code></pre>
+<p>Go ahead and save the file, then press the “Render” button. The output should look like this:</p>
+<blockquote class="blockquote">
+<h1 id="iris-shape-analyses">Iris shape analyses</h1>
+<p>AUTHOR<br>
+Jeffrey C. Oliver</p>
+<h2 id="introduction" class="anchored" data-anchor-id="changing-stuff-and-seeing-what-happens">Introduction</h2>
+<h2 id="methods" class="anchored">Methods</h2>
+<h2 id="results" class="anchored">Results</h2>
+<h2 id="discussion" class="anchored">Discussion</h2>
+</blockquote>
+</section>
+<section id="formatting-fun" class="level3">
+<h3 class="anchored">Formatting fun</h3>
+<p>To start, we will add a little information in the <strong>Introduction</strong> and <strong>Methods</strong> sections. For the introduction, we will add a sentence about what the document is about. Note that because we are using the scientific name for the flowers, we want to italicize the name. We can make text italic by adding underscores (“_“) immediately before and after the text we want italicized (in this case, we add an underscore immediately before and immediately after the word”Iris”).</p>
+<pre><code>## Introduction
+
+In this report we test for a relationship between different parts 
+of morphology in _Iris_ flowers.</code></pre>
+<p>Next we can add information about the data we will be using. In this case it is the <code>iris</code> dataset that is built into R. Add this to the Methods section:</p>
+<pre><code>## Methods
+
+Analyses are based on built-in data for three _Iris_ species. We 
+used linear regression to test for relationships.</code></pre>
+<p>Let us go ahead and save the file, then press the “Render” button to make sure the text was added as we expect. You should now have a report with more information (albeit minimal) in the <strong>Introduction</strong> and <strong>Methods</strong> sections:</p>
+<blockquote class="blockquote">
+<h1 id="iris-shape-analyses-1">Iris shape analyses</h1>
+<p>AUTHOR<br>
+Jeffrey C. Oliver</p>
+<h2 id="introduction-1" class="anchored" data-anchor-id="formatting-fun">Introduction</h2>
+<p>In this report we test for a relationship between different parts of morphology in <em>Iris</em> flowers.</p>
+<h2 id="methods-1" class="anchored">Methods</h2>
+<p>Analyses are based on built-in data for three <em>Iris</em> species. We used linear regression to test for relationships.</p>
+<h2 id="results-1" class="anchored">Results</h2>
+<h2 id="discussion-1" class="anchored">Discussion</h2>
+</blockquote>
+<p>Note that in both sections, the word “Iris” should be italicized. We can also see the difference between normal text and those section headers (Introduction, Methods, Results, and Discussion). When we start a line with pound sign(s) (“#”) in a text block, it will format the text as a header. That is, it uses larger, bold font. If you are familiar with web development, the number of pound signs indicates header level: <code>#</code> = H1, <code>##</code> = H2, <code>###</code> = H3, and so on. Note this is very different behavior when starting a line in R with a pound sign, where <code>#</code> indicates a comment.</p>
+<hr>
+</section>
+</section>
+<section id="code-chunks" class="level2">
+<h2 class="anchored" data-anchor-id="code-chunks">Code chunks</h2>
+<p>And speaking of R code, we are now going to see the real power of these documents.</p>
+<section id="showing-our-work" class="level3">
+<h3 class="anchored">Showing our work</h3>
+<p>For the next step, we will write a code chunk to create a plot of some of the data. Recall that we are interested in the measurements of some flower parts in three species of <em>Iris</em>. For our purposes, we want to include a plot that has measurements of petal length on the x (horizontal) axis and the measurements of petal width on the y (vertical) axis. To write an R code block, we use triple-backticks (<code>```</code>) and braces (“<code>{r}</code>”) to indicate the language (R in our case, but other languages such as python and bash can also be supported). Here we add code to indicate the start of the <strong>Results</strong> section, as well as a plot of the two variables:</p>
+<pre><code>## Results
+
+```{r}
+plot(x = iris$Petal.Length, 
+    y = iris$Petal.Width,
+    xlab = "Petal length (cm)",
+    ylab = "Petal width (cm)")
+```</code></pre>
+<p>When writing these code blocks, we need to explicitly tell R when to <em>stop</em> interpreting the text as R code. We do this with three more backticks (<code>```</code>) after the last line of code.</p>
+<p>Once you have that code block written (don’t forget the closing backticks!), save the file and press the “Render” button.</p>
+<blockquote class="blockquote">
+<h2 id="results-2" class="anchored" data-anchor-id="showing-our-work">Results</h2>
+</blockquote>
+<blockquote class="blockquote">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot</span>(<span class="at">x =</span> iris<span class="sc">$</span>Petal.Length, </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> iris<span class="sc">$</span>Petal.Width,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">xlab =</span> <span class="st">"Petal length (cm)"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">ylab =</span> <span class="st">"Petal width (cm)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="020-quarto-docs_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</blockquote>
+</section>
+<section id="hiding-our-work" class="level3">
+<h3 class="anchored" data-anchor-id="hiding-our-work">Hiding our work</h3>
+<p>In some cases, we may want to run some analyses, but keep the code restricted to our source file (the source file is the one we are working in right now). We might do this when the code is not necessary to include in our output, but the results are. In our case, we want to measure the correlation between the two flower measurements, petal length and petal width. We are really interested in showing the <em>r</em><sup>2</sup> value, but we do not need to show the code we used to find it (remember, the code <em>will</em> be in this source file, in case we need to update it). To hide the code of a code chunk, we will pass <code>echo = FALSE</code> in the first line of the code chunk, right after we tell it to use R as the programming language. So, after the code chunk that we used to make the plot, we can add another chunk, this one where we hide the source code from the output:</p>
+<pre><code>```{r, echo = FALSE}
+# Our correlation code goes here
+```</code></pre>
+<p>To run the correlation, we will use the <code>cor()</code> function in R, and assign that value to a variable we will call <code>r</code>. We will then take that value and square it to obtain the <em>r</em><sup>2</sup> value. Update this latest code chunk with:</p>
+<pre><code>```{r, echo = FALSE}
+# Run correlation
+r &lt;- cor(iris$Petal.Length, iris$Petal.Width)
+# Calculate r-squared
+r_squared &lt;- r * r
+```</code></pre>
+<p>And rendering the document produces…well, exactly what we had before. That is, we have a plot, but there isn’t anything about the correlation in the output.</p>
+<p>But this is OK!</p>
+<hr>
+</section>
+</section>
+<section id="more-fun-in-the-text-blocks" class="level2">
+<h2 class="anchored" data-anchor-id="more-fun-in-the-text-blocks">More fun in the text blocks</h2>
+<section id="inline-code" class="level3">
+<h3 class="anchored">Inline code</h3>
+<p>A lot of times, we want to perform some analyses or data wranging (or, more likely, both), and while the underlying code does not need to be included in our report, we do need to show the results. Here is where “inline code” comes in.</p>
+<p>We can use a regular text block and make an “inline” call to R, in order to access the value and include it in our report. We use the term “inline” to mean exactly that: in the line of text where we want some result to appear, we add a little bit of R code to retrieve values stored in a variable.</p>
+<p>For our purposes, we want to add a little bit of text about the correlation between petal length and petal width and include the <em>r</em><sup>2</sup> we calculated in the preceding code chunk. So, insert an empty line after the code chunk and add:</p>
+<!-- Oh. My. God. I hate backticks so much right now. -->
+<pre><code>Petal width and petal length were highly correlated 
+(r^2^ = `r r_squared`).</code></pre>
+<p>So, what is this doing? First, we are adding some old fashioned regular text (Starting with “Petal width and…”). In the parentheses we have “r^2^”. Those carats (“^”) surrounding the 2 indicate we want the number 2 to show up as a superscript. Following the equals sign, we have a <em>single</em> backtick, a lower case “r”, a call to the <em>r</em><sup>2</sup> variable we created in the code chunk above (<code>r_squared</code>), and a closing single backtick. With inline calls to R, we can print out values stored in variables. After adding that line, saving the file, and rendering, you should have one more line at the end of your <strong>Results</strong> section:</p>
+<blockquote class="blockquote">
+<p>Petal width and petal length were highly correlated (r<sup>2</sup> = 0.9271098).</p>
+</blockquote>
+<p>The use of inline code is not limited to only reporting values stored in variables; we can also use R functions. For example. the <em>r</em><sup>2</sup> value shows too many digits (seven digits is excessive!). We can use the <code>round()</code> function in the inline call. In this case we will round the <em>r</em><sup>2</sup> value to two digits. Update the text in the <strong>Results</strong> section to:</p>
+<pre><code>Petal width and petal length were highly correlated 
+(r^2^ = `r round(r_squared, digits = 2)`).</code></pre>
+<p>Make sure you have both the opening and closing parentheses for the <code>round()</code> function, or the document will not render correctly. After updating that line, saving your file, and Rendering, your <strong>Results</strong> section should look like:</p>
+<blockquote class="blockquote">
+<h2 id="results-3" class="anchored" data-anchor-id="inline-code">Results</h2>
+<p>Petal width and petal length were highly correlated (r<sup>2</sup> = 0.93).</p>
+</blockquote>
+</section>
+<section id="link-formatting" class="level3">
+<h3 class="anchored">Link formatting</h3>
+<p>We can also add a little more information about where these data come from. Since these data were were collected by the botanist Edgar Anderson, let’s provide a link to the Wikipedia page with information about the data set. To find the link you can use your favorite search engine and search for “wikipedia anderson iris data.” Copy the URL of the Wikipedia page to the clipboard and go back to the Materials &amp; Methods section and update it with the link:</p>
+<p>Change:</p>
+<pre><code>## Methods
+
+Analyses are based on built-in data for three _Iris_ species. We used linear 
+regression to test for relationships.</code></pre>
+<p>To:</p>
+<pre><code>## Methods
+
+Analyses are based on data for three _Iris_ species collected by 
+[Edgar Anderson](https://en.wikipedia.org/wiki/Iris_flower_data_set). We used 
+linear regression to test for relationships.</code></pre>
+<p>The general format for links is a pair of square brackets around the text to appear and a pair of parentheses around the actual url: <code>[LINK TEXT](URL)</code>.</p>
+<p>Save and render, and you should see:</p>
+<blockquote class="blockquote">
+<h2 id="methods-2" class="anchored" data-anchor-id="link-formatting">Methods</h2>
+<p>Analyses are based on data for three <em>Iris</em> species collected by <a href="https://en.wikipedia.org/wiki/Iris_flower_data_set">Edgar Anderson</a>. We used linear regression to test for relationships.</p>
+</blockquote>
+</section>
+<section id="inserting-images" class="level3">
+<h3 class="anchored">Inserting images</h3>
+<p>In some cases, you may want to add images to your report. We can do this with syntax that is very similar to the hyperlink syntax we just used. The only real difference is that we add an exclamation point to the very beginning:</p>
+<pre><code>![Text caption for image](path to image)</code></pre>
+<p>The <code>path to image</code> can be the name and location of a file on your computer, or it could be a URL to an online image. For our purposes, we will use a downloaded image of an <em>Iris</em> flower. We are going to use an image of <em>I. virginica</em> by Eric Hunt from Wikimedia commons. You can use the same image (available at <a href="https://bit.ly/iris-virginica">https://bit.ly/iris-virginica</a>), or download a different image. Be sure to save the image in the project folder (the folder named “chapter-1”) and remember what you name the image (I am naming my image file “iris-virginica.jpg”). To add this image to the report, add a sentence to the <strong>Discussion</strong> and use the image syntax described above.</p>
+<pre><code>## Discussion
+
+Additional study of _Iris_ flowers is warranted.
+
+![Image of _I. virginica_ by Eric Hunt](iris-virginica.jpg)</code></pre>
+<p>In this case, we use the caption (the text inside the square brackets) to credit the photographer (Eric Hunt) and to indicate the species of <em>Iris</em>. Note we can use the same italic text formatting inside the caption (the word “Iris” wrapped in underscores) as we saw before. After saving and rendering, your <strong>Discussion</strong> section should now look like:</p>
+<blockquote class="blockquote">
+<h2 id="discussion-2" class="anchored" data-anchor-id="inserting-images">Discussion</h2>
+<p>Additional study of <em>Iris</em> flowers is warranted.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/iris-virginica.jpg" class="img-fluid figure-img"></p>
+<figcaption>Image of <em>I. virginica</em> by Eric Hunt</figcaption>
+</figure>
+</div>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="output-formats" class="level2">
+<h2 class="anchored" data-anchor-id="output-formats">Output formats</h2>
+<section id="docx" class="level3">
+<h3 class="anchored" data-anchor-id="docx">Docx</h3>
+<p>The last thing to consider is the file format you want for your report. We have so far been using the default output format of HTML. The other two common output formats are PDFs and Word Docs. We are going to focus on the Word Doc output format, but you can find information about PDF output in the <a href="#Additional_resources">Additional resources</a> section, below. To switch to Word Doc output, go back to the beginning of your file and add a line indicating our desired format</p>
+<pre><code>---
+title: "Iris Shape Analyses"
+author: "Jeffrey C. Oliver"
+format: docx                   &lt;--- This is our new line
+---</code></pre>
+<p>Once we have that updated, you can save your file and render the document. You should now have another file in your project called “chapter-1.docx”. You can open this file with a program like Microsoft Word or LibreOffice Writer.</p>
+</section>
+<section id="document-templates" class="level3">
+<h3 class="anchored" data-anchor-id="document-templates">Document templates</h3>
+<p>One thing you will note in the .docx file you created is that it uses the default styles for Title and Header 2 text. If you want to change these styles, you will need to take three steps (we will go into more detail for step two in a moment):</p>
+<ol type="1">
+<li>Create a new .docx file and save it in this project folder under the name chapter-1-template.docx.</li>
+<li>Update the relevant styles in chapter-1-template.docx and save it.</li>
+<li>Update the YAML header (the bit of text at the top of our .qmd file with title and author information) with instructions on which file to use as the template (note the two-space indentations are required here):</li>
+</ol>
+<pre><code>---
+title: "Iris Shape Analyses"
+author: "Jeffrey C. Oliver"
+format: 
+  docx:
+    reference-doc: chapter-1-template.docx
+---</code></pre>
+<p>Let’s do this! Start by creating the file as described in step 1, above (i.e.&nbsp; open Microsoft Word or LibreOffice Writer and save the blank document as “chapter-1-template.docx”). Be sure to save it in your project folder (your project folder should be named “chapter-1”). With the file still open, add three lines of text to the file:</p>
+<blockquote class="blockquote">
+<p>Title</p>
+<p>Header 2</p>
+<p>Text</p>
+</blockquote>
+<p>They should all appear as plain text at this point. First, we will set the Title Style. This is going to determine how the title of our report (“Iris Shape Analyses”) is displayed. Go ahead and make the font size larger (highlight the word “Title” and change the font size to 24pt). Next, update the Header 2 style by highlighting the text “Header 2”, changing the font size to 16pt and making the font bold (usually Ctrl-B will do this). Finally, for the Normal text style, we can just change the font to something other than the default. In my case, I am going to change it to Arial (highlight the text “Normal text” and choose Ariel from the list of fonts).</p>
+<p>Now, and this is the real important part, we need to apply those changes to the document’s Styles. We will start again with the Title text. Place your cursor in the middle of the word, click the style dropdown menu, hover over Title, and select “Update to match selection”.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/quarto-style-word.png" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption>Updating a style in Microsoft Word</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/quarto-style-libre.png" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption>Updating a style in LibreOffice Writer</figcaption>
+</figure>
+</div>
+<p>(Note there may be slight differences among operating systems and word processing software).</p>
+<p>Now the style you used for your “Title” text will be applied to any documents that use this .docx file as the template file. Go ahead and take the same steps to update the styles for Header 2 and Normal text. Once you finished, save the changes and close this .docx file.</p>
+<p>Double check your .qmd file so the header at the top includes a reference to the template document you created.</p>
+<pre><code>---
+title: "Iris Shape Analyses"
+author: "Jeffrey C. Oliver"
+format: 
+  docx:
+    reference-doc: chapter-1-template.docx
+---</code></pre>
+<p>Save the .qmd file, Render, and then open the chapter-1.docx file. It should have those new styles applied! The last thing to note is that if you want multiple output formats, you can do this by adding more formats to the header. For example, if we want to also create the HTML output we were using before, we can add one more line in the header (again, the two-space indentation is required):</p>
+<pre><code>---
+title: "Iris Shape Analyses"
+author: "Jeffrey C. Oliver"
+format: 
+  html: default              &lt;---- Add this line to create HTML output, too
+  docx:
+    reference-doc: chapter-1-template.docx
+---</code></pre>
+<hr>
+</section>
+</section>
+<section id="additional-resources" class="level2">
+<h2 class="anchored" data-anchor-id="additional-resources">Additional resources</h2>
+<ul>
+<li>The offical Quarto documentation includes information for creating <a href="https://quarto.org/docs/output-formats/pdf-basics.html">PDF-formatted output files</a></li>
+<li><a href="https://quarto.org/docs/output-formats/all-formats.html">An overview of different Quarto output formats</a></li>
+<li><a href="https://quarto.org/docs/output-formats/ms-word-templates.html">Information on creating Word template documents</a></li>
+<li>A <a href="https://jcoliver.github.io/learn-r/020-quarto-docs.pdf">PDF version</a> of this lesson</li>
+</ul>
+<hr>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+ Copyright 2026, Jeffrey Oliver
+  </li>  
+</ul>
+    </div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="https://creativecommons.org/licenses/by/4.0/">
+<p>CC BY 4.0 Deed</p>
+</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/jcoliver">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

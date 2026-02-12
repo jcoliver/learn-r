@@ -336,6 +336,11 @@ to add points for all the restaurants in Tucson that specialize in Mexican
 cuisine. To do this, we will start by retrieving data for _all_ restaurants in 
 that Tucson bounding box that we created earlier on.
 
+```{r sleep-3, echo = FALSE}
+# Here to slow down our queries to OSM
+Sys.sleep(time = 3)
+```
+
 ```{r restaurants, error = FALSE}
 # Query for Tucson restaurants
 tucson_rest <- getbb(place_name = "Tucson") %>%
@@ -356,7 +361,7 @@ to only those restaurants specializing in Mexican cuisine. We can update our
 previous query by adding another call to `add_osm_feature()`, this time setting 
 `key = cuisine` and `value = "mexican"`:
 
-```{r sleep-3, echo = FALSE}
+```{r sleep-4, echo = FALSE}
 # Here to slow down our queries to OSM
 Sys.sleep(time = 3)
 ```
@@ -526,6 +531,11 @@ ggsave(plot = hawk_plot,
 We really just scratched the surface of OpenStreetMap data. Take a look at the 
 additional resources section below to find out more about features and other 
 ways to use OSM data with R.
+
+```{r sleep-5, echo = FALSE}
+# Here to slow down our queries to OSM
+Sys.sleep(time = 15)
+```
 
 ***
 
