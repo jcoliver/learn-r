@@ -17,7 +17,7 @@ format: # to suppress pdf link
 | 17  | Feb   | Dynamic reports with quarto        |
 | 24  | Feb   | Hybrid open lab                    |
 | 03  | Mar   | Making heatmaps in R               |
-| 10  | Mar   | Hybrid open lab                    |
+| 10  | Mar   | _No lab this day; Spring Break!_   |
 | 17  | Mar   | Data science: more fun, less pain with tidyverse |
 | 24  | Mar   | Hybrid open lab                    |
 | 31  | Mar   | Writing your own functions in R    |
