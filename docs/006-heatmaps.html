@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jeff Oliver">
-<meta name="dcterms.date" content="2026-02-12">
+<meta name="dcterms.date" content="2026-03-06">
 
 <title>Heatmaps in R – learn-r</title>
 <style>
@@ -204,7 +204,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 12, 2026</p>
+      <p class="date">March 6, 2026</p>
     </div>
   </div>
   
@@ -247,7 +247,7 @@ gtag('config', 'G-EF6ZJH0577', { 'anonymize_ip': true});
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"data"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"output"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>For this lesson we will use data from a diversity survey of microbial life in a <a href="https://en.wikipedia.org/wiki/Chrysotile">chrysotile asbestos</a> mine. Driscoll and colleagues <a href="https://doi.org/10.1016/j.gdata.2016.11.004">doi: 10.1016/j.gdata.2016.11.004</a> used next generation sequencing to identify and categorize bacterial diversity in a flooded pit of the abandoned mine. The data are normalized read counts for microbes found at the sites. A subset of the data can be downloaded from <a href="https://tinyurl.com/mine-data-csv">https://tinyurl.com/mine-data-csv</a> (which itself redirects to <a href="https://jcoliver.github.io/learn-r/data/mine-microbe-class-data.csv">https://jcoliver.github.io/learn-r/data/mine-microbe-class-data.csv</a>). You can download this file to your computer with the <code>download.file</code> function:</p>
+<p>For this lesson we will use data from a diversity survey of microbial life in a <a href="https://en.wikipedia.org/wiki/Chrysotile">chrysotile asbestos</a> mine. Driscoll and colleagues <a href="https://doi.org/10.1016/j.gdata.2016.11.004">doi: 10.1016/j.gdata.2016.11.004</a> used next generation sequencing to identify and categorize bacterial diversity in a flooded pit of the abandoned mine. The data are normalized read counts for microbes found at the sites. A subset of the data can be downloaded from <a href="https://bit.ly/mine-data-csv">https://bit.ly/mine-data-csv</a> (which itself redirects to <a href="https://raw.githubusercontent.com/jcoliver/learn-r/refs/heads/gh-pages/data/mine-microbe-class-data.csv">https://raw.githubusercontent.com/jcoliver/learn-r/refs/heads/gh-pages/data/mine-micrsobe-class-data.csv</a>). You can download this file to your computer with the <code>download.file</code> function:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="at">url =</span> <span class="st">"https://tinyurl.com/mine-data-csv"</span>, </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">destfile =</span> <span class="st">"data/mine-data.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
