@@ -64,6 +64,39 @@ dir.create(path = "output")
 
 ## [TOPIC ONE]
 
+The following was suggested by Anthropic's Claude Haiku 4.5
+
+```{r nnet-test}
+# Load the nnet package
+library(nnet)
+
+# Load the iris dataset NO, GOD NO
+# data(iris)
+
+# Set a seed for reproducibility
+set.seed(123)
+
+# Create the neural network model
+# Formula: Species ~ all measurement columns
+# size=5 creates one hidden layer with 5 nodes
+mod <- nnet(Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width, 
+            data = iris, 
+            size = 5,
+            maxit = 100)
+
+# To visualize the network, can use plotnet
+library(NeuralNetTools)
+plotnet(mod)
+
+# To make predictions
+predictions <- predict(mod, iris, type = "class")
+
+# Check accuracy
+table(predictions, iris$Species)
+
+# Ha! Too easy.
+```
+
 ***
 
 ## [TOPIC TWO]
