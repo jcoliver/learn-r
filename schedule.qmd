@@ -22,10 +22,10 @@ format: # to suppress pdf link
 | 24  | Mar   | Hybrid open lab                    |
 | 31  | Mar   | Writing your own functions in R    |
 | 07  | Apr   | Hybrid open lab                    |
-| 14  | Apr   | Machine learning in R part 1: regression |
-| 21  | Apr   | Hybrid open lab                    |
-| 28  | Apr   | Your first species distribution model |
-| 07  | May   | Hybrid open lab                    |
+| 14  | Apr   | Hybrid open lab                    |
+| 21  | Apr   | Machine learning in R part 1: regression |
+| 28  | Apr   | Hybrid open lab                    |
+| 07  | May   | Your first species distribution model |
 | 12  | May   | Hybrid open lab                    |
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
