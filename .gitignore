@@ -12,3 +12,4 @@ keys/
 /.quarto/
 
 **/*.quarto_ipynb
+.positai

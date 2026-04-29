@@ -9,24 +9,11 @@ format: # to suppress pdf link
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 13  | Jan   | _No lab this day_                  |
-| 20  | Jan   | Hybrid open lab                    |
-| 27  | Jan   | Hybrid open lab                    |
-| 03  | Feb   | Introduction to data visualization with ggplot |
-| 10  | Feb   | Hybrid open lab                    |
-| 17  | Feb   | Dynamic reports with quarto        |
-| 24  | Feb   | Hybrid open lab                    |
-| 03  | Mar   | Making heatmaps in R               |
-| 10  | Mar   | _No lab this day; Spring Break!_   |
-| 17  | Mar   | Data science: more fun, less pain with tidyverse |
-| 24  | Mar   | Hybrid open lab                    |
-| 31  | Mar   | Writing your own functions in R    |
-| 07  | Apr   | Hybrid open lab                    |
-| 14  | Apr   | Hybrid open lab                    |
-| 21  | Apr   | Hybrid open lab                    |
 | 28  | Apr   | Machine learning in R part 1: regression |
-| 07  | May   | Hybrid open lab                    |
+| 05  | May   | Hybrid open lab                    |
 | 12  | May   | Hybrid open lab                    |
+| 19  | May   | Hybrid open lab                    |
+| 26  | May   | Hybrid open lab                    |
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://lib.arizona.edu/study/spaces/data-studio) 
