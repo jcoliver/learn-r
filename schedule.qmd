@@ -9,11 +9,19 @@ format: # to suppress pdf link
 
 | Day | Month | Workshop                           |
 |:---:|:-----:|:----------------------------------:|
-| 28  | Apr   | Machine learning in R part 1: regression |
-| 05  | May   | Hybrid open lab                    |
-| 12  | May   | Hybrid open lab                    |
-| 19  | May   | Hybrid open lab                    |
-| 26  | May   | Hybrid open lab                    |
+| 02  | Jun   | Hybrid open lab                    |
+| 09  | Jun   | Hybrid open lab                    |
+| 16  | Jun   | Hybrid open lab                    |
+| 23  | Jun   | Hybrid open lab                    |
+| 30  | Jun   | Hybrid open lab                    |
+| 07  | Jul   | Hybrid open lab                    |
+| 14  | Jul   | Hybrid open lab                    |
+| 21  | Jul   | Hybrid open lab                    |
+| 28  | Jul   | Hybrid open lab                    |
+| 04  | Aug   | Hybrid open lab                    |
+| 11  | Aug   | Hybrid open lab                    |
+| 18  | Aug   | Hybrid open lab                    |
+| 25  | Aug   | Hybrid open lab                    |
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://lib.arizona.edu/study/spaces/data-studio) 
