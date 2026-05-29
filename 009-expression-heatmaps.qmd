@@ -62,8 +62,8 @@ cells infected with the influenza virus
 The study infected human plasmacytoid dendritic cells with the influenza virus, 
 and compared gene expression in those cells to gene expression in uninfected 
 cells. The goal was to see how the flu virus affected the function of these 
-immune system cells. The data for this lesson is available at: [http://tinyurl.com/flu-expression-data](http://tinyurl.com/flu-expression-data) 
-or [https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv](https://jcoliver.github.io/learn-r/data/GSE68849-expression.csv). 
+immune system cells. The data for this lesson is available at: [https://bit.ly/flu-expression-data](https://bit.ly/flu-expression-data) 
+or [https://raw.githubusercontent.com/jcoliver/learn-r/refs/heads/gh-pages/data/GSE68849-expression.csv](https://raw.githubusercontent.com/jcoliver/learn-r/refs/heads/gh-pages/data/GSE68849-expression.csv). 
 Download this comma separated file and put it in the "data" folder. 
 
 Finally, we will be using two packages that are not distributed with the base R
