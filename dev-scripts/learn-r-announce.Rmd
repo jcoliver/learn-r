@@ -13,12 +13,11 @@ suppressPackageStartupMessages(expr = library(lubridate))
 ```{r setup-schedule}
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2026-06-02",
-                                 "2026-06-09",
-                                 "2026-06-16",
-                                 "2026-06-23",
-                                 "2026-06-30"),
-                       lessons = c(-1, -1, -1, -1, -1))
+schedule <- data.frame(dates = c("2026-07-07",
+                                 "2026-07-14",
+                                 "2026-07-21",
+                                 "2026-07-28"),
+                       lessons = c(-1, -1, -1, -1))
 
 # Toggle indicating whether or not attendance files should be created
 create.files <- TRUE
@@ -84,7 +83,6 @@ Additional resources:
 
 + A tentative schedule of upcoming sessions is also available at
 [https://jcoliver.github.io/learn-r/schedule](https://jcoliver.github.io/learn-r/schedule)
-+ Even more data science events can be found on the Data Science Institute's events calendar at [https://datascience.arizona.edu/calendar](https://datascience.arizona.edu/calendar)
 + Want more help? Sign up for the UA Data Science Slack workspace at
 [https://jcoliver.github.io/uadatascience-slack/](https://jcoliver.github.io/uadatascience-slack/)
 + Stay up to date with the schedule by signing up for the University of Arizona 
