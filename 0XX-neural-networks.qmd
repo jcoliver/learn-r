@@ -182,6 +182,72 @@ mean(nn_acc)
 # or
 # https://archive.ics.uci.edu/dataset/109/wine
 
+wine_data <- read.csv(file = "~/Desktop/wine/wine.data", header = FALSE)
+names(wine_data) <- c("cultivar", "ethanol", "malic_acid", "ash", 
+                      "ash_alkalinity", "magnisium", "total_phenols", 
+                      "flavanoids", "nonflavanoid_phenols", "proanthocyanins",
+                      "color_intensity", "color_hue", "od_ratio", "proline")
+library(nnet)
+
+wine_scaled <- apply(X = wine_data[, -1], FUN = scale, MARGIN = 2)
+wine_scaled <- data.frame(wine_scaled)
+wine_scaled <- cbind(wine_data[, 1], wine_scaled)
+colnames(wine_scaled)[1] <- "cultivar"
+
+wine_nnet <- nnet(cultivar ~ ., 
+                  data = wine_scaled, 
+                  size = 4,
+                  maxit = 100)
+
+wine_predict <- predict(wine_nnet, newdata = wine_scaled)
+wine_predict <- round(wine_predict)
+colSums(wine_predict)
+table(wine_scaled$cultivar)
+
+# Try a random forest
+library(randomForest)
+wine_rf <- randomForest(cultivar ~ ., data = wine_scaled)
+
+wine_rf_predict <- predict(wine_rf, newdata = wine_scaled)
+table(wine_rf_predict)
+```
+
+# Too easy
+
+The problems described above (heart disease, wine categorization) are too easy. 
+That is, things like random forest and logistic regression perform just as well 
+(or better) than the neural network (rf and nn had 100% accuracy on the wine 
+data).
+
++ This really might be a case for image classification. MNIST is the standard; 
+ten handwritten digits in 28x28 pixel images (grayscale, values 0-255). 
+https://en.wikipedia.org/wiki/MNIST_database
++ A recent alternative is Fashion-MNIST (or FMNIST), which classifies images of 
+pieces of clothing (same size images as MNIST).
+https://en.wikipedia.org/wiki/Fashion-MNIST
+Data are available at https://github.com/zalandoresearch/fashion-mnist
+
+Going this route might really require keras/tensorflow...
+
+The MNIST data are usually either distributed as images or as a series of 
+28x28 arrays. At least one source has converted it to a csv 
+https://pjreddie.com/projects/mnist-in-csv/ with 784 columns (28 x 28 = 784).
+The pjreddie site above also includes a python script that does the conversion, 
+so one could do this on the FMNIST data, too.
+
+These datasets are too large to be handled by the nnet package.
+
+There's a nice, simple lesson with keras+tensorflow at 
+https://www.rpubs.com/sedzinfo/keras_mnist
+
+The keras package includes a getting started vignette at 
+https://cran.r-project.org/web/packages/keras/vignettes/index.html
+
+
+
+```{r first-mnist}
+mnist_train <- read.csv(file = "~/Desktop/mnist_train.csv", header = FALSE)
+
 ```
 
 ***
