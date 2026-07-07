@@ -243,7 +243,15 @@ https://www.rpubs.com/sedzinfo/keras_mnist
 The keras package includes a getting started vignette at 
 https://cran.r-project.org/web/packages/keras/vignettes/index.html
 
+For dealing with the data, we can see the gist at 
+https://gist.github.com/brendano/39760
+This opens a binary file (the extracted .gz file that ends in -ubyte) and reads
+it into memory. Image data are called x (MNIST) and training (FMNIST), while 
+label data are called y (MNIST) and label (FMNIST).
 
+For our purposes, consider reducing the dataset to 10%. Could even have a 
+"bonus track" section to do download of file, R.utils::gunzip to extract the 
+gz file, then read in the file with readBin.
 
 ```{r first-mnist}
 mnist_train <- read.csv(file = "~/Desktop/mnist_train.csv", header = FALSE)
