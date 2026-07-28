@@ -94,6 +94,167 @@ table(predictions, iris$Species)
 # Ha! Too easy.
 ```
 
+Another dataset is heart disease from Cleveland hospital. Retrieved from 
+https://archive.ics.uci.edu/dataset/45/heart+disease
+
+```{r heart-disease}
+# Using the processed.cleveland.data file (a csv)
+# Has bad column names
+cd <- read.csv(file = "~/Desktop/processed.cleveland.data")
+colnames(cd) <- c("age", "sex", "cp", "trestbps", "chol", "fbs", "restecg",
+                  "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num")
+# Change num (heart disease or not)
+cd$num <- ifelse(cd$num == 0,
+                 0, 1)
+
+# Run logistic regression
+cd_lr <- glm(num ~ ., family = binomial, data = cd)
+# Get predictions of probabilities
+cd_predict <- predict(object = cd_lr, newdata = cd, type = "response")
+# Turn predictions into binary values
+cd_predict <- round(cd_predict, digits = 0)
+# Show confusion matrix
+table(cd_predict, cd$num)
+
+# How well does neural network do?
+cd_nnet <- nnet(num ~ ., 
+            data = cd, 
+            size = 5,
+            maxit = 100)
+
+# To visualize the network, can use plotnet
+plotnet(cd_nnet)
+
+# To make predictions
+predictions <- predict(cd_nnet, cd)
+
+# Turn predictions into binary values
+predictions <- round(predictions, digits = 0)
+
+# Check accuracy
+table(predictions, cd$num)
+
+## Add more nodes to network
+# size 5 -> 10
+cd_nnet <- nnet(num ~ ., 
+            data = cd, 
+            size = 10,
+            maxit = 100)
+
+# To make predictions
+predictions <- predict(cd_nnet, cd)
+
+# Turn predictions into binary values
+predictions <- round(predictions, digits = 0)
+
+# Check accuracy
+table(predictions, cd$num)
+```
+
+```{r hd-test-train}
+fold <- rep(1:5, length.out = nrow(cd))
+
+lr_acc <- numeric(5)
+nn_acc <- numeric(5)
+for (i in 1:5) {
+  testing <- cd[fold == i, ]
+  training <- cd[fold != i, ]
+  lr <- glm(num ~ ., data = training, family = binomial)
+  nn <- nnet(num ~ ., data = training, size = 10, maxit = 100)
+  lr_predict <- predict(lr, newdata = testing, type = "response")
+  lr_predict <- round(lr_predict, digits = 0)
+  nn_predict <- predict(nn, newdata = testing)
+  nn_predict <- round(nn_predict, digits = 0)
+  lr_acc[i] <- sum(abs(lr_predict - testing$num))/nrow(testing)
+  nn_acc[i] <- sum(abs(nn_predict - testing$num))/nrow(testing)
+}
+mean(lr_acc)
+mean(nn_acc)
+# HA. Logistic regression is better.
+```
+
+```{r}
+# Try a wine dataset from
+# https://archive.ics.uci.edu/dataset/186/wine+quality
+# or
+# https://archive.ics.uci.edu/dataset/109/wine
+
+wine_data <- read.csv(file = "~/Desktop/wine/wine.data", header = FALSE)
+names(wine_data) <- c("cultivar", "ethanol", "malic_acid", "ash", 
+                      "ash_alkalinity", "magnisium", "total_phenols", 
+                      "flavanoids", "nonflavanoid_phenols", "proanthocyanins",
+                      "color_intensity", "color_hue", "od_ratio", "proline")
+library(nnet)
+
+wine_scaled <- apply(X = wine_data[, -1], FUN = scale, MARGIN = 2)
+wine_scaled <- data.frame(wine_scaled)
+wine_scaled <- cbind(wine_data[, 1], wine_scaled)
+colnames(wine_scaled)[1] <- "cultivar"
+
+wine_nnet <- nnet(cultivar ~ ., 
+                  data = wine_scaled, 
+                  size = 4,
+                  maxit = 100)
+
+wine_predict <- predict(wine_nnet, newdata = wine_scaled)
+wine_predict <- round(wine_predict)
+colSums(wine_predict)
+table(wine_scaled$cultivar)
+
+# Try a random forest
+library(randomForest)
+wine_rf <- randomForest(cultivar ~ ., data = wine_scaled)
+
+wine_rf_predict <- predict(wine_rf, newdata = wine_scaled)
+table(wine_rf_predict)
+```
+
+# Too easy
+
+The problems described above (heart disease, wine categorization) are too easy. 
+That is, things like random forest and logistic regression perform just as well 
+(or better) than the neural network (rf and nn had 100% accuracy on the wine 
+data).
+
++ This really might be a case for image classification. MNIST is the standard; 
+ten handwritten digits in 28x28 pixel images (grayscale, values 0-255). 
+https://en.wikipedia.org/wiki/MNIST_database
++ A recent alternative is Fashion-MNIST (or FMNIST), which classifies images of 
+pieces of clothing (same size images as MNIST).
+https://en.wikipedia.org/wiki/Fashion-MNIST
+Data are available at https://github.com/zalandoresearch/fashion-mnist
+
+Going this route might really require keras/tensorflow...
+
+The MNIST data are usually either distributed as images or as a series of 
+28x28 arrays. At least one source has converted it to a csv 
+https://pjreddie.com/projects/mnist-in-csv/ with 784 columns (28 x 28 = 784).
+The pjreddie site above also includes a python script that does the conversion, 
+so one could do this on the FMNIST data, too.
+
+These datasets are too large to be handled by the nnet package.
+
+There's a nice, simple lesson with keras+tensorflow at 
+https://www.rpubs.com/sedzinfo/keras_mnist
+
+The keras package includes a getting started vignette at 
+https://cran.r-project.org/web/packages/keras/vignettes/index.html
+
+For dealing with the data, we can see the gist at 
+https://gist.github.com/brendano/39760
+This opens a binary file (the extracted .gz file that ends in -ubyte) and reads
+it into memory. Image data are called x (MNIST) and training (FMNIST), while 
+label data are called y (MNIST) and label (FMNIST).
+
+For our purposes, consider reducing the dataset to 10%. Could even have a 
+"bonus track" section to do download of file, R.utils::gunzip to extract the 
+gz file, then read in the file with readBin.
+
+```{r first-mnist}
+mnist_train <- read.csv(file = "~/Desktop/mnist_train.csv", header = FALSE)
+
+```
+
 ***
 
 ## [TOPIC TWO]
