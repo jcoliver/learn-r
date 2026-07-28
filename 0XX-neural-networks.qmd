@@ -70,9 +70,6 @@ The following was suggested by Anthropic's Claude Haiku 4.5
 # Load the nnet package
 library(nnet)
 
-# Load the iris dataset NO, GOD NO
-# data(iris)
-
 # Set a seed for reproducibility
 set.seed(123)
 
