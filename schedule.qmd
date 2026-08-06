@@ -7,21 +7,29 @@ format: # to suppress pdf link
 
 ## Tentative schedule of upcoming sessions
 
-| Day | Month | Workshop                           |
-|:---:|:-----:|:----------------------------------:|
-| 02  | Jun   | Hybrid open lab                    |
-| 09  | Jun   | Hybrid open lab                    |
-| 16  | Jun   | Hybrid open lab                    |
-| 23  | Jun   | Hybrid open lab                    |
-| 30  | Jun   | Hybrid open lab                    |
-| 07  | Jul   | Hybrid open lab                    |
-| 14  | Jul   | Hybrid open lab                    |
-| 21  | Jul   | Hybrid open lab                    |
-| 28  | Jul   | Hybrid open lab                    |
-| 04  | Aug   | Hybrid open lab                    |
-| 11  | Aug   | Hybrid open lab                    |
-| 18  | Aug   | Hybrid open lab                    |
-| 25  | Aug   | Hybrid open lab                    |
+| Day | Month | Workshop                                                     |
+|:---:|:-----:|:-------------------------------------------------------------|
+| 18  | Sep   | Open lab                                                     |
+| 25  | Sep   | Open lab                                                     |
+| 01  | Aug   | Open lab **AND** R - Data Visualization with ggplot          |
+| 08  | Aug   | Open lab                                                     |
+| 15  | Aug   | Open lab                                                     |
+| 22  | Aug   | Open lab **AND** Geospatial Data Wrangling - QGIS            |
+| 29  | Aug   | Open lab **AND** Python - Introduction to data visualization |
+| 06  | Oct   | Open lab **AND** R - Introduction to statistics in R         |
+| 13  | Oct   | Open lab                                                     |
+| 20  | Oct   | Open lab **AND** Geospatial Data Wrangling - ArcGIS Online   |
+| 27  | Oct   | Open lab                                                     |
+| 03  | Nov   | Open lab **AND** Python - Introduction to linear regression  |
+| 10  | Nov   | Open lab **AND** Geospatial Terrain Analysis - QGIS          |
+| 17  | Nov   | Open lab **AND** R - Using Git and GitHub with RStudio       |
+| 24  | Nov   | Open lab                                                     |
+| 01  | Dec   | Open lab **AND** Geospatial Terrain Analysis - ArcGIS Online |
+| 08  | Dec   | Open lab **AND** R - Introduction to neural networks in R    |
+| 15  | Dec   | Open lab                                                     |
+| 22  | Dec   | _No lab this day_                                            |
+| 29  | Dec   | _No lab this day_                                            |
+
 
 All sessions will be 9-11 AM on Tuesday morning (MST) in hybrid format: we will 
 be in the Data Studios of the [Main Library](https://lib.arizona.edu/study/spaces/data-studio) 
