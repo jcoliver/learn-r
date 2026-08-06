@@ -70,9 +70,6 @@ The following was suggested by Anthropic's Claude Haiku 4.5
 # Load the nnet package
 library(nnet)
 
-# Load the iris dataset NO, GOD NO
-# data(iris)
-
 # Set a seed for reproducibility
 set.seed(123)
 
@@ -258,6 +255,52 @@ mnist_train <- read.csv(file = "~/Desktop/mnist_train.csv", header = FALSE)
 
 ```
 
+To get the data ready, will need to
+
+1. Download data
+  1. They are available in the data/fashion folder at https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion; all 
+  are .gz files. 
+3. In turn, for each of two label files
+  1. Extract the data with R.utils::gunzip (note, R.utils is not utils)
+  2. Open the binary file with readBin
+  3. Extract data
+  4. Store labels for later joining with processed image data
+3. In turn, for each of the two image archives
+  1. Extract the data with R.utils::gunzip (note, R.utils is not utils)
+  2. Open the binary file with readBin
+  3. Extract data
+  4. Join image matrix with label (should end up being a pair of matrices, one 
+  with training and one with testing)
+4. Rarefy to slightly more managable dataset, making sure to keep the sampling 
+of labels even (or as even as possible)
+
+For steps 2 and 3 above, see https://gist.github.com/brendano/39760.
+
+```{r test-labels, eval = FALSE}
+# DO NOT use endian = "big"
+# readBin(con = "~/Desktop/gz/t10k-labels-idx1-ubyte", what = "integer", 
+#         n = 1, size = 4)
+n <- readBin(con = "~/Desktop/gz/t10k-labels-idx1-ubyte", what = "integer", 
+             n = 1, size = 4)
+# There's something messed up, as we get 10,008 values back, including a pair 
+# of integers outside the expected 0-9 range (elements 7 and 8 specifically, 
+# are too large: 39 and 16, respectively).
+y <- readBin(con = "~/Desktop/gz/t10k-labels-idx1-ubyte", what = "integer", 
+             n = n, size = 1, signed = FALSE)
+table(y)
+which(y > 9)
+
+# What about training data?
+n <- readBin(con = "~/Desktop/gz/train-labels-idx1-ubyte", what = "integer", 
+             n = 1, size = 4)
+# Training data a little off, too. 60,008 elements, 7 & 8 are 234 & 96
+# I have to wonder if the first eight elements (in both cases) should be 
+# ditched.
+y <- readBin(con = "~/Desktop/gz/train-labels-idx1-ubyte", what = "integer", 
+             n = n, size = 1, signed = FALSE)
+table(y)
+table(y[9:length(y)])
+```
 ***
 
 ## [TOPIC TWO]
