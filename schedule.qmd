@@ -9,13 +9,13 @@ format: # to suppress pdf link
 
 | Day | Month | Workshop                                                     |
 |:---:|:-----:|:-------------------------------------------------------------|
-| 18  | Sep   | Open lab                                                     |
-| 25  | Sep   | Open lab                                                     |
-| 01  | Aug   | Open lab **AND** R - Data Visualization with ggplot          |
-| 08  | Aug   | Open lab                                                     |
-| 15  | Aug   | Open lab                                                     |
-| 22  | Aug   | Open lab **AND** Geospatial Data Wrangling - QGIS            |
-| 29  | Aug   | Open lab **AND** Python - Introduction to data visualization |
+| 18  | Aug   | Open lab                                                     |
+| 25  | Aug   | Open lab                                                     |
+| 01  | Sep   | Open lab **AND** R - Data Visualization with ggplot          |
+| 08  | Sep   | Open lab                                                     |
+| 15  | Sep   | Open lab                                                     |
+| 22  | Sep   | Open lab **AND** Geospatial Data Wrangling - QGIS            |
+| 29  | Sep   | Open lab **AND** Python - Introduction to data visualization |
 | 06  | Oct   | Open lab **AND** R - Introduction to statistics in R         |
 | 13  | Oct   | Open lab                                                     |
 | 20  | Oct   | Open lab **AND** Geospatial Data Wrangling - ArcGIS Online   |
