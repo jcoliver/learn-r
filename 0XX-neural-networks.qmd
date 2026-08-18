@@ -280,8 +280,8 @@ For steps 2 and 3 above, see https://gist.github.com/brendano/39760.
 # DO NOT use endian = "big"
 # readBin(con = "~/Desktop/gz/t10k-labels-idx1-ubyte", what = "integer", 
 #         n = 1, size = 4)
-n <- readBin(con = "~/Desktop/gz/t10k-labels-idx1-ubyte", what = "integer", 
-             n = 1, size = 4)
+# n <- readBin(con = "~/Desktop/gz/t10k-labels-idx1-ubyte", what = "integer", 
+#              n = 1, size = 4)
 # There's something messed up, as we get 10,008 values back, including a pair 
 # of integers outside the expected 0-9 range (elements 7 and 8 specifically, 
 # are too large: 39 and 16, respectively).
@@ -289,6 +289,59 @@ y <- readBin(con = "~/Desktop/gz/t10k-labels-idx1-ubyte", what = "integer",
              n = n, size = 1, signed = FALSE)
 table(y)
 which(y > 9)
+
+
+testing_labels_gz <- "https://github.com/zalandoresearch/fashion-mnist/raw/refs/heads/master/data/fashion/t10k-labels-idx1-ubyte.gz"
+download.file(url = testing_labels_gz,
+              destfile = "t10k-labels-idx1-ubyte.gz")
+# We really do need to use readBin twice, as the first time through does some 
+# sort of necessary counting.
+n <- readBin(con = R.utils::gunzip("t10k-labels-idx1-ubyte.gz", 
+                                   remove = FALSE,
+                                   overwrite = TRUE), 
+             what = "integer",
+             n = 1, size = 4)
+testing_labels <- readBin(con = R.utils::gunzip("t10k-labels-idx1-ubyte.gz", 
+                                                remove = FALSE,
+                                                overwrite = TRUE),
+                          what = "integer",
+                          n = n, size = 1, signed = FALSE)
+# We now have a vector that we have to drop a few elements from (the first 8)
+table(testing_labels)
+testing_labels <- testing_labels[9:length(testing_labels)]
+table(testing_labels)
+# Now we can remove the gzip and resultant binary file
+file.remove("t10k-labels-idx1-ubyte.gz")
+file.remove("t10k-labels-idx1-ubyte")
+
+# Early test of image processing based on the gist at 
+# https://gist.github.com/brendano/39760
+
+testing_images_gz <- "https://github.com/zalandoresearch/fashion-mnist/raw/refs/heads/master/data/fashion/t10k-images-idx3-ubyte.gz"
+download.file(url = testing_images_gz,
+              destfile = "t10k-images-idx3-ubyte.gz")
+images_list <- list()
+f <- file(description = R.utils::gunzip("t10k-images-idx3-ubyte.gz",
+                                        overwrite = TRUE,
+                                        remove = FALSE), 
+         open = "rb")
+readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
+images_list$n <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
+num_row <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
+num_col <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
+images_data <- readBin(con = f, what = "integer", 
+                       n = images_list$n * num_row * num_col,
+                       size = 1, signed = FALSE)
+images_list$images_data <- matrix(data = images_data,
+                                  ncol = num_row * num_col,
+                                  byrow = TRUE)
+close(f)
+file.remove("t10k-images-idx3-ubyte.gz")
+file.remove("t10k-images-idx3-ubyte")
+# Data are now stored in images_list$images_data as a matrix with 10000 rows 
+# (one row per image), and 784 columns.
+# I'll be damned it works.
+
 
 # What about training data?
 n <- readBin(con = "~/Desktop/gz/train-labels-idx1-ubyte", what = "integer", 
