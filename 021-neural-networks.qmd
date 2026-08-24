@@ -21,7 +21,10 @@ if (length(libs_missing) > 0) {
 }
 ```
 
-[INTRODUCTORY SENTENCE]
+Neural networks provide a means of making predictions for problems too 
+difficult to solve with linear models. In this workshop, we will introduce the 
+concept of these models, build an image classification model, and compare the 
+predictive power with other machine learning models.
 
 #### Learning objectives
 
