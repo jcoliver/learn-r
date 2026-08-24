@@ -13,11 +13,12 @@ suppressPackageStartupMessages(expr = library(lubridate))
 ```{r setup-schedule}
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2026-08-04",
-                                 "2026-08-11",
-                                 "2026-08-18",
-                                 "2026-08-25"),
-                       lessons = c(-1, -1, -1, -1))
+schedule <- data.frame(dates = c("2026-09-01",
+                                 "2026-09-08",
+                                 "2026-09-15",
+                                 "2026-09-22",
+                                 "2026-09-29"),
+                       lessons = c(4, -1, -1, -1, -1))
 
 # Get month as a word for Subject; use the second entry, as sometimes the last 
 # session of the preceding month is included in the schedule data.frame
@@ -55,9 +56,14 @@ Would you mind forwarding this announcement to researchers and students in your 
 
 \-\-\-\-\-
 
-_All sessions will be 9-11 am (MST) on Tuesday_. Sessions will be offered in 
-hybrid format: we will be in the Data Studios of the [Main Library](https://new.library.arizona.edu/visit/spaces/data-studio) 
-and running a concurrent Zoom session at [https://arizona.zoom.us/j/89160294963](https://arizona.zoom.us/j/89160294963).
+_All sessions will be 9-11 am (MST) on Tuesday_. Most workshops will take place 
+in person in the [Data Studios of the Main Library](https://new.library.arizona.edu/visit/spaces/data-studio).
+
+Drop-in sessions will be offered in hybrid format, in the Data 
+Studios and online at [https://arizona.zoom.us/j/89160294963](https://arizona.zoom.us/j/89160294963).
+
+**Note**: Drop-in help for R and Python is _always_ available, even when a 
+workshop is scheduled.
 
 <!--
 To get the most out of these workshops, participants should bring a laptop with 
@@ -81,11 +87,6 @@ for (i in 1:nrow(schedule)) {
   }
 }
 ```
-
-<!--
-**Note**: Drop-in help for R and Python is _always_ available in the Zoom 
-sessions.
--->
 
 Additional resources:
 
