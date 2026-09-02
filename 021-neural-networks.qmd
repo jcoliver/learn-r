@@ -295,88 +295,208 @@ which(y > 9)
 
 
 ##### START HERE #####
-testing_labels_gz <- "https://github.com/zalandoresearch/fashion-mnist/raw/refs/heads/master/data/fashion/t10k-labels-idx1-ubyte.gz"
-download.file(url = testing_labels_gz,
-              destfile = "t10k-labels-idx1-ubyte.gz")
+library(dplyr)
+library(R.utils)
+
+### Retrieval of testing data
+# Get testing data labels
+testing_labels_url <- "https://github.com/zalandoresearch/fashion-mnist/raw/refs/heads/master/data/fashion/t10k-labels-idx1-ubyte.gz"
+testing_labels_file <- "t10k-labels-idx1-ubyte"
+testing_labels_gz <- paste0(testing_labels_file, ".gz")
+
+download.file(url = testing_labels_url,
+              destfile = testing_labels_gz)
 # We really do need to use readBin twice, as the first time through does some 
 # sort of necessary counting.
-n <- readBin(con = R.utils::gunzip("t10k-labels-idx1-ubyte.gz", 
+n <- readBin(con = R.utils::gunzip(testing_labels_gz, 
                                    remove = FALSE,
                                    overwrite = TRUE), 
              what = "integer",
              n = 1, size = 4)
-testing_labels <- readBin(con = R.utils::gunzip("t10k-labels-idx1-ubyte.gz", 
+testing_labels <- readBin(con = R.utils::gunzip(testing_labels_gz, 
                                                 remove = FALSE,
                                                 overwrite = TRUE),
                           what = "integer",
                           n = n, size = 1, signed = FALSE)
-# We now have a vector that we have to drop a few elements from (the first 8)
-# table(testing_labels)
+# We now have a vector that we have to drop the first 8 elements from
 testing_labels <- testing_labels[9:length(testing_labels)]
-# table(testing_labels)
-# Now we can remove the gzip and resultant binary file and zipped file
-invisible(file.remove("t10k-labels-idx1-ubyte.gz"))
-invisible(file.remove("t10k-labels-idx1-ubyte"))
+# Now we can remove the gzip and resultant binary file
+invisible(file.remove(testing_labels_gz))
+invisible(file.remove(testing_labels_file))
 
-# Early test of image processing based on the gist at 
-# https://gist.github.com/brendano/39760
+# Get testing data images and convert to a matrix
+# Based on the gist at https://gist.github.com/brendano/39760
 
-testing_images_gz <- "https://github.com/zalandoresearch/fashion-mnist/raw/refs/heads/master/data/fashion/t10k-images-idx3-ubyte.gz"
-download.file(url = testing_images_gz,
-              destfile = "t10k-images-idx3-ubyte.gz")
+testing_images_url <- "https://github.com/zalandoresearch/fashion-mnist/raw/refs/heads/master/data/fashion/t10k-images-idx3-ubyte.gz"
+testing_images_file <- "t10k-images-idx3-ubyte"
+testing_images_gz <- paste0(testing_images_file, ".gz")
+download.file(url = testing_images_url,
+              destfile = testing_images_gz)
 images_list <- list()
-f <- file(description = R.utils::gunzip("t10k-images-idx3-ubyte.gz",
+f <- file(description = R.utils::gunzip(testing_images_gz,
                                         overwrite = TRUE,
                                         remove = FALSE), 
          open = "rb")
 # Not sure what this first readBin does, but it seems important
 first_read <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
+# Count the number of images (there should be 10,000)
 images_list$n <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
+# In this case, num_row is the number of rows of pixels in an image (should be 28)
 num_row <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
+# In this case, num_col is the number of rows of pixels in an image (should be 28)
 num_col <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
+# Here we actually read all the data in, as a single, long-ass vector
 images_data <- readBin(con = f, what = "integer", 
                        n = images_list$n * num_row * num_col,
                        size = 1, signed = FALSE)
+# We take those data, currently a vector 7,840,000 elements long. We convert it
+# to a matrix of 10000 rows and 784 columns
 images_list$images_data <- matrix(data = images_data,
                                   ncol = num_row * num_col,
                                   byrow = TRUE)
+# Stop reading from the binary file
 close(f)
-invisible(file.remove("t10k-images-idx3-ubyte.gz"))
-invisible(file.remove("t10k-images-idx3-ubyte"))
+# Now we can remove the gzip and resultant binary file
+invisible(file.remove(testing_images_file))
+invisible(file.remove(testing_images_gz))
 # Data are now stored in images_list$images_data as a matrix with 10000 rows 
 # (one row per image), and 784 columns.
-# I'll be damned it works.
-images_list$images_data[1, ]
 
+# Combine labels and data
 # For the purposes of the workshop, I think it makes sense to store these data 
-# as a matrix with 1 + 784 columns, where the first column is the label, and 
-# the remaining columns are data columns
+# as a matrix with 1 + 784 + 1 columns, where the first column is the label, 
+# columns 2-785 are data columns, and columns 786 indicates testing (0) or 
+# training (1)
 testing_data <- cbind(testing_labels, images_list$images_data)
 
+# Add some more informative column names
+colnames(testing_data) <- c("label", paste0("p", 1:(ncol(testing_data) - 1)))
+
+# Create a subsample of data to use as training data
 # But!!! we want to maybe make the data we use for the workshop a bit smaller.
 # So let us sample down to only 1000 testing images, but making sure we have 
 # the same relative sampling for all 10 classes.
-library(dplyr)
 testing_data_small <- testing_data %>%
   as_tibble() %>%
-  rename(label = 1) %>% # easier to group if column has name
   group_by(label) %>%
   slice_sample(n = 100) %>% # pull out 100 of each class
   ungroup() %>%
   sample_n(size = 1000) # shuffle rows again
-# table(testing_data_small$label)
 
-# TODO: Next step, same as above for training data
-# What about training data?
-n <- readBin(con = "~/Desktop/gz/train-labels-idx1-ubyte", what = "integer", 
+# Add one more column indicating whether or not these data are to be used for 
+# training (for these, no, so set to 0)
+testing_data_small$training <- 0
+
+# Clean up testing data debris
+rm(testing_labels_url, testing_labels_gz, testing_labels_file, testing_labels,
+   testing_images_url, testing_images_gz, testing_images_file, testing_data)
+
+### Retrieval of training data
+# Get training data labels
+training_labels_url <- "https://github.com/zalandoresearch/fashion-mnist/raw/refs/heads/master/data/fashion/train-labels-idx1-ubyte.gz"
+training_labels_file <- "train-labels-idx1-ubyte"
+training_labels_gz <- paste0(training_labels_file, ".gz")
+
+download.file(url = training_labels_url,
+              destfile = training_labels_gz)
+# We really do need to use readBin twice, as the first time through does some 
+# sort of necessary counting.
+n <- readBin(con = R.utils::gunzip(training_labels_gz, 
+                                   remove = FALSE,
+                                   overwrite = TRUE), 
+             what = "integer",
              n = 1, size = 4)
-# Training data a little off, too. 60,008 elements, 7 & 8 are 234 & 96
-# I have to wonder if the first eight elements (in both cases) should be 
-# ditched.
-y <- readBin(con = "~/Desktop/gz/train-labels-idx1-ubyte", what = "integer", 
-             n = n, size = 1, signed = FALSE)
-table(y)
-table(y[9:length(y)])
+training_labels <- readBin(con = R.utils::gunzip(training_labels_gz, 
+                                                remove = FALSE,
+                                                overwrite = TRUE),
+                          what = "integer",
+                          n = n, size = 1, signed = FALSE)
+# We now have a vector that we have to drop the first 8 elements from
+training_labels <- training_labels[9:length(training_labels)]
+# Now we can remove the gzip and resultant binary file
+invisible(file.remove(training_labels_gz))
+invisible(file.remove(training_labels_file))
+
+# Get training data images and convert to a matrix
+# Based on the gist at https://gist.github.com/brendano/39760
+
+training_images_url <- "https://github.com/zalandoresearch/fashion-mnist/raw/refs/heads/master/data/fashion/train-images-idx3-ubyte.gz"
+training_images_file <- "train-images-idx3-ubyte.gz"
+training_images_gz <- paste0(training_images_file, ".gz")
+download.file(url = training_images_url,
+              destfile = training_images_gz)
+images_list <- list()
+f <- file(description = R.utils::gunzip(training_images_gz,
+                                        overwrite = TRUE,
+                                        remove = FALSE), 
+         open = "rb")
+# Not sure what this first readBin does, but it seems important
+first_read <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
+# Count the number of images (there should be 10,000)
+images_list$n <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
+# In this case, num_row is the number of rows of pixels in an image (should be 28)
+num_row <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
+# In this case, num_col is the number of rows of pixels in an image (should be 28)
+num_col <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
+# Here we actually read all the data in, as a single vector
+images_data <- readBin(con = f, what = "integer", 
+                       n = images_list$n * num_row * num_col,
+                       size = 1, signed = FALSE)
+# We take those data, currently a vector 47,040,000 elements long. We convert 
+# it to a matrix of 60000 rows and 784 columns
+images_list$images_data <- matrix(data = images_data,
+                                  ncol = num_row * num_col,
+                                  byrow = TRUE)
+# Stop reading from the binary file
+close(f)
+# Now we can remove the gzip and resultant binary file
+invisible(file.remove(training_images_file))
+invisible(file.remove(training_images_gz))
+# Data are now stored in images_list$images_data as a matrix with 60000 rows 
+# (one row per image), and 784 columns.
+
+# Combine labels and data
+# For the purposes of the workshop, I think it makes sense to store these data 
+# as a matrix with 1 + 784 + 1 columns, where the first column is the label, 
+# columns 2-785 are data columns, and columns 786 indicates testing (0) or 
+# training (1)
+training_data <- cbind(training_labels, images_list$images_data)
+
+# Add some more informative column names
+colnames(training_data) <- c("label", paste0("p", 1:(ncol(training_data) - 1)))
+
+# Create a subsample of data to use as training data
+# But!!! we want to maybe make the data we use for the workshop a bit smaller.
+# So let us sample down to only 6000 testing images, but making sure we have 
+# the same relative sampling for all 10 classes.
+training_data_small <- training_data %>%
+  as_tibble() %>%
+  group_by(label) %>%
+  slice_sample(n = 600) %>% # pull out 600 of each class
+  ungroup() %>%
+  sample_n(size = n()) # shuffle rows again
+
+# Add one more column indicating whether or not these data are to be used for 
+# training (for these, yes, so set to 1)
+training_data_small$training <- 1
+
+# Clean up training data debris
+rm(training_labels_url, training_labels_gz, training_labels_file, 
+   training_labels, training_images_url, training_images_gz, 
+   training_images_file, training_data)
+
+# Finally, combine the testing and training data into a single data.frame (or, 
+# more accurately, a tibble), then save as a CSV
+fmnist_subsample <- testing_data_small %>%
+  bind_rows(training_data_small)
+
+write.csv(file = "data/fmnist-subsample.csv",
+          row.names = FALSE,
+          x = fmnist_subsample)
+
+# Clean up those last little bits in our environment
+rm(fmnist_subsample, testing_data_small, training_data_small, images_list, f,
+   first_read, images_data, n, num_col, num_row)
 ```
 ***
 
