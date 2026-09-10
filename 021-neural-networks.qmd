@@ -30,11 +30,18 @@ predictive power with other machine learning models.
 
 After this lesson, learners should be able to:
 
-1. one
-2. two
-3. three
+1. Install packages necessary to build neural network and random forest models.
+2. Split data into testing set and training set.
+3. Build a neural network model for classification.
+4. Build a random forest model for classification.
+5. Compare model performance.
 
 ## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
+
+A large field of data science involves identifying what group an observation 
+belongs to. This includes things like image categorization. In this workshop we 
+will build a neural network to classify images and compare the model's 
+performance with a tree-based approach.
 
 ## Setup
 
@@ -60,7 +67,50 @@ dir.create(path = "output")
 
 ## Getting started
 
-+ Library installation (if necessary)
+### Install additional R packages
+
+There are _three_ additional R packages that will need to be installed. The 
+first two packages are required for the neural network model, and the second 
+package is required for the random forest model:
+
++ keras3
++ tensorflow
++ randomForest
+
+To install these, run:
+
+```{r install-libraries, eval = FALSE}
+install.packages("keras3")
+install.packages("randomForest")
+```
+
+### Set up neural network packages
+
+While many packages in R are ready to use once they are installed, our neural 
+network package (keras3) actually relies on the Python programming language. To 
+get things setup, we will need to run a command for R to set up some of this 
+machinery in the background.
+
+```{r install-keras, eval = FALSE}
+keras3::install_keras(backend = "tensorflow")
+```
+
+Now, at this point, your computer should be set up! To test this load the 
+keras3 library with the following command:
+
+```{r load-keras3, eval = FALSE}
+library(keras3)
+```
+
+If this `library()` step, or the previous `keras3::install_keras()` step 
+resulted in an error, your machine is not ready for the remainder of the 
+lesson. If this is the case, you can look at the [documentation for the keras3 
+package](https://cran.r-project.org/web/packages/keras3/vignettes/getting_started.html) to see if you can fix things. If that does not work, I recommend heading to 
+Google Colab and starting a new R session there. Starting with the 
+`install.packages()` commands above, this lesson should work just fine on 
+Google Colab.
+
+
 + Download data (if necessary)
 
 ***
