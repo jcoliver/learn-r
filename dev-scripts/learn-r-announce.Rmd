@@ -13,12 +13,11 @@ suppressPackageStartupMessages(expr = library(lubridate))
 ```{r setup-schedule}
 # Only this chunk should be edited
 # See lesson-info.csv for lesson identifiers ('number' column)
-schedule <- data.frame(dates = c("2026-09-01",
-                                 "2026-09-08",
-                                 "2026-09-15",
-                                 "2026-09-22",
-                                 "2026-09-29"),
-                       lessons = c(4, -1, -1, -1, -1))
+schedule <- data.frame(dates = c("2026-10-06",
+                                 "2026-10-13",
+                                 "2026-10-20",
+                                 "2026-10-27"),
+                       lessons = c(2, -1, -1, -1))
 
 # Get month as a word for Subject; use the second entry, as sometimes the last 
 # session of the preceding month is included in the schedule data.frame
