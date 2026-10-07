@@ -12,7 +12,7 @@ If lesson is base R only, remove this chunk entirely.
 ```{r library-check, echo = FALSE, results = "hide"}
 #| output: false
 
-libs <- c("randomForest", "dplyr")
+libs <- c("randomForest", "keras3", "dplyr")
 libs_missing <- libs[!(libs %in% installed.packages()[, "Package"])]
 if (length(libs_missing) > 0) {
   for (l in libs_missing) {
@@ -95,6 +95,11 @@ machinery in the background.
 keras3::install_keras(backend = "tensorflow")
 ```
 
+**TODO** Stuck here with:
+
+`Error in path.expand(path) : invalid 'path' argument`
+
+
 Now, at this point, your computer should be set up! To test this load the 
 keras3 library with the following command:
 
@@ -117,157 +122,21 @@ Google Colab.
 
 ## [TOPIC ONE]
 
-The following was suggested by Anthropic's Claude Haiku 4.5
+```{r nn1}
+fmnist <- read.csv(file = "data/fmnist-subsample.csv")
 
-```{r nnet-test}
-# Load the nnet package
-library(nnet)
 
-# Set a seed for reproducibility
-set.seed(123)
-
-# Create the neural network model
-# Formula: Species ~ all measurement columns
-# size=5 creates one hidden layer with 5 nodes
-mod <- nnet(Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width, 
-            data = iris, 
-            size = 5,
-            maxit = 100)
-
-# To visualize the network, can use plotnet
-library(NeuralNetTools)
-plotnet(mod)
-
-# To make predictions
-predictions <- predict(mod, iris, type = "class")
-
-# Check accuracy
-table(predictions, iris$Species)
-
-# Ha! Too easy.
 ```
 
-Another dataset is heart disease from Cleveland hospital. Retrieved from 
-https://archive.ics.uci.edu/dataset/45/heart+disease
+***
 
-```{r heart-disease}
-# Using the processed.cleveland.data file (a csv)
-# Has bad column names
-cd <- read.csv(file = "~/Desktop/processed.cleveland.data")
-colnames(cd) <- c("age", "sex", "cp", "trestbps", "chol", "fbs", "restecg",
-                  "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num")
-# Change num (heart disease or not)
-cd$num <- ifelse(cd$num == 0,
-                 0, 1)
+## [TOPIC TWO]
 
-# Run logistic regression
-cd_lr <- glm(num ~ ., family = binomial, data = cd)
-# Get predictions of probabilities
-cd_predict <- predict(object = cd_lr, newdata = cd, type = "response")
-# Turn predictions into binary values
-cd_predict <- round(cd_predict, digits = 0)
-# Show confusion matrix
-table(cd_predict, cd$num)
+***
 
-# How well does neural network do?
-cd_nnet <- nnet(num ~ ., 
-            data = cd, 
-            size = 5,
-            maxit = 100)
+## Bonus Track: Data Wrangling
 
-# To visualize the network, can use plotnet
-plotnet(cd_nnet)
-
-# To make predictions
-predictions <- predict(cd_nnet, cd)
-
-# Turn predictions into binary values
-predictions <- round(predictions, digits = 0)
-
-# Check accuracy
-table(predictions, cd$num)
-
-## Add more nodes to network
-# size 5 -> 10
-cd_nnet <- nnet(num ~ ., 
-            data = cd, 
-            size = 10,
-            maxit = 100)
-
-# To make predictions
-predictions <- predict(cd_nnet, cd)
-
-# Turn predictions into binary values
-predictions <- round(predictions, digits = 0)
-
-# Check accuracy
-table(predictions, cd$num)
-```
-
-```{r hd-test-train}
-fold <- rep(1:5, length.out = nrow(cd))
-
-lr_acc <- numeric(5)
-nn_acc <- numeric(5)
-for (i in 1:5) {
-  testing <- cd[fold == i, ]
-  training <- cd[fold != i, ]
-  lr <- glm(num ~ ., data = training, family = binomial)
-  nn <- nnet(num ~ ., data = training, size = 10, maxit = 100)
-  lr_predict <- predict(lr, newdata = testing, type = "response")
-  lr_predict <- round(lr_predict, digits = 0)
-  nn_predict <- predict(nn, newdata = testing)
-  nn_predict <- round(nn_predict, digits = 0)
-  lr_acc[i] <- sum(abs(lr_predict - testing$num))/nrow(testing)
-  nn_acc[i] <- sum(abs(nn_predict - testing$num))/nrow(testing)
-}
-mean(lr_acc)
-mean(nn_acc)
-# HA. Logistic regression is better.
-```
-
-```{r}
-# Try a wine dataset from
-# https://archive.ics.uci.edu/dataset/186/wine+quality
-# or
-# https://archive.ics.uci.edu/dataset/109/wine
-
-wine_data <- read.csv(file = "~/Desktop/wine/wine.data", header = FALSE)
-names(wine_data) <- c("cultivar", "ethanol", "malic_acid", "ash", 
-                      "ash_alkalinity", "magnisium", "total_phenols", 
-                      "flavanoids", "nonflavanoid_phenols", "proanthocyanins",
-                      "color_intensity", "color_hue", "od_ratio", "proline")
-library(nnet)
-
-wine_scaled <- apply(X = wine_data[, -1], FUN = scale, MARGIN = 2)
-wine_scaled <- data.frame(wine_scaled)
-wine_scaled <- cbind(wine_data[, 1], wine_scaled)
-colnames(wine_scaled)[1] <- "cultivar"
-
-wine_nnet <- nnet(cultivar ~ ., 
-                  data = wine_scaled, 
-                  size = 4,
-                  maxit = 100)
-
-wine_predict <- predict(wine_nnet, newdata = wine_scaled)
-wine_predict <- round(wine_predict)
-colSums(wine_predict)
-table(wine_scaled$cultivar)
-
-# Try a random forest
-library(randomForest)
-wine_rf <- randomForest(cultivar ~ ., data = wine_scaled)
-
-wine_rf_predict <- predict(wine_rf, newdata = wine_scaled)
-table(wine_rf_predict)
-```
-
-# Too easy
-
-The problems described above (heart disease, wine categorization) are too easy. 
-That is, things like random forest and logistic regression perform just as well 
-(or better) than the neural network (rf and nn had 100% accuracy on the wine 
-data).
+### Or, How Did We Get Here?
 
 + This really might be a case for image classification. MNIST is the standard; 
 ten handwritten digits in 28x28 pixel images (grayscale, values 0-255). 
@@ -299,14 +168,6 @@ This opens a binary file (the extracted .gz file that ends in -ubyte) and reads
 it into memory. Image data are called x (MNIST) and training (FMNIST), while 
 label data are called y (MNIST) and label (FMNIST).
 
-For our purposes, consider reducing the dataset to 10%. Could even have a 
-"bonus track" section to do download of file, R.utils::gunzip to extract the 
-gz file, then read in the file with readBin.
-
-```{r first-mnist}
-mnist_train <- read.csv(file = "~/Desktop/mnist_train.csv", header = FALSE)
-
-```
 
 To get the data ready, will need to
 
@@ -330,19 +191,9 @@ of labels even (or as even as possible)
 For steps 2 and 3 above, see https://gist.github.com/brendano/39760.
 
 ```{r test-labels, eval = FALSE}
-# DO NOT use endian = "big"
-# readBin(con = "~/Desktop/gz/t10k-labels-idx1-ubyte", what = "integer", 
-#         n = 1, size = 4)
-# n <- readBin(con = "~/Desktop/gz/t10k-labels-idx1-ubyte", what = "integer", 
-#              n = 1, size = 4)
 # There's something messed up, as we get 10,008 values back, including a pair 
 # of integers outside the expected 0-9 range (elements 7 and 8 specifically, 
 # are too large: 39 and 16, respectively).
-y <- readBin(con = "~/Desktop/gz/t10k-labels-idx1-ubyte", what = "integer", 
-             n = n, size = 1, signed = FALSE)
-table(y)
-which(y > 9)
-
 
 ##### START HERE #####
 library(dplyr)
@@ -548,9 +399,7 @@ write.csv(file = "data/fmnist-subsample.csv",
 rm(fmnist_subsample, testing_data_small, training_data_small, images_list, f,
    first_read, images_data, n, num_col, num_row)
 ```
-***
 
-## [TOPIC TWO]
 
 ***
 
