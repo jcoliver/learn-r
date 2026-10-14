@@ -67,6 +67,14 @@ dir.create(path = "output")
 
 ## Getting started
 
+### TODO: Add stuff about required python installation
+
+which python
+which python3
+where python # windows
+
+On Ubuntu, also need python3-venv python3-dev
+
 ### Install additional R packages
 
 There are _three_ additional R packages that will need to be installed. The 
@@ -91,13 +99,46 @@ network package (keras3) actually relies on the Python programming language. To
 get things setup, we will need to run a command for R to set up some of this 
 machinery in the background.
 
+```{r}
+# https://github.com/rstudio/keras3/issues/1498
+install.packages("keras3")
+keras3::op_convert_to_tensor("Hello World!")
+```
+
+The above worked (and installed a bunch of packages on op_convert_to_tensor)
+
+
 ```{r install-keras, eval = FALSE}
+# This is what the keras3 package has for installation
+library(keras3)
 keras3::install_keras(backend = "tensorflow")
 ```
 
-**TODO** Stuck here with:
-
 `Error in path.expand(path) : invalid 'path' argument`
+
+```{r}
+# Looking deeper at potential solutions.
+library(reticulate)
+library(keras3)
+
+# 1. Force clear any lingering bad path pointer variables 
+Sys.unsetenv("RETICULATE_PYTHON")
+
+# 2. Manually build the virtualenv using Ubuntu's system Python
+reticulate::virtualenv_create("r-tensorflow", python = "/usr/bin/python3")
+
+# 3. Explicitly tell your R session to latch onto this fresh path
+reticulate::use_virtualenv("r-tensorflow", required = TRUE)
+
+# 4. Run the installer targeting your active, prepared environment
+keras3::install_keras(envname = "r-tensorflow", 
+                      # method = "virtualenv", 
+                      backend = "tensorflow")
+
+# TODO: Current errors on attempt to install other python libraries
+```
+
+
 
 
 Now, at this point, your computer should be set up! To test this load the 
