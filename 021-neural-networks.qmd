@@ -165,9 +165,139 @@ Google Colab.
 
 ```{r nn1}
 fmnist <- read.csv(file = "data/fmnist-subsample.csv")
-
-
 ```
+
+```{r keras3-example}
+# Example from the keras3 package
+library(keras3)
+# Download the data
+mnist <- dataset_mnist()
+# Extract relevant parts of data
+x_train <- mnist$train$x
+y_train <- mnist$train$y
+x_test <- mnist$test$x
+y_test <- mnist$test$y
+
+# reshape
+x_train <- array_reshape(x_train, c(nrow(x_train), 784))
+x_test <- array_reshape(x_test, c(nrow(x_test), 784))
+# rescale
+x_train <- x_train / 255
+x_test <- x_test / 255
+
+y_train <- to_categorical(y_train, 10)
+y_test <- to_categorical(y_test, 10)
+
+model <- keras_model_sequential(input_shape = c(784))
+# The model in the documentation:
+# model |>
+#   layer_dense(units = 256, activation = 'relu') |>
+#   layer_dropout(rate = 0.4) |>
+#   layer_dense(units = 128, activation = 'relu') |>
+#   layer_dropout(rate = 0.3) |>
+#   layer_dense(units = 10, activation = 'softmax')
+
+# A much smaller model (one layer, 32 nodes)
+model |>
+  # layer_dense(units = 256, activation = 'relu') |>
+  # layer_dropout(rate = 0.4) |>
+  layer_dense(units = 32, activation = 'relu') |>
+  layer_dropout(rate = 0.3) |>
+  layer_dense(units = 10, activation = 'softmax')
+
+summary(model)
+
+plot(model)
+
+model |> compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+# Fit of model per documentation
+# history <- model |> fit(
+#   x_train, y_train,
+#   epochs = 30, batch_size = 128,
+#   validation_split = 0.2
+# )
+
+# Smaller batch size and fewer epochs
+history <- model |> fit(
+  x_train, y_train,
+  epochs = 10, batch_size = 32,
+  validation_split = 0.2
+)
+
+plot(history)
+
+model |> evaluate(x_test, y_test)
+
+probs <- model |> predict(x_test)
+
+predicted_number <- max.col(probs) - 1L
+```
+
+```{r}
+# this is how the image looks like as a raster representation
+# plot(as.raster(test_images[1,,],max=255))
+plot(as.raster(mnist$train$x[1,,],max=255))
+```
+```{r fmnist-nn1}
+# Get the data
+
+# We need four matrices:
+# testing data one row for each image, 784 columns (28 x 28)
+# training data one row for each image, 784 columns (28 x 28)
+# testing labels one row for each image, 10 columns (see keras3::to_categorical, above)
+# training labels one row for each image, 10 columns
+
+# Build the model, first with just the number of columns of data
+model <- keras_model_sequential(input_shape = c(784))
+
+# Set up the actual structure of the network
+# A much smaller model (one layer, 32 nodes)
+model |>
+  # layer_dense(units = 256, activation = 'relu') |>
+  # layer_dropout(rate = 0.4) |>
+  layer_dense(units = 32, activation = 'relu') |>
+  layer_dropout(rate = 0.3) |>
+  layer_dense(units = 10, activation = 'softmax')
+
+# See what the model is going to look like, in terms of number of parameters
+summary(model)
+
+# Plot the model? Not sure this is useful
+plot(model)
+
+# Some model settings; how is the model going to optimize parameters? How will 
+# we evaluate model performance
+model |> compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+# Fit the model, takes time given lots of parameters!
+history <- model |> fit(
+  x_train, y_train,
+  epochs = 10, batch_size = 32,
+  validation_split = 0.2
+)
+
+# Show the history of how the fit improved
+plot(history)
+
+# Report evaluation metric of model performance
+model |> evaluate(x_test, y_test)
+
+# Calculate predictions for each class in the test data set
+probs <- model |> predict(x_test)
+
+# Pull out the most likely class for each row in test data set
+predicted_number <- max.col(probs) - 1L
+```
+
 
 ***
 
