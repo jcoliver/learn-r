@@ -164,7 +164,120 @@ Google Colab.
 ## [TOPIC ONE]
 
 ```{r nn1}
+library(keras3)
+
+# TODO: replace with bit.ly link
 fmnist <- read.csv(file = "data/fmnist-subsample.csv")
+
+# Separate data into testing/training
+# TODO: Need to update data so testing data are not NA in training column
+testing <- fmnist[is.na(fmnist$training), ]
+training <- fmnist[!is.na(fmnist$training), ]
+
+# Pull out labels to store separately
+testing_labels <- testing$label
+training_labels <- training$label
+
+# Pull out data (no label column, no training column)
+testing_data <- as.matrix(testing[, -c(1, 786)])
+training_data <- as.matrix(training[, -c(1, 786)])
+
+# Look at one of the training images
+test_image <- matrix(data = training_data[3, ],
+                     nrow = 28, ncol = 28, byrow = TRUE)
+plot(as.raster(test_image, max=255))
+
+# Rescale the values from 0 to 255 to 0 to 1
+testing_data <- testing_data/255
+training_data <- training_data/255
+
+# For the neural network program, we want the labels to be treated as 
+# categories, not numbers
+# Note: if this is the first call to a keras3 function, might do some 
+# downloading here
+testing_labels <- to_categorical(x = testing_labels, num_classes = 10)
+training_labels <- to_categorical(x = training_labels, num_classes = 10)
+
+# Start setting up our model. Here will tell it about the input data - 784 
+# columns, one column for each pixel in the image. This is the first layer of 
+# our model
+model <- keras_model_sequential(input_shape = c(784))
+
+# We add more information about our model, we want one hidden layer that has 32
+# nodes and one output layer that has 10 nodes. The 10 output nodes correspond 
+# to our labels - that is, what kind of clothing does the image represent
+# TODO: Could add a bit more info here, including dropout rate
+model |>
+  layer_dense(units = 32, activation = 'relu') |>
+  layer_dropout(rate = 0.2) |>
+  layer_dense(units = 10, activation = 'softmax')
+
+# Some reality checks of the model
+summary(model)
+
+# Set up some details of how we will fit the model
+model |> compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+# Now we (finally) fit the model and store the history of the model. We provide
+#    training_data: the pixel values on a scale of 0-1
+#    training_labels: the category of clothing the image represents
+#    epochs: how many tries to fine-tune the model
+history <- model |> fit(
+  training_data, training_labels,
+  epochs = 10,
+  validation_split = 0.2
+)
+
+# Make a nice looking plot of the model fitting process
+plot(history)
+
+# Now we use our testing data, that were not used to fit the model, to see how 
+# well the model performs on data it has not seen
+model |> evaluate(testing_data, testing_labels)
+
+# Calculate, for each image, the probability that it belongs to each of the 
+# different categories
+probs <- model |> predict(testing_data)
+
+# Use the probabilities and pull out the "best match" for each image
+predicted_label <- max.col(probs) - 1L
+```
+
+```{r nn2}
+# A model with two hidden layers (one 64, one 32)
+model2 <- keras_model_sequential(input_shape = c(784)) |>
+  layer_dense(units = 64, activation = 'relu') |>
+  layer_dropout(rate = 0.2) |>
+  layer_dense(units = 32, activation = 'relu') |>
+  layer_dropout(rate = 0.2) |>
+  layer_dense(units = 10, activation = 'softmax')
+
+# Size of model
+summary(model2)
+
+# Set up some details of how we will fit the model
+model2 |> compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+# Now we (finally) fit the model and store the history of the model. We provide
+#    training_data: the pixel values on a scale of 0-1
+#    training_labels: the category of clothing the image represents
+#    epochs: how many tries to fine-tune the model
+history2 <- model2 |> fit(
+  training_data, training_labels,
+  epochs = 10,
+  validation_split = 0.2
+)
+
+# Make a nice looking plot of the model fitting process
+plot(history2)
 ```
 
 ```{r keras3-example}
