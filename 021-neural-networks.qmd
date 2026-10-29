@@ -422,75 +422,58 @@ predicted_number <- max.col(probs) - 1L
 
 ### Or, How Did We Get Here?
 
-+ This really might be a case for image classification. MNIST is the standard; 
-ten handwritten digits in 28x28 pixel images (grayscale, values 0-255). 
-https://en.wikipedia.org/wiki/MNIST_database
-+ A recent alternative is Fashion-MNIST (or FMNIST), which classifies images of 
-pieces of clothing (same size images as MNIST).
-https://en.wikipedia.org/wiki/Fashion-MNIST
-Data are available at https://github.com/zalandoresearch/fashion-mnist
+The data we are working with in this lesson are from a larger dataset of 70,000 
+images. The Fashion-MNIST (or FMNIST) dataset includes grayscale images of ten 
+different clothing types. All images are 28x28 pixels and available at [https://github.com/zalandoresearch/fashion-mnist](https://github.com/zalandoresearch/fashion-mnist). 
+In the following code, you can see how the large dataset of images was 
+downloaded, transformed to tabular format, and saved as a CSV file. You do not 
+need to run this code for the lesson above, but it is included here for your 
+own reference.
 
-Going this route might really require keras/tensorflow...
+The data set is composed of four compressed files:
 
-The MNIST data are usually either distributed as images or as a series of 
-28x28 arrays. At least one source has converted it to a csv 
-https://pjreddie.com/projects/mnist-in-csv/ with 784 columns (28 x 28 = 784).
-The pjreddie site above also includes a python script that does the conversion, 
-so one could do this on the FMNIST data, too.
+1. Testing images
+2. Testing image labels (i.e. the type of clothing the image represents)
+3. Training images
+4. Training image labels
 
-These datasets are too large to be handled by the nnet package.
+To do the procesing, we are going to use two packages, the dplyr package for 
+data wrangling and the R.utils package for decompressing the data files. If 
+you have not done so already, you can install these packages with:
 
-There's a nice, simple lesson with keras+tensorflow at 
-https://www.rpubs.com/sedzinfo/keras_mnist
+```{r install-data-libs, eval = FALSE}
+install.packages(dplyr)
+install.packages(R.utils)
+```
 
-The keras package includes a getting started vignette at 
-https://cran.r-project.org/web/packages/keras/vignettes/index.html
+After the packages are installed, you can load them into memory:
 
-For dealing with the data, we can see the gist at 
-https://gist.github.com/brendano/39760
-This opens a binary file (the extracted .gz file that ends in -ubyte) and reads
-it into memory. Image data are called x (MNIST) and training (FMNIST), while 
-label data are called y (MNIST) and label (FMNIST).
-
-
-To get the data ready, will need to
-
-1. Download data
-  1. They are available in the data/fashion folder at https://github.com/zalandoresearch/fashion-mnist/tree/master/data/fashion; all 
-  are .gz files. 
-3. In turn, for each of two label files
-  1. Extract the data with R.utils::gunzip (note, R.utils is not utils)
-  2. Open the binary file with readBin
-  3. Extract data
-  4. Store labels for later joining with processed image data
-3. In turn, for each of the two image archives
-  1. Extract the data with R.utils::gunzip (note, R.utils is not utils)
-  2. Open the binary file with readBin
-  3. Extract data
-  4. Join image matrix with label (should end up being a pair of matrices, one 
-  with training and one with testing)
-4. Rarefy to slightly more managable dataset, making sure to keep the sampling 
-of labels even (or as even as possible)
-
-For steps 2 and 3 above, see https://gist.github.com/brendano/39760.
-
-```{r test-labels, eval = FALSE}
-# There's something messed up, as we get 10,008 values back, including a pair 
-# of integers outside the expected 0-9 range (elements 7 and 8 specifically, 
-# are too large: 39 and 16, respectively).
-
-##### START HERE #####
+```{r load-data-libs, eval = FALSE}
 library(dplyr)
 library(R.utils)
+```
 
+#### Testing data
+
+We start with the testing data, doing the download, conversion of image data to 
+numeric data, and creating a smaller subset of data for analysis. Note we are 
+only going to use 10% of the data so the models will run quickly. We could have 
+used all 70,000 images, but it would require more time than we have in this 
+workshop.
+
+```{r testing-data, eval = FALSE}
 ### Retrieval of testing data
-# Get testing data labels
+# Get testing data labels, start by indicating where they come from (the URL) 
+# and where we will store the file locally
 testing_labels_url <- "https://github.com/zalandoresearch/fashion-mnist/raw/refs/heads/master/data/fashion/t10k-labels-idx1-ubyte.gz"
 testing_labels_file <- "t10k-labels-idx1-ubyte"
 testing_labels_gz <- paste0(testing_labels_file, ".gz")
 
+# We use the values stored in those variables to download the archive to our 
+# own computer
 download.file(url = testing_labels_url,
               destfile = testing_labels_gz)
+
 # We really do need to use readBin twice, as the first time through does some 
 # sort of necessary counting.
 n <- readBin(con = R.utils::gunzip(testing_labels_gz, 
@@ -498,31 +481,44 @@ n <- readBin(con = R.utils::gunzip(testing_labels_gz,
                                    overwrite = TRUE), 
              what = "integer",
              n = 1, size = 4)
+# The second call to readBin actually reads the image data from the binary file
 testing_labels <- readBin(con = R.utils::gunzip(testing_labels_gz, 
                                                 remove = FALSE,
                                                 overwrite = TRUE),
                           what = "integer",
                           n = n, size = 1, signed = FALSE)
-# We now have a vector that we have to drop the first 8 elements from
+
+# There is something odd about this vector, as we get 10,008 values back, 
+# including a pair of integers outside the expected 0-9 range (elements 7 and 8 
+# specifically, are too large: 39 and 16, respectively).
+
+# So we drop the first 8 elements from this labels vector
 testing_labels <- testing_labels[9:length(testing_labels)]
+
 # Now we can remove the gzip and resultant binary file
 invisible(file.remove(testing_labels_gz))
 invisible(file.remove(testing_labels_file))
 
 # Get testing data images and convert to a matrix
-# Based on the gist at https://gist.github.com/brendano/39760
+# Note this code is based on the gist at https://gist.github.com/brendano/39760
 
+# Set up source and destination for images
 testing_images_url <- "https://github.com/zalandoresearch/fashion-mnist/raw/refs/heads/master/data/fashion/t10k-images-idx3-ubyte.gz"
 testing_images_file <- "t10k-images-idx3-ubyte"
 testing_images_gz <- paste0(testing_images_file, ".gz")
+
+# Download test images (file is 4.2 MB, so it might take a moment)
 download.file(url = testing_images_url,
               destfile = testing_images_gz)
+
+# We will extract the images and ultimately store them (and some metadata) in 
+# this list
 images_list <- list()
 f <- file(description = R.utils::gunzip(testing_images_gz,
                                         overwrite = TRUE,
                                         remove = FALSE), 
          open = "rb")
-# Not sure what this first readBin does, but it seems important
+# The first readBin does does some required counting
 first_read <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
 # Count the number of images (there should be 10,000)
 images_list$n <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
@@ -530,7 +526,7 @@ images_list$n <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "b
 num_row <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
 # In this case, num_col is the number of rows of pixels in an image (should be 28)
 num_col <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
-# Here we actually read all the data in, as a single, long-ass vector
+# Here we actually read all the data in, as a single, very, very long vector
 images_data <- readBin(con = f, what = "integer", 
                        n = images_list$n * num_row * num_col,
                        size = 1, signed = FALSE)
@@ -541,24 +537,27 @@ images_list$images_data <- matrix(data = images_data,
                                   byrow = TRUE)
 # Stop reading from the binary file
 close(f)
+
 # Now we can remove the gzip and resultant binary file
 invisible(file.remove(testing_images_file))
 invisible(file.remove(testing_images_gz))
+
 # Data are now stored in images_list$images_data as a matrix with 10000 rows 
 # (one row per image), and 784 columns.
 
-# Combine labels and data
-# For the purposes of the workshop, I think it makes sense to store these data 
-# as a matrix with 1 + 784 + 1 columns, where the first column is the label, 
-# columns 2-785 are data columns, and columns 786 indicates testing (0) or 
-# training (1)
+# Combine the testing labels and data
+
+# For the purposes of the workshop, we store these data as a matrix with 
+# 1 + 784 + 1 columns, where the first column is the label, columns 2-785 are 
+# data columns, and columns 786 indicates testing (0) or training (1)
 testing_data <- cbind(testing_labels, images_list$images_data)
 
-# Add some more informative column names
+# Add some more informative column names; the image data, that is pixel values, 
+# are in columns prefixed with the letter "p" for "pixel"
 colnames(testing_data) <- c("label", paste0("p", 1:(ncol(testing_data) - 1)))
 
-# Create a subsample of data to use as training data
-# But!!! we want to maybe make the data we use for the workshop a bit smaller.
+# Create a subsample of data to use as training data (easier to work with in a 
+# workshop setting)
 # So let us sample down to only 1000 testing images, but making sure we have 
 # the same relative sampling for all 10 classes.
 testing_data_small <- testing_data %>%
@@ -572,18 +571,26 @@ testing_data_small <- testing_data %>%
 # training (for these, no, so set to 0)
 testing_data_small$training <- 0
 
-# Clean up testing data debris
+# Clean up testing data debris (we don't need these variables anymore)
 rm(testing_labels_url, testing_labels_gz, testing_labels_file, testing_labels,
-   testing_images_url, testing_images_gz, testing_images_file, testing_data)
+   testing_images_url, testing_images_gz, testing_images_file, testing_data,
+   images_list, images_data, f, first_read, n, num_col, num_row)
+```
 
-### Retrieval of training data
+And we do just about the same thing for the training data. The only big 
+difference is that the training data is a larger dataset (60,000 images, as 
+opposed to the 10,000 testing images).
+
+```{r training-data, eval = FALSE}
 # Get training data labels
 training_labels_url <- "https://github.com/zalandoresearch/fashion-mnist/raw/refs/heads/master/data/fashion/train-labels-idx1-ubyte.gz"
 training_labels_file <- "train-labels-idx1-ubyte"
 training_labels_gz <- paste0(training_labels_file, ".gz")
 
+# Download the training label information
 download.file(url = training_labels_url,
               destfile = training_labels_gz)
+
 # We really do need to use readBin twice, as the first time through does some 
 # sort of necessary counting.
 n <- readBin(con = R.utils::gunzip(training_labels_gz, 
@@ -608,6 +615,8 @@ invisible(file.remove(training_labels_file))
 training_images_url <- "https://github.com/zalandoresearch/fashion-mnist/raw/refs/heads/master/data/fashion/train-images-idx3-ubyte.gz"
 training_images_file <- "train-images-idx3-ubyte.gz"
 training_images_gz <- paste0(training_images_file, ".gz")
+
+# The file is 25MB, so it might take a few moments to download
 download.file(url = training_images_url,
               destfile = training_images_gz)
 images_list <- list()
@@ -615,9 +624,9 @@ f <- file(description = R.utils::gunzip(training_images_gz,
                                         overwrite = TRUE,
                                         remove = FALSE), 
          open = "rb")
-# Not sure what this first readBin does, but it seems important
+# Run readBin for initial counting of images
 first_read <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
-# Count the number of images (there should be 10,000)
+# Count the number of images (there should be 60,000)
 images_list$n <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
 # In this case, num_row is the number of rows of pixels in an image (should be 28)
 num_row <- readBin(con = f, what = "integer", n = 1, size = 4, endian = "big")
@@ -634,6 +643,7 @@ images_list$images_data <- matrix(data = images_data,
                                   byrow = TRUE)
 # Stop reading from the binary file
 close(f)
+
 # Now we can remove the gzip and resultant binary file
 invisible(file.remove(training_images_file))
 invisible(file.remove(training_images_gz))
@@ -641,17 +651,15 @@ invisible(file.remove(training_images_gz))
 # (one row per image), and 784 columns.
 
 # Combine labels and data
-# For the purposes of the workshop, I think it makes sense to store these data 
-# as a matrix with 1 + 784 + 1 columns, where the first column is the label, 
-# columns 2-785 are data columns, and columns 786 indicates testing (0) or 
-# training (1)
+# Just as we did for testing data, we store these data as a matrix with 
+# 1 + 784 + 1 columns, where the first column is the label, columns 2-785 are 
+# images data columns, and columns 786 indicates testing (0) or training (1)
 training_data <- cbind(training_labels, images_list$images_data)
 
 # Add some more informative column names
 colnames(training_data) <- c("label", paste0("p", 1:(ncol(training_data) - 1)))
 
 # Create a subsample of data to use as training data
-# But!!! we want to maybe make the data we use for the workshop a bit smaller.
 # So let us sample down to only 6000 testing images, but making sure we have 
 # the same relative sampling for all 10 classes.
 training_data_small <- training_data %>%
@@ -668,29 +676,28 @@ training_data_small$training <- 1
 # Clean up training data debris
 rm(training_labels_url, training_labels_gz, training_labels_file, 
    training_labels, training_images_url, training_images_gz, 
-   training_images_file, training_data)
+   training_images_file, training_data, images_list, images_data, f, 
+   first_read, n, num_col, num_row)
 
-# Finally, combine the testing and training data into a single data.frame (or, 
-# more accurately, a tibble), then save as a CSV
+# Combine the testing and training data into a single data.frame (or, more 
+# accurately, a tibble)
 fmnist_subsample <- testing_data_small %>%
   bind_rows(training_data_small)
 
+# And finally (finally!) save the data as a CSV file
 write.csv(file = "data/fmnist-subsample.csv",
           row.names = FALSE,
           x = fmnist_subsample)
-
-# Clean up those last little bits in our environment
-rm(fmnist_subsample, testing_data_small, training_data_small, images_list, f,
-   first_read, images_data, n, num_col, num_row)
 ```
-
 
 ***
 
 ## Additional resources
 
-+ [resource one](url-one)
-+ [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/index.html)
++ The [getting started vignette](https://cran.r-project.org/web/packages/keras/vignettes/index.html) for the keras3 package, which is used in this lesson.
++ [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/index.html) 
+is a great (and free!) online book about the conceptual underpinnings and 
+practical applications of neural networks.
 + A [PDF version](https://jcoliver.github.io/learn-r/lesson-name.pdf) of this lesson
 
 ***
