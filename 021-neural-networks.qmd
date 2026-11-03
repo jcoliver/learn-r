@@ -1,5 +1,5 @@
 ---
-title: "LESSON TITLE"
+title: "Introduction to neural networks in R"
 author: "Jeff Oliver"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
@@ -67,22 +67,59 @@ dir.create(path = "output")
 
 ## Getting started
 
-### TODO: Add stuff about required python installation
+### Python
 
-which python
-which python3
-where python # windows
+Wait, I'm here for an R lesson.
 
-On Ubuntu, also need python3-venv python3-dev
+True, but to get the most out of what neural networks can do, we will be 
+relying on the Python programming language to do most of the heavy lifting. 
+Don't worry - we will not be writing any Python code, R will handle that in the 
+background. But we do need to make sure Python is installed on your machine. To 
+do so will vary based on your operating system:
+
+#### Windows
+
+1. Press the Windows Key, type `cmd`, and press Enter.
+2. Type `where python` and press Enter.
+
+#### MacOS & Linux
+
+1. Open the Terminal app (on Mac, press Cmd + Space and search for "Terminal").
+2. Type `which python3` and press Enter.
+
+If Python is installed on your machine, it should print out a path (a series of
+folder names) where Python is installed. If _nothing_ prints, then it means 
+Python could not be found on your system and you should proceed with installing 
+Python. To do so, you can install it from the Python page at
+[python.org](https://www.python.org/). There is also a nice step-by-step 
+tutorial to help with installation at
+[https://sarahstueve.github.io/learn-python/setup.html](https://sarahstueve.github.io/learn-python/setup.html)
+(Select "The traditional way" tab and stop before the "Download VSCode" step).
+
+After installation, be sure to double-check the installation worked by 
+following the directions above for finding Python on your operating system.
+
+#### Linux extras
+
+For those of you who are using Linux, there are two more packages you need to 
+have installed in addition to Python (these are not necessary for the Windows 
+and MacOS folks). These are the python3-venv and python3-dev packages. For 
+example, on Ubuntu, you can install these via:
+
+```{bash, eval = FALSE}
+sudo apt install python3-venv python3-dev
+```
+
+I leave it to the readers of other Linux distributions to figure out how to 
+install those packages for their OS.
 
 ### Install additional R packages
 
-There are _three_ additional R packages that will need to be installed. The 
-first two packages are required for the neural network model, and the second 
-package is required for the random forest model:
+There are _two_ additional R packages that will need to be installed. The 
+first package is required for the neural network model, and the second package 
+is required for the random forest model:
 
 + keras3
-+ tensorflow
 + randomForest
 
 To install these, run:
@@ -95,67 +132,37 @@ install.packages("randomForest")
 ### Set up neural network packages
 
 While many packages in R are ready to use once they are installed, our neural 
-network package (keras3) actually relies on the Python programming language. To 
-get things setup, we will need to run a command for R to set up some of this 
-machinery in the background.
+network package (keras3) needs to check our Python installation to make sure it 
+has all the necessary _Python_ packages to run. To get things setup, we will 
+need to run a command for R to set up some of this machinery in the background.
 
-```{r}
-# https://github.com/rstudio/keras3/issues/1498
-install.packages("keras3")
-keras3::op_convert_to_tensor("Hello World!")
-```
-
-The above worked (and installed a bunch of packages on op_convert_to_tensor)
-
-
-```{r install-keras, eval = FALSE}
-# This is what the keras3 package has for installation
+```{r setup-keras3}
 library(keras3)
-keras3::install_keras(backend = "tensorflow")
+op_convert_to_tensor("Hello World!")
 ```
 
-`Error in path.expand(path) : invalid 'path' argument`
+::: {.callout-tip appearance="true" collapse="true"}
+### Error
 
-```{r}
-# Looking deeper at potential solutions.
-library(reticulate)
-library(keras3)
+If these `library()` steps resulted in an error, your machine is not ready for 
+the remainder of the lesson. If this is the case, you can look at the 
+[documentation for the keras3 package](https://cran.r-project.org/web/packages/keras3/vignettes/getting_started.html) 
+to see if you can fix things. If that does not work, I recommend heading to 
+Google Colab and starting a new R session there. If you do use Google Colab, 
+follow the following steps:
 
-# 1. Force clear any lingering bad path pointer variables 
-Sys.unsetenv("RETICULATE_PYTHON")
-
-# 2. Manually build the virtualenv using Ubuntu's system Python
-reticulate::virtualenv_create("r-tensorflow", python = "/usr/bin/python3")
-
-# 3. Explicitly tell your R session to latch onto this fresh path
-reticulate::use_virtualenv("r-tensorflow", required = TRUE)
-
-# 4. Run the installer targeting your active, prepared environment
-keras3::install_keras(envname = "r-tensorflow", 
-                      # method = "virtualenv", 
-                      backend = "tensorflow")
-
-# TODO: Current errors on attempt to install other python libraries
+1. Create a new notebook.
+2. Make sure you are running an R session by clicking the "Connect" button, 
+selecting "Change Runtime Type", and in the "Runtime Type" drop-down menu 
+select "R", and click "Save".
+3. Create a new code cell at the top of the notebook, paste the following code 
+into the block and execute the cell:
 ```
-
-
-
-
-Now, at this point, your computer should be set up! To test this load the 
-keras3 library with the following command:
-
-```{r load-keras3, eval = FALSE}
-library(keras3)
+system("sudo apt-get update && sudo apt-get install -y python3-venv python3-pip python3-dev", wait = TRUE, ignore.stdout = FALSE, ignore.stderr = FALSE)
 ```
+:::
 
-If this `library()` step, or the previous `keras3::install_keras()` step 
-resulted in an error, your machine is not ready for the remainder of the 
-lesson. If this is the case, you can look at the [documentation for the keras3 
-package](https://cran.r-project.org/web/packages/keras3/vignettes/getting_started.html) to see if you can fix things. If that does not work, I recommend heading to 
-Google Colab and starting a new R session there. Starting with the 
-`install.packages()` commands above, this lesson should work just fine on 
-Google Colab.
-
+### Download data
 
 + Download data (if necessary)
 
@@ -163,7 +170,7 @@ Google Colab.
 
 ## [TOPIC ONE]
 
-```{r nn1}
+```{r nn1, eval = FALSE}
 library(keras3)
 
 # TODO: replace with bit.ly link
@@ -247,7 +254,11 @@ probs <- model |> predict(testing_data)
 predicted_label <- max.col(probs) - 1L
 ```
 
-```{r nn2}
+***
+
+## [TOPIC TWO]
+
+```{r nn2, eval = FALSE}
 # A model with two hidden layers (one 64, one 32)
 model2 <- keras_model_sequential(input_shape = c(784)) |>
   layer_dense(units = 64, activation = 'relu') |>
@@ -279,142 +290,6 @@ history2 <- model2 |> fit(
 # Make a nice looking plot of the model fitting process
 plot(history2)
 ```
-
-```{r keras3-example}
-# Example from the keras3 package
-library(keras3)
-# Download the data
-mnist <- dataset_mnist()
-# Extract relevant parts of data
-x_train <- mnist$train$x
-y_train <- mnist$train$y
-x_test <- mnist$test$x
-y_test <- mnist$test$y
-
-# reshape
-x_train <- array_reshape(x_train, c(nrow(x_train), 784))
-x_test <- array_reshape(x_test, c(nrow(x_test), 784))
-# rescale
-x_train <- x_train / 255
-x_test <- x_test / 255
-
-y_train <- to_categorical(y_train, 10)
-y_test <- to_categorical(y_test, 10)
-
-model <- keras_model_sequential(input_shape = c(784))
-# The model in the documentation:
-# model |>
-#   layer_dense(units = 256, activation = 'relu') |>
-#   layer_dropout(rate = 0.4) |>
-#   layer_dense(units = 128, activation = 'relu') |>
-#   layer_dropout(rate = 0.3) |>
-#   layer_dense(units = 10, activation = 'softmax')
-
-# A much smaller model (one layer, 32 nodes)
-model |>
-  # layer_dense(units = 256, activation = 'relu') |>
-  # layer_dropout(rate = 0.4) |>
-  layer_dense(units = 32, activation = 'relu') |>
-  layer_dropout(rate = 0.3) |>
-  layer_dense(units = 10, activation = 'softmax')
-
-summary(model)
-
-plot(model)
-
-model |> compile(
-  loss = 'categorical_crossentropy',
-  optimizer = optimizer_rmsprop(),
-  metrics = c('accuracy')
-)
-
-# Fit of model per documentation
-# history <- model |> fit(
-#   x_train, y_train,
-#   epochs = 30, batch_size = 128,
-#   validation_split = 0.2
-# )
-
-# Smaller batch size and fewer epochs
-history <- model |> fit(
-  x_train, y_train,
-  epochs = 10, batch_size = 32,
-  validation_split = 0.2
-)
-
-plot(history)
-
-model |> evaluate(x_test, y_test)
-
-probs <- model |> predict(x_test)
-
-predicted_number <- max.col(probs) - 1L
-```
-
-```{r}
-# this is how the image looks like as a raster representation
-# plot(as.raster(test_images[1,,],max=255))
-plot(as.raster(mnist$train$x[1,,],max=255))
-```
-```{r fmnist-nn1}
-# Get the data
-
-# We need four matrices:
-# testing data one row for each image, 784 columns (28 x 28)
-# training data one row for each image, 784 columns (28 x 28)
-# testing labels one row for each image, 10 columns (see keras3::to_categorical, above)
-# training labels one row for each image, 10 columns
-
-# Build the model, first with just the number of columns of data
-model <- keras_model_sequential(input_shape = c(784))
-
-# Set up the actual structure of the network
-# A much smaller model (one layer, 32 nodes)
-model |>
-  # layer_dense(units = 256, activation = 'relu') |>
-  # layer_dropout(rate = 0.4) |>
-  layer_dense(units = 32, activation = 'relu') |>
-  layer_dropout(rate = 0.3) |>
-  layer_dense(units = 10, activation = 'softmax')
-
-# See what the model is going to look like, in terms of number of parameters
-summary(model)
-
-# Plot the model? Not sure this is useful
-plot(model)
-
-# Some model settings; how is the model going to optimize parameters? How will 
-# we evaluate model performance
-model |> compile(
-  loss = 'categorical_crossentropy',
-  optimizer = optimizer_rmsprop(),
-  metrics = c('accuracy')
-)
-
-# Fit the model, takes time given lots of parameters!
-history <- model |> fit(
-  x_train, y_train,
-  epochs = 10, batch_size = 32,
-  validation_split = 0.2
-)
-
-# Show the history of how the fit improved
-plot(history)
-
-# Report evaluation metric of model performance
-model |> evaluate(x_test, y_test)
-
-# Calculate predictions for each class in the test data set
-probs <- model |> predict(x_test)
-
-# Pull out the most likely class for each row in test data set
-predicted_number <- max.col(probs) - 1L
-```
-
-
-***
-
-## [TOPIC TWO]
 
 ***
 
