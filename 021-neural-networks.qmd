@@ -164,22 +164,43 @@ system("sudo apt-get update && sudo apt-get install -y python3-venv python3-pip 
 
 ### Download data
 
-+ Download data (if necessary)
+The data we are Fashion MNIST data, or "FMNIST". The data are grayscale images, 
+where each images shows one of ten different fashion articles (e.g. shirt, 
+dress, bag). Each image is 28x28 pixels, with values from 0-255, where 0 is 
+pure black and 255 is white. The image below shows 20 examples: 10 images 
+classified as "bags" and 10 images classified as "Ankle boots".
+
+![Sample images of bags and boots from FMINST dataset](images/fmnist-examples.png)
+
+The [original dataset](https://github.com/fendy07/FMNIST-DeepLearning) (70,000 
+images!) is much larger that we will want to work with today. Instead, we will 
+use a much smaller dataset that (1) is a sample of only 7,000 images and (2) 
+has already converted the 28x28 images into a format that R can work with (more 
+about this later). For now, go ahead and download the file from
+[https://bit.ly/fmnist-data](https://bit.ly/fmnist-data) or
+[https://raw.githubusercontent.com/jcoliver/learn-r/refs/heads/gh-pages/data/fmnist-subsample.csv](https://raw.githubusercontent.com/jcoliver/learn-r/refs/heads/gh-pages/data/fmnist-subsample.csv) 
+(the former just redirects to the latter). You should be able to right-click or
+control-click on the link and select "Save As..." to download the file. Make 
+sure you download the file to the "data" folder you created earlier (or move 
+the file to the "data" folder if your web browser automatically downloads files 
+to a specific destination such as your "Downloads" folder).
+
+***
+
+## [TOPIC ZERO]
+
+Data transformation from images to tables
 
 ***
 
 ## [TOPIC ONE]
 
 ```{r nn1, eval = FALSE}
-library(keras3)
-
-# TODO: replace with bit.ly link
 fmnist <- read.csv(file = "data/fmnist-subsample.csv")
 
 # Separate data into testing/training
-# TODO: Need to update data so testing data are not NA in training column
-testing <- fmnist[is.na(fmnist$training), ]
-training <- fmnist[!is.na(fmnist$training), ]
+testing <- fmnist[fmnist$training == 0, ]
+training <- fmnist[fmnist$training == 1, ]
 
 # Pull out labels to store separately
 testing_labels <- testing$label
@@ -204,7 +225,9 @@ training_data <- training_data/255
 # downloading here
 testing_labels <- to_categorical(x = testing_labels, num_classes = 10)
 training_labels <- to_categorical(x = training_labels, num_classes = 10)
+```
 
+```{r model-setup}
 # Start setting up our model. Here will tell it about the input data - 784 
 # columns, one column for each pixel in the image. This is the first layer of 
 # our model
@@ -219,7 +242,7 @@ model |>
   layer_dropout(rate = 0.2) |>
   layer_dense(units = 10, activation = 'softmax')
 
-# Some reality checks of the model
+# Look at the model structure, in terms of number of parameters
 summary(model)
 
 # Set up some details of how we will fit the model
@@ -290,6 +313,13 @@ history2 <- model2 |> fit(
 # Make a nice looking plot of the model fitting process
 plot(history2)
 ```
+
+***
+
+## [TOPIC THREE]
+
+Compare the accuracy of our neural network model to that of a random forest 
+model.
 
 ***
 
