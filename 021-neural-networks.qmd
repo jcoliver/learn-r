@@ -206,6 +206,13 @@ training <- fmnist[fmnist$training == 1, ]
 testing_labels <- testing$label
 training_labels <- training$label
 
+# For the neural network program, we want the labels to be treated as 
+# categories, not numbers
+# Note: if this is the first call to a keras3 function, might do some 
+# downloading here
+testing_labels <- to_categorical(x = testing_labels, num_classes = 10)
+training_labels <- to_categorical(x = training_labels, num_classes = 10)
+
 # Pull out data (no label column, no training column)
 testing_data <- as.matrix(testing[, -c(1, 786)])
 training_data <- as.matrix(training[, -c(1, 786)])
@@ -215,16 +222,13 @@ test_image <- matrix(data = training_data[3, ],
                      nrow = 28, ncol = 28, byrow = TRUE)
 plot(as.raster(test_image, max=255))
 
+# TODO: Can we rescale first, then plot(as.raster())? Might let us skip the 
+# max=255 argument...
+
 # Rescale the values from 0 to 255 to 0 to 1
 testing_data <- testing_data/255
 training_data <- training_data/255
 
-# For the neural network program, we want the labels to be treated as 
-# categories, not numbers
-# Note: if this is the first call to a keras3 function, might do some 
-# downloading here
-testing_labels <- to_categorical(x = testing_labels, num_classes = 10)
-training_labels <- to_categorical(x = training_labels, num_classes = 10)
 ```
 
 ```{r model-setup}
@@ -232,6 +236,9 @@ training_labels <- to_categorical(x = training_labels, num_classes = 10)
 # columns, one column for each pixel in the image. This is the first layer of 
 # our model
 model <- keras_model_sequential(input_shape = c(784))
+
+# TODO: Can we combine the above with the next step? Kind of nice to have the 
+# entire model structure in one place...
 
 # We add more information about our model, we want one hidden layer that has 32
 # nodes and one output layer that has 10 nodes. The 10 output nodes correspond 
