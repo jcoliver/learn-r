@@ -22,9 +22,9 @@ if (length(libs_missing) > 0) {
 ```
 
 Neural networks provide a means of making predictions for problems too 
-difficult to solve with linear models. In this workshop, we will introduce the 
-concept of these models, build an image classification model, and compare the 
-predictive power with other machine learning models.
+difficult to solve with linear models. This introductory tutorial will briefly 
+introduce the concept of artificial neural networks and work through and 
+example of image classification.
 
 #### Learning objectives
 
@@ -35,8 +35,6 @@ After this lesson, learners should be able to:
 3. Build a neural network model for classification.
 4. Build a random forest model for classification.
 5. Compare model performance.
-
-## [DESCRIPTION OR MOTIVATION; 2-4 sentences that would be used for an announcement]
 
 A large field of data science involves identifying what group an observation 
 belongs to. This includes things like image categorization. In this workshop we 
@@ -164,11 +162,12 @@ system("sudo apt-get update && sudo apt-get install -y python3-venv python3-pip 
 
 ### Download data
 
-The data we are Fashion MNIST data, or "FMNIST". The data are grayscale images, 
-where each images shows one of ten different fashion articles (e.g. shirt, 
-dress, bag). Each image is 28x28 pixels, with values from 0-255, where 0 is 
-pure black and 255 is white. The image below shows 20 examples: 10 images 
-classified as "bags" and 10 images classified as "Ankle boots".
+The data we are using are a subset from the Fashion MNIST data, or "FMNIST". 
+The FMNIST data are grayscale images, where each images shows one of ten 
+different fashion articles (e.g. shirt, dress, bag). Each image is 28x28 
+pixels, with values from 0-255, where 0 is pure black and 255 is white. The 
+image below shows 20 examples: 10 images classified as "bags" and 10 images 
+classified as "Ankle boots".
 
 ![Sample images of bags and boots from FMINST dataset](images/fmnist-examples.png)
 
@@ -193,52 +192,160 @@ Data transformation from images to tables
 
 ***
 
-## [TOPIC ONE]
+## A small neural network
 
-```{r nn1, eval = FALSE}
+We will build a small neural network, following some additional data wrangling 
+that we need to do.
+
+### Data wrangling
+
+We start by loading the data for the images into R's memory.
+
+```{r load-data}
 fmnist <- read.csv(file = "data/fmnist-subsample.csv")
+```
 
+Like many machine learning approaches, we will need to separate our data into 
+two separate piles: one set of data that we will use to fit (or 'train') the 
+neural network model and one set of the data that we will use to evaluate (or 
+'test') the model performance. This split, often referred to as the training/
+testing split allows us to assess how well our model performs on data that the 
+model has not 'seen'. Thankfully, the data we just loaded into R have that 
+information included in a column called `training`, where a value of 0 
+indicates the data are testing data and a value of 1 indicates the data are 
+to be used for training. We will make two separate datasets based on the value 
+in the `training` column:
+
+```{r testing-training-split}
 # Separate data into testing/training
 testing <- fmnist[fmnist$training == 0, ]
 training <- fmnist[fmnist$training == 1, ]
+```
 
+In the code above, you will note we used some maybe funny syntax, with square 
+brackets and hanging commas. If we look to the right hand side of the 
+assignment operator (`<-`), we have two different subsetting commands. The 
+first is: 
+
+```{r training-explain, eval = FALSE}
+fmnist[fmnist$training == 0, ]
+```
+
+Here we are telling R to pull out data from the `fmnist` data (the `fmnist[` 
+part of the code), but only those rows where the value in the `training` column 
+is equal to 0 (the `fmnist$training == 0` part). Because we want *all* the 
+columns, we leave a blank space after the comma (the `, ]` part). Thinking 
+about this abstractly, the code works like this:
+
+```{r subset-abstraction, eval = FALSE}
+new dataset <- original dataset [criteria for matching rows, criteria for matching columns]
+```
+
+If either criteria is blank, R will return all rows/columns. In our case, we 
+left the criteria for matching columns blank, so the resulting data has all of 
+the columns of the original dataset.
+
+#### What good are labels?
+
+In machine learning, when dealing with categorization problems (also known as 
+classification problems), you will often encounter the term "label". In most 
+cases, this the the fancy term we use for "category". That is, for the FMNIST 
+data we are using, each image has a "label", which is the article of fashion 
+the image represents. Because numbers are easier to store than words, our data 
+has each image labeled with numbers 0-9 (ten numbers total). For our neural 
+network, though, we need to explicitly tell R to treat these like categories 
+instead of numbers. So we start by pulling out the labels (just a number 
+between 0 and 9, remember), then telling R they are categorical, not numeric, 
+data.
+
+```{r label-setup}
 # Pull out labels to store separately
 testing_labels <- testing$label
 training_labels <- training$label
 
 # For the neural network program, we want the labels to be treated as 
 # categories, not numbers
-# Note: if this is the first call to a keras3 function, might do some 
-# downloading here
 testing_labels <- to_categorical(x = testing_labels, num_classes = 10)
 training_labels <- to_categorical(x = training_labels, num_classes = 10)
+```
 
+::: {.callout-tip appearance="true" collapse="true"}
+#### White lies
+
+If you are paying close attention to your Environment tab, you will see two new 
+Data objects, `testing_labels` and `training_labels`, both of witch are listed 
+as numeric objects (as opposed to Factors, which is how R normally stores 
+categorical data). This is because of how the neural network package keras3 
+deals with categorical data. Find out more by looking at the documentation for 
+the `to_categorical()` function (i.e. run `?keras3::to_categorical`).
+::: 
+
+#### Data without labels
+
+We now want to pull out just the image data (that is, the data with the numeric 
+value showing how light or dark each pixel is). While we are doing this, we 
+also want to move away from a data frame (which can have columns with different 
+kinds of data) to a matrix, which takes up less memory, but can only contain 
+one kind of data (in this case, it will contain only numeric data).
+
+```{r image-data-setup}
 # Pull out data (no label column, no training column)
 testing_data <- as.matrix(testing[, -c(1, 786)])
 training_data <- as.matrix(training[, -c(1, 786)])
+```
 
-# Look at one of the training images
-test_image <- matrix(data = training_data[3, ],
-                     nrow = 28, ncol = 28, byrow = TRUE)
-plot(as.raster(test_image, max=255))
+In many image files, pixels take a value between 0 and 255. That is the case 
+here, too. But to make things a little easier on our model, we are going to 
+rescale the data so the maximum value is one (the minimum value stays at zero).
 
-# TODO: Can we rescale first, then plot(as.raster())? Might let us skip the 
-# max=255 argument...
-
+```{r rescale-data}
 # Rescale the values from 0 to 255 to 0 to 1
 testing_data <- testing_data/255
 training_data <- training_data/255
-
 ```
 
-```{r model-setup}
+As a little reality check, we can actually print one of these images to our R 
+plot viewer. We need to to a little data wrangling to change the data back to a 
+28x28 matrix (right now all the image data are in a single row with 786 cells). 
+After we do the data wrangling, we use `plot(as.raster())` to view our image.
+
+```{r print-one-image}
+# Look at one of the training images (here we are looking at the one in row 3)
+test_image <- matrix(data = training_data[3, ],
+                     nrow = 28, ncol = 28, byrow = TRUE)
+plot(as.raster(test_image))
+```
+
+The example above should show an image of a hand bag (albeit a very low 
+resolution image, remember, only 28x28 pixels). You can test this out with any 
+of the data. Try looking at different images by using a separate row of data.
+
+```{r print-another-image}
+# Try the image in row 200
+test_image <- matrix(data = training_data[200, ],
+                     nrow = 28, ncol = 28, byrow = TRUE)
+plot(as.raster(test_image))
+```
+
+Row 200 is an image of some serious footwear!
+
+### Network setup
+
+To create neural networks in the keras3 package, there are effectively four 
+steps:
+
+1. Tell R how much input data we have.
+2. Tell R the structure of the model, including output.
+3. Tell R how to fit the parameters of the model.
+
+After those three steps we can actually fit the model (by 'fit' I mean the step 
+where R figures out the values for all the neural network parameters).
+
+```{r model-1-setup}
 # Start setting up our model. Here will tell it about the input data - 784 
 # columns, one column for each pixel in the image. This is the first layer of 
 # our model
 model <- keras_model_sequential(input_shape = c(784))
-
-# TODO: Can we combine the above with the next step? Kind of nice to have the 
-# entire model structure in one place...
 
 # We add more information about our model, we want one hidden layer that has 32
 # nodes and one output layer that has 10 nodes. The 10 output nodes correspond 
@@ -258,7 +365,25 @@ model |> compile(
   optimizer = optimizer_rmsprop(),
   metrics = c('accuracy')
 )
+```
 
+So at this point, if we were to draw our model, it would look something like:
+
+## TODO: Add model image here
+
+Now we are ready to fit the model! And by fit, I mean R will estimate values 
+for all those parameters in the image above. Those parameter values will 
+ultimately be used to predict which category each image in our testing data 
+belongs to. We need to provide four pieces of information to the `fit()` 
+function:
+
++ `training_data`: the training image data (the matrix of pixel values 0-1)
++ `training_labels`: the category each image belongs to
++ `epochs`: how many times R should try to fine-tune the model
++ `validation_split`: proportion of data to set aside for evaluation; this is 
+a *separate* split from the training/testing segregation we did previously.
+
+```{r model-1-fit}
 # Now we (finally) fit the model and store the history of the model. We provide
 #    training_data: the pixel values on a scale of 0-1
 #    training_labels: the category of clothing the image represents
